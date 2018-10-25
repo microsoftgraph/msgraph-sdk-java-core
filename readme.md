@@ -1,0 +1,1 @@
+# Microsoft Graph Core SDK for Java
