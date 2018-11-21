@@ -22,12 +22,22 @@ public class HttpClients {
      * configuration.
      */
     public static CloseableHttpClient createDefault() {
-        //return HttpClientBuilder.create().build();
-    	
+    	RequestConfig config = RequestConfig.custom().setMaxRedirects(5).build();
+    	return HttpClientBuilder.create().addInterceptorFirst(new AuthenticationHandler(null))
+    			.setRedirectStrategy(new RedirectHandler())
+    			.setServiceUnavailableRetryStrategy(new RetryHandler())
+    			.setDefaultRequestConfig(config)
+    			.build();
+    }
+    
+    /**
+     * Creates {@link CloseableHttpClient} instance with default
+     * configuration and provided authProvider
+     */
+    public static CloseableHttpClient createDefault(IAuthenticationProvider auth) {
     	RequestConfig config = RequestConfig.custom().setMaxRedirects(5).build();
     	
-    	IAuthenticationProvider auth = null;
-    	return HttpClientBuilder.create().addInterceptorFirst(new AuthenticationHandler(null))
+    	return HttpClientBuilder.create().addInterceptorFirst(new AuthenticationHandler(auth))
     			.setRedirectStrategy(new RedirectHandler())
     			.setServiceUnavailableRetryStrategy(new RetryHandler())
     			.setDefaultRequestConfig(config)
