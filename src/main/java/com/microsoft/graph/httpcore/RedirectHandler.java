@@ -58,9 +58,9 @@ public class RedirectHandler extends DefaultRedirectStrategy{
             if(status != HttpStatus.SC_SEE_OTHER) {
             	try {
             		final URI requestURI = new URI(request.getRequestLine().getUri());
-            		if(!uri.getHost().equalsIgnoreCase(requestURI.getHost())) {
+            		if(!uri.getHost().equalsIgnoreCase(requestURI.getHost()) || 
+            				!uri.getScheme().equalsIgnoreCase(requestURI.getScheme()))
             			request.removeHeaders("Authorization");
-            		}
             		return RequestBuilder.copy(request).setUri(uri).build();
             	}
             	 catch (final URISyntaxException ex) {

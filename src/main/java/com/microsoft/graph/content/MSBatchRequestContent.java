@@ -18,7 +18,7 @@ public class MSBatchRequestContent {
 	private final int maxNumberOfRequests = 20;
 	
 	public MSBatchRequestContent(List<MSBatchRequestStep> batchRequestStepsArray) {
-		batchRequestStepsArray = new ArrayList<>();
+		this.batchRequestStepsArray = new ArrayList<>();
 		if(batchRequestStepsArray.size() <= maxNumberOfRequests) {
 			for(MSBatchRequestStep requestStep: batchRequestStepsArray)
 				addBatchRequestStep(requestStep);
@@ -29,16 +29,16 @@ public class MSBatchRequestContent {
 		batchRequestStepsArray = new ArrayList<>();
 	}
 	
-	public void addBatchRequestStep(MSBatchRequestStep batchRequestStep) {
+	public boolean addBatchRequestStep(MSBatchRequestStep batchRequestStep) {
 		if(batchRequestStep.getRequestId().compareTo("") == 0)
-			return;
+			return false;
 		if(batchRequestStepsArray.size() == maxNumberOfRequests)
-			return;
+			return false;
 		for(MSBatchRequestStep requestStep: batchRequestStepsArray) {
 			if(batchRequestStep.getRequestId().compareTo(requestStep.getRequestId()) == 0)
-				return;
+				return false;
 		}
-		batchRequestStepsArray.add(batchRequestStep);
+		return batchRequestStepsArray.add(batchRequestStep);
 	}
 	
 	public void removeBatchRequesStepWithId(String requestId) {
@@ -74,7 +74,7 @@ public class MSBatchRequestContent {
 		contentmap.put("url", batchRequestStep.getRequest().getRequestLine().getUri());
 		contentmap.put("method", batchRequestStep.getRequest().getRequestLine().getMethod());
 		Header[] headers = batchRequestStep.getRequest().getAllHeaders();
-		if(headers != null) {
+		if(headers != null && headers.length != 0) {
 			JSONObject obj = new JSONObject();
 			for(Header header: headers) {
 				obj.put(header.getName(), header.getValue());
