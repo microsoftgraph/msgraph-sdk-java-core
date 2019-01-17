@@ -21,7 +21,6 @@ public class AuthenticationHandlerTest {
 			return "Bearer " + token;
 		}
 		public void authenticateRequest(HttpRequest request) {
-			// TODO Auto-generated method stub
 			request.addHeader("Authorization", AuthProvider.getToken());
 		}
 	}
@@ -38,7 +37,6 @@ public class AuthenticationHandlerTest {
 			Header header = httpget.getFirstHeader("Authorization");
 			assertTrue(header.getValue().equals("Bearer " + token));
 		} catch (HttpException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Authentication handler failure");
 		}

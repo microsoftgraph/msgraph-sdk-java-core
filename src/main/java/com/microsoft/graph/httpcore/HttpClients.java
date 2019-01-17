@@ -19,19 +19,6 @@ public class HttpClients {
 
     /**
      * Creates {@link CloseableHttpClient} instance with default
-     * configuration.
-     */
-    public static CloseableHttpClient createDefault() {
-    	RequestConfig config = RequestConfig.custom().setMaxRedirects(5).build();
-    	return HttpClientBuilder.create().addInterceptorFirst(new AuthenticationHandler(null))
-    			.setRedirectStrategy(new RedirectHandler())
-    			.setServiceUnavailableRetryStrategy(new RetryHandler())
-    			.setDefaultRequestConfig(config)
-    			.build();
-    }
-    
-    /**
-     * Creates {@link CloseableHttpClient} instance with default
      * configuration and provided authProvider
      */
     public static CloseableHttpClient createDefault(IAuthenticationProvider auth) {

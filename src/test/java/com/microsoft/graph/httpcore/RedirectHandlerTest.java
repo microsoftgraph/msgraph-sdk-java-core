@@ -13,10 +13,6 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class RedirectHandlerTest {
@@ -31,7 +27,6 @@ public class RedirectHandlerTest {
 			boolean isRedirected = redirectHandler.isRedirected(httpget, response, localContext);
 			assertTrue(!isRedirected);
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
@@ -47,7 +42,6 @@ public class RedirectHandlerTest {
 			boolean isRedirected = redirectHandler.isRedirected(httpget, response, localContext);
 			assertTrue(!isRedirected);
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
@@ -64,7 +58,6 @@ public class RedirectHandlerTest {
 			boolean isRedirected = redirectHandler.isRedirected(httpget, response, localContext);
 			assertTrue(isRedirected);
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
@@ -83,7 +76,6 @@ public class RedirectHandlerTest {
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpGet.METHOD_NAME));
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
@@ -102,7 +94,6 @@ public class RedirectHandlerTest {
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpHead.METHOD_NAME));
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
@@ -140,7 +131,6 @@ public class RedirectHandlerTest {
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpGet.METHOD_NAME));
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Redirect handler isRedirect failure");
 		}
