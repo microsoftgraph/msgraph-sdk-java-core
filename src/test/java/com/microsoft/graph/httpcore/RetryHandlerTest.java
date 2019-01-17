@@ -18,16 +18,20 @@ import org.apache.http.protocol.HttpCoreContext;
 import org.junit.Test;
 
 public class RetryHandlerTest {
+	
+	 int maxRetries = 2;
+	 int retryInterval = 2000;
+	 String testurl = "https://graph.microsoft.com/v1.0/";
 
 	@Test
 	public void testRetryHandlerCreation() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
-		assertTrue(retryhandler.getRetryInterval() == 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		assertTrue(retryhandler.getRetryInterval() == retryInterval);
 	}
 	
 	@Test
 	public void testRetryRequestWithMaxRetryAttempts() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
 		HttpClientContext localContext = HttpClientContext.create();
 		assertFalse(retryhandler.retryRequest(response, 3, localContext));
@@ -35,7 +39,7 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestForStatusCode() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
 		HttpClientContext localContext = HttpClientContext.create();
 		assertFalse(retryhandler.retryRequest(response, 1, localContext));
@@ -43,10 +47,10 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestWithTransferEncoding() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
 		response.setHeader("Transfer-Encoding", "chunked");
-		HttpPost httppost = new HttpPost("https://graph.microsoft.com/v1.0/");
+		HttpPost httppost = new HttpPost(testurl);
 		
 		try {
 			HttpEntity entity = new StringEntity("TEST");
@@ -63,9 +67,9 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestWithExponentialBackOff() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
-		HttpPost httppost = new HttpPost("https://graph.microsoft.com/v1.0/");
+		HttpPost httppost = new HttpPost(testurl);
 		
 		try {
 			HttpEntity entity = new StringEntity("TEST");
@@ -83,10 +87,10 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryHandlerRetryRequestWithRetryAfterHeader() {
-		RetryHandler retryhandler = new RetryHandler(2, 2000);
+		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
 		response.setHeader("Retry-After", "100");
-		HttpPost httppost = new HttpPost("https://graph.microsoft.com/v1.0/");
+		HttpPost httppost = new HttpPost(testurl);
 		
 		try {
 			HttpEntity entity = new StringEntity("TEST");
