@@ -44,30 +44,23 @@ public class RedirectHandler extends DefaultRedirectStrategy{
     
     @Override
     public HttpUriRequest getRedirect(
-            final HttpRequest request,
-            final HttpResponse response,
-            final HttpContext context) throws ProtocolException {
-        final URI uri = getLocationURI(request, response, context);
-        final String method = request.getRequestLine().getMethod();
-        if (method.equalsIgnoreCase(HttpHead.METHOD_NAME)) {
-            return new HttpHead(uri);
-        } else if (method.equalsIgnoreCase(HttpGet.METHOD_NAME))
-            return new HttpGet(uri);
-        else {
-            final int status = response.getStatusLine().getStatusCode();
-            if(status != HttpStatus.SC_SEE_OTHER) {
-            	try {
-            		final URI requestURI = new URI(request.getRequestLine().getUri());
-            		if(!uri.getHost().equalsIgnoreCase(requestURI.getHost()) || 
-            				!uri.getScheme().equalsIgnoreCase(requestURI.getScheme()))
-            			request.removeHeaders("Authorization");
-            		return RequestBuilder.copy(request).setUri(uri).build();
-            	}
-            	 catch (final URISyntaxException ex) {
-                     throw new ProtocolException(ex.getMessage(), ex);
-                 }
-            }
-            return new HttpGet(uri);
-        }
+    		final HttpRequest request,
+    		final HttpResponse response,
+    		final HttpContext context) throws ProtocolException {
+    	final URI uri = getLocationURI(request, response, context);
+    	try {
+    		final URI requestURI = new URI(request.getRequestLine().getUri());
+    		if(!uri.getHost().equalsIgnoreCase(requestURI.getHost()) || 
+    				!uri.getScheme().equalsIgnoreCase(requestURI.getScheme()))
+    			request.removeHeaders("Authorization");	
+    	}
+    	catch (final URISyntaxException ex) {
+    		throw new ProtocolException(ex.getMessage(), ex);
+    	}
+    	
+    	final int status = response.getStatusLine().getStatusCode();
+    	if(status == HttpStatus.SC_SEE_OTHER)
+    		return new HttpGet(uri);
+    	return RequestBuilder.copy(request).setUri(uri).build();
     }
 }
