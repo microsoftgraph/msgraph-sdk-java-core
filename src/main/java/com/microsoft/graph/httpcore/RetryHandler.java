@@ -26,7 +26,7 @@ public class RetryHandler implements ServiceUnavailableRetryStrategy{
      * value is 1 second.
      */
     private long retryInterval;
-    private final int DELAY_SECONDS = 10;
+    private final int DELAY_MILLISECONDS = 1000;
     private final String RETRY_AFTER = "Retry-After";
     private final String TRANSFER_ENCODING = "Transfer-Encoding";
     
@@ -43,7 +43,7 @@ public class RetryHandler implements ServiceUnavailableRetryStrategy{
     }
 
     public RetryHandler() {
-        this(1, 1000);
+        this(2, 1000);
     }
     
 	@Override
@@ -57,14 +57,13 @@ public class RetryHandler implements ServiceUnavailableRetryStrategy{
 			if(header != null) 
 				retryInterval = Long.parseLong(header.getValue());
 			else
-				retryInterval = (long)Math.pow(2.0, (double)executionCount) * DELAY_SECONDS;
+				retryInterval = (long)Math.pow(2.0, (double)executionCount) * DELAY_MILLISECONDS;
 		}
 		return shouldRetry;
 	}
 
 	@Override
 	public long getRetryInterval() {
-		// TODO Auto-generated method stub
 		return retryInterval;
 	}
 	
