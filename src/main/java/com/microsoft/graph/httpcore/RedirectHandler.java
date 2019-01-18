@@ -36,7 +36,8 @@ public class RedirectHandler extends DefaultRedirectStrategy{
         if(statusCode == HttpStatus.SC_MOVED_TEMPORARILY ||
         		statusCode == HttpStatus.SC_MOVED_PERMANENTLY ||
         		statusCode == HttpStatus.SC_TEMPORARY_REDIRECT ||
-        		statusCode == HttpStatus.SC_SEE_OTHER)
+        		statusCode == HttpStatus.SC_SEE_OTHER ||
+        		statusCode == 308)
         	return true;
         
         return false;
