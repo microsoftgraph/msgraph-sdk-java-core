@@ -1,8 +1,5 @@
 package com.microsoft.graph.content;
 
-import java.util.Set;
-
-import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;

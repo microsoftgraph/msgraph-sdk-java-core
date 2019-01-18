@@ -59,8 +59,8 @@ public class MSBatchRequestContent {
 	}
 	
 	public String getBatchRequestContent() {
-		Map<String, List<Map<String, String>>> batchRequestContentMap = new HashMap();
-		List<Map<String, String>> batchContentArray = new ArrayList();
+		Map<String, List<Map<String, String>>> batchRequestContentMap = new HashMap<>();
+		List<Map<String, String>> batchContentArray = new ArrayList<>();
 		for(MSBatchRequestStep requestStep : batchRequestStepsArray) {
 			batchContentArray.add(getBatchRequestMapFromRequestStep(requestStep));
 		}
@@ -69,7 +69,7 @@ public class MSBatchRequestContent {
 	}
 	
 	private Map<String, String> getBatchRequestMapFromRequestStep(MSBatchRequestStep batchRequestStep){
-		Map<String, String> contentmap = new HashMap();
+		Map<String, String> contentmap = new HashMap<>();
 		contentmap.put("id", batchRequestStep.getRequestId());
 		contentmap.put("url", batchRequestStep.getRequest().getRequestLine().getUri());
 		contentmap.put("method", batchRequestStep.getRequest().getRequestLine().getMethod());
