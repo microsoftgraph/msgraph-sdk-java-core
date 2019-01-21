@@ -17,7 +17,6 @@ public class AuthenticationHandler implements HttpRequestInterceptor {
 	
 	@Override
 	public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-		// TODO Auto-generated method stub
 		authProvider.authenticateRequest(request);
 	}
 

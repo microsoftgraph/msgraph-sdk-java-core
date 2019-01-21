@@ -21,6 +21,7 @@ public class MSBatchResponseContent {
 				batchResponseObj = (JSONObject) parser.parse(batchResponseData);
 		}
 		catch(ParseException e) {
+			e.printStackTrace();
 		}
 	}
 	

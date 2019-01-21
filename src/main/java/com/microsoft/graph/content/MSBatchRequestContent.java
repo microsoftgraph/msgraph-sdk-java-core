@@ -93,9 +93,9 @@ public class MSBatchRequestContent {
 				contentmap.put("body", body);
 			}
 			catch(Exception e) {
+				e.printStackTrace();
 			}
 		}
-		
 		List<String> arrayOfDependsOnIds = batchRequestStep.getArrayOfDependsOnIds();
 		if(arrayOfDependsOnIds != null) {
 			contentmap.put("dependsOn", JSONValue.toJSONString(arrayOfDependsOnIds));
