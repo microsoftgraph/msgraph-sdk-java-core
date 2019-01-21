@@ -17,7 +17,8 @@ public class AuthenticationHandler implements HttpRequestInterceptor {
 	
 	@Override
 	public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-		authProvider.authenticateRequest(request);
+		String token = authProvider.getAccessToken();
+		request.addHeader("Authorization", "Bearer " + token);
 	}
 
 }

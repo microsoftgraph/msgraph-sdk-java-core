@@ -41,7 +41,8 @@ public class MSBatchRequestContent {
 		return batchRequestStepsArray.add(batchRequestStep);
 	}
 	
-	public void removeBatchRequesStepWithId(String requestId) {
+	public boolean removeBatchRequesStepWithId(String requestId) {
+		boolean ret = false;
 		for (int i = batchRequestStepsArray.size()-1; i >= 0; i--)
 	    {
 	        MSBatchRequestStep requestStep = batchRequestStepsArray.get(i);
@@ -51,11 +52,15 @@ public class MSBatchRequestContent {
 	            if(dependsOnId.compareTo(requestId) == 0)
 	            {
 	                requestStep.getArrayOfDependsOnIds().remove(j);
+	                ret = true;
 	            }
 	        }
-	        if(requestId.compareTo(requestStep.getRequestId()) == 0)
+	        if(requestId.compareTo(requestStep.getRequestId()) == 0) {
 	            batchRequestStepsArray.remove(i);
+	            ret = true;
+	        }
 	    }
+		return ret;
 	}
 	
 	public String getBatchRequestContent() {

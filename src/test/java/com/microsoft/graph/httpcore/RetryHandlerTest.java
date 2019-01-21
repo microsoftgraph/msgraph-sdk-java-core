@@ -77,7 +77,7 @@ public class RetryHandlerTest {
 			HttpClientContext localContext = HttpClientContext.create();
 			localContext.setAttribute(HttpCoreContext.HTTP_REQUEST, httppost);
 			assertTrue(retryhandler.retryRequest(response, 1, localContext));
-			assertTrue(retryhandler.getRetryInterval() == 20);
+			assertTrue(retryhandler.getRetryInterval() == 2000);
 			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

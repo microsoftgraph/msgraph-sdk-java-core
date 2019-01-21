@@ -4,9 +4,9 @@ import org.apache.http.HttpRequest;
 
 public interface IAuthenticationProvider {
 	/**
-     * Authenticates the request
+     * Get Access Token
      * 
-     * @param request the request to authenticate
      */
-    void authenticateRequest(final HttpRequest request);
+    
+    String getAccessToken();
 }

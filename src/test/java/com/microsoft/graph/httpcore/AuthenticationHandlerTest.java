@@ -17,11 +17,8 @@ public class AuthenticationHandlerTest {
 	static String token = "TEST-TOKEN";
 	
 	public static class AuthProvider implements IAuthenticationProvider{
-		public static String getToken() {
-			return "Bearer " + token;
-		}
-		public void authenticateRequest(HttpRequest request) {
-			request.addHeader("Authorization", AuthProvider.getToken());
+		public String getAccessToken() {
+			return token;
 		}
 	}
 
