@@ -23,7 +23,7 @@ public class RedirectHandlerTest {
 	String differenthosturl = "https://graph.abc.com/v1.0/";
 
 	@Test
-	public void testIsRedirectedFailure() {
+	public void testIsRedirectedFailureByNoLocationHeader() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
@@ -38,7 +38,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testIsRedirectedFailure1() {
+	public void testIsRedirectedFailureByStatusCodeBadRequest() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_REQUEST, "Bad Request");
@@ -54,7 +54,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testIsRedirectedSuccess() {
+	public void testIsRedirectedSuccessWithStatusCodeMovedTemporarily() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
@@ -70,7 +70,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testIsRedirectedSuccess1() {
+	public void testIsRedirectedSuccessWithStatusCodeMovedPermanently() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_PERMANENTLY, "Moved Permanently");
@@ -86,7 +86,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testIsRedirectedSuccess2() {
+	public void testIsRedirectedSuccessWithStatusCodeTemporaryRedirect() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_TEMPORARY_REDIRECT, "Temporary Redirect");
@@ -102,7 +102,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testIsRedirectedSuccess3() {
+	public void testIsRedirectedSuccessWithStatusCodeSeeOther() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpGet httpget = new HttpGet(testmeurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");
@@ -193,7 +193,7 @@ public class RedirectHandlerTest {
 	}
 	
 	@Test
-	public void testGetRedirectForPostMethod1() {
+	public void testGetRedirectForPostMethodWithStatusCodeSeeOther() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpPost httppost = new HttpPost(testurl);
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");

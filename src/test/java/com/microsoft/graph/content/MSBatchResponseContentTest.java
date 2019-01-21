@@ -31,23 +31,20 @@ public class MSBatchResponseContentTest {
 	}
 	
 	@Test
-	public void testInvalidMSBatchResponseContent() {
-		//passing empty responses
+	public void testInvalidMSBatchResponseContentWithEmptyResponse() {
 		String responsedata = "{\"responses\": [] }";
 		MSBatchResponseContent batchresponse = new MSBatchResponseContent(responsedata);
 		assertTrue(batchresponse.getResponseById("1") == null);
 	}
 	
 	@Test
-	public void testInvalidMSBatchResponseContent1() {
-		//passing null response json string
+	public void testInvalidMSBatchResponseContentWithNullResponseString() {
 		MSBatchResponseContent batchresponse = new MSBatchResponseContent(null);
 		assertTrue(batchresponse.getResponseById("1") == null);
 	}
 	
 	@Test
-	public void testInvalidMSBatchResponseContent2() {
-		//passing malformed json response
+	public void testInvalidMSBatchResponseContentWithMalformedResponse() {
 		String invalidResponsedata = "{responses: [] }";
 		MSBatchResponseContent batchresponse = new MSBatchResponseContent(invalidResponsedata);
 		assertTrue(batchresponse.getResponses() == null);

@@ -69,7 +69,7 @@ public class MSBatchRequestContentTest {
 	}
 	
 	@Test
-	public void testRemoveBatchRequesStepWithId1() {
+	public void testRemoveBatchRequesStepWithIdByAddingMultipleBatchSteps() {
 		 HttpRequest request = new HttpGet(testurl);
 		 List<String> arrayOfDependsOnIds = new ArrayList<>();
 		 MSBatchRequestStep requestStep = new MSBatchRequestStep("1", request, arrayOfDependsOnIds);
