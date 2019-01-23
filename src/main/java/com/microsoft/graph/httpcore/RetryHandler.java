@@ -13,19 +13,22 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.Args;
 
+import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
+import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+
 public class RetryHandler implements ServiceUnavailableRetryStrategy{
 
     /**
      * Maximum number of allowed retries if the server responds with a HTTP code
      * in our retry code list. Default value is 1.
      */
-    private final int maxRetries;
+    private final int maxRetries = 2;
 
     /**
      * Retry interval between subsequent requests, in milliseconds. Default
      * value is 1 second.
      */
-    private long retryInterval;
+    private long retryInterval = 1000;
     private final int DELAY_MILLISECONDS = 1000;
     private final String RETRY_AFTER = "Retry-After";
     private final String TRANSFER_ENCODING = "Transfer-Encoding";
@@ -33,21 +36,28 @@ public class RetryHandler implements ServiceUnavailableRetryStrategy{
     private final int MSClientErrorCodeTooManyRequests = 429;
     private final int MSClientErrorCodeServiceUnavailable  = 503;
     private final int MSClientErrorCodeGatewayTimeout = 504;
+    private final RetryOptions mRetryOption;
     
-    public RetryHandler(final int maxRetries, final int retryInterval) {
+    public RetryHandler(RetryOptions option) {
         super();
-        Args.positive(maxRetries, "Max retries");
-        Args.positive(retryInterval, "Retry interval");
-        this.maxRetries = maxRetries;
-        this.retryInterval = retryInterval;
+        this.mRetryOption = option;
     }
 
     public RetryHandler() {
-        this(2, 1000);
+        this(null);
     }
     
 	@Override
 	public boolean retryRequest(HttpResponse response, int executionCount, HttpContext context) {
+		
+		RetryOptions retryOption = (RetryOptions)context.getAttribute(MiddlewareType.RETRY.toString());
+		if(retryOption != null) {
+			return retryOption.shouldRetry().shouldRetry(response, executionCount, context);
+		}
+		if(mRetryOption != null) {
+			return mRetryOption.shouldRetry().shouldRetry(response, executionCount, context);
+		}
+		
 		boolean shouldRetry = false;
 		int statusCode = response.getStatusLine().getStatusCode();
 		shouldRetry = (executionCount < maxRetries) && checkStatus(statusCode) && isBuffered(response, context);
