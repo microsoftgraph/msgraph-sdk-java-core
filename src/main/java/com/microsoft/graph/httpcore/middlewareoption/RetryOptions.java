@@ -6,7 +6,7 @@ import org.apache.http.protocol.HttpContext;
 public class RetryOptions implements IMiddlewareControl {
 	private IShouldRetry shouldretry;
 	
-	RetryOptions(){
+	public RetryOptions(){
 		this(new IShouldRetry() {
 			public boolean shouldRetry(HttpResponse response, int executionCount, HttpContext context) {
 				return true;
@@ -14,7 +14,7 @@ public class RetryOptions implements IMiddlewareControl {
 		});
 	}
 	
-	RetryOptions(IShouldRetry shouldretry){
+	public RetryOptions(IShouldRetry shouldretry){
 		this.shouldretry = shouldretry;
 	}
 	
