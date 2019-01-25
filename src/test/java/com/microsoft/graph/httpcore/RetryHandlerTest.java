@@ -14,24 +14,50 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.junit.Test;
+
+import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
+import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 
 public class RetryHandlerTest {
 	
 	 int maxRetries = 2;
-	 int retryInterval = 2000;
+	 int retryInterval = 1000;
 	 String testurl = "https://graph.microsoft.com/v1.0/";
 
 	@Test
 	public void testRetryHandlerCreation() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		assertTrue(retryhandler.getRetryInterval() == retryInterval);
 	}
 	
 	@Test
+	public void testRetryHandlerWithRetryOptions() {
+		RetryOptions option = new RetryOptions();
+		RetryHandler retryhandler = new RetryHandler(option);
+		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
+		HttpClientContext localContext = HttpClientContext.create();
+		assertTrue(retryhandler.retryRequest(response, 1, localContext));
+	}
+	
+	@Test
+	public void testRetryHandlerWithCustomRetryOptions() {
+		RetryOptions option = new RetryOptions(new IShouldRetry() {
+			public boolean shouldRetry(HttpResponse response, int executionCount, HttpContext context) {
+				return false;
+			}
+		});
+		RetryHandler retryhandler = new RetryHandler(option);
+		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
+		HttpClientContext localContext = HttpClientContext.create();
+		assertTrue(!retryhandler.retryRequest(response, 1, localContext));
+	}
+	
+	@Test
 	public void testRetryRequestWithMaxRetryAttempts() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
 		HttpClientContext localContext = HttpClientContext.create();
 		assertFalse(retryhandler.retryRequest(response, 3, localContext));
@@ -39,7 +65,7 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestForStatusCode() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
 		HttpClientContext localContext = HttpClientContext.create();
 		assertFalse(retryhandler.retryRequest(response, 1, localContext));
@@ -47,7 +73,7 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestWithTransferEncoding() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
 		response.setHeader("Transfer-Encoding", "chunked");
 		HttpPost httppost = new HttpPost(testurl);
@@ -67,7 +93,7 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryRequestWithExponentialBackOff() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
 		HttpPost httppost = new HttpPost(testurl);
 		
@@ -87,7 +113,7 @@ public class RetryHandlerTest {
 	
 	@Test
 	public void testRetryHandlerRetryRequestWithRetryAfterHeader() {
-		RetryHandler retryhandler = new RetryHandler(maxRetries, retryInterval);
+		RetryHandler retryhandler = new RetryHandler();
 		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
 		response.setHeader("Retry-After", "100");
 		HttpPost httppost = new HttpPost(testurl);
