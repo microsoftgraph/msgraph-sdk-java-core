@@ -14,6 +14,9 @@ Add the repository and a compile dependency for `microsoft-graph` to your projec
 ```gradle
 repository {
     jcenter()
+	jcenter{
+        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+    }
 }
 
 dependency {
