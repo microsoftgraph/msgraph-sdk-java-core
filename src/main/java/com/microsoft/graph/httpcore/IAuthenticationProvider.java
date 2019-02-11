@@ -3,10 +3,10 @@ package com.microsoft.graph.httpcore;
 import org.apache.http.HttpRequest;
 
 public interface IAuthenticationProvider {
-	/**
-     * Get Access Token
+    /**
+     * Authenticates the request
      * 
+     * @param request the request to authenticate
      */
-    
-    String getAccessToken();
+    void authenticateRequest(HttpRequest request);
 }
