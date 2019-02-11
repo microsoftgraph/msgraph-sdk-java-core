@@ -3,11 +3,16 @@
  *
  * This generated file contains a sample Java Library project to get you started.
  * For more details take a look at the Java Libraries chapter in the Gradle
- * user guide available at https://docs.gradle.org/4.3/userguide/java_library_plugin.html
+ * user guide available at https://docs.gradle.org/4.5/userguide/java_library_plugin.html
  */
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 apply plugin: 'jacoco'
 
 // In this section you declare where to find the dependencies of your project
@@ -15,6 +20,12 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
+}
+
+def platformDependency = "org.apache.httpcomponents:httpclient:4.5.6"
+if ( project.hasProperty("platform") && project.platform == "android" ) {
+	platformDependency = "org.apache.httpcomponents:httpclient-android:4.3.5"
 }
 
 dependencies {
@@ -22,16 +33,317 @@ dependencies {
     api 'org.apache.commons:commons-math3:3.6.1'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:23.0'
+    implementation 'com.google.guava:guava:20.0'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     
-    // Use Apache HttpClient
-    api 'org.apache.httpcomponents:httpclient:4.5.6'
+    api platformDependency
     
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
-    
 }
 
+def pomConfig = {
+    licenses {
+        license([:]) {
+            name "MIT License"
+            url "http://opensource.org/licenses/MIT"
+            distribution "repo"
+        }
+    }
+}
+
+//Publishing tasks-
+//Maven Central Snapshot: publishSnapshotPublicationToMavenRepository
+//Maven Central Release: publishMavenCentralReleasePublicationToMaven2Repository
+//Bintray Snapshot: publishSnapshotPublicationToMaven3Repository
+//Bintray Release: uploadArchives
+
+publishing {
+
+    publications {
+
+        maven(MavenPublication) {
+
+            groupId 'com.microsoft.graph'
+
+            artifactId 'microsoft-graph-core'
+
+            version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenArtifactSuffix}"
+
+            from components.java
+
+            artifact sourceJar
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Microsoft Graph Core SDK for Java')
+                root.appendNode('url', 'https://github.com/microsoftgraph/msgraph-sdk-java-core')
+                root.children().last() + pomConfig
+                def pomFile = file("${project.buildDir}/libs/microsoft-graph-core.pom")
+                writeTo(pomFile)
+            }
+
+        }
+        Snapshot(MavenPublication) {
+        	customizePom(pom)
+        	groupId 'com.microsoft.graph'
+        	artifactId 'microsoft-graph-core'
+        	version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenCentralSnapshotArtifactSuffix}"
+        	from components.java
+        	pom.withXml {
+        		def pomFile = file("${project.buildDir}/generated-pom.xml")
+        		writeTo(pomFile)
+        	}
+        	artifact(sourceJar) {
+        		classifier = 'sources'
+        	}
+        	artifact(javadocJar) {
+        		classifier = 'javadoc'
+        	}
+		}
+		
+		mavenCentralRelease(MavenPublication) {
+        	customizePom(pom)
+        	groupId 'com.microsoft.graph'
+        	artifactId 'microsoft-graph-core'
+        	version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
+        	from components.java
+        	pom.withXml {
+        		def pomFile = file("${project.buildDir}/generated-pom.xml")
+        		writeTo(pomFile)
+        		def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+        		artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+        	}
+        	artifact(sourceJar) {
+        		classifier = 'sources'
+        	}
+        	artifact(javadocJar) {
+        		classifier = 'javadoc'
+        	}
+        	project.tasks.signArchives.signatureFiles.each {
+        		artifact(it) {
+        			def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+        			if(matcher.find()){
+        				classifier = matcher.group(1)
+        			}
+        			else{
+        				classifier = null
+        			}
+        			extension = 'jar.asc'
+				}
+			}
+		}
+    }
+	repositories {
+        maven {
+            url = project.property('mavenCentralSnapshotUrl')
+            
+            credentials {
+    			if (project.rootProject.file('local.properties').exists()) {
+
+        			Properties properties = new Properties()
+
+        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        			username = properties.getProperty('sonatypeUsername')
+
+        			password = properties.getProperty('sonatypePassword')
+
+    			}
+            }
+        }
+        
+        maven {
+            url = project.property('mavenCentralReleaseUrl')
+            
+            credentials {
+    			if (project.rootProject.file('local.properties').exists()) {
+
+        			Properties properties = new Properties()
+
+        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        			username = properties.getProperty('sonatypeUsername')
+
+        			password = properties.getProperty('sonatypePassword')
+
+    			}
+            }
+        }
+        
+        maven {
+            url = project.property('mavenBintraySnapshotUrl')
+            
+            credentials {
+    			if (project.rootProject.file('local.properties').exists()) {
+
+        			Properties properties = new Properties()
+
+        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        			username = (properties.containsKey('bintray.user')) ? properties.getProperty('bintray.user').toLowerCase() : "BINTRAY_USERNAME"
+
+        			password = properties.getProperty('bintray.apikey')
+
+    			}
+            }
+		}
+    }
+
+}
+
+task sourceJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allJava
+}
+
+compileJava {
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+}
+
+def getVersionCode() {
+    return mavenMajorVersion.toInteger() * 10000 + mavenMinorVersion.toInteger() * 100 + mavenPatchVersion.toInteger()
+}
+
+def getVersionName() {
+    return "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenArtifactSuffix}"
+}
+
+uploadArchives {
+
+    def bintrayUsername = ""
+
+    def bintrayApikey = ""
+
+    if (project.rootProject.file('local.properties').exists()) {
+
+        Properties properties = new Properties()
+
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        bintrayUsername = properties.getProperty('bintray.user')
+
+        bintrayApikey = properties.getProperty('bintray.apikey')
+
+    }
+
+    configuration = configurations.archives
+
+    repositories.mavenDeployer {
+
+        pom {
+
+           setGroupId project.mavenGroupId
+
+           setArtifactId project.mavenArtifactId
+
+           setVersion getVersionName()
+
+        }
+
+        repository (url: project.mavenRepoUrl) {
+        
+        	url = url + "/" + getVersionName()
+
+            authentication(
+
+                 // put these values in local file ~/.gradle/gradle.properties
+
+                 userName: project.hasProperty("bintrayUsername") ? project.bintrayUsername : bintrayUsername,
+
+                 password: project.hasProperty("bintrayApikey") ? project.bintrayApikey : bintrayApikey
+
+            )
+
+        }
+
+    }
+
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+	archives jar
+	archives sourceJar
+	archives javadocJar
+}
+
+signing {
+	sign configurations.archives
+}
+tasks.withType(Sign)*.enabled = mavenCentralPublishingEnabled.toBoolean()
+
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
+
+        root.dependencies.removeAll { dep ->
+            dep.scope == "test"
+        }
+
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
+
+            description 'Microsoft Graph Core SDK'
+            name 'Microsoft Graph Java Core SDK'
+            url 'https://github.com/microsoftgraph/msgraph-sdk-java-core'
+            organization {
+                name 'Microsoft'
+                url 'https://github.com/microsoftgraph/msgraph-sdk-java-core'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/microsoftgraph/msgraph-sdk-java-core/issues'
+            }
+            licenses {
+                license {
+                    name "MIT License"
+            		url "http://opensource.org/licenses/MIT"
+            		distribution "repo"
+                }
+            }
+            scm {
+                url 'https://github.com/microsoftgraph/msgraph-sdk-java-core'
+            	connection 'scm:git:git://github.com/microsoftgraph/msgraph-sdk-java-core.git'
+            	developerConnection 'scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git'
+            }
+            developers {
+                developer {
+                    name 'Microsoft'
+                }
+            }
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+	if (project.rootProject.file('local.properties').exists()) {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        tasks.withType(Sign)*.enabled = (properties.containsKey('enableSigning')) ? properties.getProperty('enableSigning').toBoolean() : false
+        allprojects { ext."signing.keyId" = properties.getProperty('signing.keyId') }
+        allprojects { ext."signing.secretKeyRingFile" = properties.getProperty('signing.secretKeyRingFile') }
+		allprojects { ext."signing.password" = properties.getProperty('signing.password') }
+    }
+}
+
+model {
+    tasks.generatePomFileForMavenCentralReleasePublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishMavenCentralReleasePublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenCentralReleasePublicationToMaven2Repository {
+        dependsOn project.tasks.signArchives
+    }
+}
