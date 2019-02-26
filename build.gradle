@@ -23,11 +23,6 @@ repositories {
     mavenCentral()
 }
 
-def platformDependency = "org.apache.httpcomponents:httpclient:4.5.6"
-if ( project.hasProperty("platform") && project.platform == "android" ) {
-	platformDependency = "org.apache.httpcomponents:httpclient-android:4.3.5"
-}
-
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
@@ -38,7 +33,7 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     
-    api platformDependency
+    api 'com.squareup.okhttp3:okhttp:3.12.1'
     
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'

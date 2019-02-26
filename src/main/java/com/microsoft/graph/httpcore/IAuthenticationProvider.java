@@ -1,6 +1,6 @@
 package com.microsoft.graph.httpcore;
 
-import org.apache.http.HttpRequest;
+import okhttp3.Request;
 
 public interface IAuthenticationProvider {
     /**
@@ -8,5 +8,5 @@ public interface IAuthenticationProvider {
      * 
      * @param request the request to authenticate
      */
-    void authenticateRequest(HttpRequest request);
+    Request authenticateRequest(Request request);
 }
