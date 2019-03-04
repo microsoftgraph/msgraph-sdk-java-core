@@ -3,18 +3,22 @@ package com.microsoft.graph.httpcore;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.apache.http.Header;
+import java.net.ProtocolException;
+
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
-import org.apache.http.ProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Test;
+
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.internal.http2.Header;
 
 public class RedirectHandlerTest {
 	
@@ -25,8 +29,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedFailureByNoLocationHeader() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
 			boolean isRedirected = redirectHandler.isRedirected(httpget, response, localContext);
@@ -40,8 +44,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedFailureByStatusCodeBadRequest() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_REQUEST, "Bad Request");
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_REQUEST, "Bad Request");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
@@ -56,8 +60,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedSuccessWithStatusCodeMovedTemporarily() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
@@ -72,8 +76,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedSuccessWithStatusCodeMovedPermanently() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_PERMANENTLY, "Moved Permanently");
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_PERMANENTLY, "Moved Permanently");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
@@ -88,8 +92,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedSuccessWithStatusCodeTemporaryRedirect() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_TEMPORARY_REDIRECT, "Temporary Redirect");
+		Request httpget = new HttpGet(testmeurl);
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_TEMPORARY_REDIRECT, "Temporary Redirect");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
@@ -104,8 +108,8 @@ public class RedirectHandlerTest {
 	@Test
 	public void testIsRedirectedSuccessWithStatusCodeSeeOther() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testmeurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
@@ -120,12 +124,12 @@ public class RedirectHandlerTest {
 	@Test
 	public void testGetRedirectForGetMethod() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Request httpget = new Request.Builder().url(testurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
-			HttpRequest request = redirectHandler.getRedirect(httpget, response, localContext);
+			Request request = redirectHandler.getRedirect(httpget, response, localContext);
 			assertTrue(request != null);
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpGet.METHOD_NAME));
@@ -138,13 +142,13 @@ public class RedirectHandlerTest {
 	@Test
 	public void testGetRedirectForGetMethodForAuthHeader() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpGet httpget = new HttpGet(testurl);
+		Request httpget = new Request.Builder().url(testurl).build();
 		httpget.addHeader("Authorization", "TOKEN");
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		response.setHeader("location", differenthosturl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
-			HttpRequest request = redirectHandler.getRedirect(httpget, response, localContext);
+			Request request = redirectHandler.getRedirect(httpget, response, localContext);
 			assertTrue(request != null);
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpGet.METHOD_NAME));
@@ -160,11 +164,11 @@ public class RedirectHandlerTest {
 	public void testGetRedirectForHeadMethod() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
 		HttpHead httphead = new HttpHead(testurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
-			HttpRequest request = redirectHandler.getRedirect(httphead, response, localContext);
+			Request request = redirectHandler.getRedirect(httphead, response, localContext);
 			assertTrue(request != null);
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpHead.METHOD_NAME));
@@ -177,12 +181,12 @@ public class RedirectHandlerTest {
 	@Test
 	public void testGetRedirectForPostMethod() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpPost httppost = new HttpPost(testurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
+		Request httppost = new Request.Builder().url(testurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_MOVED_TEMPORARILY, "Moved Temporarily");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
-			HttpRequest request = redirectHandler.getRedirect(httppost, response, localContext);
+			Request request = redirectHandler.getRedirect(httppost, response, localContext);
 			assertTrue(request != null);
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpPost.METHOD_NAME));
@@ -195,12 +199,12 @@ public class RedirectHandlerTest {
 	@Test
 	public void testGetRedirectForPostMethodWithStatusCodeSeeOther() {
 		RedirectHandler redirectHandler = RedirectHandler.INSTANCE;
-		HttpPost httppost = new HttpPost(testurl);
-		HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");
+		Request httppost = new Request.Builder().url(testurl).build();
+		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_SEE_OTHER, "See Other");
 		response.setHeader("location", testmeurl);
 		HttpClientContext localContext = HttpClientContext.create();
 		try {
-			HttpRequest request = redirectHandler.getRedirect(httppost, response, localContext);
+			Request request = redirectHandler.getRedirect(httppost, response, localContext);
 			assertTrue(request != null);
 			final String method = request.getRequestLine().getMethod();
 			assertTrue(method.equalsIgnoreCase(HttpGet.METHOD_NAME));

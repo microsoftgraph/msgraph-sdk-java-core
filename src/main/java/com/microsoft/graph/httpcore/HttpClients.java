@@ -21,7 +21,6 @@ public class HttpClients {
      * configuration and provided authProvider
      */
     public static OkHttpClient createDefault(IAuthenticationProvider auth) {
-    	
     	return new OkHttpClient.Builder().addInterceptor(new AuthenticationHandler(auth))
     			.addInterceptor(new RetryHandler())
     			.addInterceptor(new RedirectHandler())

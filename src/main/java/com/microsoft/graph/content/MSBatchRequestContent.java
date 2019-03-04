@@ -1,112 +1,127 @@
 package com.microsoft.graph.content;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import okhttp3.Headers;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okio.Buffer;
 
 public class MSBatchRequestContent {
-	private List<MSBatchRequestStep> batchRequestStepsArray;
+	private Map<String, MSBatchRequestStep> batchRequestStepsHashMap;
 	private final int maxNumberOfRequests = 20;
 	
 	public MSBatchRequestContent(List<MSBatchRequestStep> batchRequestStepsArray) {
-		this.batchRequestStepsArray = new ArrayList<>();
-		if(batchRequestStepsArray.size() <= maxNumberOfRequests) {
-			for(MSBatchRequestStep requestStep: batchRequestStepsArray)
-				addBatchRequestStep(requestStep);
-		}
+		if(batchRequestStepsArray.size() > maxNumberOfRequests)
+			throw new IllegalArgumentException("Number of batch request steps cannot exceed 20.");
+		
+		this.batchRequestStepsHashMap = new HashMap<>();
+		for(MSBatchRequestStep requestStep: batchRequestStepsArray)
+			addBatchRequestStep(requestStep);
 	}
 	
 	public MSBatchRequestContent() {
-		batchRequestStepsArray = new ArrayList<>();
+		batchRequestStepsHashMap = new HashMap<String, MSBatchRequestStep>();
 	}
 	
 	public boolean addBatchRequestStep(MSBatchRequestStep batchRequestStep) {
-		if(batchRequestStep.getRequestId().compareTo("") == 0)
+		if(batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId())) 
 			return false;
-		if(batchRequestStepsArray.size() == maxNumberOfRequests)
-			return false;
-		for(MSBatchRequestStep requestStep: batchRequestStepsArray) {
-			if(batchRequestStep.getRequestId().compareTo(requestStep.getRequestId()) == 0)
-				return false;
+		batchRequestStepsHashMap.put(batchRequestStep.getRequestId(), batchRequestStep);
+		return true;
+	}
+	
+	public boolean removeBatchRequestStepWithId(String requestId) {
+		boolean removed = false;
+		if(batchRequestStepsHashMap.containsKey(requestId)) {
+			batchRequestStepsHashMap.remove(requestId);
+			removed = true;
 		}
-		return batchRequestStepsArray.add(batchRequestStep);
+		for(Map.Entry<String, MSBatchRequestStep> steps : batchRequestStepsHashMap.entrySet()) {
+			while(steps.getValue().getArrayOfDependsOnIds().remove(requestId))
+				removed = true;
+		}
+		return removed;
 	}
 	
-	public boolean removeBatchRequesStepWithId(String requestId) {
-		boolean ret = false;
-		for (int i = batchRequestStepsArray.size()-1; i >= 0; i--)
-	    {
-	        MSBatchRequestStep requestStep = batchRequestStepsArray.get(i);
-	        for (int j = requestStep.getArrayOfDependsOnIds().size() - 1; j >= 0; j--)
-	        {
-	            String dependsOnId = requestStep.getArrayOfDependsOnIds().get(j);
-	            if(dependsOnId.compareTo(requestId) == 0)
-	            {
-	                requestStep.getArrayOfDependsOnIds().remove(j);
-	                ret = true;
-	            }
-	        }
-	        if(requestId.compareTo(requestStep.getRequestId()) == 0) {
-	            batchRequestStepsArray.remove(i);
-	            ret = true;
-	        }
-	    }
-		return ret;
-	}
-	
+	@SuppressWarnings("unchecked")
 	public String getBatchRequestContent() {
-		Map<String, List<Map<String, String>>> batchRequestContentMap = new HashMap<>();
-		List<Map<String, String>> batchContentArray = new ArrayList<>();
-		for(MSBatchRequestStep requestStep : batchRequestStepsArray) {
-			batchContentArray.add(getBatchRequestMapFromRequestStep(requestStep));
+		JSONObject batchRequestContentMap = new JSONObject();
+		JSONArray batchContentArray = new JSONArray();
+		for(Map.Entry<String, MSBatchRequestStep> requestStep : batchRequestStepsHashMap.entrySet()) {
+			batchContentArray.add(getBatchRequestMapFromRequestStep(requestStep.getValue()));
 		}
 		batchRequestContentMap.put("requests", batchContentArray);
-		return JSONValue.toJSONString(batchRequestContentMap);
+		return batchRequestContentMap.toJSONString();
 	}
 	
-	private Map<String, String> getBatchRequestMapFromRequestStep(MSBatchRequestStep batchRequestStep){
-		Map<String, String> contentmap = new HashMap<>();
+	@SuppressWarnings("unchecked")
+	private JSONObject getBatchRequestMapFromRequestStep(final MSBatchRequestStep batchRequestStep){
+		JSONObject contentmap = new JSONObject();
 		contentmap.put("id", batchRequestStep.getRequestId());
-		contentmap.put("url", batchRequestStep.getRequest().getRequestLine().getUri());
-		contentmap.put("method", batchRequestStep.getRequest().getRequestLine().getMethod());
-		Header[] headers = batchRequestStep.getRequest().getAllHeaders();
-		if(headers != null && headers.length != 0) {
-			JSONObject obj = new JSONObject();
-			for(Header header: headers) {
-				obj.put(header.getName(), header.getValue());
+		
+		String url = batchRequestStep.getRequest().url().toString();
+		url = url.replaceAll("https://graph.microsoft.com/v1.0", "");
+		url = url.replace("https://graph.microsoft.com/beta", "");
+		contentmap.put("url", url);
+		
+		contentmap.put("method", batchRequestStep.getRequest().method().toString());
+		
+		Headers headers = batchRequestStep.getRequest().headers();
+		if(headers != null && headers.size() != 0) {
+			JSONObject headerMap = new JSONObject();
+			for(Map.Entry<String, List<String>> entry : headers.toMultimap().entrySet()) {
+				headerMap.put(entry.getKey(), getHeaderValuesAsString(entry.getValue()));
 			}
-			contentmap.put("headers", obj.toJSONString());
+			contentmap.put("headers", headerMap);
 		}
-		HttpEntity entity = null;
-		HttpRequest request = batchRequestStep.getRequest();
-		if(request instanceof HttpEntityEnclosingRequestBase) {
-			HttpEntityEnclosingRequestBase httprequest = (HttpEntityEnclosingRequestBase)request;
-			entity = httprequest.getEntity();
-		}
-		if(entity != null) {
-			try {
-				String body = EntityUtils.toString(entity);
-				contentmap.put("body", body);
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+		
 		List<String> arrayOfDependsOnIds = batchRequestStep.getArrayOfDependsOnIds();
 		if(arrayOfDependsOnIds != null) {
-			contentmap.put("dependsOn", JSONValue.toJSONString(arrayOfDependsOnIds));
+			JSONArray array = new JSONArray();
+			for(String dependsOnId : arrayOfDependsOnIds) array.add(dependsOnId);
+			contentmap.put("dependsOn", array);
+		}
+		
+		RequestBody body = batchRequestStep.getRequest().body(); 
+		if(body != null) {
+			try {
+				contentmap.put("body", requestBodyToJSONObject(batchRequestStep.getRequest()));
+			}catch(IOException | ParseException e) {
+				e.printStackTrace();
+			} 
 		}
 		
 		return contentmap;
+	}
+	
+	private String getHeaderValuesAsString(final List<String> list) {
+		StringBuilder builder = new StringBuilder("");
+		if(list.size() != 0) {
+			builder.append(list.get(0));
+			for(int i=1;i<list.size();i++) {
+				builder.append("; ");
+				builder.append(list.get(i));
+			}
+		}
+		return builder.toString();
+	}
+	
+	private JSONObject requestBodyToJSONObject(final Request request) throws IOException, ParseException{
+		Request copy = request.newBuilder().build();
+		Buffer buffer = new Buffer();
+		copy.body().writeTo(buffer);
+		String body = buffer.readUtf8();
+		JSONObject json = (JSONObject)new JSONParser().parse(body);
+		return json;
 	}
 
 }

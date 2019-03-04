@@ -30,11 +30,11 @@ public class RedirectHandler implements Interceptor{
         	return false;
         
         final int statusCode = response.code();
-        if(statusCode == HTTP_PERM_REDIRECT ||
-        		statusCode == HTTP_MOVED_PERM ||
-        		statusCode == HTTP_TEMP_REDIRECT ||
-        		statusCode == HTTP_SEE_OTHER ||
-        		statusCode == HTTP_MOVED_TEMP)
+        if(statusCode == HTTP_PERM_REDIRECT || //308
+        		statusCode == HTTP_MOVED_PERM || //301
+        		statusCode == HTTP_TEMP_REDIRECT || //307
+        		statusCode == HTTP_SEE_OTHER || //303
+        		statusCode == HTTP_MOVED_TEMP) //302
         	return true;
         
         return false;
@@ -45,39 +45,26 @@ public class RedirectHandler implements Interceptor{
     		final Response userResponse) throws ProtocolException {    	
         String location = userResponse.header("Location");
         if (location == null) return null;
-        HttpUrl url = userResponse.request().url().resolve(location);
+        
+        HttpUrl requestUrl = userResponse.request().url();
+        
+        HttpUrl locationUrl = userResponse.request().url().resolve(location);
         // Don't follow redirects to unsupported protocols.
-        if (url == null) return null;
+        if (locationUrl == null) return null;
 
         // Most redirects don't include a request body.
         Request.Builder requestBuilder = userResponse.request().newBuilder();
-        final String method = userResponse.request().method();
-        
-        if (HttpMethod.permitsRequestBody(method)) {
-          final boolean maintainBody = HttpMethod.redirectsWithBody(method);
-          if (HttpMethod.redirectsToGet(method)) {
-            requestBuilder.method("GET", null);
-          } else {
-            RequestBody requestBody = maintainBody ? userResponse.request().body() : null;
-            requestBuilder.method(method, requestBody);
-          }
-          if (!maintainBody) {
-            requestBuilder.removeHeader("Transfer-Encoding");
-            requestBuilder.removeHeader("Content-Length");
-            requestBuilder.removeHeader("Content-Type");
-          }
-        }
 
         // When redirecting across hosts, drop all authentication headers. This
         // is potentially annoying to the application layer since they have no
         // way to retain them.
-        boolean sameScheme = url.scheme().equals(userResponse.request().url().scheme());
-        boolean sameHost = url.host().equals(userResponse.request().url().host());
+        boolean sameScheme = locationUrl.scheme().equalsIgnoreCase(requestUrl.scheme());
+        boolean sameHost = locationUrl.host().toString().equalsIgnoreCase(requestUrl.host().toString());
         if (!sameScheme || !sameHost) {
           requestBuilder.removeHeader("Authorization");
         }
 
-        return requestBuilder.url(url).build();
+        return requestBuilder.url(locationUrl).build();
     }
 
 	@Override
