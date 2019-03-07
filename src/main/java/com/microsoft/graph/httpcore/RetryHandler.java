@@ -49,7 +49,7 @@ public class RetryHandler implements Interceptor{
         this(null);
     }
     
-	private boolean retryRequest(Response response, int executionCount, Request request, RetryOptions retryOptions) {
+	boolean retryRequest(Response response, int executionCount, Request request, RetryOptions retryOptions) {
 		
 		// Should retry option
 		// Use should retry common for all requests
@@ -58,8 +58,8 @@ public class RetryHandler implements Interceptor{
 			shouldRetryCallback = retryOptions.shouldRetry();
 		}
 		// Call should retry callback
-		if(shouldRetryCallback != null) {
-			shouldRetryCallback.shouldRetry(response, executionCount, request, retryOptions.delay());
+		if(shouldRetryCallback != null && !shouldRetryCallback.shouldRetry(response, executionCount, request, retryOptions.delay())) {
+				return false;
 		}
 		
 		boolean shouldRetry = false;
@@ -81,7 +81,7 @@ public class RetryHandler implements Interceptor{
 		return shouldRetry;
 	}
 	
-	private long getRetryAfter(Response response, long delay, int executionCount) {
+	long getRetryAfter(Response response, long delay, int executionCount) {
 		String retryAfterHeader = response.header(RETRY_AFTER);
 		long retryDelay = RetryOptions.DEFAULT_DELAY;
 		if(retryAfterHeader != null) {
@@ -93,12 +93,12 @@ public class RetryHandler implements Interceptor{
 		return Math.min(retryDelay, RetryOptions.MAX_DELAY);
 	}
 	
-	private boolean checkStatus(int statusCode) {
+	boolean checkStatus(int statusCode) {
 	    return (statusCode == MSClientErrorCodeTooManyRequests || statusCode == MSClientErrorCodeServiceUnavailable 
 	    		|| statusCode == MSClientErrorCodeGatewayTimeout);
 	}
 	
-	private boolean isBuffered(Response response, Request request) {
+	boolean isBuffered(Response response, Request request) {
 		String methodName = request.method();
 		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE")) 
 			return true;
@@ -113,6 +113,7 @@ public class RetryHandler implements Interceptor{
 				String transferEncoding = response.header(TRANSFER_ENCODING);
 				boolean isTransferEncodingChunked = (transferEncoding != null) && 
 						transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
+				
 				if(request.body() != null && isTransferEncodingChunked)
 					return true;
 			}
@@ -123,12 +124,11 @@ public class RetryHandler implements Interceptor{
 	@Override
 	public Response intercept(Chain chain) throws IOException {
 		Request request = chain.request();
-		
 		Response response = chain.proceed(request);
 		
 		// Use should retry pass along with this request
 		RetryOptions retryOption = request.tag(RetryOptions.class);
-		retryOption = retryOption != null ? retryOption : this.mRetryOption;
+		retryOption = retryOption != null ? retryOption : mRetryOption;
 		
 		int executionCount = 1;
 		while(retryRequest(response, executionCount, request, retryOption)) {

@@ -4,7 +4,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RetryOptions implements IMiddlewareControl {
-	private IShouldRetry shouldretry;
+	private IShouldRetry mShouldretry;
 	public static final IShouldRetry DEFAULT_SHOULD_RETRY = new IShouldRetry() {
 		@Override
 		public boolean shouldRetry(Response response, int executionCount, Request request, long delay) {
@@ -12,14 +12,14 @@ public class RetryOptions implements IMiddlewareControl {
 		}
 	};
 	
-    private int maxRetries;
+    private int mMaxRetries;
     public static final int MAX_RETRIES = 10;
     public static final int DEFAULT_MAX_RETRIES = 3;
     
     /*
      * Delay in seconds
      */
-    private long delay;
+    private long mDelay;
     public static final long DEFAULT_DELAY = 3; // 3 seconds default delay
     public static final long MAX_DELAY = 180; // 180 second max delay
     
@@ -41,33 +41,33 @@ public class RetryOptions implements IMiddlewareControl {
 		if(delay < 0)
 			throw new IllegalArgumentException("Delay cannot be negative");
 		if(maxRetries > MAX_RETRIES)
-			throw new IllegalArgumentException("Max retires cannot exceed " + MAX_RETRIES);
+			throw new IllegalArgumentException("Max retries cannot exceed " + MAX_RETRIES);
 		if(maxRetries < 0)
-			throw new IllegalArgumentException("Max retires cannot be negative");
+			throw new IllegalArgumentException("Max retries cannot be negative");
 		
-		this.shouldretry = shouldRetry != null ? shouldRetry : DEFAULT_SHOULD_RETRY;
-		this.maxRetries = maxRetries;
-		this.delay = delay;
+		this.mShouldretry = shouldRetry != null ? shouldRetry : DEFAULT_SHOULD_RETRY;
+		this.mMaxRetries = maxRetries;
+		this.mDelay = delay;
 	}
 	
 	/*
 	 * @return should retry callback
 	 */
 	public IShouldRetry shouldRetry() {
-		return shouldretry;
+		return mShouldretry;
 	}
 	
 	/*
 	 * @return Number of max retries
 	 */
 	public int maxRetries() {
-		return maxRetries;
+		return mMaxRetries;
 	}
 	
 	/*
 	 * @return Delay in seconds between retries
 	 */
 	public long delay() {
-		return delay;
+		return mDelay;
 	}
 }

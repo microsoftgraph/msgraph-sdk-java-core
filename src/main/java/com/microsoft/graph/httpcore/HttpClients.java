@@ -22,6 +22,7 @@ public class HttpClients {
      */
     public static OkHttpClient createDefault(IAuthenticationProvider auth) {
     	return new OkHttpClient.Builder().addInterceptor(new AuthenticationHandler(auth))
+    			.followRedirects(false)
     			.addInterceptor(new RetryHandler())
     			.addInterceptor(new RedirectHandler())
     			.build();

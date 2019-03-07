@@ -1,139 +1,128 @@
 package com.microsoft.graph.httpcore;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 
 import javax.xml.ws.spi.http.HttpContext;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.protocol.HttpCoreContext;
 import org.junit.Test;
 
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 
+import okhttp3.MediaType;
+import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.http.StatusLine;
 
 public class RetryHandlerTest {
-	
-	 int maxRetries = 2;
-	 int retryInterval = 1000;
-	 String testurl = "https://graph.microsoft.com/v1.0/";
+
+	int maxRetries = 2;
+	int retryInterval = 1000;
+	String testmeurl = "https://graph.microsoft.com/v1.0/me";
 
 	@Test
 	public void testRetryHandlerCreation() {
 		RetryHandler retryhandler = new RetryHandler();
-		assertTrue(retryhandler.getRetryInterval() == retryInterval);
+		assertNotNull(retryhandler);
 	}
-	
+
 	@Test
 	public void testRetryHandlerWithRetryOptions() {
 		RetryOptions option = new RetryOptions();
 		RetryHandler retryhandler = new RetryHandler(option);
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
-		HttpClientContext localContext = HttpClientContext.create();
-		assertTrue(retryhandler.retryRequest(response, 1, localContext));
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
+				.message("Gateway Timeout")
+				.request(httpget)
+				.build();
+		assertTrue(retryhandler.retryRequest(response, 1, httpget, option));
 	}
-	
+
 	@Test
 	public void testRetryHandlerWithCustomRetryOptions() {
-		RetryOptions option = new RetryOptions(new IShouldRetry() {
-			public boolean shouldRetry(Response response, int executionCount, HttpContext context) {
+		IShouldRetry shouldRetry = new IShouldRetry() {
+			public boolean shouldRetry(Response response, int executionCount, Request request, long delay){
 				return false;
 			}
-		});
+		};
+		RetryOptions option = new RetryOptions(shouldRetry, 5, 0);
 		RetryHandler retryhandler = new RetryHandler(option);
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
-		HttpClientContext localContext = HttpClientContext.create();
-		assertTrue(!retryhandler.retryRequest(response, 1, localContext));
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
+				.message("Gateway Timeout")
+				.request(httpget)
+				.build();
+		assertTrue(!retryhandler.retryRequest(response, 0, httpget, option));
 	}
-	
+
 	@Test
 	public void testRetryRequestWithMaxRetryAttempts() {
 		RetryHandler retryhandler = new RetryHandler();
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Gateway Timeout");
-		HttpClientContext localContext = HttpClientContext.create();
-		assertFalse(retryhandler.retryRequest(response, 3, localContext));
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
+				.message("Gateway Timeout")
+				.request(httpget)
+				.build();
+		// Default retry options with Number of maxretries default to 3
+		RetryOptions retryOptions = new RetryOptions();
+		// Try to execute one more than allowed default max retries
+		int executionCount = RetryOptions.DEFAULT_MAX_RETRIES + 1; 
+		assertFalse(retryhandler.retryRequest(response, executionCount, httpget, retryOptions));
 	}
-	
+
 	@Test
 	public void testRetryRequestForStatusCode() {
 		RetryHandler retryhandler = new RetryHandler();
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
-		HttpClientContext localContext = HttpClientContext.create();
-		assertFalse(retryhandler.retryRequest(response, 1, localContext));
+		Request httpget = new Request.Builder().url(testmeurl).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				// For status code 500 which is not in (429 503 504), So NO retry
+				.code(HttpURLConnection.HTTP_SERVER_ERROR)  
+				.message( "Internal Server Error")
+				.request(httpget)
+				.build();
+		assertFalse(retryhandler.retryRequest(response, 1, httpget, new RetryOptions()));
 	}
-	
+
 	@Test
 	public void testRetryRequestWithTransferEncoding() {
 		RetryHandler retryhandler = new RetryHandler();
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
-		response.setHeader("Transfer-Encoding", "chunked");
-		Request httppost = new Request.Builder().url(testurl).build();
-		
-		try {
-			HttpEntity entity = new StringEntity("TEST");
-			httppost.setEntity(entity);
-			HttpClientContext localContext = HttpClientContext.create();
-			localContext.setAttribute(HttpCoreContext.HTTP_REQUEST, httppost);
-			assertFalse(retryhandler.retryRequest(response, 1, localContext));
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			fail("Retry handler testRetryHandlerRetryRequest3 test failure");
-		} 
+		Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)  
+				.message( "gateway timeout")
+				.request(httppost)
+				.addHeader("Transfer-Encoding", "chunked")
+				.build();
+		assertTrue(retryhandler.retryRequest(response, 1, httppost, new RetryOptions()));
 	}
-	
+
 	@Test
 	public void testRetryRequestWithExponentialBackOff() {
 		RetryHandler retryhandler = new RetryHandler();
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
-		Request httppost = new Request.Builder().url(testurl).build();
+		Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)  
+				.message( "gateway timeout")
+				.request(httppost)
+				.addHeader("Transfer-Encoding", "chunked")
+				.build();
 		
-		try {
-			HttpEntity entity = new StringEntity("TEST");
-			httppost.setEntity(entity);
-			HttpClientContext localContext = HttpClientContext.create();
-			localContext.setAttribute(HttpCoreContext.HTTP_REQUEST, httppost);
-			assertTrue(retryhandler.retryRequest(response, 1, localContext));
-			assertTrue(retryhandler.getRetryInterval() == 2000);
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			fail("Retry handler testRetryHandlerRetryRequest3 test failure");
-		} 
+		assertTrue(retryhandler.retryRequest(response, 1, httppost, new RetryOptions()));
 	}
-	
-	@Test
-	public void testRetryHandlerRetryRequestWithRetryAfterHeader() {
-		RetryHandler retryhandler = new RetryHandler();
-		Response response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_GATEWAY_TIMEOUT, "Internal Server Error");
-		response.setHeader("Retry-After", "100");
-		Request httppost = new Request.Builder().url(testurl).build();
-		
-		try {
-			HttpEntity entity = new StringEntity("TEST");
-			httppost.setEntity(entity);
-			HttpClientContext localContext = HttpClientContext.create();
-			localContext.setAttribute(HttpCoreContext.HTTP_REQUEST, httppost);
-			assertTrue(retryhandler.retryRequest(response, 1, localContext));
-			assertTrue(retryhandler.getRetryInterval() == 100);
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			fail("Retry handler testRetryHandlerRetryRequestWithRetryAfterHeader test failure");
-		} 
-	}
-
 }
