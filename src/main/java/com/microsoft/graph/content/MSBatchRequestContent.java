@@ -7,21 +7,20 @@ import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.microsoft.graph.httpcore.RequestSerializer;
+
 import okhttp3.Headers;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okio.Buffer;
 
 public class MSBatchRequestContent {
 	private Map<String, MSBatchRequestStep> batchRequestStepsHashMap;
-	private final int maxNumberOfRequests = 20;
+	public static final int MAX_NUMBER_OF_REQUESTS = 20;
 	
 	public MSBatchRequestContent(List<MSBatchRequestStep> batchRequestStepsArray) {
-		if(batchRequestStepsArray.size() > maxNumberOfRequests)
-			throw new IllegalArgumentException("Number of batch request steps cannot exceed 20.");
+		if(batchRequestStepsArray.size() > MAX_NUMBER_OF_REQUESTS)
+			throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 		
 		this.batchRequestStepsHashMap = new HashMap<>();
 		for(MSBatchRequestStep requestStep: batchRequestStepsArray)
@@ -57,20 +56,24 @@ public class MSBatchRequestContent {
 		JSONObject batchRequestContentMap = new JSONObject();
 		JSONArray batchContentArray = new JSONArray();
 		for(Map.Entry<String, MSBatchRequestStep> requestStep : batchRequestStepsHashMap.entrySet()) {
-			batchContentArray.add(getBatchRequestMapFromRequestStep(requestStep.getValue()));
+			batchContentArray.add(getBatchRequestObjectFromRequestStep(requestStep.getValue()));
 		}
 		batchRequestContentMap.put("requests", batchContentArray);
-		return batchRequestContentMap.toJSONString();
+		
+		String content =  batchRequestContentMap.toString();
+		return content;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private JSONObject getBatchRequestMapFromRequestStep(final MSBatchRequestStep batchRequestStep){
+	private JSONObject getBatchRequestObjectFromRequestStep(final MSBatchRequestStep batchRequestStep){
 		JSONObject contentmap = new JSONObject();
 		contentmap.put("id", batchRequestStep.getRequestId());
 		
 		String url = batchRequestStep.getRequest().url().toString();
-		url = url.replaceAll("https://graph.microsoft.com/v1.0", "");
-		url = url.replace("https://graph.microsoft.com/beta", "");
+		url = url.replaceAll("https://graph.microsoft.com/v1.0/", "");
+		url = url.replaceAll("http://graph.microsoft.com/v1.0/", "");
+		url = url.replaceAll("https://graph.microsoft.com/beta/", "");
+		url = url.replaceAll("http://graph.microsoft.com/beta/", "");
 		contentmap.put("url", url);
 		
 		contentmap.put("method", batchRequestStep.getRequest().method().toString());
@@ -79,7 +82,7 @@ public class MSBatchRequestContent {
 		if(headers != null && headers.size() != 0) {
 			JSONObject headerMap = new JSONObject();
 			for(Map.Entry<String, List<String>> entry : headers.toMultimap().entrySet()) {
-				headerMap.put(entry.getKey(), getHeaderValuesAsString(entry.getValue()));
+				headerMap.put(entry.getKey(), RequestSerializer.getHeaderValuesAsString(entry.getValue()));
 			}
 			contentmap.put("headers", headerMap);
 		}
@@ -94,34 +97,12 @@ public class MSBatchRequestContent {
 		RequestBody body = batchRequestStep.getRequest().body(); 
 		if(body != null) {
 			try {
-				contentmap.put("body", requestBodyToJSONObject(batchRequestStep.getRequest()));
+				contentmap.put("body", RequestSerializer.requestBodyToJSONObject(batchRequestStep.getRequest()));
 			}catch(IOException | ParseException e) {
 				e.printStackTrace();
 			} 
 		}
-		
 		return contentmap;
 	}
 	
-	private String getHeaderValuesAsString(final List<String> list) {
-		StringBuilder builder = new StringBuilder("");
-		if(list.size() != 0) {
-			builder.append(list.get(0));
-			for(int i=1;i<list.size();i++) {
-				builder.append("; ");
-				builder.append(list.get(i));
-			}
-		}
-		return builder.toString();
-	}
-	
-	private JSONObject requestBodyToJSONObject(final Request request) throws IOException, ParseException{
-		Request copy = request.newBuilder().build();
-		Buffer buffer = new Buffer();
-		copy.body().writeTo(buffer);
-		String body = buffer.readUtf8();
-		JSONObject json = (JSONObject)new JSONParser().parse(body);
-		return json;
-	}
-
 }
