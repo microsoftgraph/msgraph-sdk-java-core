@@ -2,6 +2,9 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
+import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
+import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 
 import okhttp3.Interceptor;
@@ -9,86 +12,112 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RetryHandler implements Interceptor{
+	
+	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
 
-    /**
-     * Maximum number of allowed retries if the server responds with a HTTP code
-     * in our retry code list. Default value is 1.
+    private RetryOptions mRetryOption;
+    
+    /*
+     * constant string being used
      */
-    private final int maxRetries = 2;
-
-    /**
-     * Retry interval between subsequent requests, in milliseconds. Default
-     * value is 1 second.
-     */
-    private long retryInterval = 1000;
-    private final int DELAY_MILLISECONDS = 1000;
+    private final String RETRY_ATTEMPT_HEADER = "Retry-Attempt";
     private final String RETRY_AFTER = "Retry-After";
     private final String TRANSFER_ENCODING = "Transfer-Encoding";
+    private final String TRANSFER_ENCODING_CHUNKED = "chunked";
+    private final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+    private final String CONTENT_TYPE = "Content-Type";
     
-    private final int MSClientErrorCodeTooManyRequests = 429;
-    private final int MSClientErrorCodeServiceUnavailable  = 503;
-    private final int MSClientErrorCodeGatewayTimeout = 504;
-    private final RetryOptions mRetryOption;
+    public static final int MSClientErrorCodeTooManyRequests = 429;
+    public static final int MSClientErrorCodeServiceUnavailable  = 503;
+    public static final int MSClientErrorCodeGatewayTimeout = 504;
     
-    public RetryHandler(RetryOptions option) {
-        super();
-        this.mRetryOption = option;
+    private final long DELAY_MILLISECONDS = 1000;
+    
+    /*
+     * @retryOption Create Retry handler using retry option
+     */
+    public RetryHandler(RetryOptions retryOption) {
+        this.mRetryOption = retryOption;
+        if(this.mRetryOption == null) {
+        	this.mRetryOption = new RetryOptions();
+        }
     }
-
+    /*
+     * Initialize retry handler with default retry option
+     */
     public RetryHandler() {
         this(null);
     }
     
-	public boolean retryRequest(Response response, int executionCount, Request request) {
+	private boolean retryRequest(Response response, int executionCount, Request request, RetryOptions retryOptions) {
 		
-		RetryOptions retryOption = request.tag(RetryOptions.class);
-		if(retryOption != null) {
-			return retryOption.shouldRetry().shouldRetry(response, executionCount, request);
+		// Should retry option
+		// Use should retry common for all requests
+		IShouldRetry shouldRetryCallback = null;
+		if(retryOptions != null) {
+			shouldRetryCallback = retryOptions.shouldRetry();
 		}
-		if(mRetryOption != null) {
-			return mRetryOption.shouldRetry().shouldRetry(response, executionCount, request);
+		// Call should retry callback
+		if(shouldRetryCallback != null) {
+			shouldRetryCallback.shouldRetry(response, executionCount, request, retryOptions.delay());
 		}
 		
 		boolean shouldRetry = false;
+		// Status codes 429 503 504
 		int statusCode = response.code();
-		shouldRetry = (executionCount < maxRetries) && checkStatus(statusCode) && isBuffered(response, request);
+		// Only requests with payloads that are buffered/rewindable are supported. 
+		// Payloads with forward only streams will be have the responses returned 
+		// without any retry attempt.
+		shouldRetry = (executionCount <= retryOptions.maxRetries()) && checkStatus(statusCode) && isBuffered(response, request);
 		
 		if(shouldRetry) {
-			String retryAfterHeader = response.header(RETRY_AFTER);
-			if(retryAfterHeader != null) 
-				retryInterval = Long.parseLong(retryAfterHeader);
-			else
-				retryInterval = (long)Math.pow(2.0, (double)executionCount) * DELAY_MILLISECONDS;
+			long retryInterval = getRetryAfter(response, retryOptions.delay(), executionCount);
+			try {
+				Thread.sleep(retryInterval);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return shouldRetry;
 	}
-
-	public long getRetryInterval() {
-		return retryInterval;
+	
+	private long getRetryAfter(Response response, long delay, int executionCount) {
+		String retryAfterHeader = response.header(RETRY_AFTER);
+		long retryDelay = RetryOptions.DEFAULT_DELAY;
+		if(retryAfterHeader != null) {
+			retryDelay = Long.parseLong(retryAfterHeader);
+		} else {
+			retryDelay = (long)Math.pow(2.0, (double)executionCount) * DELAY_MILLISECONDS;
+			retryDelay = executionCount < 2 ? retryDelay : retryDelay + delay + (long)Math.random(); 
+		}
+		return Math.min(retryDelay, RetryOptions.MAX_DELAY);
 	}
 	
 	private boolean checkStatus(int statusCode) {
-	    if (statusCode == MSClientErrorCodeTooManyRequests || statusCode == MSClientErrorCodeServiceUnavailable 
-	    		|| statusCode == MSClientErrorCodeGatewayTimeout)
-	    	return true;
-	    return false;
+	    return (statusCode == MSClientErrorCodeTooManyRequests || statusCode == MSClientErrorCodeServiceUnavailable 
+	    		|| statusCode == MSClientErrorCodeGatewayTimeout);
 	}
 	
 	private boolean isBuffered(Response response, Request request) {
 		String methodName = request.method();
+		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE")) 
+			return true;
 		
 		boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
 				methodName.equalsIgnoreCase("PUT") ||
 				methodName.equalsIgnoreCase("PATCH");
 		
-		//Header transferEncoding = response.getFirstHeader(TRANSFER_ENCODING);
-		String transferEncoding = response.header(TRANSFER_ENCODING);
-		boolean isTransferEncodingChunked = (transferEncoding != null) && 
-				transferEncoding.equalsIgnoreCase("chunked"); 
-		
-		if(request.body() != null && isHTTPMethodPutPatchOrPost && isTransferEncodingChunked)
-			return false;
-		return true;
+		if(isHTTPMethodPutPatchOrPost) {
+			boolean isStream = response.header(CONTENT_TYPE)!=null && response.header(CONTENT_TYPE).equalsIgnoreCase(APPLICATION_OCTET_STREAM);
+			if(!isStream) {
+				String transferEncoding = response.header(TRANSFER_ENCODING);
+				boolean isTransferEncodingChunked = (transferEncoding != null) && 
+						transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
+				if(request.body() != null && isTransferEncodingChunked)
+					return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -96,8 +125,14 @@ public class RetryHandler implements Interceptor{
 		Request request = chain.request();
 		
 		Response response = chain.proceed(request);
-		int executionCount = 0;
-		while(retryRequest(response, executionCount, request)) {
+		
+		// Use should retry pass along with this request
+		RetryOptions retryOption = request.tag(RetryOptions.class);
+		retryOption = retryOption != null ? retryOption : this.mRetryOption;
+		
+		int executionCount = 1;
+		while(retryRequest(response, executionCount, request, retryOption)) {
+			request = request.newBuilder().addHeader(RETRY_ATTEMPT_HEADER, String.valueOf(executionCount)).build();
 			executionCount++;
 			response = chain.proceed(request);
 		}

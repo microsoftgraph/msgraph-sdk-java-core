@@ -9,26 +9,47 @@ import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
 import java.io.IOException;
 import java.net.ProtocolException;
 
+import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.http.HttpMethod;
 
 public class RedirectHandler implements Interceptor{
 	
-	public static final RedirectHandler INSTANCE = new RedirectHandler();
-	final int maxRedirect = 5;
+	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.REDIRECT;
 	
-    public boolean isRedirected(Request request, Response response, int redirectCount) throws IOException {
-        
-    	if(redirectCount > maxRedirect) return false;
+	private RedirectOptions mRedirectOptions;
+	
+	/*
+	 * Initialize using default redirect options, default IShouldRedirect and max redirect value
+	 */
+	public RedirectHandler() {
+		this.mRedirectOptions = new RedirectOptions();
+	}
+	
+	/*
+	 * @param redirectOptions pass instance of redirect options to be used
+	 */
+	public RedirectHandler(RedirectOptions redirectOptions) {
+		this.mRedirectOptions = redirectOptions;
+		if(redirectOptions == null) {
+			this.mRedirectOptions = new RedirectOptions();
+		}
+	}
+	
+    public boolean isRedirected(Request request, Response response, int redirectCount, RedirectOptions redirectOptions) throws IOException {
+        // Check max count of redirects reached
+    	if(redirectCount > redirectOptions.maxRedirects()) return false;
     	
+    	// Location header empty then don't redirect
         final String locationHeader = response.header("location");
         if(locationHeader == null)
         	return false;
         
+        // If any of 301,302,303,307,308 then redirect
         final int statusCode = response.code();
         if(statusCode == HTTP_PERM_REDIRECT || //308
         		statusCode == HTTP_MOVED_PERM || //301
@@ -46,12 +67,15 @@ public class RedirectHandler implements Interceptor{
         String location = userResponse.header("Location");
         if (location == null) return null;
         
+        // TODO: If Location header is relative reference then final URL should be relative to original target URL.
+        
         HttpUrl requestUrl = userResponse.request().url();
         
         HttpUrl locationUrl = userResponse.request().url().resolve(location);
+        
         // Don't follow redirects to unsupported protocols.
         if (locationUrl == null) return null;
-
+        
         // Most redirects don't include a request body.
         Request.Builder requestBuilder = userResponse.request().newBuilder();
 
@@ -63,25 +87,37 @@ public class RedirectHandler implements Interceptor{
         if (!sameScheme || !sameHost) {
           requestBuilder.removeHeader("Authorization");
         }
+        
+        // Response status code 303 See Other then POST changes to GET
+        if(userResponse.code() == HTTP_SEE_OTHER) {
+        	requestBuilder.method("GET", null);
+        }
 
         return requestBuilder.url(locationUrl).build();
     }
 
+    // Intercept request and response made to network
 	@Override
 	public Response intercept(Chain chain) throws IOException {
 		Request request = chain.request();
 		Response response = null;
-		int redirectCount = 1;
+		int requestsCount = 1;
+		
+		// Use should retry pass along with this request
+		RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
+		redirectOptions = redirectOptions != null ? redirectOptions : this.mRedirectOptions;
+		
 		while(true) {
 			response = chain.proceed(request);
-			boolean shouldRedirect = isRedirected(request, response, redirectCount);
+			boolean shouldRedirect = redirectOptions.shouldRedirect().shouldRedirect(response)
+					&& isRedirected(request, response, requestsCount, redirectOptions);
 			if(!shouldRedirect) break;
 			
 			Request followup = getRedirect(request, response);
 			if(followup == null) break;
 			request = followup;
 		
-			redirectCount++;
+			requestsCount++;
 		}
 		return response;
 	}
