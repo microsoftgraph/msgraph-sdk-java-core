@@ -25,7 +25,7 @@ public class HttpClients {
      * @param auth Use IAuthenticationProvider instance provided while constructing http client
      * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers 
      */
-    public static OkHttpClient createDefault(IAuthenticationProvider auth) {
+    public static OkHttpClient createDefault(ICoreAuthenticationProvider auth) {
     	return new OkHttpClient.Builder().addInterceptor(new AuthenticationHandler(auth))
     			.followRedirects(false)
     			.addInterceptor(new RetryHandler())

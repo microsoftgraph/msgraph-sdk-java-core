@@ -2,7 +2,7 @@ package com.microsoft.graph.httpcore;
 
 import okhttp3.Request;
 
-public interface IAuthenticationProvider {
+public interface ICoreAuthenticationProvider {
     /**
      * Authenticates the request
      * 

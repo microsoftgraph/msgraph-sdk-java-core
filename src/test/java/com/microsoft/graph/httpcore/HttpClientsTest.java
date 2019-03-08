@@ -11,7 +11,7 @@ public class HttpClientsTest {
 
 	@Test
 	public void testHttpClientCreation() {
-		IAuthenticationProvider authprovider = new IAuthenticationProvider() {
+		ICoreAuthenticationProvider authprovider = new ICoreAuthenticationProvider() {
 			public Request authenticateRequest(Request request) {
 				Request newRequest = request.newBuilder().addHeader("Authorization", "Bearer " + "TOKEN").build();
 				return newRequest;

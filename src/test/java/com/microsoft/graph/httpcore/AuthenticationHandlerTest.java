@@ -14,7 +14,7 @@ public class AuthenticationHandlerTest {
 	
 	static String token = "TEST-TOKEN";
 	
-	public static class AuthProvider implements IAuthenticationProvider{
+	public static class AuthProvider implements ICoreAuthenticationProvider{
 		 public Request authenticateRequest(Request request) {
 			 Request newRequest = request.newBuilder().addHeader("Authorization", "Bearer " + token).build();
 			 return newRequest;

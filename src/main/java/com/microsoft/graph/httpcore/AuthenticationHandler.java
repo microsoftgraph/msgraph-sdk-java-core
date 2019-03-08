@@ -12,9 +12,9 @@ public class AuthenticationHandler implements Interceptor {
 	
 	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.AUTHENTICATION;
 
-	private IAuthenticationProvider authProvider;
+	private ICoreAuthenticationProvider authProvider;
 	
-	public AuthenticationHandler(IAuthenticationProvider authProvider) {
+	public AuthenticationHandler(ICoreAuthenticationProvider authProvider) {
 		this.authProvider = authProvider;
 	}
 
