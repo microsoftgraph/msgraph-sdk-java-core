@@ -1,15 +1,12 @@
 # Microsoft Graph Core SDK for Java
 
-[ ![Download](https://api.bintray.com/packages/microsoftgraph/Maven/microsoft-graph/images/download.svg) ](https://bintray.com/microsoftgraph/Maven/microsoft-graph/_latestVersion)
-
-
 Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://graph.microsoft.io/en-us/getting-started) into your Java application!
 
 ## 1. Installation
 
 ### 1.1 Install via Gradle
 
-Add the repository and a compile dependency for `microsoft-graph` to your project's `build.gradle`:
+Add the repository and a compile dependency for `microsoft-graph-core` to your project's `build.gradle`:
 
 ```gradle
 repository {
@@ -70,33 +67,59 @@ Register your application by following the steps at [Register your app with the 
 
 ### 2.2 Create an IAuthenticationProvider object
 
-An instance of the **GraphServiceClient** class handles building requests, sending them to the Microsoft Graph API, and processing the responses. To create a new instance of this class, you need to provide an instance of `IAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
+An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
 
-For an example of authentication in a client application, see the [MSGraph SDK Android MSA Auth for Android Adapter](https://github.com/microsoftgraph/msgraph-sdk-android-msa-auth-for-android-adapter).
-
-### 2.3 Get a HttpClient object
-You must get a **HttpClient** object to make requests against the service.
+### 2.3 Get a HttpClients object
+You must get a **HttpClients** object to make requests against the service.
 
 ```java
-CloseableHttpClient httpClient = HttpClients.createDefault(authenticationProvider);
+OkHttpClient client = HttpClients.createDefault(iCoreAuthenticationProvider);
 ```
 
 ## 3. Make requests against the service
 
-After you have a HttpClient that is authenticated, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
+After you have a HttpClients that is authenticated, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
 
-### 3.1 Get the user's drive
+### 3.1 Get the user's details
+
+To retrieve the user's details
+
+```java
+Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
+
+client.newCall(request).enqueue(new Callback() {
+	@Override
+	public void onResponse(Call call, Response response) throws IOException {
+		String responseBody = response.body().string();
+		// Your processing with the response body 
+	}
+			
+	@Override
+	public void onFailure(Call call, IOException e) {
+		e.printStackTrace();
+	}
+});
+```
+
+### 3.2 Get the user's drive
 
 To retrieve the user's drive:
 
 ```java
-HttpGet httpget = new HttpGet("https://graph.microsoft.com/v1.0/me/");
-try{
-	HttpResponse response = httpclient.execute(httpget);
-	//...
-}catch(IOException e){
-//Handle exception
-}
+Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/drive").build();
+
+client.newCall(request).enqueue(new Callback() {
+	@Override
+	public void onResponse(Call call, Response response) throws IOException {
+		String responseBody = response.body().string();
+		// Your processing with the response body 
+	}
+			
+	@Override
+	public void onFailure(Call call, IOException e) {
+		e.printStackTrace();
+	}
+});
 ```
 
 ## 4. Issues
@@ -105,11 +128,12 @@ For known issues, see [issues](https://github.com/MicrosoftGraph/msgraph-sdk-jav
 
 ## 5. Contributions
 
-The Microsoft Graph SDK is open for contribution. To contribute to this project, see [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java/blob/master/CONTRIBUTING.md).
+The Microsoft Graph SDK is open for contribution. To contribute to this project, see [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/master/CONTRIBUTING.md).
 
 <!-- ALL-CONTRIBUTORS-LIST:START  -->
 <!-- prettier-ignore -->
-[<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[💻](https://github.com/microsoftgraph/msgraph-sdk-java/commits?author=deepak2016 "Code") 
+| [<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=deepak2016 "Code") | [<img src="https://avatars3.githubusercontent.com/u/16473684?v=4" width="100px;"/><br /><sub><b>Nakul Sabharwal</b></sub>][:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Code")<br />[](#question-NakulSabharwal "Answering Questions") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/commits?author=NakulSabharwal "Code") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/wiki "Documentation") [:clipboard:](#review-NakulSabharwal "Reviewed Pull Requests") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/commits?author=NakulSabharwal "Tests") <br />
+| :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!
