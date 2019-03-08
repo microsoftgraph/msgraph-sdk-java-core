@@ -1,67 +1,124 @@
 package com.microsoft.graph.httpcore;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import static java.net.HttpURLConnection.HTTP_MOVED_PERM;
+import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
+import static java.net.HttpURLConnection.HTTP_SEE_OTHER;
+import static okhttp3.internal.http.StatusLine.HTTP_PERM_REDIRECT;
+import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
 
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.ProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.Args;
+import java.io.IOException;
+import java.net.ProtocolException;
 
-public class RedirectHandler extends DefaultRedirectStrategy{
+import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class RedirectHandler implements Interceptor{
 	
-	public static final RedirectHandler INSTANCE = new RedirectHandler();
+	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.REDIRECT;
 	
-    @Override
-    public boolean isRedirected(
-            final HttpRequest request,
-            final HttpResponse response,
-            final HttpContext context) throws ProtocolException {
-        Args.notNull(request, "HTTP request");
-        Args.notNull(response, "HTTP response");
-
-        final int statusCode = response.getStatusLine().getStatusCode();
-        final Header locationHeader = response.getFirstHeader("location");
+	private RedirectOptions mRedirectOptions;
+	
+	/*
+	 * Initialize using default redirect options, default IShouldRedirect and max redirect value
+	 */
+	public RedirectHandler() {
+		this(null);
+	}
+	
+	/*
+	 * @param redirectOptions pass instance of redirect options to be used
+	 */
+	public RedirectHandler(RedirectOptions redirectOptions) {
+		this.mRedirectOptions = redirectOptions;
+		if(redirectOptions == null) {
+			this.mRedirectOptions = new RedirectOptions();
+		}
+	}
+	
+    boolean isRedirected(Request request, Response response, int redirectCount, RedirectOptions redirectOptions) throws IOException {
+        // Check max count of redirects reached
+    	if(redirectCount > redirectOptions.maxRedirects()) return false;
+    	
+    	// Location header empty then don't redirect
+        final String locationHeader = response.header("location");
         if(locationHeader == null)
         	return false;
         
-        if(statusCode == HttpStatus.SC_MOVED_TEMPORARILY ||
-        		statusCode == HttpStatus.SC_MOVED_PERMANENTLY ||
-        		statusCode == HttpStatus.SC_TEMPORARY_REDIRECT ||
-        		statusCode == HttpStatus.SC_SEE_OTHER ||
-        		statusCode == 308)
+        // If any of 301,302,303,307,308 then redirect
+        final int statusCode = response.code();
+        if(statusCode == HTTP_PERM_REDIRECT || //308
+        		statusCode == HTTP_MOVED_PERM || //301
+        		statusCode == HTTP_TEMP_REDIRECT || //307
+        		statusCode == HTTP_SEE_OTHER || //303
+        		statusCode == HTTP_MOVED_TEMP) //302
         	return true;
         
         return false;
     }
     
-    @Override
-    public HttpUriRequest getRedirect(
-    		final HttpRequest request,
-    		final HttpResponse response,
-    		final HttpContext context) throws ProtocolException {
-    	final URI uri = getLocationURI(request, response, context);
-    	try {
-    		final URI requestURI = new URI(request.getRequestLine().getUri());
-    		if(!uri.getHost().equalsIgnoreCase(requestURI.getHost()) || 
-    				!uri.getScheme().equalsIgnoreCase(requestURI.getScheme()))
-    			request.removeHeaders("Authorization");	
-    	}
-    	catch (final URISyntaxException ex) {
-    		throw new ProtocolException(ex.getMessage(), ex);
-    	}
-    	
-    	final int status = response.getStatusLine().getStatusCode();
-    	if(status == HttpStatus.SC_SEE_OTHER)
-    		return new HttpGet(uri);
-    	return RequestBuilder.copy(request).setUri(uri).build();
+    Request getRedirect(
+    		final Request request,
+    		final Response userResponse) throws ProtocolException {    	
+        String location = userResponse.header("Location");
+        if (location == null) return null;
+        
+        // TODO: If Location header is relative reference then final URL should be relative to original target URL.
+        
+        HttpUrl requestUrl = userResponse.request().url();
+        
+        HttpUrl locationUrl = userResponse.request().url().resolve(location);
+        
+        // Don't follow redirects to unsupported protocols.
+        if (locationUrl == null) return null;
+        
+        // Most redirects don't include a request body.
+        Request.Builder requestBuilder = userResponse.request().newBuilder();
+
+        // When redirecting across hosts, drop all authentication headers. This
+        // is potentially annoying to the application layer since they have no
+        // way to retain them.
+        boolean sameScheme = locationUrl.scheme().equalsIgnoreCase(requestUrl.scheme());
+        boolean sameHost = locationUrl.host().toString().equalsIgnoreCase(requestUrl.host().toString());
+        if (!sameScheme || !sameHost) {
+          requestBuilder.removeHeader("Authorization");
+        }
+        
+        // Response status code 303 See Other then POST changes to GET
+        if(userResponse.code() == HTTP_SEE_OTHER) {
+        	requestBuilder.method("GET", null);
+        }
+
+        return requestBuilder.url(locationUrl).build();
     }
+
+    // Intercept request and response made to network
+	@Override
+	public Response intercept(Chain chain) throws IOException {
+		Request request = chain.request();
+		Response response = null;
+		int requestsCount = 1;
+		
+		// Use should retry pass along with this request
+		RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
+		redirectOptions = redirectOptions != null ? redirectOptions : this.mRedirectOptions;
+		
+		while(true) {
+			response = chain.proceed(request);
+			boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
+					&& redirectOptions.shouldRedirect().shouldRedirect(response);
+			if(!shouldRedirect) break;
+			
+			Request followup = getRedirect(request, response);
+			if(followup == null) break;
+			request = followup;
+		
+			requestsCount++;
+		}
+		return response;
+	}
 }

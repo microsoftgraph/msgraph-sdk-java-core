@@ -1,8 +1,7 @@
 package com.microsoft.graph.httpcore;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 
 public class HttpClients {
     private HttpClients() {
@@ -11,31 +10,26 @@ public class HttpClients {
 
     /**
      * Creates builder object for construction of custom
-     * {@link CloseableHttpClient} instances.
+     * {@link OkHttpClient} instances.
+     * 
+     * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
-    public static HttpClientBuilder custom() {
-        return HttpClientBuilder.create();
+    public static Builder custom() {
+        return new OkHttpClient.Builder();
     }
 
     /**
-     * Creates {@link CloseableHttpClient} instance with default
+     * Creates {@link OkHttpClient} instance with default
      * configuration and provided authProvider
+     * 
+     * @param auth Use IAuthenticationProvider instance provided while constructing http client
+     * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers 
      */
-    public static CloseableHttpClient createDefault(IAuthenticationProvider auth) {
-    	RequestConfig config = RequestConfig.custom().setMaxRedirects(5).build();
-    	
-    	return HttpClientBuilder.create().addInterceptorFirst(new AuthenticationHandler(auth))
-    			.setRedirectStrategy(new RedirectHandler())
-    			.setServiceUnavailableRetryStrategy(new RetryHandler())
-    			.setDefaultRequestConfig(config)
+    public static OkHttpClient createDefault(ICoreAuthenticationProvider auth) {
+    	return new OkHttpClient.Builder().addInterceptor(new AuthenticationHandler(auth))
+    			.followRedirects(false)
+    			.addInterceptor(new RetryHandler())
+    			.addInterceptor(new RedirectHandler())
     			.build();
-    }
-
-    /**
-     * Creates {@link CloseableHttpClient} instance with default
-     * configuration based on system properties.
-     */
-    public static CloseableHttpClient createSystem() {
-        return HttpClientBuilder.create().useSystemProperties().build();
     }
 }

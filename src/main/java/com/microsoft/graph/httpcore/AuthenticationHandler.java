@@ -2,22 +2,27 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.protocol.HttpContext;
+import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 
-public class AuthenticationHandler implements HttpRequestInterceptor {
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 
-	private IAuthenticationProvider authProvider;
+public class AuthenticationHandler implements Interceptor {
 	
-	public AuthenticationHandler(IAuthenticationProvider authProvider) {
+	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.AUTHENTICATION;
+
+	private ICoreAuthenticationProvider authProvider;
+	
+	public AuthenticationHandler(ICoreAuthenticationProvider authProvider) {
 		this.authProvider = authProvider;
 	}
-	
+
 	@Override
-	public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-		authProvider.authenticateRequest(request);
+	public Response intercept(Chain chain) throws IOException {
+		Request originalRequest = chain.request();
+		Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
+		return chain.proceed(authenticatedRequest);
 	}
 
 }

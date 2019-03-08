@@ -2,20 +2,23 @@ package com.microsoft.graph.httpcore;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class HttpClientsTest {
 
 	@Test
 	public void testHttpClientCreation() {
-		IAuthenticationProvider authprovider = new IAuthenticationProvider() {
-			public void authenticateRequest(HttpRequest request) {
-				 request.addHeader("Authorization", "Bearer " + "TOKEN");
-			 }
+		ICoreAuthenticationProvider authprovider = new ICoreAuthenticationProvider() {
+			public Request authenticateRequest(Request request) {
+				Request newRequest = request.newBuilder().addHeader("Authorization", "Bearer " + "TOKEN").build();
+				return newRequest;
+			}
 		};
-		CloseableHttpClient httpclient = HttpClients.createDefault(authprovider);
+		
+		OkHttpClient httpclient = HttpClients.createDefault(authprovider);
 		assertTrue(httpclient != null);
 	}
 

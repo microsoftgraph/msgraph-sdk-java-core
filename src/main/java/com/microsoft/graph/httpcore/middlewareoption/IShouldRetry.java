@@ -1,8 +1,8 @@
 package com.microsoft.graph.httpcore.middlewareoption;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HttpContext;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public interface IShouldRetry {
-	boolean shouldRetry(HttpResponse response, int executionCount, HttpContext context);
+	boolean shouldRetry(long delay, int executionCount, Request request,Response response);
 }
