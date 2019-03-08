@@ -56,10 +56,6 @@ public class RetryHandler implements Interceptor{
 		if(retryOptions != null) {
 			shouldRetryCallback = retryOptions.shouldRetry();
 		}
-		// Call should retry callback
-		if(shouldRetryCallback != null && !shouldRetryCallback.shouldRetry(response, executionCount, request, retryOptions.delay())) {
-				return false;
-		}
 		
 		boolean shouldRetry = false;
 		// Status codes 429 503 504
@@ -67,7 +63,11 @@ public class RetryHandler implements Interceptor{
 		// Only requests with payloads that are buffered/rewindable are supported. 
 		// Payloads with forward only streams will be have the responses returned 
 		// without any retry attempt.
-		shouldRetry = (executionCount <= retryOptions.maxRetries()) && checkStatus(statusCode) && isBuffered(response, request);
+		shouldRetry = 
+				(executionCount <= retryOptions.maxRetries()) 
+				&& checkStatus(statusCode) && isBuffered(response, request)
+				&& shouldRetryCallback != null 
+				&& shouldRetryCallback.shouldRetry(retryOptions.delay(), executionCount, request, response);
 		
 		if(shouldRetry) {
 			long retryInterval = getRetryAfter(response, retryOptions.delay(), executionCount);
@@ -86,8 +86,9 @@ public class RetryHandler implements Interceptor{
 		if(retryAfterHeader != null) {
 			retryDelay = Long.parseLong(retryAfterHeader);
 		} else {
-			retryDelay = (long)Math.pow(2.0, (double)executionCount) * DELAY_MILLISECONDS;
+			retryDelay = (long)((Math.pow(2.0, (double)executionCount)-1)*0.5);
 			retryDelay = executionCount < 2 ? retryDelay : retryDelay + delay + (long)Math.random(); 
+			retryDelay *= DELAY_MILLISECONDS;
 		}
 		return Math.min(retryDelay, RetryOptions.MAX_DELAY);
 	}
@@ -99,7 +100,7 @@ public class RetryHandler implements Interceptor{
 	
 	boolean isBuffered(Response response, Request request) {
 		String methodName = request.method();
-		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE")) 
+		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE") || methodName.equalsIgnoreCase("HEAD") || methodName.equalsIgnoreCase("OPTIONS")) 
 			return true;
 		
 		boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||

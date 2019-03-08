@@ -14,11 +14,7 @@ public class MSBatchRequestStep {
 			throw new IllegalArgumentException("Request Id cannot be null.");
 		if(request == null)
 			new IllegalArgumentException("Request cannot be null.");
-		if(request.url() == null)
-			throw new IllegalArgumentException("Request url cannot be null.");
-		if(request.method() == null)
-			throw new IllegalArgumentException("Request method cannot be null.");
-		
+				
 		this.requestId = requestId;
 		this.request = request;
 		this.arrayOfDependsOnIds = arrayOfDependsOnIds;

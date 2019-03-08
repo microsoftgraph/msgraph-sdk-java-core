@@ -27,7 +27,7 @@ public class RedirectHandler implements Interceptor{
 	 * Initialize using default redirect options, default IShouldRedirect and max redirect value
 	 */
 	public RedirectHandler() {
-		this.mRedirectOptions = new RedirectOptions();
+		this(null);
 	}
 	
 	/*
@@ -109,8 +109,8 @@ public class RedirectHandler implements Interceptor{
 		
 		while(true) {
 			response = chain.proceed(request);
-			boolean shouldRedirect = redirectOptions.shouldRedirect().shouldRedirect(response)
-					&& isRedirected(request, response, requestsCount, redirectOptions);
+			boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
+					&& redirectOptions.shouldRedirect().shouldRedirect(response);
 			if(!shouldRedirect) break;
 			
 			Request followup = getRedirect(request, response);

@@ -7,7 +7,7 @@ public class RetryOptions implements IMiddlewareControl {
 	private IShouldRetry mShouldretry;
 	public static final IShouldRetry DEFAULT_SHOULD_RETRY = new IShouldRetry() {
 		@Override
-		public boolean shouldRetry(Response response, int executionCount, Request request, long delay) {
+		public boolean shouldRetry(long delay, int executionCount, Request request, Response response) {
 			return true;
 		}
 	};

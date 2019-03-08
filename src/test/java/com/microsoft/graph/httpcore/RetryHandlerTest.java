@@ -47,7 +47,7 @@ public class RetryHandlerTest {
 	@Test
 	public void testRetryHandlerWithCustomRetryOptions() {
 		IShouldRetry shouldRetry = new IShouldRetry() {
-			public boolean shouldRetry(Response response, int executionCount, Request request, long delay){
+			public boolean shouldRetry(long delay, int executionCount, Request request,Response response){
 				return false;
 			}
 		};
