@@ -63,7 +63,9 @@ public class MSBatchRequestContent {
 			batchRequestStepsHashMap.remove(requestId);
 			removed = true;
 			for(Map.Entry<String, MSBatchRequestStep> steps : batchRequestStepsHashMap.entrySet()) {
-				while(steps.getValue().getArrayOfDependsOnIds().remove(requestId));
+				if(steps.getValue() != null && steps.getValue().getArrayOfDependsOnIds() != null) {
+					while(steps.getValue().getArrayOfDependsOnIds().remove(requestId));
+				}
 			}
 		}
 		return removed;
