@@ -40,7 +40,7 @@ public class RedirectHandler implements Interceptor{
 		}
 	}
 	
-    public boolean isRedirected(Request request, Response response, int redirectCount, RedirectOptions redirectOptions) throws IOException {
+    boolean isRedirected(Request request, Response response, int redirectCount, RedirectOptions redirectOptions) throws IOException {
         // Check max count of redirects reached
     	if(redirectCount > redirectOptions.maxRedirects()) return false;
     	
@@ -61,7 +61,7 @@ public class RedirectHandler implements Interceptor{
         return false;
     }
     
-    public Request getRedirect(
+    Request getRedirect(
     		final Request request,
     		final Response userResponse) throws ProtocolException {    	
         String location = userResponse.header("Location");

@@ -20,7 +20,7 @@ public class MSBatchResponseContentTest {
 	public void testNullMSBatchResponseContent() {
 		Response response = null;
 		try {
-			MSBatchResponseContent batchresponse = new MSBatchResponseContent(response);
+			new MSBatchResponseContent(response);
 		}
 		catch(IllegalArgumentException e) {
 			assertNotNull(e);

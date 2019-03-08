@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
-import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 
 import okhttp3.Interceptor;

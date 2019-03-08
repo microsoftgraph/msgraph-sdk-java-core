@@ -4,10 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-
-import javax.xml.ws.spi.http.HttpContext;
 
 import org.junit.Test;
 
@@ -19,13 +16,13 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.http.StatusLine;
 
 public class RetryHandlerTest {
 
 	int maxRetries = 2;
 	int retryInterval = 1000;
 	String testmeurl = "https://graph.microsoft.com/v1.0/me";
+	private final int HTTP_SERVER_ERROR = 500;
 
 	@Test
 	public void testRetryHandlerCreation() {
@@ -90,7 +87,7 @@ public class RetryHandlerTest {
 		Response response = new Response.Builder()
 				.protocol(Protocol.HTTP_1_1)
 				// For status code 500 which is not in (429 503 504), So NO retry
-				.code(HttpURLConnection.HTTP_SERVER_ERROR)  
+				.code(HTTP_SERVER_ERROR)  
 				.message( "Internal Server Error")
 				.request(httpget)
 				.build();
