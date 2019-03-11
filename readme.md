@@ -1,6 +1,9 @@
-# Microsoft Graph Core SDK for Java
+# Microsoft Graph Core Preview SDK for Java
 
 Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://graph.microsoft.io/en-us/getting-started) into your Java application!
+
+## Important Note about the Microsoft Graph Core Java Preview
+During the preview we may make changes to the API, and other mechanisms of this library, which you will be required to take along with bug fixes or feature improvements. This may impact your application. An API change may require you to update your code. When we provide the General Availability release we will require you to update to the General Availability version within six months, as applications written using a preview version of library may no longer work.
 
 ## 1. Installation
 
@@ -132,7 +135,7 @@ The Microsoft Graph SDK is open for contribution. To contribute to this project,
 
 <!-- ALL-CONTRIBUTORS-LIST:START  -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=deepak2016 "Code") | [<img src="https://avatars3.githubusercontent.com/u/16473684?v=4" width="100px;"/><br /><sub><b>Nakul Sabharwal</b></sub>][:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Code")<br />[](#question-NakulSabharwal "Answering Questions") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/commits?author=NakulSabharwal "Code") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/wiki "Documentation") [:clipboard:](#review-NakulSabharwal "Reviewed Pull Requests") [](https://github.com/microsoftgraph/msgraph-sdk-android-auth/commits?author=NakulSabharwal "Tests") <br />
+| [<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=deepak2016 "Code") | [<img src="https://avatars3.githubusercontent.com/u/16473684?v=4" width="100px;"/><br /><sub><b>Nakul Sabharwal</b></sub>](https://github.com/NakulSabharwal)<br/>[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Code")[:clipboard:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Reviewed Pull Requests")|
 | :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
