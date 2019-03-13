@@ -5,6 +5,10 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 ## Important Note about the Microsoft Graph Core Java Preview
 During the preview we may make changes to the API, and other mechanisms of this library, which you will be required to take along with bug fixes or feature improvements. This may impact your application. An API change may require you to update your code. When we provide the General Availability release we will require you to update to the General Availability version within six months, as applications written using a preview version of library may no longer work.
 
+## Samples and usage guide
+[Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)</br>
+[Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
+
 ## 1. Installation
 
 ### 1.1 Install via Gradle
