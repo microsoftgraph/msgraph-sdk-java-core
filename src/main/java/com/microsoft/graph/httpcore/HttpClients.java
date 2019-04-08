@@ -15,7 +15,8 @@ public class HttpClients {
      * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
     public static Builder custom() {
-        return new OkHttpClient.Builder();
+    	OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new VersionHeaderHandler());
+        return builder;
     }
 
     /**
@@ -30,6 +31,7 @@ public class HttpClients {
     			.followRedirects(false)
     			.addInterceptor(new RetryHandler())
     			.addInterceptor(new RedirectHandler())
+    			.addInterceptor(new VersionHeaderHandler())
     			.build();
     }
 }
