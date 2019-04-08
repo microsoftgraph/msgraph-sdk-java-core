@@ -14,7 +14,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 @Ignore
-public class VersionHeaderHandlerTest {
+public class TelemetryHandlerTest {
 
 	@Test
 	public void addVerisonHeaderToDefaultTest() {

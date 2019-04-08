@@ -6,7 +6,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class VersionHeaderHandler implements Interceptor{
+public class TelemetryHandler implements Interceptor{
 	
 	private final String SDK_VERSION = "SdkVersion";
 	private final String VERSION = "0.1.0-SNAPSHOT";
