@@ -1,5 +1,6 @@
 package com.microsoft.graph.httpcore;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 
@@ -30,6 +31,22 @@ public class HttpClients {
     			.followRedirects(false)
     			.addInterceptor(new RetryHandler())
     			.addInterceptor(new RedirectHandler())
+    			.addInterceptor(new TelemetryHandler())
     			.build();
+    }
+    
+    /**
+     * Creates {@link OkHttpClient} instance with interceptors
+     * 
+     * @param interceptors Use interceptors provided while constructing http client
+     * @return OkHttpClient build with interceptors provided 
+     */
+    public static OkHttpClient createFromInterceptors(Interceptor[] interceptors) {
+    	OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    	for(Interceptor interceptor : interceptors) {
+    		builder.addInterceptor(interceptor);
+    	}
+    	builder.addInterceptor(new TelemetryHandler());
+    	return builder.build();
     }
 }

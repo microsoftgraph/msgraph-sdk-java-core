@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -20,6 +21,19 @@ public class HttpClientsTest {
 		
 		OkHttpClient httpclient = HttpClients.createDefault(authprovider);
 		assertTrue(httpclient != null);
+	}
+	
+	@Test
+	public void arrayInterceptorsTest() {
+		AuthenticationHandler authenticationHandler = new AuthenticationHandler(new ICoreAuthenticationProvider() {
+			@Override
+			public Request authenticateRequest(Request request) {
+				return request;
+			}
+		});
+		Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler(), authenticationHandler};
+		OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
+		assertTrue(client.interceptors().size()==4);
 	}
 
 }
