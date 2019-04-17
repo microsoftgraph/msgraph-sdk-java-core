@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -124,6 +125,11 @@ public class RetryHandler implements Interceptor{
 	@Override
 	public Response intercept(Chain chain) throws IOException {
 		Request request = chain.request();
+		
+		if(request.tag(TelemetryOptions.class) == null)
+			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
+		
 		Response response = chain.proceed(request);
 		
 		// Use should retry pass along with this request

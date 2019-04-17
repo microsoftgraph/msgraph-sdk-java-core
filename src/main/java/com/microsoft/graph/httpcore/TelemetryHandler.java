@@ -1,0 +1,38 @@
+package com.microsoft.graph.httpcore;
+
+import java.io.IOException;
+
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class TelemetryHandler implements Interceptor{
+
+	public static final String SDK_VERSION = "SdkVersion";
+	public static final String VERSION = "v0.1.0-SNAPSHOT";
+	public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
+	public static final String CLIENT_REQUEST_ID = "client-request-id";
+
+	@Override
+	public Response intercept(Chain chain) throws IOException {
+		Request request = chain.request();
+		Request.Builder telemetryAddedBuilder = request.newBuilder();
+
+		TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
+
+		if(telemetryOptions != null) {
+			String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
+			String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage;
+			telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
+
+			if(request.header(CLIENT_REQUEST_ID) == null) {
+				telemetryAddedBuilder.addHeader(CLIENT_REQUEST_ID, telemetryOptions.getClientRequestId());
+			}
+		}
+
+		return chain.proceed(telemetryAddedBuilder.build());
+	}
+
+}
