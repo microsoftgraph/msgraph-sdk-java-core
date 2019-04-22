@@ -43,9 +43,11 @@ public class HttpClients {
      */
     public static OkHttpClient createFromInterceptors(Interceptor[] interceptors) {
     	OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    	for(Interceptor interceptor : interceptors) {
-    		builder.addInterceptor(interceptor);
-    	}
+    	if(interceptors != null)
+    		for(Interceptor interceptor : interceptors) {
+    			if(interceptor != null)
+    				builder.addInterceptor(interceptor);
+    		}
     	builder.addInterceptor(new TelemetryHandler());
     	return builder.build();
     }
