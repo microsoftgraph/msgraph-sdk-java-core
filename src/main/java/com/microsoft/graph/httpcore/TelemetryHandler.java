@@ -21,15 +21,15 @@ public class TelemetryHandler implements Interceptor{
 		Request.Builder telemetryAddedBuilder = request.newBuilder();
 
 		TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
+		if(telemetryOptions == null)
+			telemetryOptions = new TelemetryOptions();
 
-		if(telemetryOptions != null) {
-			String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
-			String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage;
-			telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
+		String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
+		String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage;
+		telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
 
-			if(request.header(CLIENT_REQUEST_ID) == null) {
-				telemetryAddedBuilder.addHeader(CLIENT_REQUEST_ID, telemetryOptions.getClientRequestId());
-			}
+		if(request.header(CLIENT_REQUEST_ID) == null) {
+			telemetryAddedBuilder.addHeader(CLIENT_REQUEST_ID, telemetryOptions.getClientRequestId());
 		}
 
 		return chain.proceed(telemetryAddedBuilder.build());

@@ -16,7 +16,7 @@ public class HttpClients {
      * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
     public static Builder custom() {
-        return new OkHttpClient.Builder();
+        return new OkHttpClient.Builder().addInterceptor(new TelemetryHandler());
     }
 
     /**
@@ -43,9 +43,11 @@ public class HttpClients {
      */
     public static OkHttpClient createFromInterceptors(Interceptor[] interceptors) {
     	OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    	for(Interceptor interceptor : interceptors) {
-    		builder.addInterceptor(interceptor);
-    	}
+    	if(interceptors != null)
+    		for(Interceptor interceptor : interceptors) {
+    			if(interceptor != null)
+    				builder.addInterceptor(interceptor);
+    		}
     	builder.addInterceptor(new TelemetryHandler());
     	return builder.build();
     }

@@ -56,4 +56,17 @@ public class TelemetryHandlerTest {
 		assertNotNull(response);
 		assertTrue(response.request().header("SdkVersion").contains(expectedHeader));
 	}
+	
+	@Test
+	public void arrayInterceptorEmptyTest() throws IOException {
+		Interceptor[] interceptors = null;
+		OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
+		String expectedHeader = TelemetryHandler.SDK_VERSION + TelemetryHandler.GRAPH_VERSION_PREFIX +"/"
+				+TelemetryHandler.VERSION;
+		Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
+		Response response = client.newCall(request).execute();
+		assertNotNull(response);
+		assertTrue(response.request().header("SdkVersion").contains(expectedHeader));
+	}
+	
 }
