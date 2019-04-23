@@ -133,7 +133,7 @@ public class MSBatchResponseContent {
 					JSONObject batchResponseObj = stringToJSONObject(batchResponseData);
 					if(batchResponseObj != null) {
 						
-						JSONObject nextLinkObject = (JSONObject) batchResponseObj.get("nextLink");
+						JSONObject nextLinkObject = (JSONObject) batchResponseObj.get("@odata.nextLink");
 						if(nextLinkObject!=null)
 							nextLink = nextLinkObject.toString();		
 						
