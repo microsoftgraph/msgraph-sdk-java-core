@@ -16,7 +16,7 @@ public class HttpClients {
      * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
     public static Builder custom() {
-        return new OkHttpClient.Builder();
+        return new OkHttpClient.Builder().addInterceptor(new TelemetryHandler());
     }
 
     /**
