@@ -2,6 +2,7 @@ package com.microsoft.graph.content;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
@@ -18,33 +19,17 @@ import okio.Buffer;
 
 public class MSBatchResponseContent {
 
-	private JSONObject batchResponseObj;
 	private Response batchResponse;
 	private Map<String, Request> batchRequestsHashMap;
 	private JSONArray batchResponseArray;
+	private String nextLink;
 	
 	/*
 	 * @param batchResponse OkHttp batch response on execution of batch requests
 	 */
 	public MSBatchResponseContent(Response batchResponse) {
-		if(batchResponse == null)
-			throw new IllegalArgumentException("Batch Response cannot be null");
-		
-		this.batchRequestsHashMap = createBatchRequestsHashMap(batchResponse);
 		this.batchResponse = batchResponse;
-		if(batchResponse.body() != null) {
-			try {
-				String batchResponseData = batchResponse.body().string();
-				if(batchResponseData != null) {
-					batchResponseObj = stringToJSONObject(batchResponseData);
-					if(batchResponseObj != null) {
-						batchResponseArray = (JSONArray)batchResponseObj.get("responses");
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		update(batchResponse);
 	}
 	
 	/*
@@ -54,12 +39,9 @@ public class MSBatchResponseContent {
 	 * @return OkHttp Response corresponding to requestId
 	 */
 	public Response getResponseById(String requestId) {
-		if(batchResponseObj == null)
-			return null;
+		if(batchResponseArray == null) return null;
 
-		JSONArray responses = (JSONArray)batchResponseObj.get("responses");
-		if(responses == null)
-			return null;
+		JSONArray responses = batchResponseArray;
 
 		for(Object response : responses) {
 			JSONObject jsonresponse = (JSONObject)response;
@@ -104,20 +86,76 @@ public class MSBatchResponseContent {
 		return null;
 	}
 	
-	/*
-	 * @return responses as a string
+	/**
+	 * Get map of id and responses
+	 * 
+	 * @return responses in Map of id and response
 	 */
-	public String getResponses() {
-		return batchResponseArray != null ? batchResponseArray.toJSONString() : null;
+	public Map<String, Response> getResponses() {
+		if(batchResponseArray == null) 
+			return null;
+		Map<String, Response> responsesMap = new HashMap<>();
+		for(String id : batchRequestsHashMap.keySet()) {
+			responsesMap.put(id, getResponseById(id));
+		}
+		return responsesMap;
+	}
+	
+	/**
+	 * Get iterator over the responses
+	 * 
+	 * @return iterator for responses
+	 */
+	public Iterator<Map.Entry<String, Response>> getResponsesIterator() {
+		if(batchResponseArray == null) 
+			return null;
+		Map<String, Response> responsesMap = new HashMap<>();
+		for(String id : batchRequestsHashMap.keySet()) {
+			responsesMap.put(id, getResponseById(id));
+		}
+		return responsesMap.entrySet().iterator();
+	}
+	
+	public void update(Response batchResponse) {
+		if(batchResponse == null)
+			throw new IllegalArgumentException("Batch Response cannot be null");
+		
+		Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
+		if(batchRequestsHashMap == null)
+			batchRequestsHashMap = new HashMap<>();
+		if(requestMap != null)
+			batchRequestsHashMap.putAll(requestMap);
+		
+		if(batchResponse.body() != null) {
+			try {
+				String batchResponseData = batchResponse.body().string();
+				if(batchResponseData != null) {
+					JSONObject batchResponseObj = stringToJSONObject(batchResponseData);
+					if(batchResponseObj != null) {
+						
+						JSONObject nextLinkObject = (JSONObject) batchResponseObj.get("nextLink");
+						if(nextLinkObject!=null)
+							nextLink = nextLinkObject.toString();		
+						
+						if(batchResponseArray == null)
+							batchResponseArray = new JSONArray();
+						
+						JSONArray responseArray = (JSONArray)batchResponseObj.get("responses");
+						if(responseArray!=null)
+							batchResponseArray.addAll(responseArray);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/*
 	 * @return nextLink of batch response
 	 */
 	public String nextLink() {
-		if(batchResponseObj == null) return null;
-		Object nextLinkObject = batchResponseObj.get("nextLink");
-		return nextLinkObject != null ? ((JSONObject)nextLinkObject).toString() : null;
+		return nextLink;
 	}
 	
 	private Map<String, Request> createBatchRequestsHashMap(Response batchResponse) {
