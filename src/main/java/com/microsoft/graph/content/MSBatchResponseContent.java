@@ -107,13 +107,8 @@ public class MSBatchResponseContent {
 	 * @return iterator for responses
 	 */
 	public Iterator<Map.Entry<String, Response>> getResponsesIterator() {
-		if(batchResponseArray == null) 
-			return null;
-		Map<String, Response> responsesMap = new HashMap<>();
-		for(String id : batchRequestsHashMap.keySet()) {
-			responsesMap.put(id, getResponseById(id));
-		}
-		return responsesMap.entrySet().iterator();
+		Map<String, Response> responsesMap = getResponses();
+		return responsesMap != null ? responsesMap.entrySet().iterator() : null;
 	}
 	
 	public void update(Response batchResponse) {
