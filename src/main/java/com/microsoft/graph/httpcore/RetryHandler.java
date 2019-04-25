@@ -81,17 +81,24 @@ public class RetryHandler implements Interceptor{
 		return shouldRetry;
 	}
 	
+	/**
+	 * Get retry after in milliseconds
+	 * @param response Response
+	 * @param delay Delay in seconds
+	 * @param executionCount Execution count of retries
+	 * @return Retry interval in milliseconds
+	 */
 	long getRetryAfter(Response response, long delay, int executionCount) {
 		String retryAfterHeader = response.header(RETRY_AFTER);
-		long retryDelay = RetryOptions.DEFAULT_DELAY;
+		double retryDelay = RetryOptions.DEFAULT_DELAY * DELAY_MILLISECONDS;
 		if(retryAfterHeader != null) {
-			retryDelay = Long.parseLong(retryAfterHeader);
+			retryDelay = Long.parseLong(retryAfterHeader) * DELAY_MILLISECONDS;
 		} else {
-			retryDelay = (long)((Math.pow(2.0, (double)executionCount)-1)*0.5);
-			retryDelay = executionCount < 2 ? retryDelay : retryDelay + delay + (long)Math.random(); 
+			retryDelay = (double)((Math.pow(2.0, (double)executionCount)-1)*0.5);
+			retryDelay = (executionCount < 2 ? delay : retryDelay + delay) + (double)Math.random();
 			retryDelay *= DELAY_MILLISECONDS;
 		}
-		return Math.min(retryDelay, RetryOptions.MAX_DELAY);
+		return (long)Math.min(retryDelay, RetryOptions.MAX_DELAY * DELAY_MILLISECONDS);
 	}
 	
 	boolean checkStatus(int statusCode) {

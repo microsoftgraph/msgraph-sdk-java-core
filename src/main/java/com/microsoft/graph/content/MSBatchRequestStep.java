@@ -12,6 +12,8 @@ public class MSBatchRequestStep {
 	public MSBatchRequestStep(String requestId, Request request, List<String> arrayOfDependsOnIds) {
 		if(requestId == null)
 			throw new IllegalArgumentException("Request Id cannot be null.");
+		if(requestId.length() == 0)
+			throw new IllegalArgumentException("Request Id cannot be empty.");
 		if(request == null)
 			new IllegalArgumentException("Request cannot be null.");
 				
