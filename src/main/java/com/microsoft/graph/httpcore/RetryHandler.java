@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -80,17 +81,24 @@ public class RetryHandler implements Interceptor{
 		return shouldRetry;
 	}
 	
+	/**
+	 * Get retry after in milliseconds
+	 * @param response Response
+	 * @param delay Delay in seconds
+	 * @param executionCount Execution count of retries
+	 * @return Retry interval in milliseconds
+	 */
 	long getRetryAfter(Response response, long delay, int executionCount) {
 		String retryAfterHeader = response.header(RETRY_AFTER);
-		long retryDelay = RetryOptions.DEFAULT_DELAY;
+		double retryDelay = RetryOptions.DEFAULT_DELAY * DELAY_MILLISECONDS;
 		if(retryAfterHeader != null) {
-			retryDelay = Long.parseLong(retryAfterHeader);
+			retryDelay = Long.parseLong(retryAfterHeader) * DELAY_MILLISECONDS;
 		} else {
-			retryDelay = (long)((Math.pow(2.0, (double)executionCount)-1)*0.5);
-			retryDelay = executionCount < 2 ? retryDelay : retryDelay + delay + (long)Math.random(); 
+			retryDelay = (double)((Math.pow(2.0, (double)executionCount)-1)*0.5);
+			retryDelay = (executionCount < 2 ? delay : retryDelay + delay) + (double)Math.random();
 			retryDelay *= DELAY_MILLISECONDS;
 		}
-		return Math.min(retryDelay, RetryOptions.MAX_DELAY);
+		return (long)Math.min(retryDelay, RetryOptions.MAX_DELAY * DELAY_MILLISECONDS);
 	}
 	
 	boolean checkStatus(int statusCode) {
@@ -124,6 +132,11 @@ public class RetryHandler implements Interceptor{
 	@Override
 	public Response intercept(Chain chain) throws IOException {
 		Request request = chain.request();
+		
+		if(request.tag(TelemetryOptions.class) == null)
+			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
+		
 		Response response = chain.proceed(request);
 		
 		// Use should retry pass along with this request

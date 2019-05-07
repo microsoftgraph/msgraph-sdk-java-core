@@ -11,6 +11,7 @@ import java.net.ProtocolException;
 
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -65,9 +66,15 @@ public class RedirectHandler implements Interceptor{
     		final Request request,
     		final Response userResponse) throws ProtocolException {    	
         String location = userResponse.header("Location");
-        if (location == null) return null;
+        if (location == null || location.length() == 0) return null;
         
-        // TODO: If Location header is relative reference then final URL should be relative to original target URL.
+        // For relative URL in location header, the new url to redirect is relative to original request
+        if(location.startsWith("/")) {
+        	if(request.url().toString().endsWith("/")) {
+        		location = location.substring(1);
+        	}
+        	location = request.url() + location;
+        }
         
         HttpUrl requestUrl = userResponse.request().url();
         
@@ -100,6 +107,11 @@ public class RedirectHandler implements Interceptor{
 	@Override
 	public Response intercept(Chain chain) throws IOException {
 		Request request = chain.request();
+		
+		if(request.tag(TelemetryOptions.class) == null)
+			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
+		
 		Response response = null;
 		int requestsCount = 1;
 		

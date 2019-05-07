@@ -1,9 +1,10 @@
-# Microsoft Graph Core Preview SDK for Java
+# Microsoft Graph Core SDK for Java
 
-Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://graph.microsoft.io/en-us/getting-started) into your Java application!
+Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://graph.microsoft.io/en-us/getting-started) into your Java and Android application!
 
-## Important Note about the Microsoft Graph Core Java Preview
-During the preview we may make changes to the API, and other mechanisms of this library, which you will be required to take along with bug fixes or feature improvements. This may impact your application. An API change may require you to update your code. When we provide the General Availability release we will require you to update to the General Availability version within six months, as applications written using a preview version of library may no longer work.
+## Samples and usage guide
+[Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)</br>
+[Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
 
 ## 1. Installation
 
@@ -14,14 +15,11 @@ Add the repository and a compile dependency for `microsoft-graph-core` to your p
 ```gradle
 repository {
     jcenter()
-	jcenter{
-        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
-    }
 }
 
 dependency {
     // Include the sdk as a dependency
-    compile('com.microsoft.graph:microsoft-graph-core:0.1.0-SNAPSHOT')
+    compile('com.microsoft.graph:microsoft-graph-core:1.0.0')
 }
 ```
 
@@ -31,32 +29,8 @@ Add the dependency in `dependencies` in pom.xml
 <dependency>
 	<groupId>com.microsoft.graph</groupId>
 	<artifactId>microsoft-graph-core</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 </dependency>
-```
-
-Add `profiles` in `project` to download Snapshot release binary:
-```
-<profiles>
-	<profile>
-		<id>allow-snapshots</id>
-		<activation>
-			<activeByDefault>true</activeByDefault>
-		</activation>
-		<repositories>
-			<repository>
-				<id>snapshots-repo</id>
-				<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-				<releases>
-					<enabled>false</enabled>
-				</releases>
-				<snapshots>
-					<enabled>true</enabled>
-				</snapshots>
-			</repository>
-		</repositories>
-	</profile>
-</profiles>
 ```
 
 ### 1.3 Enable ProGuard (Android)
@@ -70,7 +44,11 @@ Register your application by following the steps at [Register your app with the 
 
 ### 2.2 Create an IAuthenticationProvider object
 
-An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
+An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph. 
+### To get instance of HttpClients 
+Auth in Java app [here](https://github.com/microsoftgraph/msgraph-sdk-java-auth)
+
+Auth in Android app [here](https://github.com/microsoftgraph/msgraph-sdk-android-auth)
 
 ### 2.3 Get a HttpClients object
 You must get a **HttpClients** object to make requests against the service.

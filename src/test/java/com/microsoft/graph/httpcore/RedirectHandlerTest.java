@@ -21,7 +21,7 @@ import okhttp3.internal.http.StatusLine;
 public class RedirectHandlerTest {
 	
 	String testmeurl = "https://graph.microsoft.com/v1.0/me/";
-	String testurl = "https://graph.microsoft.com/v1.0/";
+	String testurl = "https://graph.microsoft.com/v1.0";
 	String differenthosturl = "https://graph.abc.com/v1.0/";
 
 	@Test
@@ -227,6 +227,40 @@ public class RedirectHandlerTest {
 			e.printStackTrace();
 			fail("Redirect handler testGetRedirectForPostMethod1 failure");
 		}
+	}
+	
+	@Test
+	public void testGetRedirectForRelativeURL() throws ProtocolException {
+		RedirectHandler redirectHandler = new RedirectHandler();
+		Request httppost = new Request.Builder().url(testurl).build();
+		
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_SEE_OTHER)
+				.message("See Other")
+				.addHeader("location", "/testrelativeurl")
+				.request(httppost)
+				.build();
+		
+			Request request = redirectHandler.getRedirect(httppost, response);
+			assertTrue(request.url().toString().compareTo(testurl+"/testrelativeurl") == 0);
+	}
+	
+	@Test
+	public void testGetRedirectRelativeLocationRequestURLwithSlash() throws ProtocolException {
+		RedirectHandler redirectHandler = new RedirectHandler();
+		Request httppost = new Request.Builder().url(testmeurl).build();
+		
+		Response response = new Response.Builder()
+				.protocol(Protocol.HTTP_1_1)
+				.code(HttpURLConnection.HTTP_SEE_OTHER)
+				.message("See Other")
+				.addHeader("location", "/testrelativeurl")
+				.request(httppost)
+				.build();
+			Request request = redirectHandler.getRedirect(httppost, response);
+			String expected = "https://graph.microsoft.com/v1.0/me/testrelativeurl";
+			assertTrue(request.url().toString().compareTo(expected) == 0);
 	}
 
 }

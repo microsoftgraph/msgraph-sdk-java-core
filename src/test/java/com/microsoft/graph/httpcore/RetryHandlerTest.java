@@ -122,4 +122,37 @@ public class RetryHandlerTest {
 		
 		assertTrue(retryhandler.retryRequest(response, 1, httppost, new RetryOptions()));
 	}
+	
+	@Test
+	public void testGetRetryAfterWithHeader() {
+		RetryHandler retryHandler = new RetryHandler();
+		long delay = retryHandler.getRetryAfter(TestResponse().newBuilder().addHeader("Retry-After", "60").build(), 1, 1);
+		assertTrue(delay == 60000);
+		delay = retryHandler.getRetryAfter(TestResponse().newBuilder().addHeader("Retry-After", "1").build(), 2, 3);
+		assertTrue(delay == 1000);
+	}
+	
+	@Test
+	public void testGetRetryAfterOnFirstExecution() {
+		RetryHandler retryHandler = new RetryHandler();
+		long delay = retryHandler.getRetryAfter(TestResponse(), 3, 1);
+		assertTrue(delay > 3000);
+		delay = retryHandler.getRetryAfter(TestResponse(), 3, 2);
+		assertTrue(delay > 3100);
+	}
+	
+	@Test
+	public void testGetRetryAfterMaxExceed() {
+		RetryHandler retryHandler = new RetryHandler();
+		long delay = retryHandler.getRetryAfter(TestResponse(), 190, 1);
+		assertTrue(delay == 180000);
+	}
+	
+	Response TestResponse() {
+		return new Response.Builder()
+				.code(429)
+				.message("message")
+				.request(new Request.Builder().url("https://localhost").build())
+				.protocol(Protocol.HTTP_1_0).build();
+	}
 }
