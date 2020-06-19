@@ -28,7 +28,7 @@ trigger: none # disable triggers based on commits.
 
 variables:
   PACKAGE_NAME: 'microsoft-graph-core'
-  GRADLE_PATH: '.\gradle.properties'
+  PROPERTIES_PATH: '.\gradle.properties'
 
 pool: 
   vmImage: windows-latest
@@ -48,6 +48,7 @@ steps:
   inputs:
     filePath: '$(System.DefaultWorkingDirectory)/Scripts/validateMavenVersion.ps1'
     pwsh: true
+    arguments: '-packageName "$(PACKAGE_NAME)" -propertiesPath "$(PROPERTIES_PATH)"'
 
 - task: Gradle@2
   inputs:
