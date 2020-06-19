@@ -29,32 +29,41 @@ $web_client = New-Object System.Net.WebClient
 
 $mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=g:"com.microsoft.graph"+AND+a:"microsoft-graph-core"&core=gav&rows=20&wt=json'
 $jsonResult = $web_client.DownloadString($mavenAPIurl) | ConvertFrom-Json
-$mavenVersions = $jsonResult.response.docs.v.split(".")
-$mavenMajorVersion = [int]$mavenVersions[0]
-$mavenMinorVersion = [int]$mavenVersions[1]
-$mavenPatchVersion = [int]$mavenVersions[2]
+$mavenVersions = $jsonResult.response.docs.v
+$mavenSplit = $mavenVersions.split(".")
+$mavenMajorVersion = [int]$mavenSplit[0]
+$mavenMinorVersion = [int]$mavenSplit[1]
+$mavenPatchVersion = [int]$mavenSplit[2]
 
 $bintrayAPIurl = 'https://api.bintray.com/search/packages?name=microsoft-graph-core'
 $jsonResult = $web_client.DownloadString($bintrayAPIurl) | ConvertFrom-Json
-$bintrayVersions = $jsonResult.latest_version.split(".")
-$bintrayMajorVersion = [int]$bintrayVersions[0]
-$bintrayMinorVersion = [int]$bintrayVersions[1]
-$bintrayPatchVersion = [int]$bintrayVersions[2]
+$bintrayVersions = $jsonResult.latest_version
+$bintraySplit = $bintrayVersions.split(".")
+$bintrayMajorVersion = [int]$bintraySplit[0]
+$bintrayMinorVersion = [int]$bintraySplit[1]
+$bintrayPatchVersion = [int]$bintraySplit[2]
+
+
+write-host 'The current version in the Maven central repository is:' $mavenVersions
+write-host 'The current version in the Bintray central repository is:' $bintrayVersions
 
 if(($bintrayMinorVersion -ne $mavenMinorVersion) -OR 
 ($bintrayMajorversion -ne $mavenMajorVersion) -OR 
 ($bintraypatchversion -ne $mavenpatchversion))
 {
-    "The current Maven and Bintray versions are not the same"
+    Write-Warning "The current Maven and Bintray versions are not the same"
 }
-else {
-    if(($localMajorVersion -gt $bintrayMajorVersion) -OR 
+
+if(($localMajorVersion -gt $bintrayMajorVersion) -OR 
     ($localMinorVersion -gt $bintrayMinorVersion) -OR
     ($localPatchVersion -gt $bintrayPatchVersion))
-    {
-        "The current pull request is of a greater version"
-    }    
-}
+{
+    write-host "The current pull request is of a greater version"
+}   
+else
+{
+      write-error "The local version has not been updated or is of an earlier version than that on the remote repository"
+} 
 
 
 
