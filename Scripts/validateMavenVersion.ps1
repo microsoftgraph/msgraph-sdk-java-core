@@ -27,7 +27,7 @@ $localPatchVersion = [int]$localPatchVersion.Substring($localPatchVersion.Length
 
 $web_client = New-Object System.Net.WebClient
 
-$mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=g:"com.microsoft.graph"+AND+a:"microsoft-graph-core"&core=gav&rows=20&wt=json'
+$mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=microsoft-graph-core&rows=20&wt=json'
 $jsonResult = $web_client.DownloadString($mavenAPIurl) | ConvertFrom-Json
 $mavenVersions = $jsonResult.response.docs.v
 $mavenSplit = $mavenVersions.split(".")
