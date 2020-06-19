@@ -27,7 +27,7 @@ pr:
 trigger: none # disable triggers based on commits.
 
 variables:
-  PACKAGE_NAME: 'microsoft.graph.core'
+  PACKAGE_NAME: 'microsoft-graph-core'
   PROJECT_PATH: '.\src\Microsoft.Graph.Core\Microsoft.Graph.Core.csproj'
 
 pool: 
