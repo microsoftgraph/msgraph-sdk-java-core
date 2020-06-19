@@ -8,10 +8,18 @@
 .Description 
 #>
 
+.Parameter packageName
+.Parameter propertiesPath
 
+Param(
+    [parameter(Mandatory = $true)]
+    [string]$packageName,
 
-$fullFileName = $PWD.toString + "\gradle.properties"
-$file = get-item $fullFileName
+    [parameter(Mandatory = $true)]
+    [string]$propertiesPath
+)
+
+$file = get-item $propertiesPath
 $findVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
 $localVersions = $findVersions -split "`r`n"
 
@@ -24,10 +32,9 @@ $localMinorVersion = [int]$localMinorVersion.Substring($localMinorVersion.Length
 $localPatchVersion = $localVersions[2]
 $localPatchVersion = [int]$localPatchVersion.Substring($localPatchVersion.Length-1)
 
-
 $web_client = New-Object System.Net.WebClient
 
-$mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=microsoft-graph-core&rows=20&wt=json'
+$mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=$packageName&rows=20&wt=json'
 $jsonResult = $web_client.DownloadString($mavenAPIurl) | ConvertFrom-Json
 $mavenVersions = $jsonResult.response.docs.v
 $mavenSplit = $mavenVersions.split(".")
@@ -35,7 +42,7 @@ $mavenMajorVersion = [int]$mavenSplit[0]
 $mavenMinorVersion = [int]$mavenSplit[1]
 $mavenPatchVersion = [int]$mavenSplit[2]
 
-$bintrayAPIurl = 'https://api.bintray.com/search/packages?name=microsoft-graph-core'
+$bintrayAPIurl = 'https://api.bintray.com/search/packages?name=$packageName'
 $jsonResult = $web_client.DownloadString($bintrayAPIurl) | ConvertFrom-Json
 $bintrayVersions = $jsonResult.latest_version
 $bintraySplit = $bintrayVersions.split(".")
@@ -43,26 +50,22 @@ $bintrayMajorVersion = [int]$bintraySplit[0]
 $bintrayMinorVersion = [int]$bintraySplit[1]
 $bintrayPatchVersion = [int]$bintraySplit[2]
 
-
 write-host 'The current version in the Maven central repository is:' $mavenVersions
 write-host 'The current version in the Bintray central repository is:' $bintrayVersions
 
 if(($bintrayMinorVersion -ne $mavenMinorVersion) -OR 
 ($bintrayMajorversion -ne $mavenMajorVersion) -OR 
-($bintraypatchversion -ne $mavenpatchversion))
-{
+($bintraypatchversion -ne $mavenpatchversion)){
     Write-Warning "The current Maven and Bintray versions are not the same"
 }
 
 if(($localMajorVersion -gt $bintrayMajorVersion) -OR 
     ($localMinorVersion -gt $bintrayMinorVersion) -OR
-    ($localPatchVersion -gt $bintrayPatchVersion))
-{
-    write-host "The current pull request is of a greater version"
+    ($localPatchVersion -gt $bintrayPatchVersion)){
+    Write-Host "The current pull request is of a greater version"
 }   
-else
-{
-      write-error "The local version has not been updated or is of an earlier version than that on the remote repository"
+else{
+    Write-Error "The local version has not been updated or is of an earlier version than that on the remote repository"
 } 
 
 
