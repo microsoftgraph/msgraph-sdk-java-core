@@ -6,6 +6,9 @@
     Ensure the maven version is updated in the case that the pull request is 
     to the main/master branch of the repo.
 .Description 
+    Retrieves the local, Maven, and Bintray versions of the Java-Core build.
+    Checks that the Maven and Bintray versions are aligned, trigger warning if not.
+    Checks that the current local version is greater than those currently deployed. 
 #>
 
 .Parameter packageName
@@ -19,60 +22,39 @@ Param(
     [string]$propertiesPath
 )
 
+#Find the local version from the Gradle.Properties file
 $file = get-item $propertiesPath
-$findVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
-$localVersions = $findVersions -split "`r`n"
+$findLocalVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
+$findLocalVersions = $findLocalVersions -split "`r`n"
 
-$localMajorVersion = $localVersions[0]
-$localMajorVersion = [int]$localMajorVersion.Substring($localMajorVersion.Length-1)
+$localMajor = $findLocalVersions[0].Substring($findLocalVersions[0].Length-1)
+$localMinor = $findLocalVersions[1].Substring($findLocalVersions[1].Length-1)
+$localPatch = $findLocalVersions[2].Substring($findLocalVersions[2].Length-1)
+$localVersion = [version]"$localMajor.$localMinor.$localPatch"
 
-$localMinorVersion = $localVersions[1]
-$localMinorVersion = [int]$localMinorVersion.Substring($localMinorVersion.Length-1)
-
-$localPatchVersion = $localVersions[2]
-$localPatchVersion = [int]$localPatchVersion.Substring($localPatchVersion.Length-1)
-
+#Set Web Client and retrieve Maven and Bintray versions from their respective repos.
 $web_client = New-Object System.Net.WebClient
 
-$mavenAPIurl = 'https://search.maven.org/solrsearch/select?q=$packageName&rows=20&wt=json'
+$mavenAPIurl = "https://search.maven.org/solrsearch/select?q=$packageName&rows=20&wt=json"
 $jsonResult = $web_client.DownloadString($mavenAPIurl) | ConvertFrom-Json
-$mavenVersions = $jsonResult.response.docs.v
-$mavenSplit = $mavenVersions.split(".")
-$mavenMajorVersion = [int]$mavenSplit[0]
-$mavenMinorVersion = [int]$mavenSplit[1]
-$mavenPatchVersion = [int]$mavenSplit[2]
+$mavenVersion = [version]$jsonResult.response.docs.latestVersion
 
-$bintrayAPIurl = 'https://api.bintray.com/search/packages?name=$packageName'
+$bintrayAPIurl = "https://api.bintray.com/search/packages?name=$packageName"
 $jsonResult = $web_client.DownloadString($bintrayAPIurl) | ConvertFrom-Json
-$bintrayVersions = $jsonResult.latest_version
-$bintraySplit = $bintrayVersions.split(".")
-$bintrayMajorVersion = [int]$bintraySplit[0]
-$bintrayMinorVersion = [int]$bintraySplit[1]
-$bintrayPatchVersion = [int]$bintraySplit[2]
+$bintrayVersion = [version]$jsonResult.latest_version
 
-write-host 'The current version in the Maven central repository is:' $mavenVersions
-write-host 'The current version in the Bintray central repository is:' $bintrayVersions
+#Inform host of current Maven and Bintray versions
+write-host 'The current version in the Maven central repository is:' $mavenVersion
+write-host 'The current version in the Bintray central repository is:' $bintrayVersion
 
-if(($bintrayMinorVersion -ne $mavenMinorVersion) -OR 
-($bintrayMajorversion -ne $mavenMajorVersion) -OR 
-($bintraypatchversion -ne $mavenpatchversion)){
+#Warn in case Maven and Bintray versions are not the same.
+if($mavenVersion -ne $bintrayVersion){
     Write-Warning "The current Maven and Bintray versions are not the same"
 }
-
-if(($localMajorVersion -gt $bintrayMajorVersion) -OR 
-    ($localMinorVersion -gt $bintrayMinorVersion) -OR
-    ($localPatchVersion -gt $bintrayPatchVersion)){
+#Success if Local version has been updated, Error otherwise. 
+if($localVersion -gt $bintrayVersion){
     Write-Host "The current pull request is of a greater version"
 }   
 else{
-    Write-Error "The local version has not been updated or is of an earlier version than that on the remote repository"
+    Write-Error "The current local version is not updated. Please update the local version in the Gradle.Properties file."
 } 
-
-
-
-
-
-
-
-
-
