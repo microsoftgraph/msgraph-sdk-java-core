@@ -1,9 +1,4 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-
+# Build and test Java Core to make sure a valid pull request is being made 
 pr: 
   branches:
     include:
