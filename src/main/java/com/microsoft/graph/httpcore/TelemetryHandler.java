@@ -11,8 +11,9 @@ import okhttp3.Response;
 public class TelemetryHandler implements Interceptor{
 
 	public static final String SDK_VERSION = "SdkVersion";
-	public static final String VERSION = "v1.0.0";
+	public static final String VERSION = "v1.0.1";
 	public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
+	public static final String JAVA_VERSION_PREFIX = "java";
 	public static final String CLIENT_REQUEST_ID = "client-request-id";
 
 	@Override
@@ -25,7 +26,8 @@ public class TelemetryHandler implements Interceptor{
 			telemetryOptions = new TelemetryOptions();
 
 		String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
-		String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage;
+		String javaVersion = System.getProperty("java.version");
+		String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage + " " + JAVA_VERSION_PREFIX + "/" + javaVersion;
 		telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
 
 		if(request.header(CLIENT_REQUEST_ID) == null) {

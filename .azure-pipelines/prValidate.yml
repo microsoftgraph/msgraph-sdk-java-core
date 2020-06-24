@@ -1,0 +1,65 @@
+# Build and test Java Core to make sure a valid pull request is being made 
+pr: 
+  branches:
+    include:
+      - master
+      - main
+      - dev
+  paths:
+    exclude:
+      - .azure-pipelines
+      - .gradle/wrapper
+      - .gitignore
+      - CONTRIBUTING.md
+      - LICENSE
+      - THIRD PARTY NOTICES
+      - gradle.properties
+      - gradlew
+      - gradlew.bat
+      - readme.md
+      - settings.gradle
+
+trigger: none # disable triggers based on commits.
+
+variables:
+  PACKAGE_NAME: 'microsoft-graph-core'
+  PROPERTIES_PATH: '.\gradle.properties'
+
+pool: 
+  vmImage: windows-latest
+
+steps:
+- checkout: self
+  clean: true
+  fetchDepth: 1
+
+- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+  displayName: 'Run CredScan'
+  inputs:
+    debugMode: false
+
+- task: PowerShell@2
+  condition: and(failed(), eq(variables['Build.SourceBranchName'], 'dev'))
+  inputs:
+    filePath: '$(System.DefaultWorkingDirectory)\Scripts\validateMavenVersion.ps1'
+    pwsh: true
+    arguments: '-packageName "$(PACKAGE_NAME)" -propertiesPath "$(PROPERTIES_PATH)"'
+
+- task: Gradle@2
+  inputs:
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    sonarQubeRunAnalysis: false
+
+- task: YodLabs.O365PostMessage.O365PostMessageBuild.O365PostMessageBuild@0
+  displayName: 'Graph Client Tooling pipeline fail notification'
+  inputs:
+    addressType: serviceEndpoint
+    serviceEndpointName: 'microsoftgraph pipeline status'
+    title: '$(Build.DefinitionName) failure notification'
+    text: 'This pipeline has failed. View the build details for further information. This is a blocking failure. '
+  condition: and(failed(), ne(variables['Build.Reason'], 'Manual'))
+  enabled: true
