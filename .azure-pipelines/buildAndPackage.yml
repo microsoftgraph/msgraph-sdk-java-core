@@ -29,6 +29,11 @@ steps:
   clean: true
   fetchDepth: 1
 
+- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+  displayName: 'Run CredScan'
+  inputs:
+    debugMode: false
+
 - task: DownloadSecureFile@1
   inputs:
     secureFile: 'local.properties'
