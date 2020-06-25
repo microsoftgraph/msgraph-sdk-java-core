@@ -52,8 +52,8 @@ if(($mavenVersion -eq $null) -and ($bintrayVersion -eq $null))
 }
 
 #Inform host of current Maven and Bintray versions
-write-host 'The current version in the Maven central repository is:' $mavenVersion
-write-host 'The current version in the Bintray central repository is:' $bintrayVersion
+Write-Host 'The current version in the Maven central repository is:' $mavenVersion
+Write-Host 'The current version in the Bintray central repository is:' $bintrayVersion
 
 #Warn in case Maven and Bintray versions are not the same.
 if($mavenVersion -ne $bintrayVersion){
