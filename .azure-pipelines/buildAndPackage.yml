@@ -82,7 +82,7 @@ steps:
       settings.gradle
       gradle.properties
       **/gradle/wrapper/*
-      Scripts/getLatestVersion.ps1
+      scripts/getLatestVersion.ps1
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - task: PublishBuildArtifacts@1
