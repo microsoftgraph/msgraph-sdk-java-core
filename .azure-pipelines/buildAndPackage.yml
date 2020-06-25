@@ -23,6 +23,7 @@ trigger:
       - gradlew.bat
       - readme.md
       - settings.gradle
+      - Scripts/*
 
 pr: none
 
@@ -82,6 +83,7 @@ steps:
       settings.gradle
       gradle.properties
       **/gradle/wrapper/*
+      Scripts/getLatestVersion.ps1
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - task: PublishBuildArtifacts@1
