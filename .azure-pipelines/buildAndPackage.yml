@@ -23,6 +23,7 @@ trigger:
       - gradlew.bat
       - readme.md
       - settings.gradle
+      - Scripts/*
 
 pr: none
 
