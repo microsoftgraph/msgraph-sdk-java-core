@@ -18,6 +18,7 @@ pr:
       - gradlew.bat
       - readme.md
       - settings.gradle
+      - Scripts/*
 
 trigger: none # disable triggers based on commits.
 
