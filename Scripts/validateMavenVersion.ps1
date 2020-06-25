@@ -43,6 +43,14 @@ $bintrayAPIurl = "https://api.bintray.com/search/packages?name=$packageName"
 $jsonResult = $web_client.DownloadString($bintrayAPIurl) | ConvertFrom-Json
 $bintrayVersion = [version]$jsonResult.latest_version
 
+#If the api calls return empty then this library cannot be compared to the online versions
+#may proceed with the pull request
+if(($mavenVersion -eq $null) -and ($bintrayVersion -eq $null))
+{
+    Write-Information "This package does not exist yet in the online repository, therefore there are no versions to compare."
+    return
+}
+
 #Inform host of current Maven and Bintray versions
 write-host 'The current version in the Maven central repository is:' $mavenVersion
 write-host 'The current version in the Bintray central repository is:' $bintrayVersion
