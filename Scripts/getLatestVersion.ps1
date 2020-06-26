@@ -13,7 +13,7 @@
 
 Param(
     [parameter(Mandatory = $true)]
-    [string]$propertiesPath,
+    [string]$propertiesPath
 )
 
 #Retrieve the current version from the Gradle.Properties file given the specified path
