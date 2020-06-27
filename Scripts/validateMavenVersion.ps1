@@ -9,10 +9,12 @@
     Retrieves the local, Maven, and Bintray versions of the Java-Core build.
     Checks that the Maven and Bintray versions are aligned, trigger warning if not.
     Checks that the current local version is greater than those currently deployed. 
-#>
-
 .Parameter packageName
+    The package name to search in the Maven and JCenter repositories. 
 .Parameter propertiesPath
+    The path pointing to the Gradle.Properties file.
+
+#>
 
 Param(
     [parameter(Mandatory = $true)]
