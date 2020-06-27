@@ -13,7 +13,6 @@
     The package name to search in the Maven and JCenter repositories. 
 .Parameter propertiesPath
     The path pointing to the Gradle.Properties file.
-
 #>
 
 Param(
