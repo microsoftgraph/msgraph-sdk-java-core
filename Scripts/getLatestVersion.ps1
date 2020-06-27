@@ -7,9 +7,9 @@
 .Description 
     Retrieves the latest version specified in the Gradle.Properties file
     Uses the retrieved values to update the enviornment variable VERSION_STRING
-#>
-
 .Parameter propertiesPath
+    The path pointing to the gradle.properties file. 
+#>
 
 Param(
     [parameter(Mandatory = $true)]
