@@ -1,6 +1,5 @@
 package com.microsoft.graph.authentication;
 
-//This should be deleted later once IHttpRequest is moved to the core library
 import com.microsoft.graph.httpcore.IHttpRequest;
 
 public interface IAuthenticationProvider {
