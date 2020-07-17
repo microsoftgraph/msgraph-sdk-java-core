@@ -3,6 +3,7 @@ package com.microsoft.graph.httpcore;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public class AuthenticationHandlerTest {
 	
 	static String token = "TEST-TOKEN";
 	
-	public static class AuthProvider implements ICoreAuthenticationProvider{
+	public static class AuthProvider implements ICoreAuthenticationProvider {
 		 public Request authenticateRequest(Request request) {
 			 Request newRequest = request.newBuilder().addHeader("Authorization", "Bearer " + token).build();
 			 return newRequest;

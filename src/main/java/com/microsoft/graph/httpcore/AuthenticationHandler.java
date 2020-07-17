@@ -2,6 +2,7 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
+import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 

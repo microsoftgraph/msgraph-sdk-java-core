@@ -2,6 +2,7 @@ package com.microsoft.graph.httpcore;
 
 import static org.junit.Assert.assertTrue;
 
+import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
 import org.junit.Test;
 
 import okhttp3.Interceptor;

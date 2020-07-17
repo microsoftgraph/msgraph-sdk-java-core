@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 

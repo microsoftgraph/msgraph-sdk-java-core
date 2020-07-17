@@ -1,4 +1,4 @@
-package com.microsoft.graph.httpcore;
+package com.microsoft.graph.authentication;
 
 import okhttp3.Request;
 

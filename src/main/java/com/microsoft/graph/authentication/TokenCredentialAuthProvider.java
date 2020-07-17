@@ -3,9 +3,7 @@ package com.microsoft.graph.authentication;
 import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
-import com.azure.core.http.HttpRequest;
 import com.microsoft.graph.httpcore.IHttpRequest;
-import com.microsoft.graph.httpcore.ICoreAuthenticationProvider;
 import okhttp3.Request;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package com.microsoft.graph.httpcore;
 
+import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
