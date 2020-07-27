@@ -1,5 +1,6 @@
 package com.microsoft.graph.authentication;
 
+import com.microsoft.graph.exceptions.AuthenticationException;
 import okhttp3.Request;
 
 public interface ICoreAuthenticationProvider {

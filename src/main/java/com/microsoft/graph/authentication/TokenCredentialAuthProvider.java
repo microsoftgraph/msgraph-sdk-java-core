@@ -3,6 +3,7 @@ package com.microsoft.graph.authentication;
 import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
+import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.IHttpRequest;
 import okhttp3.Request;
 
@@ -15,6 +16,10 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     private AccessToken accessToken;
 
     public  TokenCredentialAuthProvider(TokenCredential tokenCredential) {
+        if(tokenCredential == null) {
+            throw new AuthenticationException(new Error(),new IllegalAccessException());
+        }
+
         this.tokenCredential = tokenCredential;
         this.context = new TokenRequestContext();
     }
@@ -32,19 +37,19 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     @Override
     public Request authenticateRequest(Request request) {
         return request.newBuilder()
-                .addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken())
-                .build();
+                    .addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken())
+                    .build();
     }
 
     String getAccessToken() {
-        this.tokenCredential.getToken(this.context).subscribe(token -> {
+        this.tokenCredential.getToken(this.context).doOnSuccess(token -> {
             this.accessToken = token;
-        }, failToken ->{
-            //Do something if failure to receive the token
-            this.accessToken = null;
+        }).doOnError( exception -> {
+            exception.printStackTrace();
         });
         return this.accessToken.getToken();
     }
+   // throw AuthenticationException(new error(errorConstant.generalException, kjsdfhdfj, kkjsd), cause);
 
 
 }
