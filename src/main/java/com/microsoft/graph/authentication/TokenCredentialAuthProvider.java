@@ -4,6 +4,7 @@ import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.microsoft.graph.exceptions.AuthenticationException;
+import com.microsoft.graph.exceptions.Error;
 import com.microsoft.graph.httpcore.IHttpRequest;
 import okhttp3.Request;
 
@@ -15,7 +16,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     private TokenRequestContext context;
     private AccessToken accessToken;
 
-    public  TokenCredentialAuthProvider(TokenCredential tokenCredential) {
+    public  TokenCredentialAuthProvider(TokenCredential tokenCredential) throws AuthenticationException {
         if(tokenCredential == null) {
             throw new AuthenticationException(new Error(),new IllegalAccessException());
         }
@@ -24,7 +25,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
         this.context = new TokenRequestContext();
     }
 
-    public TokenCredentialAuthProvider(TokenCredential tokenCredential, List<String> scopes) {
+    public TokenCredentialAuthProvider(TokenCredential tokenCredential, List<String> scopes) throws AuthenticationException {
         this(tokenCredential);
         this.context.setScopes(scopes);
     }
