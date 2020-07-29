@@ -7,6 +7,7 @@ import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.exceptions.Error;
 import com.microsoft.graph.httpcore.IHttpRequest;
 import okhttp3.Request;
+import com.microsoft.graph.exceptions.ErrorConstants.*;
 
 import java.util.List;
 
@@ -18,7 +19,9 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
 
     public  TokenCredentialAuthProvider(TokenCredential tokenCredential) throws AuthenticationException {
         if(tokenCredential == null) {
-            throw new AuthenticationException(new Error(),new IllegalAccessException());
+            throw new AuthenticationException(new Error(Codes.InvalidArgument,
+                    String.format(Messages.nullParameter, "TokenCredential"))
+                    ,new IllegalArgumentException());
         }
 
         this.tokenCredential = tokenCredential;
@@ -50,7 +53,4 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
         });
         return this.accessToken.getToken();
     }
-   // throw AuthenticationException(new error(errorConstant.generalException, kjsdfhdfj, kkjsd), cause);
-
-
 }
