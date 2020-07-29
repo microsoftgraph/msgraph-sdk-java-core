@@ -46,10 +46,9 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     }
 
     String getAccessToken() {
-        this.tokenCredential.getToken(this.context).doOnSuccess(token -> {
+        this.tokenCredential.getToken(this.context).doOnError(exception -> exception.printStackTrace())
+                .subscribe(token -> {
             this.accessToken = token;
-        }).doOnError( exception -> {
-            exception.printStackTrace();
         });
         return this.accessToken.getToken();
     }
