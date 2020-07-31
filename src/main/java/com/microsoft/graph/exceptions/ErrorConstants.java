@@ -9,6 +9,6 @@ public final class ErrorConstants {
     }
 
     public static class Messages {
-        public static String nullParameter = "%s parameter cannot be null.";
+        public static String NullParameter = "%s parameter cannot be null.";
     }
 }
