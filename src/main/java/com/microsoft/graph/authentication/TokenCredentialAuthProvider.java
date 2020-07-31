@@ -42,7 +42,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      *
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @param scopes Specified desired scopes of the Auth Provider
-     * @throws AuthenticationException
+     * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
     public TokenCredentialAuthProvider(TokenCredential tokenCredential, List<String> scopes) throws AuthenticationException {
         this(tokenCredential);
