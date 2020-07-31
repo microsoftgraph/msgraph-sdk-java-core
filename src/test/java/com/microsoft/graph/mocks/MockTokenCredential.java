@@ -15,10 +15,8 @@ public class MockTokenCredential {
 
     public static TokenCredential getMockTokenCredential() {
         TokenCredential mockCredential = Mockito.mock(TokenCredential.class);
-        TokenRequestContext context = new TokenRequestContext();
         Mono<AccessToken> token = Mono.just(new AccessToken(testToken, OffsetDateTime.now().plusMinutes(10)));
-        Mockito.when(mockCredential.getToken(context).thenReturn(token));
+        Mockito.when(mockCredential.getToken(Mockito.any())).thenReturn(token);
         return mockCredential;
     }
-
 }

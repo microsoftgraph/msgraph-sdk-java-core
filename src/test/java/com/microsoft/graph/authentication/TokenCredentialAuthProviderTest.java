@@ -21,7 +21,7 @@ public class TokenCredentialAuthProviderTest {
     @Test
     public void TokenCredentialAuthProviderTestICoreAuthentication() throws AuthenticationException {
 
-        //Arange
+        //Arrange
         Request request = new Request.Builder().url("https://localhost").build();
         TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
         TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
@@ -38,17 +38,18 @@ public class TokenCredentialAuthProviderTest {
 
     @Test
     public void TokenCredentialAuthProviderTestIAuthentication() throws AuthenticationException {
+
+        //Arrange
         TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
         MockIHttpRequest request = new MockIHttpRequest("https://localhost");
         TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
-        Assert.assertFalse(request.getHeaders().contains(new HeaderOption(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + this.testToken)));
+        //Act
+        Assert.assertTrue(request.getHeaders().isEmpty());
         authProvider.authenticateRequest(request);
 
-        Assert.assertTrue(request.getHeaders().contains(new HeaderOption(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + this.testToken)));
+        //Assert
+        Assert.assertTrue(request.getHeaders().get(0).getName().equals(AuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertTrue(request.getHeaders().get(0).getValue().equals(AuthConstants.BEARER + this.testToken));
     }
-
-
-
-
 }

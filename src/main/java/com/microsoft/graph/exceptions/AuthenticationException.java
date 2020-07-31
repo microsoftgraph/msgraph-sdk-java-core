@@ -4,6 +4,7 @@ import com.sun.deploy.uitoolkit.impl.fx.ui.ErrorPane;
 
 public class AuthenticationException extends Exception{
 
+    //Error object to store details of thrown Exception
     public Error error;
 
     /**
@@ -26,5 +27,4 @@ public class AuthenticationException extends Exception{
         super(error.getMessage(), rootCause);
         this.error = error;
     }
-
 }
