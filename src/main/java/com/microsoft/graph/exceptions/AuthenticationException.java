@@ -1,7 +1,5 @@
 package com.microsoft.graph.exceptions;
 
-import com.sun.deploy.uitoolkit.impl.fx.ui.ErrorPane;
-
 public class AuthenticationException extends Exception{
 
     //Error object to store details of thrown Exception

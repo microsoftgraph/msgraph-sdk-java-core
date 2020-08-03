@@ -1,6 +1,5 @@
 package com.microsoft.graph.authentication;
 
-import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.IHttpRequest;
 
 public interface IAuthenticationProvider {
