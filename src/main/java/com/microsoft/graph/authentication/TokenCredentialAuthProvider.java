@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider , IAuthenticationProvider {
 
-    //TokenCredential expected form user
+    //TokenCredential expected from user
     private TokenCredential tokenCredential;
     //Context options which can be optionally set by the user
     private TokenRequestContext context;
