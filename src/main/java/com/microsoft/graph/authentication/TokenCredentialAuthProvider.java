@@ -17,8 +17,6 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     private TokenCredential tokenCredential;
     //Context options which can be optionally set by the user
     private TokenRequestContext context;
-    //Access token to be retrieved
-    private AccessToken accessToken;
 
     /**
      * Creates an Authentication provider using a passed in TokenCredential
@@ -78,10 +76,11 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @return String representing the retrieved AccessToken
      */
     String getAccessToken() {
+        String[] accessToken = new String[1];
         this.tokenCredential.getToken(this.context).doOnError(exception -> exception.printStackTrace())
                 .subscribe(token -> {
-            this.accessToken = token;
+            accessToken[0] = token.getToken();
         });
-        return this.accessToken.getToken();
+        return accessToken[0];
     }
 }
