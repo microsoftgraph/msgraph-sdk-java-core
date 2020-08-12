@@ -53,6 +53,17 @@ def pomConfig = {
     }
 }
 
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 //Publishing tasks-
 //Maven Central Snapshot: publishSnapshotPublicationToMavenRepository
 //Maven Central Release: publishMavenCentralReleasePublicationToMaven2Repository
@@ -195,11 +206,6 @@ publishing {
 
 }
 
-task sourceJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allJava
-}
-
 compileJava {
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -263,11 +269,6 @@ uploadArchives {
 
     }
 
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
 }
 
 artifacts {
