@@ -58,11 +58,15 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
+signing {
+    sign configurations.archives
+}
+tasks.withType(Sign)*.enabled = mavenCentralPublishingEnabled.toBoolean()
 
 //Publishing tasks-
 //Maven Central Snapshot: publishSnapshotPublicationToMavenRepository
@@ -276,11 +280,6 @@ artifacts {
 	archives sourceJar
 	archives javadocJar
 }
-
-signing {
-	sign configurations.archives
-}
-tasks.withType(Sign)*.enabled = mavenCentralPublishingEnabled.toBoolean()
 
 def customizePom(pom) {
     pom.withXml {
