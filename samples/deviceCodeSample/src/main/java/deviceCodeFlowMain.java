@@ -1,6 +1,5 @@
 import com.azure.identity.DeviceCodeCredential;
 import com.azure.identity.DeviceCodeCredentialBuilder;
-import com.azure.security.keyvault.secrets.SecretClient;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.HttpClients;
