@@ -76,11 +76,13 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @return String representing the retrieved AccessToken
      */
     String getAccessToken() {
-        String[] accessToken = new String[1];
-        this.tokenCredential.getToken(this.context).doOnError(exception -> exception.printStackTrace())
-                .subscribe(token -> {
-            accessToken[0] = token.getToken();
-        });
-        return accessToken[0];
+        String accessToken = null;
+        try {
+            AccessToken token = this.tokenCredential.getToken(this.context).block();
+            accessToken = token.getToken();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  accessToken;
     }
 }
