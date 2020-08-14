@@ -1,10 +1,6 @@
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.azure.identity.DeviceCodeCredential;
-import com.azure.identity.DeviceCodeCredentialBuilder;
 import com.azure.identity.InteractiveBrowserCredential;
 import com.azure.identity.InteractiveBrowserCredentialBuilder;
 import com.microsoft.graph.authentication.*;
@@ -13,30 +9,22 @@ import com.microsoft.graph.httpcore.HttpClients;
 import com.microsoft.graph.exceptions.*;
 
 public class interactiveBrowserSample {
-    private final static String CLIENT_ID = "fa62d88a-02fa-4893-88b3-8e566c7ad6f5";
-    private final static String AUTHORITY = "https://login.microsoftonline.com/common/";
-    private final static List<String> SCOPE = Stream.of("user.read").collect(Collectors.toList());
+
+    private final static String CLIENT_ID = "199e4de3-dd3b-4a51-b78a-86b801246e20";
+    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All");
 
     public static void main(String args[]) throws Exception {
-        getUserWithHttp();
+        interactiveBrowser();
     }
 
-    private static void getUserWithHttp() throws AuthenticationException{
-        DeviceCodeCredential deviceCodeCredential = new DeviceCodeCredentialBuilder()
-                .challengeConsumer(challenge -> {
-                    // lets user know of the challenge
-                    System.out.println(challenge.getMessage());
-                })
+    private static void interactiveBrowser() throws AuthenticationException{
+
+        InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
                 .clientId(CLIENT_ID)
-                .authorityHost(AUTHORITY)
+                .port(8765)
                 .build();
 
-//        InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
-//                .clientId(CLIENT_ID)
-//                .port(8765)
-//                .build();
-
-        TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(deviceCodeCredential,SCOPE);
+        TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(interactiveBrowserCredential,SCOPES);
         OkHttpClient httpClient = HttpClients.createDefault(tokenCredentialAuthProvider);
 
         Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
@@ -45,7 +33,6 @@ public class interactiveBrowserSample {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body().string();
-                // Your processing with the response body
                 System.out.println(responseBody);
             }
 
