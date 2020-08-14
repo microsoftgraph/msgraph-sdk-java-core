@@ -4,6 +4,9 @@ import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.HttpClients;
 import okhttp3.*;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,28 +15,41 @@ import java.util.List;
 
 public class deviceCodeFlowMain {
 
+    //Replace CLIENT_ID with your own client id from an adequately configured app
+    //for requirements visit:
+    //https://github.com/Azure/azure-sdk-for-java/wiki/Set-up-Your-Environment-for-Authentication#enable-applications-for-device-code-flow
+    private final static String CLIENT_ID = "cfb5d84c-c88f-466c-81fb-0fe9fa8da052";
+
+    //Set the scopes for your ms-graph request
+    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All", "User.Read");
+
     public static void main(String[] args) throws AuthenticationException {
         deviceCodeFlow();
     }
 
     public static void deviceCodeFlow() throws AuthenticationException {
 
-        List<String> scopes = Arrays.asList("user.ReadBasic.All", "User.Read");
-
         DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
-                .clientId("cfb5d84c-c88f-466c-81fb-0fe9fa8da052")
+                .clientId(CLIENT_ID)
                 .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})
                 .build();
 
-        TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(deviceCodeCred, scopes);
+        TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(deviceCodeCred, SCOPES);
         OkHttpClient httpClient = HttpClients.createDefault(tokenCredAuthProvider);
 
         Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
 
         httpClient.newCall(request).enqueue(new Callback() {
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseBody = response.body().string();
-                System.out.println(responseBody);
+                JSONParser jsonParser = new JSONParser();
+                JSONObject responseJson = null;
+                try {
+                    responseJson = (JSONObject) jsonParser.parse(response.body().string());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(responseJson);
             }
 
             @Override

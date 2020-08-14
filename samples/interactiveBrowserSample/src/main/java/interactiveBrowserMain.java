@@ -12,7 +12,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class interactiveBrowserSample {
+public class interactiveBrowserMain {
 
     //Replace CLIENT_ID with your own client id from an adequately configured app
     //for requirements visit:
@@ -20,7 +20,7 @@ public class interactiveBrowserSample {
     private final static String CLIENT_ID = "199e4de3-dd3b-4a51-b78a-86b801246e20";
 
     //Set the scopes for your ms-graph request
-    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All");
+    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All"); 
 
     public static void main(String args[]) throws Exception {
         interactiveBrowser();
