@@ -18,6 +18,9 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     //Context options which can be optionally set by the user
     private TokenRequestContext context;
 
+    
+    //TODO: Upon further review from Peter, this should include a Null check in the case that this is the first request
+    //There should be just one constructor as scopes should probably not be optional
     /**
      * Creates an Authentication provider using a passed in TokenCredential
      *
