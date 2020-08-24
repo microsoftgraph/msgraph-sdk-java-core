@@ -30,7 +30,7 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
     
-    api 'com.squareup.okhttp3:okhttp:3.12.1'
+    api 'com.squareup.okhttp3:okhttp:4.8.1'
     
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
