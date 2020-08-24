@@ -11,7 +11,7 @@ import okhttp3.Response;
 public class TelemetryHandler implements Interceptor{
 
 	public static final String SDK_VERSION = "SdkVersion";
-	public static final String VERSION = "v1.0.1";
+	public static final String VERSION = "v1.0.2";
 	public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
 	public static final String JAVA_VERSION_PREFIX = "java";
 	public static final String CLIENT_REQUEST_ID = "client-request-id";
