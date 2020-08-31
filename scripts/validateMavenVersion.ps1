@@ -8,25 +8,24 @@
 .Description 
     Retrieves the local, Maven, and Bintray versions of the Java-Core build.
     Checks that the Maven and Bintray versions are aligned, trigger warning if not.
-    Checks that the current local version is greater than those currently deployed.
-.Parameter packageName
-    The package name to search in the Maven and JCenter repositories.
+    Checks that the current local version is greater than those currently deployed. 
 .Parameter propertiesPath
     The path pointing to the Gradle.Properties file.
 #>
 
-Param(
-    [parameter(Mandatory = $true)]
-    [string]$packageName,
 
-    [parameter(Mandatory = $true)]
+Param(
     [string]$propertiesPath
 )
 
 #Find the local version from the Gradle.Properties file
+if($propertiesPath -eq "" -or $null -eq $propertiesPath) {
+    $propertiesPath = Join-Path -Path $PSScriptRoot -ChildPath "../gradle.properties"
+}
 $file = get-item $propertiesPath
 $findLocalVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
 $findLocalVersions = $findLocalVersions -split "`r`n"
+$packageName = ($file | Select-String -Pattern "mavenArtifactId").Line.Split("=")[1].Trim()
 
 $localMajor = $findLocalVersions[0].Substring($findLocalVersions[0].Length-1)
 $localMinor = $findLocalVersions[1].Substring($findLocalVersions[1].Length-1)
@@ -61,7 +60,7 @@ if($mavenVersion -ne $bintrayVersion){
     Write-Warning "The current Maven and Bintray versions are not the same"
 }
 #Success if Local version has been updated, Error otherwise. 
-if($localVersion -gt $bintrayVersion){
+if($localVersion -gt $bintrayVersion -and $localVersion -gt $mavenVersion){
     Write-Host "The current pull request is of a greater version"
 }   
 else{
