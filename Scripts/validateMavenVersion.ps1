@@ -18,7 +18,7 @@ Param(
 )
 
 #Find the local version from the Gradle.Properties file
-if($propertiesPath -eq "" || $null -eq $propertiesPath) {
+if($propertiesPath -eq "" -or $null -eq $propertiesPath) {
     $propertiesPath = Join-Path -Path $PSScriptRoot -ChildPath "../gradle.properties"
 }
 $file = get-item $propertiesPath
@@ -59,7 +59,7 @@ if($mavenVersion -ne $bintrayVersion){
     Write-Warning "The current Maven and Bintray versions are not the same"
 }
 #Success if Local version has been updated, Error otherwise. 
-if($localVersion -gt $bintrayVersion && $localVersion -gt $mavenVersion){
+if($localVersion -gt $bintrayVersion -and $localVersion -gt $mavenVersion){
     Write-Host "The current pull request is of a greater version"
 }   
 else{
