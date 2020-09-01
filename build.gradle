@@ -187,7 +187,7 @@ publishing {
 		}
 
         maven {
-            url = 'https://api.bintray.com/content/microsoftgraph/Maven/microsoft-graph-core'
+            url = 'https://api.bintray.com/content/microsoftgraph/Maven'
             name = 'bintray'
             
             credentials {
@@ -278,7 +278,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 model {
     tasks.generatePomFileForMavenCentralReleasePublication {
-        destination = file("$buildDir/generated-pom.xml")
+        destination = file("${project.buildDir}/generated-pom.xml")
     }
     tasks.publishMavenCentralReleasePublicationToMavenLocal {
         dependsOn project.tasks.signArchives
