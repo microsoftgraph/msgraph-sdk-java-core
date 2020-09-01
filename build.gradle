@@ -196,7 +196,7 @@ bintray {
         user = (properties.containsKey('bintray.user')) ? properties.getProperty('bintray.user').toLowerCase() : "BINTRAY_USERNAME"
         key = properties.getProperty('bintray.apikey')
     }
-	publications = ['maven']
+	publications = ['mavenCentralRelease']
 	pkg {
 		repo = 'Maven'
 		name = project.property('mavenArtifactId')
@@ -206,7 +206,7 @@ bintray {
 		publicDownloadNumbers = true
 		version {
 			name = "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
-			vcsTag = "v${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
+			vcsTag = "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
 		}
 	}
 }
