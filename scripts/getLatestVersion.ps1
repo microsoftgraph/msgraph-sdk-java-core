@@ -12,11 +12,13 @@
 #>
 
 Param(
-    [parameter(Mandatory = $true)]
     [string]$propertiesPath
 )
 
 #Retrieve the current version from the Gradle.Properties file given the specified path
+if($propertiesPath -eq "" -or $null -eq $propertiesPath) {
+    $propertiesPath = Join-Path -Path $PSScriptRoot -ChildPath "../gradle.properties"
+}
 $file = get-item $propertiesPath
 $findVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
 $findVersions = $findVersions -split "`r`n"
