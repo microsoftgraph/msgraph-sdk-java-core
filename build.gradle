@@ -13,6 +13,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'signing'
+    id 'com.jfrog.bintray' version '1.8.5'
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -185,22 +186,29 @@ publishing {
     			}
             }
 		}
-
-        maven {
-            url = 'https://api.bintray.com/content/microsoftgraph/Maven'
-            name = 'bintray'
-            
-            credentials {
-    			if (project.rootProject.file('local.properties').exists()) {
-        			Properties properties = new Properties()
-        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        			username = (properties.containsKey('bintray.user')) ? properties.getProperty('bintray.user').toLowerCase() : "BINTRAY_USERNAME"
-        			password = properties.getProperty('bintray.apikey')
-    			}
-            }
-		}
     }
+}
 
+bintray {
+    if (project.rootProject.file('local.properties').exists()) {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        user = (properties.containsKey('bintray.user')) ? properties.getProperty('bintray.user').toLowerCase() : "BINTRAY_USERNAME"
+        key = properties.getProperty('bintray.apikey')
+    }
+	publications = ['maven']
+	pkg {
+		repo = 'Maven'
+		name = project.property('mavenArtifactId')
+		userOrg = 'microsoftgraph'
+		licenses = ['MIT']
+		vcsUrl = 'https://github.com/microsoftgraph/msgraph-sdk-java-core.git'
+		publicDownloadNumbers = true
+		version {
+			name = "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
+			vcsTag = "v${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
+		}
+	}
 }
 
 compileJava {
