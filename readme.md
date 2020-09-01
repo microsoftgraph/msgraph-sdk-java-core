@@ -3,8 +3,9 @@
 Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://graph.microsoft.io/en-us/getting-started) into your Java and Android application!
 
 ## Samples and usage guide
-[Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)</br>
-[Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
+
+- [Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)
+- [Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
 
 ## 1. Installation
 
@@ -13,13 +14,13 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 Add the repository and a compile dependency for `microsoft-graph-core` to your project's `build.gradle`:
 
 ```gradle
-repository {
+repositories {
     jcenter()
 }
 
-dependency {
+dependencies {
     // Include the sdk as a dependency
-    compile('com.microsoft.graph:microsoft-graph-core:1.0.2')
+    implementation 'com.microsoft.graph:microsoft-graph-core:1.0.2'
 }
 ```
 
@@ -36,6 +37,7 @@ Add the dependency in `dependencies` in pom.xml
 ```
 
 ### 1.3 Enable ProGuard (Android)
+
 The nature of the Graph API is such that the SDK needs quite a large set of classes to describe its functionality. You need to ensure that [ProGuard](https://developer.android.com/studio/build/shrink-code.html) is enabled on your project. Otherwise, you will incur long build times for functionality that is not necessarily relevant to your particular application. If you are still hitting the 64K method limit, you can also enable [multidexing](https://developer.android.com/studio/build/multidex.html).
 
 ## 2. Getting started
@@ -46,13 +48,16 @@ Register your application by following the steps at [Register your app with the 
 
 ### 2.2 Create an IAuthenticationProvider object
 
-An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph. 
-### To get instance of HttpClients 
+An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
+
+### To get instance of HttpClients
+
 Auth in Java app [here](https://github.com/microsoftgraph/msgraph-sdk-java-auth)
 
 Auth in Android app [here](https://github.com/microsoftgraph/msgraph-sdk-android-auth)
 
 ### 2.3 Get a HttpClients object
+
 You must get a **HttpClients** object to make requests against the service.
 
 ```java
