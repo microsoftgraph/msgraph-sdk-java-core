@@ -118,15 +118,8 @@ For known issues, see [issues](https://github.com/MicrosoftGraph/msgraph-sdk-jav
 
 The Microsoft Graph SDK is open for contribution. To contribute to this project, see [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/master/CONTRIBUTING.md).
 
-<!-- ALL-CONTRIBUTORS-LIST:START  -->
-<!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=deepak2016 "Code") | [<img src="https://avatars3.githubusercontent.com/u/16473684?v=4" width="100px;"/><br /><sub><b>Nakul Sabharwal</b></sub>](https://github.com/NakulSabharwal)<br/>[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Code")[:clipboard:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Reviewed Pull Requests")|
-| :---: | :---: |
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!
-
 ## 6. Supported Java versions
+
 The Microsoft Graph SDK for Java library is supported at runtime for Java 8+ and [Android API revision 15](http://source.android.com/source/build-numbers.html) and greater through [desugaring](https://developer.android.com/studio/write/java8-support.html#library-desugaring).
 
 ## 7. License
