@@ -77,6 +77,8 @@ steps:
     SourceFolder: '$(System.DefaultWorkingDirectory)'
     Contents: |
       **/libs/*
+      build/generated-pom.xml
+      build/generated-pom.xml.asc
       build.gradle
       gradlew
       gradlew.bat
