@@ -62,7 +62,7 @@ public class MSBatchResponseContentTest {
 		String requestbody = "{requests:[]}";
 		Response invalidResponsedata = TestResponse(invalidResponsebody, requestbody);
 		MSBatchResponseContent batchresponse = new MSBatchResponseContent(invalidResponsedata);
-		assertTrue(batchresponse.getResponses() == null);
+		assertTrue(batchresponse.getResponses().keySet().isEmpty());
 	}
 	
 	@Test

@@ -34,7 +34,7 @@ public class MSBatchRequestContentTest {
 		MSBatchRequestContent requestContent = new MSBatchRequestContent();
 		requestContent.addBatchRequestStep(requestStep);
 		String content = requestContent.getBatchRequestContent();
-		String expectedContent = "{\"requests\":[{\"method\":\"GET\",\"dependsOn\":[],\"id\":\"1\",\"url\":\"http:\\/\\/graph.microsoft.com\\/me\"}]}";
+		String expectedContent = "{\"requests\":[{\"id\":\"1\",\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"dependsOn\":[]}]}";
 		assertTrue(content.compareTo(expectedContent) == 0);
 	}
 
@@ -47,7 +47,7 @@ public class MSBatchRequestContentTest {
 		requestContent.addBatchRequestStep(requestStep);
 		String content = requestContent.getBatchRequestContent();
 		System.out.println(content);
-		String expectedContent = "{\"requests\":[{\"headers\":{\"testkey\":\"testvalue\"},\"method\":\"GET\",\"dependsOn\":[],\"id\":\"1\",\"url\":\"http:\\/\\/graph.microsoft.com\\/me\"}]}";
+		String expectedContent = "{\"requests\":[{\"id\":\"1\",\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"headers\":{\"testkey\":\"testvalue\"},\"dependsOn\":[]}]}";
 		assertTrue(content.compareTo(expectedContent) == 0);
 	}
 
@@ -81,7 +81,7 @@ public class MSBatchRequestContentTest {
 
 		requestContent.removeBatchRequestStepWithId("1");
 		String content = requestContent.getBatchRequestContent();
-		String expectedContent = "{\"requests\":[{\"method\":\"GET\",\"dependsOn\":[],\"id\":\"2\",\"url\":\"http:\\/\\/graph.microsoft.com\\/me\"}]}";
+		String expectedContent = "{\"requests\":[{\"id\":\"2\",\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"dependsOn\":[]}]}";
 		assertTrue(content.compareTo(expectedContent) == 0);
 	}
 
