@@ -1,9 +1,11 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -50,10 +52,28 @@ public class MSBatchRequestContent {
 	 * given
 	 */
 	public boolean addBatchRequestStep(final MSBatchRequestStep batchRequestStep) {
-		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()))
+		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
+			batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
 			return false;
 		batchRequestStepsHashMap.put(batchRequestStep.getRequestId(), batchRequestStep);
 		return true;
+	}
+
+	/**
+	 * Add steps to batch from OkHttp.Request
+	 * @param request the request to add to the batch
+	 * @param arrayOfDependsOnIds ids of steps this step depends on
+	 * @return the step id
+	 */
+	public String addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
+		String requestId;
+		do {
+			requestId = Integer.toString(ThreadLocalRandom.current().nextInt());
+		} while(batchRequestStepsHashMap.keySet().contains(requestId));
+		if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds))))
+			return requestId;
+		else
+			throw new IllegalArgumentException("unable to add step to batch. Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 	}
 
 	/*
