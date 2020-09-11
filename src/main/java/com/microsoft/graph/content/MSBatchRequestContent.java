@@ -63,14 +63,17 @@ public class MSBatchRequestContent {
 	 * Add steps to batch from OkHttp.Request
 	 * @param request the request to add to the batch
 	 * @param arrayOfDependsOnIds ids of steps this step depends on
-	 * @return whether the step was added to the batch or not
+	 * @return the step id
 	 */
-	public boolean addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
+	public String addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
 		String requestId;
 		do {
 			requestId = Integer.toString(ThreadLocalRandom.current().nextInt());
 		} while(batchRequestStepsHashMap.keySet().contains(requestId));
-		return addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds)));
+		if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds))))
+			return requestId;
+		else
+			throw new IllegalArgumentException("unable to add step to batch. Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 	}
 
 	/*
