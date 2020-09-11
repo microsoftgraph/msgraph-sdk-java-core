@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:1.0.2'
+    implementation 'com.microsoft.graph:microsoft-graph-core:1.0.3'
 }
 ```
 
@@ -32,7 +32,7 @@ Add the dependency in `dependencies` in pom.xml
 <dependency>
 	<groupId>com.microsoft.graph</groupId>
 	<artifactId>microsoft-graph-core</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 </dependency>
 ```
 
@@ -118,15 +118,8 @@ For known issues, see [issues](https://github.com/MicrosoftGraph/msgraph-sdk-jav
 
 The Microsoft Graph SDK is open for contribution. To contribute to this project, see [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/master/CONTRIBUTING.md).
 
-<!-- ALL-CONTRIBUTORS-LIST:START  -->
-<!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/3197588?v=4" width="100px;"/><br /><sub><b>Deepak Agrawal</b></sub>](https://github.com/deepak2016)<br />[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=deepak2016 "Code") | [<img src="https://avatars3.githubusercontent.com/u/16473684?v=4" width="100px;"/><br /><sub><b>Nakul Sabharwal</b></sub>](https://github.com/NakulSabharwal)<br/>[:computer:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Code")[:clipboard:](https://github.com/microsoftgraph/msgraph-sdk-java-core/commits?author=NakulSabharwal "Reviewed Pull Requests")|
-| :---: | :---: |
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!
-
 ## 6. Supported Java versions
+
 The Microsoft Graph SDK for Java library is supported at runtime for Java 7+ and [Android API revision 15](http://source.android.com/source/build-numbers.html) and greater.
 
 ## 7. License
