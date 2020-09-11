@@ -1,9 +1,11 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -50,10 +52,25 @@ public class MSBatchRequestContent {
 	 * given
 	 */
 	public boolean addBatchRequestStep(final MSBatchRequestStep batchRequestStep) {
-		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()))
+		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
+			batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
 			return false;
 		batchRequestStepsHashMap.put(batchRequestStep.getRequestId(), batchRequestStep);
 		return true;
+	}
+
+	/**
+	 * Add steps to batch from OkHttp.Request
+	 * @param request the request to add to the batch
+	 * @param arrayOfDependsOnIds ids of steps this step depends on
+	 * @return whether the step was added to the batch or not
+	 */
+	public boolean addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
+		String requestId;
+		do {
+			requestId = Integer.toString(ThreadLocalRandom.current().nextInt());
+		} while(batchRequestStepsHashMap.keySet().contains(requestId));
+		return addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds)));
 	}
 
 	/*
