@@ -164,18 +164,19 @@ public class MSBatchRequestContent {
 	}
 
 	private JsonObject requestBodyToJSONObject(final Request request) throws IOException, JsonParseException {
-		if (request != null && request.body() != null) {
-			final Request copy = request.newBuilder().build();
-			final Buffer buffer = new Buffer();
-			copy.body().writeTo(buffer);
-			final String requestBody = buffer.readUtf8();
-			if(requestBody != null && requestBody != "") {
-				final JsonElement requestBodyElement = JsonParser.parseString(requestBody);
-				if(requestBodyElement != null && requestBodyElement.isJsonObject())
-					return requestBodyElement.getAsJsonObject();
-			}
-		}
-		return null;
+		if (request == null || request.body() == null)
+			return null;
+		final Request copy = request.newBuilder().build();
+		final Buffer buffer = new Buffer();
+		copy.body().writeTo(buffer);
+		final String requestBody = buffer.readUtf8();
+		if(requestBody == null || requestBody == "")
+			return null;
+		final JsonElement requestBodyElement = JsonParser.parseString(requestBody);
+		if(requestBodyElement == null || !requestBodyElement.isJsonObject())
+			return null;
+		else
+			return requestBodyElement.getAsJsonObject();
 	}
 	
 }

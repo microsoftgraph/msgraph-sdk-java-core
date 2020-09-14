@@ -47,54 +47,54 @@ public class MSBatchResponseContent {
 		final JsonArray responses = batchResponseArray;
 
 		for (final JsonElement response : responses) {
-			if(response.isJsonObject()) {
-				final JsonObject jsonresponse = response.getAsJsonObject();
-				final JsonElement idElement = jsonresponse.get("id");
-				if (idElement != null && idElement.isJsonPrimitive()) {
-					final String id = idElement.getAsString();
-					if (id.compareTo(requestId) == 0) {
-						final Response.Builder builder = new Response.Builder();
+			if(!response.isJsonObject())
+				continue;
+			final JsonObject jsonresponse = response.getAsJsonObject();
+			final JsonElement idElement = jsonresponse.get("id");
+			if (idElement != null && idElement.isJsonPrimitive()) {
+				final String id = idElement.getAsString();
+				if (id.compareTo(requestId) == 0) {
+					final Response.Builder builder = new Response.Builder();
 
-						// Put corresponding request into the constructed response
-						builder.request(batchRequestsHashMap.get(requestId));
-						// copy protocol and message same as of batch response
-						builder.protocol(batchResponse.protocol());
-						builder.message(batchResponse.message());
+					// Put corresponding request into the constructed response
+					builder.request(batchRequestsHashMap.get(requestId));
+					// copy protocol and message same as of batch response
+					builder.protocol(batchResponse.protocol());
+					builder.message(batchResponse.message());
 
-						// Put status code of the corresponding request in JsonArray
-						final JsonElement statusElement = jsonresponse.get("status");
-						if (statusElement != null && statusElement.isJsonPrimitive()) {
-							final Long status = statusElement.getAsLong();
-							builder.code(status.intValue());
-						}
+					// Put status code of the corresponding request in JsonArray
+					final JsonElement statusElement = jsonresponse.get("status");
+					if (statusElement != null && statusElement.isJsonPrimitive()) {
+						final Long status = statusElement.getAsLong();
+						builder.code(status.intValue());
+					}
 
-						// Put body from response array for corresponding id into constructing response
-						final JsonElement jsonBodyElement = jsonresponse.get("body");
-						if (jsonBodyElement != null && jsonBodyElement.isJsonObject()) {
-							final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
-							final String bodyAsString = JsonObject.toString();
-							final ResponseBody responseBody = ResponseBody
-									.create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
-							builder.body(responseBody);
-						}
+					// Put body from response array for corresponding id into constructing response
+					final JsonElement jsonBodyElement = jsonresponse.get("body");
+					if (jsonBodyElement != null && jsonBodyElement.isJsonObject()) {
+						final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
+						final String bodyAsString = JsonObject.toString();
+						final ResponseBody responseBody = ResponseBody
+								.create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
+						builder.body(responseBody);
+					}
 
-						// Put headers from response array for corresponding id into constructing
-						// response
-						final JsonElement jsonheadersElement = jsonresponse.get("headers");
-						if (jsonheadersElement != null && jsonheadersElement.isJsonObject()) {
-							final JsonObject jsonheaders = jsonheadersElement.getAsJsonObject();
-							for (final String key : jsonheaders.keySet()) {
-								final JsonElement strValueElement = jsonheaders.get(key);
-								if (strValueElement != null && strValueElement.isJsonPrimitive()) {
-									final String strvalue = strValueElement.getAsString();
-									for (final String value : strvalue.split(";")) {
-										builder.header(key, value);
-									}
+					// Put headers from response array for corresponding id into constructing
+					// response
+					final JsonElement jsonheadersElement = jsonresponse.get("headers");
+					if (jsonheadersElement != null && jsonheadersElement.isJsonObject()) {
+						final JsonObject jsonheaders = jsonheadersElement.getAsJsonObject();
+						for (final String key : jsonheaders.keySet()) {
+							final JsonElement strValueElement = jsonheaders.get(key);
+							if (strValueElement != null && strValueElement.isJsonPrimitive()) {
+								final String strvalue = strValueElement.getAsString();
+								for (final String value : strvalue.split(";")) {
+									builder.header(key, value);
 								}
 							}
 						}
-						return builder.build();
 					}
+					return builder.build();
 				}
 			}
 		}
@@ -180,47 +180,47 @@ public class MSBatchResponseContent {
 			if (requestArrayElement != null && requestArrayElement.isJsonArray()) {
 				final JsonArray requestArray = requestArrayElement.getAsJsonArray();
 				for (final JsonElement item : requestArray) {
-					if(item.isJsonObject()) {
-						final JsonObject requestObject = item.getAsJsonObject();
+					if(!item.isJsonObject())
+						continue;
+					final JsonObject requestObject = item.getAsJsonObject();
 
-						final Request.Builder builder = new Request.Builder();
+					final Request.Builder builder = new Request.Builder();
 
-						final JsonElement urlElement = requestObject.get("url");
-						if (urlElement != null && urlElement.isJsonPrimitive()) {
-							final StringBuilder fullUrl = new StringBuilder(
-									batchResponse.request().url().toString().replace("$batch", ""));
-							fullUrl.append(urlElement.getAsString());
-							builder.url(fullUrl.toString());
-						}
-						final JsonElement jsonHeadersElement = requestObject.get("headers");
-						if (jsonHeadersElement != null && jsonHeadersElement.isJsonObject()) {
-							final JsonObject jsonheaders = jsonHeadersElement.getAsJsonObject();
-							for (final String key : jsonheaders.keySet()) {
-								final JsonElement strvalueElement = jsonheaders.get(key);
-								if (strvalueElement != null && strvalueElement.isJsonPrimitive()) {
-									final String strvalue = strvalueElement.getAsString();
-									for (final String value : strvalue.split("; ")) {
-										builder.header(key, value);
-									}
+					final JsonElement urlElement = requestObject.get("url");
+					if (urlElement != null && urlElement.isJsonPrimitive()) {
+						final StringBuilder fullUrl = new StringBuilder(
+								batchResponse.request().url().toString().replace("$batch", ""));
+						fullUrl.append(urlElement.getAsString());
+						builder.url(fullUrl.toString());
+					}
+					final JsonElement jsonHeadersElement = requestObject.get("headers");
+					if (jsonHeadersElement != null && jsonHeadersElement.isJsonObject()) {
+						final JsonObject jsonheaders = jsonHeadersElement.getAsJsonObject();
+						for (final String key : jsonheaders.keySet()) {
+							final JsonElement strvalueElement = jsonheaders.get(key);
+							if (strvalueElement != null && strvalueElement.isJsonPrimitive()) {
+								final String strvalue = strvalueElement.getAsString();
+								for (final String value : strvalue.split("; ")) {
+									builder.header(key, value);
 								}
 							}
 						}
-						final JsonElement jsonBodyElement = requestObject.get("body");
-						final JsonElement jsonMethodElement = requestObject.get("method");
-						if (jsonBodyElement != null && jsonMethodElement != null
-							&& jsonBodyElement.isJsonObject() && jsonMethodElement.isJsonPrimitive()) {
-							final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
-							final String bodyAsString = JsonObject.toString();
-							final RequestBody requestBody = RequestBody
-									.create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
-							builder.method(jsonMethodElement.getAsString(), requestBody);
-						} else if (jsonMethodElement != null) {
-							builder.method(jsonMethodElement.getAsString(), null);
-						}
-						final JsonElement jsonIdElement = requestObject.get("id");
-						if (jsonIdElement != null && jsonIdElement.isJsonPrimitive()) {
-							batchRequestsHashMap.put(jsonIdElement.getAsString(), builder.build());
-						}
+					}
+					final JsonElement jsonBodyElement = requestObject.get("body");
+					final JsonElement jsonMethodElement = requestObject.get("method");
+					if (jsonBodyElement != null && jsonMethodElement != null
+						&& jsonBodyElement.isJsonObject() && jsonMethodElement.isJsonPrimitive()) {
+						final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
+						final String bodyAsString = JsonObject.toString();
+						final RequestBody requestBody = RequestBody
+								.create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
+						builder.method(jsonMethodElement.getAsString(), requestBody);
+					} else if (jsonMethodElement != null) {
+						builder.method(jsonMethodElement.getAsString(), null);
+					}
+					final JsonElement jsonIdElement = requestObject.get("id");
+					if (jsonIdElement != null && jsonIdElement.isJsonPrimitive()) {
+						batchRequestsHashMap.put(jsonIdElement.getAsString(), builder.build());
 					}
 				}
 			}
