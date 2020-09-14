@@ -2,7 +2,7 @@ package com.microsoft.graph.content;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,7 +20,7 @@ import okhttp3.RequestBody;
 import okio.Buffer;
 
 public class MSBatchRequestContent {
-	private final Map<String, MSBatchRequestStep> batchRequestStepsHashMap;
+	private final LinkedHashMap<String, MSBatchRequestStep> batchRequestStepsHashMap;
 
 	// Maximum number of requests that can be sent in a batch
 	public static final int MAX_NUMBER_OF_REQUESTS = 20;
@@ -34,7 +34,7 @@ public class MSBatchRequestContent {
 		if (batchRequestStepsArray.size() > MAX_NUMBER_OF_REQUESTS)
 			throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 
-		this.batchRequestStepsHashMap = new HashMap<>();
+		this.batchRequestStepsHashMap = new LinkedHashMap<>();
 		for (final MSBatchRequestStep requestStep : batchRequestStepsArray)
 			addBatchRequestStep(requestStep);
 	}
@@ -43,7 +43,7 @@ public class MSBatchRequestContent {
 	 * Creates empty batch request content
 	 */
 	public MSBatchRequestContent() {
-		batchRequestStepsHashMap = new HashMap<String, MSBatchRequestStep>();
+		this.batchRequestStepsHashMap = new LinkedHashMap<>();
 	}
 
 	/*

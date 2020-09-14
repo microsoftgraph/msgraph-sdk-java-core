@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import okio.Buffer;
 public class MSBatchResponseContent {
 
 	private final Response batchResponse;
-	private Map<String, Request> batchRequestsHashMap;
+	private LinkedHashMap<String, Request> batchRequestsHashMap;
 	private JsonArray batchResponseArray;
 	private String nextLink;
 
@@ -109,7 +109,7 @@ public class MSBatchResponseContent {
 	public Map<String, Response> getResponses() {
 		if (batchResponseArray == null)
 			return null;
-		final Map<String, Response> responsesMap = new HashMap<>();
+		final Map<String, Response> responsesMap = new LinkedHashMap<>();
 		for (final String id : batchRequestsHashMap.keySet()) {
 			responsesMap.put(id, getResponseById(id));
 		}
@@ -132,7 +132,7 @@ public class MSBatchResponseContent {
 
 		final Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
 		if (batchRequestsHashMap == null)
-			batchRequestsHashMap = new HashMap<>();
+			batchRequestsHashMap = new LinkedHashMap<>();
 		if (requestMap != null)
 			batchRequestsHashMap.putAll(requestMap);
 
@@ -174,7 +174,7 @@ public class MSBatchResponseContent {
 		if (batchResponse == null)
 			return null;
 		try {
-			final Map<String, Request> batchRequestsHashMap = new HashMap<>();
+			final Map<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
 			final JsonObject requestJSONObject = requestBodyToJSONObject(batchResponse.request());
 			final JsonElement requestArrayElement = requestJSONObject.get("requests");
 			if (requestArrayElement != null && requestArrayElement.isJsonArray()) {
