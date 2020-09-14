@@ -69,7 +69,7 @@ public class MSBatchRequestContent {
 	public String addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
 		String requestId;
 		do {
-			requestId = Integer.toString(ThreadLocalRandom.current().nextInt());
+			requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
 		} while(batchRequestStepsHashMap.keySet().contains(requestId));
 		if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds))))
 			return requestId;
