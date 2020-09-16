@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import okio.Buffer;
 public class MSBatchResponseContent {
 
 	private final Response batchResponse;
-	private Map<String, Request> batchRequestsHashMap;
+	private LinkedHashMap<String, Request> batchRequestsHashMap;
 	private JsonArray batchResponseArray;
 	private String nextLink;
 
@@ -47,9 +47,11 @@ public class MSBatchResponseContent {
 		final JsonArray responses = batchResponseArray;
 
 		for (final JsonElement response : responses) {
+			if(!response.isJsonObject())
+				continue;
 			final JsonObject jsonresponse = response.getAsJsonObject();
 			final JsonElement idElement = jsonresponse.get("id");
-			if (idElement != null) {
+			if (idElement != null && idElement.isJsonPrimitive()) {
 				final String id = idElement.getAsString();
 				if (id.compareTo(requestId) == 0) {
 					final Response.Builder builder = new Response.Builder();
@@ -62,14 +64,14 @@ public class MSBatchResponseContent {
 
 					// Put status code of the corresponding request in JsonArray
 					final JsonElement statusElement = jsonresponse.get("status");
-					if (statusElement != null) {
+					if (statusElement != null && statusElement.isJsonPrimitive()) {
 						final Long status = statusElement.getAsLong();
 						builder.code(status.intValue());
 					}
 
 					// Put body from response array for corresponding id into constructing response
 					final JsonElement jsonBodyElement = jsonresponse.get("body");
-					if (jsonBodyElement != null) {
+					if (jsonBodyElement != null && jsonBodyElement.isJsonObject()) {
 						final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
 						final String bodyAsString = JsonObject.toString();
 						final ResponseBody responseBody = ResponseBody
@@ -80,11 +82,11 @@ public class MSBatchResponseContent {
 					// Put headers from response array for corresponding id into constructing
 					// response
 					final JsonElement jsonheadersElement = jsonresponse.get("headers");
-					if (jsonheadersElement != null) {
+					if (jsonheadersElement != null && jsonheadersElement.isJsonObject()) {
 						final JsonObject jsonheaders = jsonheadersElement.getAsJsonObject();
 						for (final String key : jsonheaders.keySet()) {
 							final JsonElement strValueElement = jsonheaders.get(key);
-							if (strValueElement != null) {
+							if (strValueElement != null && strValueElement.isJsonPrimitive()) {
 								final String strvalue = strValueElement.getAsString();
 								for (final String value : strvalue.split(";")) {
 									builder.header(key, value);
@@ -107,7 +109,7 @@ public class MSBatchResponseContent {
 	public Map<String, Response> getResponses() {
 		if (batchResponseArray == null)
 			return null;
-		final Map<String, Response> responsesMap = new HashMap<>();
+		final Map<String, Response> responsesMap = new LinkedHashMap<>();
 		for (final String id : batchRequestsHashMap.keySet()) {
 			responsesMap.put(id, getResponseById(id));
 		}
@@ -130,7 +132,7 @@ public class MSBatchResponseContent {
 
 		final Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
 		if (batchRequestsHashMap == null)
-			batchRequestsHashMap = new HashMap<>();
+			batchRequestsHashMap = new LinkedHashMap<>();
 		if (requestMap != null)
 			batchRequestsHashMap.putAll(requestMap);
 
@@ -142,14 +144,14 @@ public class MSBatchResponseContent {
 					if (batchResponseObj != null) {
 
 						final JsonElement nextLinkElement = batchResponseObj.get("@odata.nextLink");
-						if (nextLinkElement != null)
+						if (nextLinkElement != null && nextLinkElement.isJsonPrimitive())
 							nextLink = nextLinkElement.getAsString();
 
 						if (batchResponseArray == null)
 							batchResponseArray = new JsonArray();
 
 						final JsonElement responseArrayElement = batchResponseObj.get("responses");
-						if (responseArrayElement != null) {
+						if (responseArrayElement != null && responseArrayElement.isJsonArray()) {
 							final JsonArray responseArray = responseArrayElement.getAsJsonArray();
 							batchResponseArray.addAll(responseArray);
 						}
@@ -172,29 +174,31 @@ public class MSBatchResponseContent {
 		if (batchResponse == null)
 			return null;
 		try {
-			final Map<String, Request> batchRequestsHashMap = new HashMap<>();
+			final Map<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
 			final JsonObject requestJSONObject = requestBodyToJSONObject(batchResponse.request());
 			final JsonElement requestArrayElement = requestJSONObject.get("requests");
-			if (requestArrayElement != null) {
+			if (requestArrayElement != null && requestArrayElement.isJsonArray()) {
 				final JsonArray requestArray = requestArrayElement.getAsJsonArray();
 				for (final JsonElement item : requestArray) {
+					if(!item.isJsonObject())
+						continue;
 					final JsonObject requestObject = item.getAsJsonObject();
 
 					final Request.Builder builder = new Request.Builder();
 
 					final JsonElement urlElement = requestObject.get("url");
-					if (urlElement != null) {
+					if (urlElement != null && urlElement.isJsonPrimitive()) {
 						final StringBuilder fullUrl = new StringBuilder(
 								batchResponse.request().url().toString().replace("$batch", ""));
 						fullUrl.append(urlElement.getAsString());
 						builder.url(fullUrl.toString());
 					}
 					final JsonElement jsonHeadersElement = requestObject.get("headers");
-					if (jsonHeadersElement != null) {
+					if (jsonHeadersElement != null && jsonHeadersElement.isJsonObject()) {
 						final JsonObject jsonheaders = jsonHeadersElement.getAsJsonObject();
 						for (final String key : jsonheaders.keySet()) {
 							final JsonElement strvalueElement = jsonheaders.get(key);
-							if (strvalueElement != null) {
+							if (strvalueElement != null && strvalueElement.isJsonPrimitive()) {
 								final String strvalue = strvalueElement.getAsString();
 								for (final String value : strvalue.split("; ")) {
 									builder.header(key, value);
@@ -204,7 +208,8 @@ public class MSBatchResponseContent {
 					}
 					final JsonElement jsonBodyElement = requestObject.get("body");
 					final JsonElement jsonMethodElement = requestObject.get("method");
-					if (jsonBodyElement != null && jsonMethodElement != null) {
+					if (jsonBodyElement != null && jsonMethodElement != null
+						&& jsonBodyElement.isJsonObject() && jsonMethodElement.isJsonPrimitive()) {
 						final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
 						final String bodyAsString = JsonObject.toString();
 						final RequestBody requestBody = RequestBody
@@ -214,7 +219,7 @@ public class MSBatchResponseContent {
 						builder.method(jsonMethodElement.getAsString(), null);
 					}
 					final JsonElement jsonIdElement = requestObject.get("id");
-					if (jsonIdElement != null) {
+					if (jsonIdElement != null && jsonIdElement.isJsonPrimitive()) {
 						batchRequestsHashMap.put(jsonIdElement.getAsString(), builder.build());
 					}
 				}

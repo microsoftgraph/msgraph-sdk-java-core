@@ -147,6 +147,9 @@ public class RetryHandler implements Interceptor{
 		while(retryRequest(response, executionCount, request, retryOption)) {
 			request = request.newBuilder().addHeader(RETRY_ATTEMPT_HEADER, String.valueOf(executionCount)).build();
 			executionCount++;
+			if(response != null && response.body() != null) {
+				response.body().close();
+			}
 			response = chain.proceed(request);
 		}
 		return response;
