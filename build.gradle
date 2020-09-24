@@ -54,7 +54,7 @@ def pomConfig = {
 
 tasks.jar {
     manifest {
-        attributes('Automatic-Module-Name': project.property('mavenGroupId'))
+        attributes('Automatic-Module-Name': project.property('mavenGroupId') + '.core')
     }
 }
 
