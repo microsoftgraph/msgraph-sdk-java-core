@@ -1,7 +1,10 @@
 package com.microsoft.graph.httpcore;
 
+import java.util.Arrays;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.OkHttpClient.Builder;
 
 public class HttpClients {
@@ -16,7 +19,10 @@ public class HttpClients {
      * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
     public static Builder custom() {
-        return new OkHttpClient.Builder().addInterceptor(new TelemetryHandler());
+        return new OkHttpClient.Builder()
+                    .addInterceptor(new TelemetryHandler())
+                    .followRedirects(false)
+                    .protocols(Arrays.asList(Protocol.HTTP_1_1)); //https://stackoverflow.com/questions/62031298/sockettimeout-on-java-11-but-not-on-java-8
     }
 
     /**
@@ -27,11 +33,10 @@ public class HttpClients {
      * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers 
      */
     public static OkHttpClient createDefault(ICoreAuthenticationProvider auth) {
-    	return new OkHttpClient.Builder().addInterceptor(new AuthenticationHandler(auth))
-    			.followRedirects(false)
+        return custom()
+                .addInterceptor(new AuthenticationHandler(auth))
     			.addInterceptor(new RetryHandler())
     			.addInterceptor(new RedirectHandler())
-    			.addInterceptor(new TelemetryHandler())
     			.build();
     }
     
@@ -42,13 +47,12 @@ public class HttpClients {
      * @return OkHttpClient build with interceptors provided 
      */
     public static OkHttpClient createFromInterceptors(Interceptor[] interceptors) {
-    	OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    	OkHttpClient.Builder builder = custom();
     	if(interceptors != null)
     		for(Interceptor interceptor : interceptors) {
     			if(interceptor != null)
     				builder.addInterceptor(interceptor);
     		}
-    	builder.addInterceptor(new TelemetryHandler());
     	return builder.build();
     }
 }
