@@ -1,11 +1,14 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -17,7 +20,7 @@ import okhttp3.RequestBody;
 import okio.Buffer;
 
 public class MSBatchRequestContent {
-	private final Map<String, MSBatchRequestStep> batchRequestStepsHashMap;
+	private final LinkedHashMap<String, MSBatchRequestStep> batchRequestStepsHashMap;
 
 	// Maximum number of requests that can be sent in a batch
 	public static final int MAX_NUMBER_OF_REQUESTS = 20;
@@ -31,7 +34,7 @@ public class MSBatchRequestContent {
 		if (batchRequestStepsArray.size() > MAX_NUMBER_OF_REQUESTS)
 			throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 
-		this.batchRequestStepsHashMap = new HashMap<>();
+		this.batchRequestStepsHashMap = new LinkedHashMap<>();
 		for (final MSBatchRequestStep requestStep : batchRequestStepsArray)
 			addBatchRequestStep(requestStep);
 	}
@@ -40,7 +43,7 @@ public class MSBatchRequestContent {
 	 * Creates empty batch request content
 	 */
 	public MSBatchRequestContent() {
-		batchRequestStepsHashMap = new HashMap<String, MSBatchRequestStep>();
+		this.batchRequestStepsHashMap = new LinkedHashMap<>();
 	}
 
 	/*
@@ -50,10 +53,28 @@ public class MSBatchRequestContent {
 	 * given
 	 */
 	public boolean addBatchRequestStep(final MSBatchRequestStep batchRequestStep) {
-		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()))
+		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
+			batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
 			return false;
 		batchRequestStepsHashMap.put(batchRequestStep.getRequestId(), batchRequestStep);
 		return true;
+	}
+
+	/**
+	 * Add steps to batch from OkHttp.Request
+	 * @param request the request to add to the batch
+	 * @param arrayOfDependsOnIds ids of steps this step depends on
+	 * @return the step id
+	 */
+	public String addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
+		String requestId;
+		do {
+			requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
+		} while(batchRequestStepsHashMap.keySet().contains(requestId));
+		if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds))))
+			return requestId;
+		else
+			throw new IllegalArgumentException("unable to add step to batch. Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 	}
 
 	/*
@@ -149,8 +170,13 @@ public class MSBatchRequestContent {
 		final Buffer buffer = new Buffer();
 		copy.body().writeTo(buffer);
 		final String requestBody = buffer.readUtf8();
-		final JsonObject JsonObject = JsonParser.parseString(requestBody).getAsJsonObject();
-		return JsonObject;
+		if(requestBody == null || requestBody == "")
+			return null;
+		final JsonElement requestBodyElement = JsonParser.parseString(requestBody);
+		if(requestBodyElement == null || !requestBodyElement.isJsonObject())
+			return null;
+		else
+			return requestBodyElement.getAsJsonObject();
 	}
 	
 }
