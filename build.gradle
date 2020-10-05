@@ -32,7 +32,7 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
     
-    api 'com.squareup.okhttp3:okhttp:3.12.1'
+    api 'com.squareup.okhttp3:okhttp:4.8.1'
     
     implementation 'com.google.code.gson:gson:2.8.6'
 }
