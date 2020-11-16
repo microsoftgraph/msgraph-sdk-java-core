@@ -38,6 +38,7 @@ public class RetryOptions implements IMiddlewareControl {
 	 * @param maxRetries Number of max retires for a request
 	 * @param delay Delay in seconds between retries
 	 */
+	@SuppressWarnings("LambdaLast")
 	public RetryOptions(@Nullable final IShouldRetry shouldRetry, int maxRetries, long delay) {
 		if(delay > MAX_DELAY)
 			throw new IllegalArgumentException("Delay cannot exceed " + MAX_DELAY);
