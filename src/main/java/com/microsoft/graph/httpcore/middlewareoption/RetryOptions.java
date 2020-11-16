@@ -3,6 +3,9 @@ package com.microsoft.graph.httpcore.middlewareoption;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 public class RetryOptions implements IMiddlewareControl {
 	private IShouldRetry mShouldretry;
 	public static final IShouldRetry DEFAULT_SHOULD_RETRY = new IShouldRetry() {
@@ -35,7 +38,7 @@ public class RetryOptions implements IMiddlewareControl {
 	 * @param maxRetries Number of max retires for a request
 	 * @param delay Delay in seconds between retries
 	 */
-	public RetryOptions(IShouldRetry shouldRetry, int maxRetries, long delay) {
+	public RetryOptions(@Nullable final IShouldRetry shouldRetry, int maxRetries, long delay) {
 		if(delay > MAX_DELAY)
 			throw new IllegalArgumentException("Delay cannot exceed " + MAX_DELAY);
 		if(delay < 0)
@@ -53,6 +56,7 @@ public class RetryOptions implements IMiddlewareControl {
 	/*
 	 * @return should retry callback
 	 */
+	@Nonnull
 	public IShouldRetry shouldRetry() {
 		return mShouldretry;
 	}

@@ -2,6 +2,9 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
@@ -36,7 +39,7 @@ public class RetryHandler implements Interceptor{
     /*
      * @retryOption Create Retry handler using retry option
      */
-    public RetryHandler(RetryOptions retryOption) {
+    public RetryHandler(@Nullable final RetryOptions retryOption) {
         this.mRetryOption = retryOption;
         if(this.mRetryOption == null) {
         	this.mRetryOption = new RetryOptions();
@@ -130,7 +133,8 @@ public class RetryHandler implements Interceptor{
 	}
 
 	@Override
-	public Response intercept(Chain chain) throws IOException {
+	@Nullable
+	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request request = chain.request();
 		
 		if(request.tag(TelemetryOptions.class) == null)
