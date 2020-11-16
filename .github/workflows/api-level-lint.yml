@@ -9,6 +9,7 @@ on:
     branches:
       - dev
       - master
+      - feature/v2
 
 jobs:
   lint-api-level:
@@ -26,4 +27,3 @@ jobs:
       - name: Build SDK with Android project configuration
         run: ./gradlew --no-daemon build
         working-directory: ./android
-
