@@ -20,8 +20,12 @@ public class TelemetryOptions {
 		featureUsage = featureUsage | flag;
 	}
 
+	public int getFeatureUsage() {
+		return featureUsage;
+	}
+
 	@Nonnull
-	public String getFeatureUsage() {
+	public String getSerializedFeatureUsage() {
 		return Integer.toHexString(featureUsage);
 	}
 

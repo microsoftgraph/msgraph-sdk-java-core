@@ -29,7 +29,7 @@ public class TelemetryHandler implements Interceptor{
 		if(telemetryOptions == null)
 			telemetryOptions = new TelemetryOptions();
 
-		String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
+		String featureUsage = "(featureUsage=" + telemetryOptions.getSerializedFeatureUsage() + ")";
 		String javaVersion = System.getProperty("java.version");
 		String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage + " " + JAVA_VERSION_PREFIX + "/" + javaVersion;
 		telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
