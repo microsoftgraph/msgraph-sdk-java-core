@@ -2,6 +2,8 @@ package com.microsoft.graph.httpcore.middlewareoption;
 
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+
 public class TelemetryOptions {
 
 	public static final int NONE_FLAG = 0;
@@ -18,14 +20,20 @@ public class TelemetryOptions {
 		featureUsage = featureUsage | flag;
 	}
 
-	public String getFeatureUsage() {
+	public int getFeatureUsage() {
+		return featureUsage;
+	}
+
+	@Nonnull
+	public String getSerializedFeatureUsage() {
 		return Integer.toHexString(featureUsage);
 	}
 
-	public void setClientRequestId(String clientRequestId) {
+	public void setClientRequestId(@Nonnull final String clientRequestId) {
 		this.clientRequestId = clientRequestId;
 	}
 
+	@Nonnull
 	public String getClientRequestId() {
 		if(clientRequestId == null) {
 			clientRequestId = UUID.randomUUID().toString();

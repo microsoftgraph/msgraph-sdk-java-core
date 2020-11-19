@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,7 +33,7 @@ public class MSBatchRequestContent {
 	 * 
 	 * @param batchRequestStepsArray List of batch steps for batching
 	 */
-	public MSBatchRequestContent(final List<MSBatchRequestStep> batchRequestStepsArray) {
+	public MSBatchRequestContent(@Nonnull final List<MSBatchRequestStep> batchRequestStepsArray) {
 		if (batchRequestStepsArray.size() > MAX_NUMBER_OF_REQUESTS)
 			throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 
@@ -52,7 +55,7 @@ public class MSBatchRequestContent {
 	 * @return true or false based on addition or no addition of batch request step
 	 * given
 	 */
-	public boolean addBatchRequestStep(final MSBatchRequestStep batchRequestStep) {
+	public boolean addBatchRequestStep(@Nonnull final MSBatchRequestStep batchRequestStep) {
 		if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
 			batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
 			return false;
@@ -66,7 +69,8 @@ public class MSBatchRequestContent {
 	 * @param arrayOfDependsOnIds ids of steps this step depends on
 	 * @return the step id
 	 */
-	public String addBatchRequestStep(final Request request, final String... arrayOfDependsOnIds) {
+	@Nonnull
+	public String addBatchRequestStep(@Nonnull final Request request, @Nullable final String... arrayOfDependsOnIds) {
 		String requestId;
 		do {
 			requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
@@ -83,7 +87,7 @@ public class MSBatchRequestContent {
 	 * @return true or false based on removal or no removal of batch request step
 	 * with given id
 	 */
-	public boolean removeBatchRequestStepWithId(final String requestId) {
+	public boolean removeBatchRequestStepWithId(@Nonnull final String requestId) {
 		boolean removed = false;
 		if (batchRequestStepsHashMap.containsKey(requestId)) {
 			batchRequestStepsHashMap.remove(requestId);
@@ -101,6 +105,7 @@ public class MSBatchRequestContent {
 	/*
 	 * @return Batch request content's json as String
 	 */
+	@Nonnull
 	public String getBatchRequestContent() {
 		final JsonObject batchRequestContentMap = new JsonObject();
 		final JsonArray batchContentArray = new JsonArray();

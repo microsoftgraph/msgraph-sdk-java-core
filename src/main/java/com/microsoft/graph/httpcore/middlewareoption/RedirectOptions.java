@@ -2,6 +2,9 @@ package com.microsoft.graph.httpcore.middlewareoption;
 
 import okhttp3.Response;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 public class RedirectOptions implements IMiddlewareControl{
 	private int maxRedirects;
 	public static final int DEFAULT_MAX_REDIRECTS = 5;
@@ -26,7 +29,7 @@ public class RedirectOptions implements IMiddlewareControl{
 	 * @param maxRedirects Max redirects to occur
 	 * @param shouldRedirect Should redirect callback called before every redirect
 	 */
-	public RedirectOptions(int maxRedirects, IShouldRedirect shouldRedirect) {
+	public RedirectOptions(int maxRedirects, @Nullable final IShouldRedirect shouldRedirect) {
 		if(maxRedirects < 0)
 			throw new IllegalArgumentException("Max redirects cannot be negative");
 		if(maxRedirects > MAX_REDIRECTS)
@@ -46,6 +49,7 @@ public class RedirectOptions implements IMiddlewareControl{
 	/*
 	 * @return should redirect
 	 */
+	@Nonnull
 	public IShouldRedirect shouldRedirect() {
 		return this.shouldRedirect;
 	}

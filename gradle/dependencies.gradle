@@ -1,0 +1,10 @@
+dependencies {
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.13'
+    
+    api 'com.squareup.okhttp3:okhttp:4.9.0'
+
+    api 'com.google.code.findbugs:jsr305:3.0.2' // can be replaced by guava if we need guava
+    
+    implementation 'com.google.code.gson:gson:2.8.6'
+}
