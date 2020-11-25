@@ -2,6 +2,9 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.Interceptor;
@@ -17,7 +20,8 @@ public class TelemetryHandler implements Interceptor{
 	public static final String CLIENT_REQUEST_ID = "client-request-id";
 
 	@Override
-	public Response intercept(Chain chain) throws IOException {
+	@Nullable
+	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request request = chain.request();
 		Request.Builder telemetryAddedBuilder = request.newBuilder();
 
@@ -25,7 +29,7 @@ public class TelemetryHandler implements Interceptor{
 		if(telemetryOptions == null)
 			telemetryOptions = new TelemetryOptions();
 
-		String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
+		String featureUsage = "(featureUsage=" + telemetryOptions.getSerializedFeatureUsage() + ")";
 		String javaVersion = System.getProperty("java.version");
 		String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage + " " + JAVA_VERSION_PREFIX + "/" + javaVersion;
 		telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);

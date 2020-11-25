@@ -120,7 +120,7 @@ The Microsoft Graph SDK is open for contribution. To contribute to this project,
 
 ## 6. Supported Java versions
 
-The Microsoft Graph SDK for Java library is supported at runtime for Java 7+ and [Android API revision 15](http://source.android.com/source/build-numbers.html) and greater.
+The Microsoft Graph SDK for Java library is supported at runtime for Java 8+ and [Android API revision 21](http://source.android.com/source/build-numbers.html) and greater.
 
 ## 7. License
 

@@ -28,7 +28,7 @@ public class AuthenticationHandlerTest {
 		AuthenticationHandler authHandler = new AuthenticationHandler(authProvider);
 		Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
 		
-		RealInterceptorChain chain = new RealInterceptorChain(null, null, null, null, 0, request, null, null, 0, 0, 0);
+		RealInterceptorChain chain = new RealInterceptorChain(null, null, 0, null, request, 0, 0, 0);
 		
 		try {
 			authHandler.intercept(chain);

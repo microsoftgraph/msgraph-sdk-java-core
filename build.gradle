@@ -20,6 +20,14 @@ java {
     modularity.inferModulePath = true
 }
 
+sourceSets {
+    main {
+        java {
+            exclude 'pom.xml'
+        }
+    }
+}
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -28,17 +36,7 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
-    //Mockito Mock framework
-    testImplementation 'org.mockito:mockito-core:3.4.4'
-
-    api 'com.squareup.okhttp3:okhttp:3.12.1'
-    
-    implementation 'com.azure:azure-identity:1.0.8'
-    implementation 'com.google.code.gson:gson:2.8.6'
-}
+apply from: "gradle/dependencies.gradle"
 
 def pomConfig = {
     licenses {
@@ -49,21 +47,6 @@ def pomConfig = {
         }
     }
 }
-
-task sourceJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allJava
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-signing {
-    sign configurations.archives
-}
-tasks.withType(Sign)*.enabled = mavenCentralPublishingEnabled.toBoolean()
 
 //Publishing tasks-
 //Maven Central Snapshot: publishSnapshotPublicationToMavenRepository

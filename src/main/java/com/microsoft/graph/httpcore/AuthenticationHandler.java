@@ -3,6 +3,9 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 
 import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
@@ -16,12 +19,13 @@ public class AuthenticationHandler implements Interceptor {
 
 	private ICoreAuthenticationProvider authProvider;
 	
-	public AuthenticationHandler(ICoreAuthenticationProvider authProvider) {
+	public AuthenticationHandler(@Nonnull final ICoreAuthenticationProvider authProvider) {
 		this.authProvider = authProvider;
 	}
 
 	@Override
-	public Response intercept(Chain chain) throws IOException {
+	@Nullable
+	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request originalRequest = chain.request();
 		
 		if(originalRequest.tag(TelemetryOptions.class) == null)

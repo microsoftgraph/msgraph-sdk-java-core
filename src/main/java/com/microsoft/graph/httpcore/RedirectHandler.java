@@ -9,6 +9,9 @@ import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
 import java.io.IOException;
 import java.net.ProtocolException;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
@@ -34,7 +37,7 @@ public class RedirectHandler implements Interceptor{
 	/*
 	 * @param redirectOptions pass instance of redirect options to be used
 	 */
-	public RedirectHandler(RedirectOptions redirectOptions) {
+	public RedirectHandler(@Nullable final RedirectOptions redirectOptions) {
 		this.mRedirectOptions = redirectOptions;
 		if(redirectOptions == null) {
 			this.mRedirectOptions = new RedirectOptions();
@@ -105,7 +108,8 @@ public class RedirectHandler implements Interceptor{
 
     // Intercept request and response made to network
 	@Override
-	public Response intercept(Chain chain) throws IOException {
+	@Nullable
+	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request request = chain.request();
 		
 		if(request.tag(TelemetryOptions.class) == null)

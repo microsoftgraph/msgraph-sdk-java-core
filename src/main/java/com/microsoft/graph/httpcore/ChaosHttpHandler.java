@@ -3,6 +3,9 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
@@ -38,7 +41,8 @@ public class ChaosHttpHandler implements Interceptor {
 	public static final int MSClientErrorCodeTooManyRequests = 429;
 	
 	@Override
-	public Response intercept(Chain chain) throws IOException {
+	@Nullable
+	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request request = chain.request();
 		
 		if(request.tag(TelemetryOptions.class) == null)

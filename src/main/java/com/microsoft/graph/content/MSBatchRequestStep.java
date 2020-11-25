@@ -2,6 +2,9 @@ package com.microsoft.graph.content;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import okhttp3.Request;
 
 public class MSBatchRequestStep {
@@ -9,7 +12,7 @@ public class MSBatchRequestStep {
 	private Request request;
 	private List<String> arrayOfDependsOnIds;
 	
-	public MSBatchRequestStep(String requestId, Request request, List<String> arrayOfDependsOnIds) {
+	public MSBatchRequestStep(@Nonnull final String requestId, @Nonnull final Request request, @Nullable final List<String> arrayOfDependsOnIds) {
 		if(requestId == null)
 			throw new IllegalArgumentException("Request Id cannot be null.");
 		if(requestId.length() == 0)
@@ -22,14 +25,17 @@ public class MSBatchRequestStep {
 		this.arrayOfDependsOnIds = arrayOfDependsOnIds;
 	}
 	
+	@Nonnull
 	public String getRequestId() {
 		return requestId;
 	}
 	
+	@Nonnull
 	public Request getRequest() {
 		return request;
 	}
 	
+	@Nullable
 	public List<String> getArrayOfDependsOnIds(){
 		return arrayOfDependsOnIds;
 	}

@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +31,7 @@ public class MSBatchResponseContent {
 	/*
 	 * @param batchResponse OkHttp batch response on execution of batch requests
 	 */
-	public MSBatchResponseContent(final Response batchResponse) {
+	public MSBatchResponseContent(@Nullable final Response batchResponse) {
 		this.batchResponse = batchResponse;
 		update(batchResponse);
 	}
@@ -40,7 +43,8 @@ public class MSBatchResponseContent {
 	 * 
 	 * @return OkHttp Response corresponding to requestId
 	 */
-	public Response getResponseById(final String requestId) {
+	@Nullable
+	public Response getResponseById(@Nonnull final String requestId) {
 		if (batchResponseArray == null)
 			return null;
 
@@ -106,6 +110,7 @@ public class MSBatchResponseContent {
 	 * 
 	 * @return responses in Map of id and response
 	 */
+	@Nonnull
 	public Map<String, Response> getResponses() {
 		if (batchResponseArray == null)
 			return null;
@@ -121,12 +126,13 @@ public class MSBatchResponseContent {
 	 * 
 	 * @return iterator for responses
 	 */
+	@Nullable
 	public Iterator<Map.Entry<String, Response>> getResponsesIterator() {
 		final Map<String, Response> responsesMap = getResponses();
 		return responsesMap != null ? responsesMap.entrySet().iterator() : null;
 	}
 
-	public void update(final Response batchResponse) {
+	public void update(@Nonnull final Response batchResponse) {
 		if (batchResponse == null)
 			throw new IllegalArgumentException("Batch Response cannot be null");
 
@@ -166,6 +172,7 @@ public class MSBatchResponseContent {
 	/*
 	 * @return nextLink of batch response
 	 */
+	@Nullable
 	public String nextLink() {
 		return nextLink;
 	}
