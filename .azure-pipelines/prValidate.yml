@@ -43,13 +43,6 @@ steps:
   inputs:
     debugMode: false
 
-- task: PowerShell@2
-  condition: and(failed(), eq(variables['Build.SourceBranchName'], 'dev'))
-  inputs:
-    filePath: '$(System.DefaultWorkingDirectory)\Scripts\validateMavenVersion.ps1'
-    pwsh: true
-    arguments: '-packageName "$(PACKAGE_NAME)" -propertiesPath "$(PROPERTIES_PATH)"'
-
 - task: Gradle@2
   inputs:
     gradleWrapperFile: 'gradlew'
