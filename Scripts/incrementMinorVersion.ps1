@@ -3,14 +3,12 @@
 
 <#
 .Synopsis
-    Increment the minor version string in the csproj if the major,
+    Increment the minor version string in the gradle.properties if the major,
     minor, or patch version hasn't been manually updated.
 .Description
     Assumptions:
-        Targets Microsoft.Graph.csproj
+        Targets Gradle.properties
         This script assumes it is run from the repo root.
-        VersionPrefix is set in the first property group in the csproj.
-        Major or patch update versions are manually set by dev.
         Minor version is typically auto-incremented.
 
 #>
