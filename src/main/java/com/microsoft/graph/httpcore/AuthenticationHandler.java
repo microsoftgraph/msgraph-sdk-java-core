@@ -3,6 +3,8 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 
 import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
+import com.microsoft.graph.exceptions.AuthenticationException;
+
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
@@ -32,8 +34,12 @@ public class AuthenticationHandler implements Interceptor {
 			originalRequest = originalRequest.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
 		originalRequest.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
 		
-		Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
-		return chain.proceed(authenticatedRequest);
+		try {
+			final Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
+			return chain.proceed(authenticatedRequest);
+		} catch (AuthenticationException ex) {
+			throw new IOException(ex);
+		}
 	}
 
 }

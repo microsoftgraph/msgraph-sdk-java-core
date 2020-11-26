@@ -15,5 +15,7 @@ public final class ErrorConstants {
     public static class Messages {
         @Nonnull
         public final static String NullParameter = "%s parameter cannot be null.";
+        @Nonnull
+        public final static String AuthTimeOut = "Authentication failed or timed out.";
     }
 }

@@ -2,6 +2,7 @@ package com.microsoft.graph.authentication;
 
 import javax.annotation.Nonnull;
 
+import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.IHttpRequest;
 
 public interface IAuthenticationProvider {
@@ -11,6 +12,6 @@ public interface IAuthenticationProvider {
      *
      * @param request the request to authenticate
      */
-    void authenticateRequest(@Nonnull final IHttpRequest request);
+    void authenticateRequest(@Nonnull final IHttpRequest request) throws AuthenticationException;
 
 }
