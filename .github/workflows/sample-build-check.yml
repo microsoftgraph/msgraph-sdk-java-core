@@ -18,7 +18,7 @@ jobs:
       run: chmod +x gradlew
       working-directory: ./samples/deviceCodeSample
     - name: Build and run type summary project
-      run: ./gradlew --no-daemon build'
+      run: ./gradlew --no-daemon build
       working-directory: ./samples/deviceCodeSample
   samples-build-check-interactive:
     runs-on: ubuntu-latest
@@ -31,5 +31,5 @@ jobs:
       run: chmod +x gradlew
       working-directory: ./samples/interactiveBrowserSample
     - name: Build and run type summary project
-      run: ./gradlew --no-daemon build'
+      run: ./gradlew --no-daemon build
       working-directory: ./samples/interactiveBrowserSample
