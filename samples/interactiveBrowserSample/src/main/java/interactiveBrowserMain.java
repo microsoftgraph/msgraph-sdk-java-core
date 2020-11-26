@@ -3,14 +3,10 @@ import java.util.Arrays;
 import java.util.List;
 import com.azure.identity.InteractiveBrowserCredential;
 import com.azure.identity.InteractiveBrowserCredentialBuilder;
-import com.google.gson.annotations.JsonAdapter;
 import com.microsoft.graph.authentication.*;
 import okhttp3.*;
 import com.microsoft.graph.httpcore.HttpClients;
 import com.microsoft.graph.exceptions.*;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class interactiveBrowserMain {
 
@@ -28,27 +24,20 @@ public class interactiveBrowserMain {
 
     private static void interactiveBrowser() throws AuthenticationException{
 
-        InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
+        final InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
                 .clientId(CLIENT_ID)
                 .port(8765)
                 .build();
 
-        TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(interactiveBrowserCredential,SCOPES);
-        OkHttpClient httpClient = HttpClients.createDefault(tokenCredentialAuthProvider);
+        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(SCOPES, interactiveBrowserCredential);
+        final OkHttpClient httpClient = HttpClients.createDefault(tokenCredentialAuthProvider);
 
-        Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
+        final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                JSONParser jsonParser = new JSONParser();
-                JSONObject responseJson = null;
-                try {
-                    responseJson = (JSONObject) jsonParser.parse(response.body().string());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(responseJson);
+                System.out.println(response.body().string());
             }
 
             @Override
