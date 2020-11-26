@@ -9,7 +9,12 @@ import com.microsoft.graph.httpcore.IHttpRequest;
 import okhttp3.Request;
 import com.microsoft.graph.exceptions.ErrorConstants.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -59,7 +64,9 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      */
     @Override
     public void authenticateRequest(@Nonnull final IHttpRequest request) {
-        request.addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken());
+        if(ShouldAuthenticateRequest(request.getRequestUrl().toString())) {
+            request.addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken());
+        }
     }
 
     /**
@@ -71,9 +78,25 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     @Override
     @Nonnull
     public Request authenticateRequest(@Nonnull final Request request) {
-        return request.newBuilder()
+        if(ShouldAuthenticateRequest(request.url().toString())) {
+            return request.newBuilder()
                     .addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken())
                     .build();
+        } else {
+            return request;
+        }
+    }
+
+    private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
+    private boolean ShouldAuthenticateRequest(@Nonnull final String requestUrl) {
+        try {
+            final URL url = new URL(requestUrl);
+            final String hostName = url.getHost().toLowerCase(Locale.getDefault());
+            return validGraphHostNames.contains(hostName);
+        } catch (MalformedURLException ex) {
+            return false;
+        }
+        
     }
 
     /**
@@ -81,7 +104,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      *
      * @return String representing the retrieved AccessToken
      */
-    String getAccessToken() {
+    private String getAccessToken() {
         String accessToken = null;
         try {
             AccessToken token = this.tokenCredential.getToken(this.context).block();

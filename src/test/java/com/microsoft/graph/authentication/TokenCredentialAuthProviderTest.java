@@ -2,15 +2,11 @@ package com.microsoft.graph.authentication;
 
 import com.azure.core.credential.TokenCredential;
 import com.microsoft.graph.exceptions.AuthenticationException;
-import com.microsoft.graph.httpcore.IHttpRequest;
 import com.microsoft.graph.mocks.MockIHttpRequest;
 import com.microsoft.graph.mocks.MockTokenCredential;
-import com.microsoft.graph.options.HeaderOption;
 import okhttp3.Request;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -22,13 +18,13 @@ public class TokenCredentialAuthProviderTest {
     public void TokenCredentialAuthProviderTestICoreAuthentication() throws AuthenticationException {
 
         //Arrange
-        Request request = new Request.Builder().url("https://localhost").build();
-        TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
-        TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+        final Request request = new Request.Builder().url("https://graph.microsoft.com").build();
+        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
         //Act
         Assert.assertNull(request.header(AuthConstants.AUTHORIZATION_HEADER));
-        Request authenticatedRequest = authProvider.authenticateRequest(request);
+        final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
         //Assert
         Assert.assertEquals(request.url(), authenticatedRequest.url());
@@ -40,9 +36,9 @@ public class TokenCredentialAuthProviderTest {
     public void TokenCredentialAuthProviderTestIAuthentication() throws AuthenticationException {
 
         //Arrange
-        TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
-        MockIHttpRequest request = new MockIHttpRequest("https://localhost");
-        TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+        final MockIHttpRequest request = new MockIHttpRequest("https://graph.microsoft.com");
+        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
         //Act
         Assert.assertTrue(request.getHeaders().isEmpty());
@@ -51,5 +47,37 @@ public class TokenCredentialAuthProviderTest {
         //Assert
         Assert.assertTrue(request.getHeaders().get(0).getName().equals(AuthConstants.AUTHORIZATION_HEADER));
         Assert.assertTrue(request.getHeaders().get(0).getValue().equals(AuthConstants.BEARER + this.testToken));
+    }
+    @Test
+    public void TokenCredentialAuthProviderDoesNotAddTokenOnInvalidDomainsTestICoreAuthentication() throws AuthenticationException {
+
+        //Arrange
+        final Request request = new Request.Builder().url("https://localhost").build();
+        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+
+        //Act
+        Assert.assertNull(request.header(AuthConstants.AUTHORIZATION_HEADER));
+        final Request authenticatedRequest = authProvider.authenticateRequest(request);
+
+        //Assert
+        Assert.assertEquals(request.url(), authenticatedRequest.url());
+        Assert.assertNull(authenticatedRequest.header(AuthConstants.AUTHORIZATION_HEADER));
+    }
+
+    @Test
+    public void TokenCredentialAuthProviderDoesNotAddTokenOnInvalidDomainsTestIAuthentication() throws AuthenticationException {
+
+        //Arrange
+        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+        final MockIHttpRequest request = new MockIHttpRequest("https://localhost");
+        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+
+        //Act
+        Assert.assertTrue(request.getHeaders().isEmpty());
+        authProvider.authenticateRequest(request);
+
+        //Assert
+        Assert.assertTrue(request.getHeaders().isEmpty());
     }
 }
