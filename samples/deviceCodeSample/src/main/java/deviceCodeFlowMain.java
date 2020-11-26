@@ -4,9 +4,6 @@ import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.HttpClients;
 import okhttp3.*;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,27 +26,20 @@ public class deviceCodeFlowMain {
 
     public static void deviceCodeFlow() throws AuthenticationException {
 
-        DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
+        final DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
                 .clientId(CLIENT_ID)
                 .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})
                 .build();
 
-        TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(deviceCodeCred, SCOPES);
-        OkHttpClient httpClient = HttpClients.createDefault(tokenCredAuthProvider);
+        final TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(SCOPES, deviceCodeCred);
+        final OkHttpClient httpClient = HttpClients.createDefault(tokenCredAuthProvider);
 
-        Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
+        final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                JSONParser jsonParser = new JSONParser();
-                JSONObject responseJson = null;
-                try {
-                    responseJson = (JSONObject) jsonParser.parse(response.body().string());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(responseJson);
+                System.out.println(response.body().string());
             }
 
             @Override
