@@ -20,7 +20,7 @@ public class interactiveBrowserMain {
     private final static String CLIENT_ID = "199e4de3-dd3b-4a51-b78a-86b801246e20";
 
     //Set the scopes for your ms-graph request
-    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All"); 
+    private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All"); 
 
     public static void main(String args[]) throws Exception {
         interactiveBrowser();

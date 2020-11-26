@@ -12,5 +12,5 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation project(':coreLibrary')
-    implementation 'com.azure:azure-identity:1.0.8'
+    implementation 'com.azure:azure-identity:1.2.0'
 }
