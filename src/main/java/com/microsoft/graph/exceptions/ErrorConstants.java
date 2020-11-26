@@ -1,14 +1,19 @@
 package com.microsoft.graph.exceptions;
 
+import javax.annotation.Nonnull;
+
 public final class ErrorConstants {
 
     public static class Codes {
-        public static String GeneralException = "generalException";
-        public static String InvalidArgument = "invalidArgument";
+        @Nonnull
+        public final static String GeneralException = "generalException";
+        @Nonnull
+        public final static String InvalidArgument = "invalidArgument";
 
     }
 
     public static class Messages {
-        public static String NullParameter = "%s parameter cannot be null.";
+        @Nonnull
+        public final static String NullParameter = "%s parameter cannot be null.";
     }
 }

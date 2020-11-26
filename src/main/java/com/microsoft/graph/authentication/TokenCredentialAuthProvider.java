@@ -11,6 +11,8 @@ import com.microsoft.graph.exceptions.ErrorConstants.*;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider , IAuthenticationProvider {
 
     //TokenCredential expected from user
@@ -27,7 +29,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public  TokenCredentialAuthProvider(TokenCredential tokenCredential) throws AuthenticationException {
+    public  TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
         if(tokenCredential == null) {
             throw new AuthenticationException(new Error(Codes.InvalidArgument,
                     String.format(Messages.NullParameter, "TokenCredential"))
@@ -45,7 +47,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @param scopes Specified desired scopes of the Auth Provider
      * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public TokenCredentialAuthProvider(TokenCredential tokenCredential, List<String> scopes) throws AuthenticationException {
+    public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
         this(tokenCredential);
         this.context.setScopes(scopes);
     }
@@ -56,7 +58,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @param request the request to authenticate
      */
     @Override
-    public void authenticateRequest(IHttpRequest request) {
+    public void authenticateRequest(@Nonnull final IHttpRequest request) {
         request.addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken());
     }
 
@@ -67,7 +69,8 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @return Request with Authorization header added to it
      */
     @Override
-    public Request authenticateRequest(Request request) {
+    @Nonnull
+    public Request authenticateRequest(@Nonnull final Request request) {
         return request.newBuilder()
                     .addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken())
                     .build();

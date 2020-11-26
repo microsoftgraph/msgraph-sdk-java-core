@@ -1,5 +1,7 @@
 package com.microsoft.graph.options;
 
+import javax.annotation.Nonnull;
+
 /**
  * An option that is settable for a request
  */
@@ -21,7 +23,7 @@ public class Option {
      * @param name  the name of the option
      * @param value the value of the option
      */
-    protected Option(final String name, final Object value) {
+    protected Option(@Nonnull final String name, @Nonnull final Object value) {
         this.name = name;
         this.value = value;
     }
@@ -31,6 +33,7 @@ public class Option {
      *
      * @return the name of the option
      */
+    @Nonnull
     public String getName() {
         return name;
     }
@@ -40,6 +43,7 @@ public class Option {
      *
      * @return the value of the option
      */
+    @Nonnull
     public Object getValue() {
         return value;
     }

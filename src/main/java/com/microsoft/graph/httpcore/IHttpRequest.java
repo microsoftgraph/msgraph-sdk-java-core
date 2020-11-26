@@ -8,6 +8,9 @@ import com.microsoft.graph.options.Option;
 import java.net.URL;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * An HTTP request
  */
@@ -18,6 +21,7 @@ public interface IHttpRequest {
      *
      * @return the request URL
      */
+    @Nullable
     URL getRequestUrl();
 
     /**
@@ -25,6 +29,7 @@ public interface IHttpRequest {
      *
      * @return the HTTP method
      */
+    @Nullable
     HttpMethod getHttpMethod();
 
     /**
@@ -32,6 +37,7 @@ public interface IHttpRequest {
      *
      * @return the headers
      */
+    @Nullable
     List<HeaderOption> getHeaders();
 
     /**
@@ -39,6 +45,7 @@ public interface IHttpRequest {
      *
      * @return the options
      */
+    @Nullable
     List<Option> getOptions();
 
     /**
@@ -47,7 +54,7 @@ public interface IHttpRequest {
      * @param header the name of the header
      * @param value  the value of the header
      */
-    void addHeader(String header, String value);
+    void addHeader(@Nonnull final String header, @Nonnull final String value);
 
     /**
      * Sets useCaches parameter to cache the response
@@ -82,13 +89,14 @@ public interface IHttpRequest {
      *
      * @param shouldRedirect Callback called before doing a redirect
      */
-    void setShouldRedirect(IShouldRedirect shouldRedirect);
+    void setShouldRedirect(@Nonnull final IShouldRedirect shouldRedirect);
 
     /**
      * Gets the should redirect callback
      *
      * @return Callback which is called before redirect
      */
+    @Nullable
     IShouldRedirect getShouldRedirect();
 
     /**
@@ -96,13 +104,14 @@ public interface IHttpRequest {
      *
      * @param shouldretry The callback called before retry
      */
-    void setShouldRetry(IShouldRetry shouldretry);
+    void setShouldRetry(@Nonnull final IShouldRetry shouldretry);
 
     /**
      * Gets the should retry callback
      *
      * @return Callback called before retry
      */
+    @Nullable
     IShouldRetry getShouldRetry();
 
     /**

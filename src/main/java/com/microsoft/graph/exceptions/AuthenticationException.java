@@ -1,8 +1,15 @@
 package com.microsoft.graph.exceptions;
 
+import javax.annotation.Nonnull;
+
 public class AuthenticationException extends Exception{
 
-    //Error object to store details of thrown Exception
+    /**
+     * serial id
+     */
+    private static final long serialVersionUID = 8708883112518988965L;
+    // Error object to store details of thrown Exception
+    @Nonnull
     public Error error;
 
     /**
@@ -10,7 +17,7 @@ public class AuthenticationException extends Exception{
      *
      * @param error The specifying error causing exception to be thrown
      */
-    public AuthenticationException(Error error) {
+    public AuthenticationException(@Nonnull final Error error) {
         super(error.getMessage());
         this.error = error;
     }
@@ -21,7 +28,7 @@ public class AuthenticationException extends Exception{
      * @param error The specified error causing exception to be thrown
      * @param rootCause The underlying exception causing AuthenticationException to be thrown
      */
-    public AuthenticationException(Error error, Throwable rootCause) {
+    public AuthenticationException(@Nonnull final Error error, @Nonnull final Throwable rootCause) {
         super(error.getMessage(), rootCause);
         this.error = error;
     }
