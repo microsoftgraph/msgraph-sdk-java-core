@@ -118,8 +118,7 @@ public class MSBatchRequestContent {
 		contentmap.add("id", new JsonPrimitive(batchRequestStep.getRequestId()));
 
 		final String url = batchRequestStep.getRequest().url().toString()
-				.replaceAll("https://graph.microsoft.com/v1.0/", "").replaceAll("http://graph.microsoft.com/v1.0/", "")
-				.replaceAll("https://graph.microsoft.com/beta/", "").replaceAll("http://graph.microsoft.com/beta/", "");
+				.replaceAll("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?", ""); // (?i) case insensitive
 		contentmap.add("url", new JsonPrimitive(url));
 
 		contentmap.add("method", new JsonPrimitive(batchRequestStep.getRequest().method().toString()));
