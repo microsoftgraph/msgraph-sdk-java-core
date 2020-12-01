@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -113,12 +115,19 @@ public class MSBatchRequestContent {
 		return content;
 	}
 
+	private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
+	private Matcher protocolAndHostReplacementMatcher; // not static to avoid multithreading issues as the object is mutable
 	private JsonObject getBatchRequestObjectFromRequestStep(final MSBatchRequestStep batchRequestStep) {
 		final JsonObject contentmap = new JsonObject();
 		contentmap.add("id", new JsonPrimitive(batchRequestStep.getRequestId()));
 
-		final String url = batchRequestStep.getRequest().url().toString()
-				.replaceAll("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?", ""); // (?i) case insensitive
+		if(protocolAndHostReplacementMatcher == null) {
+			protocolAndHostReplacementMatcher = protocolAndHostReplacementPattern.matcher(batchRequestStep.getRequest().url().toString());
+		} else {
+			protocolAndHostReplacementMatcher = protocolAndHostReplacementMatcher.reset(batchRequestStep.getRequest().url().toString());
+		}
+
+		final String url =  protocolAndHostReplacementMatcher.replaceAll(""); 
 		contentmap.add("url", new JsonPrimitive(url));
 
 		contentmap.add("method", new JsonPrimitive(batchRequestStep.getRequest().method().toString()));
