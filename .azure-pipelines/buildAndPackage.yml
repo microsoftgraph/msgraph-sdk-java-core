@@ -84,7 +84,7 @@ steps:
       gradlew.bat
       settings.gradle
       gradle.properties
-      **/gradle/wrapper/*
+      **/gradle/*
       Scripts/getLatestVersion.ps1
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
