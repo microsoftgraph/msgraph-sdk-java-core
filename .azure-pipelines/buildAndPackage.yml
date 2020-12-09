@@ -86,7 +86,7 @@ steps:
       settings.gradle
       gradle.properties
       **/gradle/**
-      Scripts/getLatestVersion.ps1
+      Scripts/**
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - task: PublishBuildArtifacts@1
