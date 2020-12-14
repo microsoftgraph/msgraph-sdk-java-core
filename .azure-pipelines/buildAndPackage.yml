@@ -9,6 +9,7 @@ trigger:
       - dev
       - main
       - master
+      - feature/v2
   paths:
     include:
       - src/*
@@ -84,8 +85,8 @@ steps:
       gradlew.bat
       settings.gradle
       gradle.properties
-      **/gradle/wrapper/*
-      Scripts/getLatestVersion.ps1
+      **/gradle/**
+      Scripts/**
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - task: PublishBuildArtifacts@1

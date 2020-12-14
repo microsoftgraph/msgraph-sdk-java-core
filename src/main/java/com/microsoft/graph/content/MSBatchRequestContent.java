@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -30,7 +32,7 @@ public class MSBatchRequestContent {
 
 	/*
 	 * Creates Batch request content using list provided
-	 * 
+	 *
 	 * @param batchRequestStepsArray List of batch steps for batching
 	 */
 	public MSBatchRequestContent(@Nonnull final List<MSBatchRequestStep> batchRequestStepsArray) {
@@ -51,7 +53,7 @@ public class MSBatchRequestContent {
 
 	/*
 	 * @param batchRequestStep Batch request step adding to batch content
-	 * 
+	 *
 	 * @return true or false based on addition or no addition of batch request step
 	 * given
 	 */
@@ -83,7 +85,7 @@ public class MSBatchRequestContent {
 
 	/*
 	 * @param requestId Id of Batch request step to be removed
-	 * 
+	 *
 	 * @return true or false based on removal or no removal of batch request step
 	 * with given id
 	 */
@@ -118,13 +120,14 @@ public class MSBatchRequestContent {
 		return content;
 	}
 
+	private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
 	private JsonObject getBatchRequestObjectFromRequestStep(final MSBatchRequestStep batchRequestStep) {
 		final JsonObject contentmap = new JsonObject();
 		contentmap.add("id", new JsonPrimitive(batchRequestStep.getRequestId()));
 
-		final String url = batchRequestStep.getRequest().url().toString()
-				.replaceAll("https://graph.microsoft.com/v1.0/", "").replaceAll("http://graph.microsoft.com/v1.0/", "")
-				.replaceAll("https://graph.microsoft.com/beta/", "").replaceAll("http://graph.microsoft.com/beta/", "");
+        final Matcher protocolAndHostReplacementMatcher = protocolAndHostReplacementPattern.matcher(batchRequestStep.getRequest().url().toString());
+
+		final String url =  protocolAndHostReplacementMatcher.replaceAll("");
 		contentmap.add("url", new JsonPrimitive(url));
 
 		contentmap.add("method", new JsonPrimitive(batchRequestStep.getRequest().method().toString()));
@@ -183,5 +186,5 @@ public class MSBatchRequestContent {
 		else
 			return requestBodyElement.getAsJsonObject();
 	}
-	
+
 }
