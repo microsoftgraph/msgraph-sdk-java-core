@@ -22,27 +22,27 @@ public class AuthenticationHandler implements Interceptor {
      */
     public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.AUTHENTICATION;
 
-	private ICoreAuthenticationProvider authProvider;
+    private ICoreAuthenticationProvider authProvider;
 
     /**
      * Initialize a the handler with a authentication provider
      * @param authProvider the authentication provider to use
      */
     public AuthenticationHandler(@Nonnull final ICoreAuthenticationProvider authProvider) {
-		this.authProvider = authProvider;
-	}
+        this.authProvider = authProvider;
+    }
 
-	@Override
-	@Nullable
-	public Response intercept(@Nonnull final Chain chain) throws IOException {
-		Request originalRequest = chain.request();
+    @Override
+    @Nullable
+    public Response intercept(@Nonnull final Chain chain) throws IOException {
+        Request originalRequest = chain.request();
 
-		if(originalRequest.tag(TelemetryOptions.class) == null)
-			originalRequest = originalRequest.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-		originalRequest.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
+        if(originalRequest.tag(TelemetryOptions.class) == null)
+            originalRequest = originalRequest.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+        originalRequest.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
 
-		Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
-		return chain.proceed(authenticatedRequest);
-	}
+        Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
+        return chain.proceed(authenticatedRequest);
+    }
 
 }

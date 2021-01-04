@@ -43,9 +43,9 @@ public class TelemetryHandler implements Interceptor{
      */
     public static final String CLIENT_REQUEST_ID = "client-request-id";
 
-	@Override
-	@Nullable
-	public Response intercept(@Nonnull final Chain chain) throws IOException {
+    @Override
+    @Nullable
+    public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 

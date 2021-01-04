@@ -22,7 +22,7 @@ public class RetryHandler implements Interceptor{
     /**
      * Type of the current middleware
      */
-	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
+    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
 
     private RetryOptions mRetryOption;
 
@@ -75,7 +75,7 @@ public class RetryHandler implements Interceptor{
     public RetryHandler(@Nullable final RetryOptions retryOption) {
         this.mRetryOption = retryOption;
         if(this.mRetryOption == null) {
-        	this.mRetryOption = new RetryOptions();
+            this.mRetryOption = new RetryOptions();
         }
     }
     /**
@@ -85,111 +85,111 @@ public class RetryHandler implements Interceptor{
         this(null);
     }
 
-	boolean retryRequest(Response response, int executionCount, Request request, RetryOptions retryOptions) {
+    boolean retryRequest(Response response, int executionCount, Request request, RetryOptions retryOptions) {
 
-		// Should retry option
-		// Use should retry common for all requests
-		IShouldRetry shouldRetryCallback = null;
-		if(retryOptions != null) {
-			shouldRetryCallback = retryOptions.shouldRetry();
-		}
+        // Should retry option
+        // Use should retry common for all requests
+        IShouldRetry shouldRetryCallback = null;
+        if(retryOptions != null) {
+            shouldRetryCallback = retryOptions.shouldRetry();
+        }
 
-		boolean shouldRetry = false;
-		// Status codes 429 503 504
-		int statusCode = response.code();
-		// Only requests with payloads that are buffered/rewindable are supported.
-		// Payloads with forward only streams will be have the responses returned
-		// without any retry attempt.
-		shouldRetry =
-				(executionCount <= retryOptions.maxRetries())
-				&& checkStatus(statusCode) && isBuffered(response, request)
-				&& shouldRetryCallback != null
-				&& shouldRetryCallback.shouldRetry(retryOptions.delay(), executionCount, request, response);
+        boolean shouldRetry = false;
+        // Status codes 429 503 504
+        int statusCode = response.code();
+        // Only requests with payloads that are buffered/rewindable are supported.
+        // Payloads with forward only streams will be have the responses returned
+        // without any retry attempt.
+        shouldRetry =
+                (executionCount <= retryOptions.maxRetries())
+                && checkStatus(statusCode) && isBuffered(response, request)
+                && shouldRetryCallback != null
+                && shouldRetryCallback.shouldRetry(retryOptions.delay(), executionCount, request, response);
 
-		if(shouldRetry) {
-			long retryInterval = getRetryAfter(response, retryOptions.delay(), executionCount);
-			try {
-				Thread.sleep(retryInterval);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return shouldRetry;
-	}
+        if(shouldRetry) {
+            long retryInterval = getRetryAfter(response, retryOptions.delay(), executionCount);
+            try {
+                Thread.sleep(retryInterval);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return shouldRetry;
+    }
 
-	/**
-	 * Get retry after in milliseconds
-	 * @param response Response
-	 * @param delay Delay in seconds
-	 * @param executionCount Execution count of retries
-	 * @return Retry interval in milliseconds
-	 */
-	long getRetryAfter(Response response, long delay, int executionCount) {
-		String retryAfterHeader = response.header(RETRY_AFTER);
-		double retryDelay = RetryOptions.DEFAULT_DELAY * DELAY_MILLISECONDS;
-		if(retryAfterHeader != null) {
-			retryDelay = Long.parseLong(retryAfterHeader) * DELAY_MILLISECONDS;
-		} else {
-			retryDelay = (double)((Math.pow(2.0, (double)executionCount)-1)*0.5);
-			retryDelay = (executionCount < 2 ? delay : retryDelay + delay) + (double)Math.random();
-			retryDelay *= DELAY_MILLISECONDS;
-		}
-		return (long)Math.min(retryDelay, RetryOptions.MAX_DELAY * DELAY_MILLISECONDS);
-	}
+    /**
+     * Get retry after in milliseconds
+     * @param response Response
+     * @param delay Delay in seconds
+     * @param executionCount Execution count of retries
+     * @return Retry interval in milliseconds
+     */
+    long getRetryAfter(Response response, long delay, int executionCount) {
+        String retryAfterHeader = response.header(RETRY_AFTER);
+        double retryDelay = RetryOptions.DEFAULT_DELAY * DELAY_MILLISECONDS;
+        if(retryAfterHeader != null) {
+            retryDelay = Long.parseLong(retryAfterHeader) * DELAY_MILLISECONDS;
+        } else {
+            retryDelay = (double)((Math.pow(2.0, (double)executionCount)-1)*0.5);
+            retryDelay = (executionCount < 2 ? delay : retryDelay + delay) + (double)Math.random();
+            retryDelay *= DELAY_MILLISECONDS;
+        }
+        return (long)Math.min(retryDelay, RetryOptions.MAX_DELAY * DELAY_MILLISECONDS);
+    }
 
-	boolean checkStatus(int statusCode) {
-	    return (statusCode == MSClientErrorCodeTooManyRequests || statusCode == MSClientErrorCodeServiceUnavailable
-	    		|| statusCode == MSClientErrorCodeGatewayTimeout);
-	}
+    boolean checkStatus(int statusCode) {
+        return (statusCode == MSClientErrorCodeTooManyRequests || statusCode == MSClientErrorCodeServiceUnavailable
+                || statusCode == MSClientErrorCodeGatewayTimeout);
+    }
 
-	boolean isBuffered(Response response, Request request) {
-		String methodName = request.method();
-		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE") || methodName.equalsIgnoreCase("HEAD") || methodName.equalsIgnoreCase("OPTIONS"))
-			return true;
+    boolean isBuffered(Response response, Request request) {
+        String methodName = request.method();
+        if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE") || methodName.equalsIgnoreCase("HEAD") || methodName.equalsIgnoreCase("OPTIONS"))
+            return true;
 
-		boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
-				methodName.equalsIgnoreCase("PUT") ||
-				methodName.equalsIgnoreCase("PATCH");
+        boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
+                methodName.equalsIgnoreCase("PUT") ||
+                methodName.equalsIgnoreCase("PATCH");
 
-		if(isHTTPMethodPutPatchOrPost) {
-			boolean isStream = response.header(CONTENT_TYPE)!=null && response.header(CONTENT_TYPE).equalsIgnoreCase(APPLICATION_OCTET_STREAM);
-			if(!isStream) {
-				String transferEncoding = response.header(TRANSFER_ENCODING);
-				boolean isTransferEncodingChunked = (transferEncoding != null) &&
-						transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
+        if(isHTTPMethodPutPatchOrPost) {
+            boolean isStream = response.header(CONTENT_TYPE)!=null && response.header(CONTENT_TYPE).equalsIgnoreCase(APPLICATION_OCTET_STREAM);
+            if(!isStream) {
+                String transferEncoding = response.header(TRANSFER_ENCODING);
+                boolean isTransferEncodingChunked = (transferEncoding != null) &&
+                        transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
 
-				if(request.body() != null && isTransferEncodingChunked)
-					return true;
-			}
-		}
-		return false;
-	}
+                if(request.body() != null && isTransferEncodingChunked)
+                    return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	@Nullable
-	public Response intercept(@Nonnull final Chain chain) throws IOException {
-		Request request = chain.request();
+    @Override
+    @Nullable
+    public Response intercept(@Nonnull final Chain chain) throws IOException {
+        Request request = chain.request();
 
-		if(request.tag(TelemetryOptions.class) == null)
-			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
+        if(request.tag(TelemetryOptions.class) == null)
+            request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+        request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
 
-		Response response = chain.proceed(request);
+        Response response = chain.proceed(request);
 
-		// Use should retry pass along with this request
-		RetryOptions retryOption = request.tag(RetryOptions.class);
-		retryOption = retryOption != null ? retryOption : mRetryOption;
+        // Use should retry pass along with this request
+        RetryOptions retryOption = request.tag(RetryOptions.class);
+        retryOption = retryOption != null ? retryOption : mRetryOption;
 
-		int executionCount = 1;
-		while(retryRequest(response, executionCount, request, retryOption)) {
-			request = request.newBuilder().addHeader(RETRY_ATTEMPT_HEADER, String.valueOf(executionCount)).build();
-			executionCount++;
-			if(response != null && response.body() != null) {
-				response.body().close();
-			}
-			response = chain.proceed(request);
-		}
-		return response;
-	}
+        int executionCount = 1;
+        while(retryRequest(response, executionCount, request, retryOption)) {
+            request = request.newBuilder().addHeader(RETRY_ATTEMPT_HEADER, String.valueOf(executionCount)).build();
+            executionCount++;
+            if(response != null && response.body() != null) {
+                response.body().close();
+            }
+            response = chain.proceed(request);
+        }
+        return response;
+    }
 
 }

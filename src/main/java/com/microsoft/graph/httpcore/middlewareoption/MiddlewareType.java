@@ -5,23 +5,23 @@ package com.microsoft.graph.httpcore.middlewareoption;
  */
 public enum MiddlewareType {
 
-	/**
+    /**
      * Authentication Middleware
      */
-	AUTHENTICATION,
+    AUTHENTICATION,
 
-	/**
+    /**
      * Redirect Middleware
      */
-	REDIRECT,
+    REDIRECT,
 
-	/**
+    /**
      * Retry Middleware
      */
-	RETRY,
+    RETRY,
 
-	/**
+    /**
      * Not supported
      */
-	NOT_SUPPORTED
+    NOT_SUPPORTED
 }

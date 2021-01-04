@@ -29,61 +29,61 @@ public class RedirectHandler implements Interceptor{
     /**
      * The current middleware type
      */
-	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.REDIRECT;
+    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.REDIRECT;
 
-	private RedirectOptions mRedirectOptions;
+    private RedirectOptions mRedirectOptions;
 
-	/**
-	 * Initialize using default redirect options, default IShouldRedirect and max redirect value
-	 */
-	public RedirectHandler() {
-		this(null);
-	}
+    /**
+     * Initialize using default redirect options, default IShouldRedirect and max redirect value
+     */
+    public RedirectHandler() {
+        this(null);
+    }
 
-	/**
+    /**
      * Initialize using custom redirect options.
-	 * @param redirectOptions pass instance of redirect options to be used
-	 */
-	public RedirectHandler(@Nullable final RedirectOptions redirectOptions) {
-		this.mRedirectOptions = redirectOptions;
-		if(redirectOptions == null) {
-			this.mRedirectOptions = new RedirectOptions();
-		}
-	}
+     * @param redirectOptions pass instance of redirect options to be used
+     */
+    public RedirectHandler(@Nullable final RedirectOptions redirectOptions) {
+        this.mRedirectOptions = redirectOptions;
+        if(redirectOptions == null) {
+            this.mRedirectOptions = new RedirectOptions();
+        }
+    }
 
     boolean isRedirected(Request request, Response response, int redirectCount, RedirectOptions redirectOptions) throws IOException {
         // Check max count of redirects reached
-    	if(redirectCount > redirectOptions.maxRedirects()) return false;
+        if(redirectCount > redirectOptions.maxRedirects()) return false;
 
-    	// Location header empty then don't redirect
+        // Location header empty then don't redirect
         final String locationHeader = response.header("location");
         if(locationHeader == null)
-        	return false;
+            return false;
 
         // If any of 301,302,303,307,308 then redirect
         final int statusCode = response.code();
         if(statusCode == HTTP_PERM_REDIRECT || //308
-        		statusCode == HTTP_MOVED_PERM || //301
-        		statusCode == HTTP_TEMP_REDIRECT || //307
-        		statusCode == HTTP_SEE_OTHER || //303
-        		statusCode == HTTP_MOVED_TEMP) //302
-        	return true;
+                statusCode == HTTP_MOVED_PERM || //301
+                statusCode == HTTP_TEMP_REDIRECT || //307
+                statusCode == HTTP_SEE_OTHER || //303
+                statusCode == HTTP_MOVED_TEMP) //302
+            return true;
 
         return false;
     }
 
     Request getRedirect(
-    		final Request request,
-    		final Response userResponse) throws ProtocolException {
+            final Request request,
+            final Response userResponse) throws ProtocolException {
         String location = userResponse.header("Location");
         if (location == null || location.length() == 0) return null;
 
         // For relative URL in location header, the new url to redirect is relative to original request
         if(location.startsWith("/")) {
-        	if(request.url().toString().endsWith("/")) {
-        		location = location.substring(1);
-        	}
-        	location = request.url() + location;
+            if(request.url().toString().endsWith("/")) {
+                location = location.substring(1);
+            }
+            location = request.url() + location;
         }
 
         HttpUrl requestUrl = userResponse.request().url();
@@ -107,41 +107,41 @@ public class RedirectHandler implements Interceptor{
 
         // Response status code 303 See Other then POST changes to GET
         if(userResponse.code() == HTTP_SEE_OTHER) {
-        	requestBuilder.method("GET", null);
+            requestBuilder.method("GET", null);
         }
 
         return requestBuilder.url(locationUrl).build();
     }
 
     // Intercept request and response made to network
-	@Override
-	@Nullable
-	public Response intercept(@Nonnull final Chain chain) throws IOException {
-		Request request = chain.request();
+    @Override
+    @Nullable
+    public Response intercept(@Nonnull final Chain chain) throws IOException {
+        Request request = chain.request();
 
-		if(request.tag(TelemetryOptions.class) == null)
-			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
+        if(request.tag(TelemetryOptions.class) == null)
+            request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
+        request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
 
-		Response response = null;
-		int requestsCount = 1;
+        Response response = null;
+        int requestsCount = 1;
 
-		// Use should retry pass along with this request
-		RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
-		redirectOptions = redirectOptions != null ? redirectOptions : this.mRedirectOptions;
+        // Use should retry pass along with this request
+        RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
+        redirectOptions = redirectOptions != null ? redirectOptions : this.mRedirectOptions;
 
-		while(true) {
-			response = chain.proceed(request);
-			boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
-					&& redirectOptions.shouldRedirect().shouldRedirect(response);
-			if(!shouldRedirect) break;
+        while(true) {
+            response = chain.proceed(request);
+            boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
+                    && redirectOptions.shouldRedirect().shouldRedirect(response);
+            if(!shouldRedirect) break;
 
-			Request followup = getRedirect(request, response);
-			if(followup == null) break;
-			request = followup;
+            Request followup = getRedirect(request, response);
+            if(followup == null) break;
+            request = followup;
 
-			requestsCount++;
-		}
-		return response;
-	}
+            requestsCount++;
+        }
+        return response;
+    }
 }

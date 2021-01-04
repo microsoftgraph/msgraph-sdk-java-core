@@ -32,53 +32,53 @@ public class TelemetryOptions {
     /**
      * Logging handler enabled
      */
-	public static final int LOGGING_HANDLER_ENABLED_FLAG = 16;
+    public static final int LOGGING_HANDLER_ENABLED_FLAG = 16;
 
-	private int featureUsage = NONE_FLAG;
-	private String clientRequestId;
+    private int featureUsage = NONE_FLAG;
+    private String clientRequestId;
 
     /**
      * Sets a numeric representation of the SDK feature usage
      * @param flag a numeric representation of the SDK feature usage
      */
-	public void setFeatureUsage(int flag) {
-		featureUsage = featureUsage | flag;
-	}
+    public void setFeatureUsage(int flag) {
+        featureUsage = featureUsage | flag;
+    }
 
     /**
      * Gets a numeric representation of the SDK feature usage
      * @return a numeric representation of the SDK feature usage
      */
-	public int getFeatureUsage() {
-		return featureUsage;
-	}
+    public int getFeatureUsage() {
+        return featureUsage;
+    }
 
     /**
      * Gets a serialized representation of the SDK feature usage.
      * @return a serialized representation of the SDK feature usage
      */
-	@Nonnull
-	public String getSerializedFeatureUsage() {
-		return Integer.toHexString(featureUsage);
-	}
+    @Nonnull
+    public String getSerializedFeatureUsage() {
+        return Integer.toHexString(featureUsage);
+    }
 
     /**
      * Sets the client request id
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
-	public void setClientRequestId(@Nonnull final String clientRequestId) {
-		this.clientRequestId = clientRequestId;
-	}
+    public void setClientRequestId(@Nonnull final String clientRequestId) {
+        this.clientRequestId = clientRequestId;
+    }
     /**
      * Gets the client request id
      * @return the client request id
      */
-	@Nonnull
-	public String getClientRequestId() {
-		if(clientRequestId == null) {
-			clientRequestId = UUID.randomUUID().toString();
-		}
-		return clientRequestId;
-	}
+    @Nonnull
+    public String getClientRequestId() {
+        if(clientRequestId == null) {
+            clientRequestId = UUID.randomUUID().toString();
+        }
+        return clientRequestId;
+    }
 
 }

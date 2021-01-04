@@ -13,5 +13,5 @@ public interface IShouldRedirect {
      * @param response current response
      * @return whether the handler should follow the redirect information
      */
-	boolean shouldRedirect(@Nonnull final Response response);
+    boolean shouldRedirect(@Nonnull final Response response);
 }

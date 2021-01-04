@@ -43,9 +43,9 @@ public class HttpClients {
     public static OkHttpClient createDefault(@Nonnull final ICoreAuthenticationProvider auth) {
         return custom()
                 .addInterceptor(new AuthenticationHandler(auth))
-    			.addInterceptor(new RetryHandler())
-    			.addInterceptor(new RedirectHandler())
-    			.build();
+                .addInterceptor(new RetryHandler())
+                .addInterceptor(new RedirectHandler())
+                .build();
     }
 
     /**
@@ -56,12 +56,12 @@ public class HttpClients {
      */
     @Nonnull
     public static OkHttpClient createFromInterceptors(@Nullable final Interceptor[] interceptors) {
-    	OkHttpClient.Builder builder = custom();
-    	if(interceptors != null)
-    		for(Interceptor interceptor : interceptors) {
-    			if(interceptor != null)
-    				builder.addInterceptor(interceptor);
-    		}
-    	return builder.build();
+        OkHttpClient.Builder builder = custom();
+        if(interceptors != null)
+            for(Interceptor interceptor : interceptors) {
+                if(interceptor != null)
+                    builder.addInterceptor(interceptor);
+            }
+        return builder.build();
     }
 }
