@@ -21,8 +21,11 @@ import okhttp3.ResponseBody;
  * interceptor that randomly fails the responses for unit testing purposes
  */
 public class ChaosHttpHandler implements Interceptor {
+    /**
+     * The current middleware type
+     */
 	public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
-	/*
+	/**
 	 * constant string being used
 	 */
 	private final String RETRY_AFTER = "Retry-After";
@@ -38,17 +41,20 @@ public class ChaosHttpHandler implements Interceptor {
 	 * body to respond on failed requests
 	 */
 	private final String responseBody = "{\"error\": {\"code\": \"TooManyRequests\",\"innerError\": {\"code\": \"429\",\"date\": \"2020-08-18T12:51:51\",\"message\": \"Please retry after\",\"request-id\": \"94fb3b52-452a-4535-a601-69e0a90e3aa2\",\"status\": \"429\"},\"message\": \"Please retry again later.\"}}";
-	public static final int MSClientErrorCodeTooManyRequests = 429;
-	
+    /**
+     * Too many requests status code
+     */
+    public static final int MSClientErrorCodeTooManyRequests = 429;
+
 	@Override
 	@Nullable
 	public Response intercept(@Nonnull final Chain chain) throws IOException {
 		Request request = chain.request();
-		
+
 		if(request.tag(TelemetryOptions.class) == null)
 			request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
 		request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
-		
+
 		final Integer dice = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
 
 		if(dice % failureRate == 0) {

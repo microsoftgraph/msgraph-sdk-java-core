@@ -12,13 +12,35 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Middleware responsible for adding telemetry information on SDK usage
+ * Note: the telemetry only collects anonymous information on SDK version and usage. No personal information is collected.
+ */
 public class TelemetryHandler implements Interceptor{
 
+    /**
+     * Http request header to send the telemetry infromation with
+     */
     public static final String SDK_VERSION = "SdkVersion";
+    /**
+     * Current SDK version
+     */
     public static final String VERSION = "v1.0.6";
+    /**
+     * Verion prefix
+     */
     public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
+    /**
+     * Java version prefix
+     */
     public static final String JAVA_VERSION_PREFIX = "java";
+    /**
+     * Android version prefix
+     */
     public static final String ANDROID_VERSION_PREFIX = "android";
+    /**
+     * The client request ID header
+     */
     public static final String CLIENT_REQUEST_ID = "client-request-id";
 
 	@Override

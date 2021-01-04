@@ -10,6 +10,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.OkHttpClient.Builder;
 
+/**
+ * Builder to get a custom HttpClient to be used for requests against Microsoft Graph
+ */
 public class HttpClients {
     private HttpClients() {
         super();
@@ -18,7 +21,7 @@ public class HttpClients {
     /**
      * Creates builder object for construction of custom
      * {@link OkHttpClient} instances.
-     * 
+     *
      * @return OkHttpClient.Builder() custom builder for developer to add its own interceptors to it
      */
     @Nonnull
@@ -32,9 +35,9 @@ public class HttpClients {
     /**
      * Creates {@link OkHttpClient} instance with default
      * configuration and provided authProvider
-     * 
+     *
      * @param auth Use IAuthenticationProvider instance provided while constructing http client
-     * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers 
+     * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers
      */
     @Nonnull
     public static OkHttpClient createDefault(@Nonnull final ICoreAuthenticationProvider auth) {
@@ -44,12 +47,12 @@ public class HttpClients {
     			.addInterceptor(new RedirectHandler())
     			.build();
     }
-    
+
     /**
      * Creates {@link OkHttpClient} instance with interceptors
-     * 
+     *
      * @param interceptors Use interceptors provided while constructing http client
-     * @return OkHttpClient build with interceptors provided 
+     * @return OkHttpClient build with interceptors provided
      */
     @Nonnull
     public static OkHttpClient createFromInterceptors(@Nullable final Interceptor[] interceptors) {

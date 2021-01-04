@@ -1,16 +1,27 @@
 package com.microsoft.graph.httpcore.middlewareoption;
 
+/**
+ * The type of middleware to applied to the request/response
+ */
 public enum MiddlewareType {
-	
-	//Authentication Middleware
+
+	/**
+     * Authentication Middleware
+     */
 	AUTHENTICATION,
-	
-	//Redirect Middleware
+
+	/**
+     * Redirect Middleware
+     */
 	REDIRECT,
-	
-	//Retry Middleware
+
+	/**
+     * Retry Middleware
+     */
 	RETRY,
-	
-	//Not supported
+
+	/**
+     * Not supported
+     */
 	NOT_SUPPORTED
 }

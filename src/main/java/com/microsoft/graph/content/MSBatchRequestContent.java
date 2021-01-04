@@ -24,13 +24,18 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okio.Buffer;
 
+/**
+ * Represents the content of a batch request
+ */
 public class MSBatchRequestContent {
 	private final LinkedHashMap<String, MSBatchRequestStep> batchRequestStepsHashMap;
 
-	// Maximum number of requests that can be sent in a batch
+	/**
+     * Maximum number of requests that can be sent in a batch
+     */
 	public static final int MAX_NUMBER_OF_REQUESTS = 20;
 
-	/*
+	/**
 	 * Creates Batch request content using list provided
 	 *
 	 * @param batchRequestStepsArray List of batch steps for batching
@@ -44,16 +49,16 @@ public class MSBatchRequestContent {
 			addBatchRequestStep(requestStep);
 	}
 
-	/*
+	/**
 	 * Creates empty batch request content
 	 */
 	public MSBatchRequestContent() {
 		this.batchRequestStepsHashMap = new LinkedHashMap<>();
 	}
 
-	/*
+	/**
+     * Adds a step to the current batch
 	 * @param batchRequestStep Batch request step adding to batch content
-	 *
 	 * @return true or false based on addition or no addition of batch request step
 	 * given
 	 */
@@ -83,7 +88,7 @@ public class MSBatchRequestContent {
 			throw new IllegalArgumentException("unable to add step to batch. Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 	}
 
-	/*
+	/**
 	 * @param requestId Id of Batch request step to be removed
 	 *
 	 * @return true or false based on removal or no removal of batch request step
@@ -104,7 +109,7 @@ public class MSBatchRequestContent {
 		return removed;
 	}
 
-	/*
+	/**
 	 * @return Batch request content's json as String
 	 */
 	@Nonnull

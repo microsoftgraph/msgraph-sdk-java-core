@@ -21,6 +21,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 
+/**
+ * Represents the response of a batch request
+ */
 public class MSBatchResponseContent {
 
 	private final Response batchResponse;
@@ -28,7 +31,7 @@ public class MSBatchResponseContent {
 	private JsonArray batchResponseArray;
 	private String nextLink;
 
-	/*
+	/**
 	 * @param batchResponse OkHttp batch response on execution of batch requests
 	 */
 	public MSBatchResponseContent(@Nullable final Response batchResponse) {
@@ -36,11 +39,11 @@ public class MSBatchResponseContent {
 		update(batchResponse);
 	}
 
-	/*
+	/**
 	 * Returns OkHttp Response of given request Id
-	 * 
+	 *
 	 * @param requestId Request Id of batch step
-	 * 
+	 *
 	 * @return OkHttp Response corresponding to requestId
 	 */
 	@Nullable
@@ -107,7 +110,7 @@ public class MSBatchResponseContent {
 
 	/**
 	 * Get map of id and responses
-	 * 
+	 *
 	 * @return responses in Map of id and response
 	 */
 	@Nonnull
@@ -123,7 +126,7 @@ public class MSBatchResponseContent {
 
 	/**
 	 * Get iterator over the responses
-	 * 
+	 *
 	 * @return iterator for responses
 	 */
 	@Nullable
@@ -132,6 +135,10 @@ public class MSBatchResponseContent {
 		return responsesMap != null ? responsesMap.entrySet().iterator() : null;
 	}
 
+    /**
+     * Updates the response content using the raw http response object
+     * @param batchResponse the response from the service.
+     */
 	public void update(@Nonnull final Response batchResponse) {
 		if (batchResponse == null)
 			throw new IllegalArgumentException("Batch Response cannot be null");
@@ -169,7 +176,7 @@ public class MSBatchResponseContent {
 		}
 	}
 
-	/*
+	/**
 	 * @return nextLink of batch response
 	 */
 	@Nullable
