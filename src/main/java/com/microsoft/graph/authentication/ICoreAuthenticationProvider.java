@@ -6,10 +6,13 @@ import javax.annotation.Nonnull;
 
 import com.microsoft.graph.exceptions.AuthenticationException;
 
+/**
+ * Authenticates requests to be sent to the API
+ */
 public interface ICoreAuthenticationProvider {
     /**
      * Authenticates the request
-     * 
+     *
      * @param request the request to authenticate
      * @return Request with Authorization header added to it
      */
