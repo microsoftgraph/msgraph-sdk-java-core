@@ -14,10 +14,28 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'com.jfrog.bintray' version '1.8.5'
+    id 'jacoco'
 }
 
 java {
     modularity.inferModulePath = true
+}
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.7-SNAPSHOT" //https://github.com/gradle/gradle/issues/15038
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
 
 sourceSets {
@@ -34,6 +52,7 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for jacoco, until 0.8.7 gets released
 }
 
 apply from: "gradle/dependencies.gradle"
