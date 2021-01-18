@@ -49,9 +49,6 @@ public class Option {
         if(name == null || name == "") {
             throw new IllegalArgumentException("name should not be null or empty");
         }
-        if(value == null) {
-            throw new IllegalArgumentException("value should not be null");
-        }
         this.name = name;
         this.value = value;
     }

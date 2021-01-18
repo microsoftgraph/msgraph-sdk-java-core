@@ -38,12 +38,6 @@ public class OptionTests {
         } catch(Exception ex) {
             assertTrue("exception is IllegalArgument", ex.getClass() == IllegalArgumentException.class);
         }
-        try {
-            new Option("onion", null);
-            fail("should fail on null value");
-        } catch(Exception ex) {
-            assertTrue("exception is IllegalArgument", ex.getClass() == IllegalArgumentException.class);
-        }
     }
 
 }
