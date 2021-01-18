@@ -23,7 +23,6 @@
 package com.microsoft.graph.concurrency;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -39,8 +38,6 @@ import com.microsoft.graph.http.HttpResponseHeadersHelper;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.http.IStatefulResponseHandler;
 import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.concurrency.IUploadSession;
-import com.microsoft.graph.concurrency.ChunkedUploadResult;
 import com.microsoft.graph.serializer.ISerializer;
 
 import okhttp3.Response;

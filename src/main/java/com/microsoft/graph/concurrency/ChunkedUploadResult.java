@@ -6,7 +6,6 @@ package com.microsoft.graph.concurrency;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
-import com.microsoft.graph.concurrency.IUploadSession;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;

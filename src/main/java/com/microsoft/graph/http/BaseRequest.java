@@ -26,8 +26,6 @@ import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.HttpUrl.Builder;
 
-import com.microsoft.graph.content.MSBatchRequestContent;
-import com.microsoft.graph.content.MSBatchRequestStep;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRedirect;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
@@ -43,11 +41,9 @@ import com.microsoft.graph.options.Option;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
