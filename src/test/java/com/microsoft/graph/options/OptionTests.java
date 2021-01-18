@@ -1,6 +1,8 @@
 package com.microsoft.graph.options;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -23,6 +25,25 @@ public class OptionTests {
         Option option = new Option("o1","ov1");
         assertEquals("o1",option.getName());
         assertEquals("ov1",option.getValue());
+
+        try {
+            new Option(null, "onion");
+            fail("should fail on null name");
+        } catch(Exception ex) {
+            assertTrue("exception is IllegalArgument", ex.getClass() == IllegalArgumentException.class);
+        }
+        try {
+            new Option("", "onion");
+            fail("should fail on empty name");
+        } catch(Exception ex) {
+            assertTrue("exception is IllegalArgument", ex.getClass() == IllegalArgumentException.class);
+        }
+        try {
+            new Option("onion", null);
+            fail("should fail on null value");
+        } catch(Exception ex) {
+            assertTrue("exception is IllegalArgument", ex.getClass() == IllegalArgumentException.class);
+        }
     }
 
 }
