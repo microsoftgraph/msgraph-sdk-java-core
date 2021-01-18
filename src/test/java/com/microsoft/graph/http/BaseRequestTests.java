@@ -28,17 +28,17 @@ import okhttp3.ResponseBody;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.IBaseGraphServiceClient;
+import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.FunctionOption;
 import com.microsoft.graph.options.Option;
 import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.core.BaseGraphServiceClient;
+import com.microsoft.graph.core.BaseClient;
 
 /**
  * Test cases for {@see BaseRequest}
  */
 public class BaseRequestTests {
-    private IBaseGraphServiceClient mBaseClient;
+    private IBaseClient mBaseClient;
     private BaseRequest<JsonObject> mRequest;
     private JsonObject callbackJsonObject;
 
@@ -56,7 +56,7 @@ public class BaseRequestTests {
         final OkHttpClient mockClient = BaseStreamRequestTests.getMockClient(response);
         final JsonObject result = new JsonObject();
         result.add("id", new JsonPrimitive("zzz"));
-        mBaseClient = BaseGraphServiceClient.builder()
+        mBaseClient = BaseClient.builder()
                 .httpClient(mockClient)
                 .buildClient();
         mRequest = new BaseRequest<JsonObject>("https://a.b.c/", mBaseClient, null,JsonObject.class){};

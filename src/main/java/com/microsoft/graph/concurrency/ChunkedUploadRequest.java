@@ -14,7 +14,7 @@ import com.microsoft.graph.concurrency.ChunkedUploadResponseHandler;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.BaseRequest;
 import com.microsoft.graph.http.HttpMethod;
-import com.microsoft.graph.core.IBaseGraphServiceClient;
+import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.Option;
 
 /**
@@ -56,7 +56,7 @@ public class ChunkedUploadRequest<UploadType> {
      */
     @SuppressWarnings("unchecked")
     public ChunkedUploadRequest(@Nonnull final String requestUrl,
-                                @Nonnull final IBaseGraphServiceClient client,
+                                @Nonnull final IBaseClient client,
                                 @Nullable final List<? extends Option> options,
                                 @Nonnull final byte[] chunk,
                                 final int chunkSize,

@@ -27,7 +27,7 @@ import com.microsoft.graph.concurrency.ChunkedUploadRequest;
 import com.microsoft.graph.concurrency.ChunkedUploadResult;
 import com.microsoft.graph.concurrency.IUploadSession;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.IBaseGraphServiceClient;
+import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.Option;
 
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class ChunkedUploadProvider<UploadType> {
     /**
      * The client
      */
-    private final IBaseGraphServiceClient client;
+    private final IBaseClient client;
 
     /**
      * The input stream
@@ -103,7 +103,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @param uploadTypeClass the upload type class
      */
     public ChunkedUploadProvider(@Nonnull final IUploadSession uploadSession,
-                                 @Nonnull final IBaseGraphServiceClient client,
+                                 @Nonnull final IBaseClient client,
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
                                  @Nonnull final Class<UploadType> uploadTypeClass) {

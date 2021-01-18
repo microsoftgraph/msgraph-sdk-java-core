@@ -33,7 +33,7 @@ public class GraphServiceClientTest {
     @Test
     public void testClientMethodsReturnStuff() {
         ILogger logger = createLogger();
-        IBaseGraphServiceClient client = BaseGraphServiceClient.builder()
+        IBaseClient client = BaseClient.builder()
                 .logger(logger)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -45,7 +45,7 @@ public class GraphServiceClientTest {
     @Test
     public void testOverrideOfDefaultLogger() {
         ILogger logger = createLogger();
-        IBaseGraphServiceClient client = BaseGraphServiceClient.builder()
+        IBaseClient client = BaseClient.builder()
                 .logger(logger)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -59,7 +59,7 @@ public class GraphServiceClientTest {
 
     @Test
     public void testOverrideOfDefaultAuthenticationProvider() {
-        IBaseGraphServiceClient client = BaseGraphServiceClient.builder()
+        IBaseClient client = BaseClient.builder()
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
         assertNotNull(client.getHttpProvider());
@@ -87,7 +87,7 @@ public class GraphServiceClientTest {
                 return null;
             }
         };
-        IBaseGraphServiceClient client = BaseGraphServiceClient.builder()
+        IBaseClient client = BaseClient.builder()
                 .serializer(serializer)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -136,7 +136,7 @@ public class GraphServiceClientTest {
 				return null;
             }
         };
-        IBaseGraphServiceClient client = BaseGraphServiceClient
+        IBaseClient client = BaseClient
                 .builder()
                 .httpProvider(hp)
                 .buildClient();
@@ -147,12 +147,12 @@ public class GraphServiceClientTest {
 
     @Test(expected = NullPointerException.class)
     public void testHttpProviderCannotBeNull() {
-        BaseGraphServiceClient.builder().httpProvider(null);
+        BaseClient.builder().httpProvider(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testLoggerCannotBeNull() {
-        BaseGraphServiceClient.builder().logger(null);
+        BaseClient.builder().logger(null);
     }
 
     private static ILogger createLogger() {
