@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,56 +20,41 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
+package com.microsoft.graph.http;
 
+
+import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
+import com.microsoft.graph.core.IBaseClient;
+
 /**
- * An option that is settable for a request
+ * Builder for a request
  */
-public class Option {
+public interface IRequestBuilder {
 
     /**
-     * The name of the option
+     * Gets the client for this request builder
+     * 
+     * @return the client for this request builder
      */
-    private final String name;
+    @Nullable
+    IBaseClient getClient();
 
     /**
-     * The value of the option
+     * Gets the request URL
+     * 
+     * @return the request URL
      */
-    private final Object value;
+    @Nullable
+    String getRequestUrl();
 
     /**
-     * Creates an option object
-     *
-     * @param name  the name of the option
-     * @param value the value of the option
-     */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
-    }
-
-    /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
+     * Gets the request URL with an additional segment
+     * 
+     * @param urlSegment the segment to add to the URL
+     * @return           the new request URL
      */
     @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
-     */
-    @Nonnull
-    public Object getValue() {
-        return value;
-    }
+    String getRequestUrlWithAdditionalSegment(@Nonnull final String urlSegment);
 }

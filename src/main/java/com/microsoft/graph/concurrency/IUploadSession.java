@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------------
-// Copyright (c) 2017 Microsoft Corporation
+// Copyright (c) 2021 Microsoft Corporation
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,56 +20,29 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
+package com.microsoft.graph.concurrency;
 
-import javax.annotation.Nonnull;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
- * An option that is settable for a request
+ * The interface for the Upload Session.
  */
-public class Option {
+public interface IUploadSession {
 
     /**
-     * The name of the option
+     * Gets the Upload Url.
+     * The URL endpoint that accepts PUT requests for byte ranges of the file.
+     * @return the upload Url
      */
-    private final String name;
-
+    @Nullable
+    String getUploadUrl();
     /**
-     * The value of the option
+     * Gets the Next Expected Ranges.
+     * A collection of byte ranges that the server is missing for the file. These ranges are zero indexed and of the format 'start-end' (e.g. '0-26' to indicate the first 27 bytes of the file). When uploading files as Outlook attachments, instead of a collection of ranges, this property always indicates a single value '{start}', the location in the file where the next upload should begin.
+     * @return the Next Expected Ranges.
      */
-    private final Object value;
-
-    /**
-     * Creates an option object
-     *
-     * @param name  the name of the option
-     * @param value the value of the option
-     */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
-    }
-
-    /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
-     */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
-     */
-    @Nonnull
-    public Object getValue() {
-        return value;
-    }
+    @Nullable
+    List<String> getNextExpectedRanges();
 }

@@ -20,56 +20,50 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
-
-import javax.annotation.Nonnull;
+package com.microsoft.graph.http;
 
 /**
- * An option that is settable for a request
+ * The HTTP code for the HTTP request
  */
-public class Option {
+public final class  HttpResponseCode {
 
     /**
-     * The name of the option
+     * HTTP response code OK
      */
-    private final String name;
+    public static final int HTTP_OK = 200;
 
     /**
-     * The value of the option
+     * HTTP response code for created
      */
-    private final Object value;
+    public static final int HTTP_CREATED = 201;
 
     /**
-     * Creates an option object
-     *
-     * @param name  the name of the option
-     * @param value the value of the option
+     * HTTP response code for accepted
      */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
-    }
+    public static final int HTTP_ACCEPTED = 202;
 
     /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
+     * HTTP response code for no body
      */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
+    public static final int HTTP_NOBODY = 204;
 
     /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
+     * HTTP response code for multiple choices
      */
-    @Nonnull
-    public Object getValue() {
-        return value;
-    }
+    public static final int HTTP_MULTIPLE_CHOICES = 300;
+
+    /**
+     * HTTP response code for see other
+     */
+    public static final int HTTP_SEE_OTHER = 303;
+
+    /**
+     * HTTP response code for not modified
+     */
+    public static final int HTTP_NOT_MODIFIED = 304;
+
+    /**
+     * HTTP response code for error response
+     */
+    public static final int HTTP_CLIENT_ERROR = 400;
 }

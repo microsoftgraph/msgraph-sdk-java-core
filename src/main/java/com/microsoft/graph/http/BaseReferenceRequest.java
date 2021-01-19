@@ -20,56 +20,51 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
+package com.microsoft.graph.http;
 
+import com.microsoft.graph.core.IBaseClient;
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.options.Option;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 /**
- * An option that is settable for a request
+ * An HTTP request.
+ *
+ * @param <T> the response class
  */
-public class Option {
+public abstract class BaseReferenceRequest<T> extends BaseRequest<T> {
 
     /**
-     * The name of the option
-     */
-    private final String name;
-
-    /**
-     * The value of the option
-     */
-    private final Object value;
-
-    /**
-     * Creates an option object
+     * The request for reference
      *
-     * @param name  the name of the option
-     * @param value the value of the option
+     * @param requestUrl     the request URL
+     * @param client         the service client
+     * @param requestOptions the options for this request
+     * @param entityType     the class for the entity
      */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
+    public BaseReferenceRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> entityType) {
+        super(requestUrl, client, requestOptions, entityType);
     }
 
     /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
+     * Deletes the entity and invokes the callback
+     * @return a future with the result
      */
     @Nonnull
-    public String getName() {
-        return name;
+    public java.util.concurrent.CompletableFuture<T> deleteAsync() {
+        return sendAsync(HttpMethod.DELETE, null);
     }
 
     /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
+     * Deletes the entity
+     * @return the result from the API response, if any
      */
-    @Nonnull
-    public Object getValue() {
-        return value;
+    @Nullable
+    public T delete() throws ClientException {
+       return send(HttpMethod.DELETE, null);
     }
 }

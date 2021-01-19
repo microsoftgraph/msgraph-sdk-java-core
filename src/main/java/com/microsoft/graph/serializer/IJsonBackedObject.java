@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,56 +20,48 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
+package com.microsoft.graph.serializer;
 
+import com.google.gson.JsonObject;
+
+import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 /**
- * An option that is settable for a request
+ * An object that was parsed from JSON
  */
-public class Option {
+public interface IJsonBackedObject {
 
     /**
-     * The name of the option
-     */
-    private final String name;
-
-    /**
-     * The value of the option
-     */
-    private final Object value;
-
-    /**
-     * Creates an option object
+     * Sets the raw JSON object this object was parsed from
      *
-     * @param name  the name of the option
-     * @param value the value of the option
+     * @param serializer the serializer for sub class deserialization
+     * @param json       the JSON that this object was derived from
      */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
-    }
+    void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json);
 
     /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
+     * Provides access to objects not anticipated in the model, as well as 
+     * request and response data from the HTTP call
+     * 
+     * @return the AddtionalDataManager
      */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
+    @Nullable
+    AdditionalDataManager additionalDataManager();
+
 
     /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
+     * Gets the raw JSON object for this object as parsed from
+     * @return the JSON that this object was derived from
      */
-    @Nonnull
-    public Object getValue() {
-        return value;
-    }
+    @Nullable
+    JsonObject getRawObject();
+
+    /**
+     * Gets serializer
+     *
+     * @return the serializer
+     */
+    @Nullable
+    ISerializer getSerializer();
 }

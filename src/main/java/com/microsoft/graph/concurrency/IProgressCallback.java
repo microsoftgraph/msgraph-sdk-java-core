@@ -20,56 +20,18 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.options;
-
-import javax.annotation.Nonnull;
+package com.microsoft.graph.concurrency;
 
 /**
- * An option that is settable for a request
+ * A callback that describes how to deal with success, failure, and progress
  */
-public class Option {
+public interface IProgressCallback {
 
     /**
-     * The name of the option
-     */
-    private final String name;
-
-    /**
-     * The value of the option
-     */
-    private final Object value;
-
-    /**
-     * Creates an option object
+     * How progress updates are handled for this callback
      *
-     * @param name  the name of the option
-     * @param value the value of the option
+     * @param current the current amount of progress
+     * @param max     the max amount of progress
      */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
-        }
-        this.name = name;
-        this.value = value;
-    }
-
-    /**
-     * Gets the name of the option
-     *
-     * @return the name of the option
-     */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the value of the option
-     *
-     * @return the value of the option
-     */
-    @Nonnull
-    public Object getValue() {
-        return value;
-    }
+    void progress(final long current, final long max);
 }

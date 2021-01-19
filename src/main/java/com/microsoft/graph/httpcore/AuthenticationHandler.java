@@ -46,7 +46,7 @@ public class AuthenticationHandler implements Interceptor {
 
         try {
             final Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
-            return chain.proceed(authenticatedRequest);
+            return authenticatedRequest == null ? chain.proceed(originalRequest) : chain.proceed(authenticatedRequest);
         } catch (AuthenticationException ex) {
             throw new IOException(ex);
         }
