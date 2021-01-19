@@ -87,7 +87,7 @@ public class BaseStreamRequestTests {
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
         final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
-        final java.util.concurrent.CompletableFuture<InputStream> result = request.futureSend();
+        final java.util.concurrent.CompletableFuture<InputStream> result = request.sendAsync();
         assertNotNull(result.get());
         assertTrue(result.isDone());
         assertFalse(result.isCancelled());
@@ -111,7 +111,7 @@ public class BaseStreamRequestTests {
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
         final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
-        final java.util.concurrent.CompletableFuture<InputStream> result = request.futureSend(new byte[]{1, 2, 3, 4});
+        final java.util.concurrent.CompletableFuture<InputStream> result = request.sendAsync(new byte[]{1, 2, 3, 4});
         assertNotNull(result.get());
         assertTrue(result.isDone());
         assertFalse(result.isCancelled());
