@@ -111,14 +111,14 @@ public class BaseClient implements IBaseClient {
 	/**
 	 * Builder to help configure the Graph service client
 	 */
-	public static final class Builder<httpClientType> {
+	public static class Builder<httpClientType> {
 		private ISerializer serializer;
 		private IHttpProvider httpProvider;
 		private ILogger logger;
 		private httpClientType httpClient;
 		private ICoreAuthenticationProvider auth;
 
-		private ICoreAuthenticationProvider getAuth() {
+		private ICoreAuthenticationProvider getAuthenticationProvider() {
 			if(auth == null) {
 				throw new NullPointerException("auth"); // TODO initialize to default once moved to core
 			} else {
@@ -142,7 +142,7 @@ public class BaseClient implements IBaseClient {
 		@SuppressWarnings("unchecked")
 		private httpClientType getHttpClient() {
 			if(httpClient == null) {
-				return (httpClientType)HttpClients.createDefault(getAuth());
+				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
 			} else {
 				return httpClient;
 			}
@@ -227,18 +227,31 @@ public class BaseClient implements IBaseClient {
 		/**
 		 * Builds and returns the Graph service client.
 		 *
+		 * @param instance the instance to set the information for
+		 * @param <ClientType> the type of the client to return
+		 * @return the Graph service client object
+		 * @throws ClientException
+		 *			 if there was an exception creating the client
+		 */
+		@Nonnull
+		protected <ClientType extends BaseClient> ClientType buildClient(ClientType instance) throws ClientException {
+			instance.setHttpProvider(this.getHttpProvider());
+			instance.setLogger(this.getLogger());
+			instance.setSerializer(this.getSerializer());
+			instance.validate();
+			return instance;
+		}
+
+		/**
+		 * Builds and returns the Graph service client.
+		 *
 		 * @return the Graph service client object
 		 * @throws ClientException
 		 *			 if there was an exception creating the client
 		 */
 		@Nonnull
 		public IBaseClient buildClient() throws ClientException {
-			BaseClient client = new BaseClient();
-			client.setHttpProvider(this.getHttpProvider());
-			client.setLogger(this.getLogger());
-			client.setSerializer(this.getSerializer());
-			client.validate();
-			return client;
+			return buildClient(new BaseClient());
 		}
 	}
 
