@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider , IAuthenticationProvider {
+public class TokenCredentialAuthProvider implements IAuthenticationProvider<Request> {
 
     //TokenCredential expected from user
     private TokenCredential tokenCredential;
@@ -29,7 +29,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
     // maximum delay to wait for token obtention
     private Duration tokenBlockTimeout;
 
-    
+
     //TODO: Upon further review from Peter, this should include a Null check in the case that this is the first request
     //There should be just one constructor as scopes should probably not be optional
     /**
@@ -38,7 +38,7 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public  TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
+    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
         if(tokenCredential == null) {
             throw new AuthenticationException(new Error(Codes.InvalidArgument,
                     String.format(Messages.NullParameter, "TokenCredential"))
@@ -115,7 +115,6 @@ public class TokenCredentialAuthProvider implements ICoreAuthenticationProvider 
         } catch (MalformedURLException ex) {
             return false;
         }
-        
     }
 
     /**

@@ -2,7 +2,7 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 
-import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.exceptions.AuthenticationException;
 
 import javax.annotation.Nullable;
@@ -25,13 +25,13 @@ public class AuthenticationHandler implements Interceptor {
      */
     public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.AUTHENTICATION;
 
-    private ICoreAuthenticationProvider authProvider;
+    private IAuthenticationProvider<Request> authProvider;
 
     /**
      * Initialize a the handler with a authentication provider
      * @param authProvider the authentication provider to use
      */
-    public AuthenticationHandler(@Nonnull final ICoreAuthenticationProvider authProvider) {
+    public AuthenticationHandler(@Nonnull final IAuthenticationProvider<Request> authProvider) {
         this.authProvider = authProvider;
     }
 

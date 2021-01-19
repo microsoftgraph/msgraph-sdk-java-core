@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.httpcore.HttpClients;
-import com.microsoft.graph.authentication.ICoreAuthenticationProvider;
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.DefaultSerializer;
@@ -36,6 +36,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * A client that communications with an OData service
@@ -104,23 +105,25 @@ public class BaseClient implements IBaseClient {
 	 * @return builder to start configuring the client
 	 */
 	@Nonnull
-	public static Builder<OkHttpClient> builder() {
-		return new Builder<OkHttpClient>();
+	public static Builder<OkHttpClient, Request> builder() {
+		return new Builder<>();
 	}
 
 	/**
 	 * Builder to help configure the Graph service client
+     * @param <httpClientType> type of the native http library client
+     * @param <httpRequestType> type of the native http library request
 	 */
-	public static class Builder<httpClientType> {
+	public static class Builder<httpClientType, httpRequestType> {
 		private ISerializer serializer;
 		private IHttpProvider httpProvider;
 		private ILogger logger;
 		private httpClientType httpClient;
-		private ICoreAuthenticationProvider auth;
+		private IAuthenticationProvider<httpRequestType> auth;
 
-		private ICoreAuthenticationProvider getAuthenticationProvider() {
+		private IAuthenticationProvider<httpRequestType> getAuthenticationProvider() {
 			if(auth == null) {
-				throw new NullPointerException("auth"); // TODO initialize to default once moved to core
+				throw new NullPointerException("auth");
 			} else {
 				return auth;
 			}
@@ -142,7 +145,7 @@ public class BaseClient implements IBaseClient {
 		@SuppressWarnings("unchecked")
 		private httpClientType getHttpClient() {
 			if(httpClient == null) {
-				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
+				return (httpClientType)HttpClients.createDefault((IAuthenticationProvider<Request>)getAuthenticationProvider());
 			} else {
 				return httpClient;
 			}
@@ -163,7 +166,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> serializer(@Nonnull final ISerializer serializer) {
+		public Builder<httpClientType, httpRequestType> serializer(@Nonnull final ISerializer serializer) {
 			checkNotNull(serializer, "serializer");
 			this.serializer = serializer;
 			return this;
@@ -177,7 +180,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> httpProvider(@Nonnull final IHttpProvider httpProvider) {
+		public Builder<httpClientType, httpRequestType> httpProvider(@Nonnull final IHttpProvider httpProvider) {
 			checkNotNull(httpProvider, "httpProvider");
 			this.httpProvider = httpProvider;
 			return this;
@@ -191,7 +194,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> logger(@Nonnull final ILogger logger) {
+		public Builder<httpClientType, httpRequestType> logger(@Nonnull final ILogger logger) {
 			checkNotNull(logger, "logger");
 			this.logger = logger;
 			return this;
@@ -205,7 +208,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> httpClient(@Nonnull final httpClientType client) {
+		public Builder<httpClientType, httpRequestType> httpClient(@Nonnull final httpClientType client) {
 			checkNotNull(client, "client");
 			this.httpClient = client;
 			return this;
@@ -218,7 +221,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> authenticationProvider(@Nonnull final ICoreAuthenticationProvider auth) {
+		public Builder<httpClientType, httpRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider<httpRequestType> auth) {
 			checkNotNull(auth, "auth");
 			this.auth = auth;
 			return this;
