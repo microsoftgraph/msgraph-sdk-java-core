@@ -74,11 +74,6 @@ public interface IBaseClient {
     ISerializer getSerializer();
 
     /**
-     * Validates this client
-     */
-    void validate();
-
-    /**
      * Gets a builder to execute a custom request
      *
      * @return the custom request builder

@@ -13,6 +13,7 @@ import org.junit.Test;
 import okhttp3.OkHttpClient;
 
 import com.microsoft.graph.http.IHttpProvider;
+import com.google.gson.JsonObject;
 import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
@@ -22,7 +23,6 @@ import com.microsoft.graph.serializer.ISerializer;
  */
 public class BaseClientTests {
 	public static final String DEFAULT_GRAPH_ENDPOINT = "https://graph.microsoft.com/v1.0";
-    private String mEndpoint = DEFAULT_GRAPH_ENDPOINT;
     private BaseClient baseClient;
     private IHttpProvider mHttpProvider;
     private ILogger mLogger;
@@ -30,17 +30,7 @@ public class BaseClientTests {
 
 	@Before
 	public void setUp() throws Exception {
-        baseClient = new BaseClient() {
-            @Override
-            public String getServiceRoot() {
-                return mEndpoint;
-            }
-
-            @Override
-            public void setServiceRoot(String value) {
-                mEndpoint = value;
-            }
-        };
+        baseClient = new BaseClient();
         mLogger = mock(ILogger.class);
         mSerializer = mock(ISerializer.class);
         mHttpProvider = new CoreHttpProvider(mSerializer,
@@ -54,24 +44,6 @@ public class BaseClientTests {
         assertNotNull(mHttpProvider);
         assertNotNull(mLogger);
         assertNotNull(mSerializer);
-    }
-
-	@Test
-    public void testValidateThrowException() {
-        Boolean success = false;
-        try {
-            baseClient.validate();
-        }catch (NullPointerException nEx){
-            success = true;
-        }
-        assertTrue(success);
-    }
-
-	@Test
-    public void testValidateSuccess() throws Exception {
-        baseClient.setHttpProvider(mHttpProvider);
-        baseClient.setSerializer(mSerializer);
-        baseClient.validate();
     }
 
 	@Test
@@ -101,5 +73,11 @@ public class BaseClientTests {
         baseClient.setSerializer(mSerializer);
         assertEquals(mSerializer, baseClient.getSerializer());
     }
-
+    @Test
+    public void testCustomRequest() {
+        final CustomRequestBuilder<JsonObject> simpleRequest = baseClient.customRequest("");
+        assertNotNull(simpleRequest);
+        final CustomRequestBuilder<String> stringRequest = baseClient.customRequest("", String.class);
+        assertNotNull(stringRequest);
+    }
 }

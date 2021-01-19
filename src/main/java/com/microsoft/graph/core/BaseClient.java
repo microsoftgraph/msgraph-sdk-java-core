@@ -238,7 +238,6 @@ public class BaseClient implements IBaseClient {
 			instance.setHttpProvider(this.getHttpProvider());
 			instance.setLogger(this.getLogger());
 			instance.setSerializer(this.getSerializer());
-			instance.validate();
 			return instance;
 		}
 
@@ -315,25 +314,12 @@ public class BaseClient implements IBaseClient {
     }
 
     /**
-     * Validates this client
-     */
-    @Override
-    public void validate() {
-        if (httpProvider == null) {
-            throw new NullPointerException("HttpProvider");
-        }
-
-        if (serializer == null) {
-            throw new NullPointerException("Serializer");
-        }
-    }
-
-    /**
      * Sets the logger
      *
      * @param logger The logger
      */
     protected void setLogger(@Nonnull final ILogger logger) {
+        checkNotNull(logger, "logger");
         this.logger = logger;
     }
 
@@ -343,6 +329,7 @@ public class BaseClient implements IBaseClient {
      * @param httpProvider The HTTP provider
      */
     protected void setHttpProvider(@Nonnull final IHttpProvider httpProvider) {
+        checkNotNull(httpProvider, "httpProvider");
         this.httpProvider = httpProvider;
     }
 
@@ -352,6 +339,7 @@ public class BaseClient implements IBaseClient {
      * @param serializer The serializer
      */
     public void setSerializer(@Nonnull final ISerializer serializer) {
+        checkNotNull(serializer, "serializer");
         this.serializer = serializer;
     }
 
