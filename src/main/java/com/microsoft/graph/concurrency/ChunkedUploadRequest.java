@@ -55,7 +55,7 @@ public class ChunkedUploadRequest<UploadType> {
      * @param totalLength The total length of the input stream.
      */
     @SuppressWarnings("unchecked")
-    public ChunkedUploadRequest(@Nonnull final String requestUrl,
+    protected ChunkedUploadRequest(@Nonnull final String requestUrl,
                                 @Nonnull final IBaseClient client,
                                 @Nullable final List<? extends Option> options,
                                 @Nonnull final byte[] chunk,

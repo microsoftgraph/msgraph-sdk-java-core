@@ -128,7 +128,7 @@ public class ChunkedUploadProvider<UploadType> {
         this.inputStream = inputStream;
         this.streamSize = streamSize;
         this.uploadUrl = uploadSession.getUploadUrl();
-        this.responseHandler = new ChunkedUploadResponseHandler<UploadType>(uploadTypeClass);
+        this.responseHandler = new ChunkedUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
     }
 
     /**

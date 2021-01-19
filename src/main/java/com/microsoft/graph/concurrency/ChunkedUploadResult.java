@@ -34,7 +34,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param uploaded The created item.
      */
-    public ChunkedUploadResult(@Nullable final UploadType uploaded) {
+    protected ChunkedUploadResult(@Nullable final UploadType uploaded) {
         this.uploadedItem = uploaded;
         this.session = null;
         this.error = null;
@@ -45,7 +45,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param session The next session.
      */
-    public ChunkedUploadResult(@Nullable final IUploadSession session) {
+    protected ChunkedUploadResult(@Nullable final IUploadSession session) {
         this.session = session;
         this.uploadedItem = null;
         this.error = null;
@@ -56,7 +56,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param error The error occurred during uploading.
      */
-    public ChunkedUploadResult(@Nullable final ClientException error) {
+    protected ChunkedUploadResult(@Nullable final ClientException error) {
         this.error = error;
         this.uploadedItem = null;
         this.session = null;
@@ -67,7 +67,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param exception The exception received from server.
      */
-    public ChunkedUploadResult(@Nonnull final GraphServiceException exception) {
+    protected ChunkedUploadResult(@Nonnull final GraphServiceException exception) {
         this(new ClientException(exception.getMessage(/* verbose */ true), exception));
     }
 

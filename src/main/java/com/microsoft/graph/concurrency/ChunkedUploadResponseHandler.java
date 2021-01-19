@@ -56,13 +56,16 @@ public class ChunkedUploadResponseHandler<UploadType>
 	 */
 	private final Class<UploadType> deserializeTypeClass;
 
+    private final Class<? extends IUploadSession> uploadSessionClass;
 	/**
 	 * Creates a chunked upload response handler
 	 *
 	 * @param uploadType the expected upload item type
+     * @param uploadSessionType the type of the upload session
 	 */
-	public ChunkedUploadResponseHandler(@Nonnull final Class<UploadType> uploadType) {
-		this.deserializeTypeClass = uploadType;
+	protected ChunkedUploadResponseHandler(@Nonnull final Class<UploadType> uploadType, @Nonnull final Class<? extends IUploadSession>  uploadSessionType) {
+        this.deserializeTypeClass = uploadType;
+        this.uploadSessionClass = uploadSessionType;
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class ChunkedUploadResponseHandler<UploadType>
 				&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
 				try (final InputStream in = new BufferedInputStream(response.body().byteStream())) {
 					final String rawJson = CoreHttpProvider.streamToString(in);
-					final IUploadSession session = serializer.deserializeObject(rawJson, IUploadSession.class);
+					final IUploadSession session = serializer.deserializeObject(rawJson, uploadSessionClass);
 					if(session == null || session.getNextExpectedRanges() == null) {
 						logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
 						final UploadType uploadedItem = serializer.deserializeObject(rawJson, this.deserializeTypeClass);
