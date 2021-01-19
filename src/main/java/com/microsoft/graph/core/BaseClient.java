@@ -354,4 +354,14 @@ public class BaseClient implements IBaseClient {
     public void setSerializer(@Nonnull final ISerializer serializer) {
         this.serializer = serializer;
     }
+
+    /**
+     * Gets the service SDK version if the service SDK is in use, null otherwise
+     * @return the service SDK version if the service SDK is in use, null otherwise
+     */
+    @Override
+    @Nullable
+    public String getServiceSDKVersion() {
+        return null;
+    }
 }

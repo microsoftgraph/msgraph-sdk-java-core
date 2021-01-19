@@ -24,8 +24,5 @@ public final class Constants {
 	 * The binary content type header's value
 	 */
 	public static final String BINARY_CONTENT_TYPE = "application/octet-stream";
-
-	/** The SDK version */
-	public static final String VERSION_NAME = "2.5.0";
 }
 

@@ -128,7 +128,7 @@ public class BaseCollectionRequestTests {
         assertEquals("https://a.b.c/(1='one',2=null)", request.getRequestUrl().toString());
         request.addFunctionOption(new FunctionOption("3","two"));;
         assertEquals("https://a.b.c/(1='one',2=null,3='two')", request.getRequestUrl().toString());
-        assertEquals(4, request.getOptions().size());
+        assertEquals(3, request.getOptions().size());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class BaseCollectionRequestTests {
         assertEquals("https://a.b.c/?q1=option1%20&q2=option2", request.getRequestUrl().toString());
         request.addQueryOption(new QueryOption("q3","option3"));
         assertEquals("https://a.b.c/?q1=option1%20&q2=option2&q3=option3", request.getRequestUrl().toString());
-        assertEquals(4,request.getOptions().size());
+        assertEquals(3,request.getOptions().size());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class BaseCollectionRequestTests {
         final Option q2 = new QueryOption("q2","option2");
         final BaseCollectionRequest<String,ICollectionResponse<String>, BaseCollectionPage<String, BaseRequestBuilder<String>>> request = new BaseCollectionRequest<String,ICollectionResponse<String>, BaseCollectionPage<String, BaseRequestBuilder<String>>>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(f1, f2, q1, q2), stringCollectionResponseMockClass, stringCollectionPageMockClass, stringCollectionRequestBuilderMockClass){};
         assertEquals("https://a.b.c/(f1='fun1',f2=null)?q1=option1%20&q2=option2", request.getRequestUrl().toString());
-        assertEquals(5, request.getOptions().size());
+        assertEquals(4, request.getOptions().size());
     }
 
     @Test
@@ -171,8 +171,8 @@ public class BaseCollectionRequestTests {
         final String expectedHeader = "header key";
         final String expectedValue = "header value";
         final BaseCollectionRequest<String,ICollectionResponse<String>, BaseCollectionPage<String, BaseRequestBuilder<String>>> request = new BaseCollectionRequest<String,ICollectionResponse<String>, BaseCollectionPage<String, BaseRequestBuilder<String>>>("https://a.b.c/", mock(IBaseClient.class), null, stringCollectionResponseMockClass, stringCollectionPageMockClass, stringCollectionRequestBuilderMockClass){};
-        assertEquals(1, request.getHeaders().size());
+        assertEquals(0, request.getHeaders().size());
         request.addHeader(expectedHeader,expectedValue);
-        assertEquals(2,request.getHeaders().size());
+        assertEquals(1,request.getHeaders().size());
     }
 }

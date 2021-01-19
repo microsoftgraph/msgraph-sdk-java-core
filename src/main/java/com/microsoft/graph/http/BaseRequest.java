@@ -38,6 +38,7 @@ import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -164,11 +165,13 @@ public abstract class BaseRequest<T> implements IHttpRequest {
                 }
             }
         }
-        final HeaderOption requestStatsHeader = new HeaderOption(REQUEST_STATS_HEADER_NAME,
-                String.format(REQUEST_STATS_HEADER_VALUE_FORMAT_STRING, Constants.VERSION_NAME));
-        headersOptions.add(requestStatsHeader);
+        final String sdkVersion = client == null ? null : client.getServiceSDKVersion();
+        if(sdkVersion != null) {
+            final HeaderOption requestStatsHeader = new HeaderOption(REQUEST_STATS_HEADER_NAME,
+                    String.format(REQUEST_STATS_HEADER_VALUE_FORMAT_STRING, sdkVersion));
+            headersOptions.add(requestStatsHeader);
+        }
     }
-
     /**
      * Gets the request URL
      *

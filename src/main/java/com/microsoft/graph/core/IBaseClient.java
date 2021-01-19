@@ -97,4 +97,11 @@ public interface IBaseClient {
      */
     @Nonnull
     CustomRequestBuilder<JsonObject> customRequest(@Nonnull final String url);
+
+    /**
+     * Gets the service SDK version if the service SDK is in use, null otherwise
+     * @return the service SDK version if the service SDK is in use, null otherwise
+     */
+    @Nullable
+    String getServiceSDKVersion();
 }

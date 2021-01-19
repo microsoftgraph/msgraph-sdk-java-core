@@ -144,9 +144,9 @@ public class BaseStreamRequestTests {
         final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
         assertEquals("https://a.b.c/", request.getRequestUrl().toString());
         request.addHeader("header key", "header value");
-        assertEquals(2,request.getHeaders().size());
+        assertEquals(1,request.getHeaders().size());
         assertNull(request.getHttpMethod());
-        assertEquals(2, request.getOptions().size());
+        assertEquals(1, request.getOptions().size());
     }
     public static OkHttpClient getMockClient(final Response response) throws IOException {
         final OkHttpClient mockClient = mock(OkHttpClient.class);
