@@ -52,8 +52,6 @@ public class CollectionPageSerializer {
 	private final static Integer collectionLength = 10;
 	/** length of the work "response" */
 	private final static Integer responseLength = 8;
-	/** the extensions segment in the package name of target classes */
-	private final static String extensionsPath = "extensions.";
 
 	/**
 	 * Not available for instantiation
@@ -109,9 +107,9 @@ public class CollectionPageSerializer {
 		serializer = new DefaultSerializer(logger);
 		final JsonArray sourceArray = json.getAsJsonArray();
 		final ArrayList<T1> list = new ArrayList<T1>(sourceArray.size());
-		/** eg: com.microsoft.graph.requests.extensions.AttachmentCollectionPage */
+		/** eg: com.microsoft.graph.requests.AttachmentCollectionPage */
 		final String collectionPageClassCanonicalName = ((Class<?>)typeOfT).getName();
-		/** eg: com.microsoft.graph.models.extensions.Attachment */
+		/** eg: com.microsoft.graph.models.Attachment */
 		final String baseEntityClassCanonicalName = collectionPageClassCanonicalName
 					.substring(0, collectionPageClassCanonicalName.length() - pageLength - collectionLength)
 					.replace("requests", "models");
@@ -128,17 +126,16 @@ public class CollectionPageSerializer {
 					list.add(targetObject);
 				}
 			}
-			/** eg: com.microsoft.graph.requests.extensions.AttachmentCollectionResponse */
+			/** eg: com.microsoft.graph.requests.AttachmentCollectionResponse */
 			final String responseClassCanonicalName = collectionPageClassCanonicalName
 						.substring(0, collectionPageClassCanonicalName.length() - pageLength) + "Response";
 			final Class<?> responseClass = Class.forName(responseClassCanonicalName);
 			final Object response = responseClass.getConstructor().newInstance();
 			responseClass.getField("value").set(response, list);
 			final Class<?> collectionPageClass = Class.forName(collectionPageClassCanonicalName);
-			/** eg: com.microsoft.graph.requests.extensions.AttachmentCollectionRequestBuilder */
+			/** eg: com.microsoft.graph.requests.AttachmentCollectionRequestBuilder */
 			final String responseBuilderCanonicalName = responseClassCanonicalName
-						.substring(0, responseClassCanonicalName.length() - responseLength)
-						.replace(extensionsPath, extensionsPath) + "RequestBuilder";
+						.substring(0, responseClassCanonicalName.length() - responseLength) + "RequestBuilder";
 			final Class<?> responseBuilderClass = Class.forName(responseBuilderCanonicalName);
 			return (BaseCollectionPage<T1, T2>)collectionPageClass.getConstructor(responseClass, responseBuilderClass).newInstance(response, null);
 		} catch(ClassNotFoundException ex) {

@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -101,7 +101,7 @@ public class DefaultSerializer implements ISerializer {
 			}
 
 			final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jo;
-			
+
 			if(rawElement.isJsonObject()) {
 				jsonBackedObject.setRawObject(this, rawObject);
 				jsonBackedObject.additionalDataManager().setAdditionalData(rawObject);
@@ -146,7 +146,7 @@ public class DefaultSerializer implements ISerializer {
 								if (child instanceof IJsonBackedObject) {
 									final AdditionalDataManager childAdditionalDataManager = ((IJsonBackedObject) child).additionalDataManager();
 									final JsonElement fieldElement = rawJson.get(field.getName());
-									if(fieldElement != null && fieldElement.isJsonObject() 
+									if(fieldElement != null && fieldElement.isJsonObject()
 											&& fieldElement.getAsJsonObject().get(pair.getKey()) != null
 											&& fieldElement.getAsJsonObject().get(pair.getKey()).isJsonObject()) {
 										childAdditionalDataManager.setAdditionalData(fieldElement.getAsJsonObject().get(pair.getKey()).getAsJsonObject());
@@ -172,7 +172,7 @@ public class DefaultSerializer implements ISerializer {
 										}
 									}
 								}
-								if (rawJsonArraySize != fieldObjectListSize) 
+								if (rawJsonArraySize != fieldObjectListSize)
 									logger.logDebug("rawJsonArray has a size of " + rawJsonArraySize + " and fieldObjectList of " + fieldObjectListSize);
 							}
 						}
@@ -195,7 +195,7 @@ public class DefaultSerializer implements ISerializer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Serializes an object into a string
 	 *
@@ -237,23 +237,23 @@ public class DefaultSerializer implements ISerializer {
 	private <T> JsonElement getDataFromAdditionalDataManager(JsonElement outJsonTree, final T serializableObject) {
 		final IJsonBackedObject serializableJsonObject = (IJsonBackedObject) serializableObject;
 		final AdditionalDataManager additionalData = serializableJsonObject.additionalDataManager();
-			
+
 		// If the item is a valid Graph object, add its additional data
 		if (outJsonTree.isJsonObject()) {
 			final JsonObject outJson = outJsonTree.getAsJsonObject();
-			
+
 			addAdditionalDataFromManagerToJson(additionalData, outJson);
 			getChildAdditionalData(serializableJsonObject, outJson);
-			
+
 			return outJson;
 		} else {
 			return outJsonTree;
 		}
 	}
-	
+
 	/**
 	 * Recursively populates additional data for each child object
-	 * 
+	 *
 	 * @param serializableObject the child to get additional data for
 	 * @param outJson			the serialized output JSON to add to
 	 */
@@ -268,13 +268,13 @@ public class DefaultSerializer implements ISerializer {
 				final JsonElement fieldJsonElement = outJson.get(field.getName());
 				if(fieldObject == null || field == null || fieldJsonElement == null)
 					continue;
-				
+
 				// If the object is a HashMap, iterate through its children
 				if (fieldObject instanceof Map && fieldJsonElement.isJsonObject()) {
 					final Map<String, Object> serializableChildren = (Map<String, Object>) fieldObject;
 					final Iterator<Entry<String, Object>> it = serializableChildren.entrySet().iterator();
 					final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
-					
+
 					while (it.hasNext()) {
 						final Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
 						final Object child = pair.getValue();
@@ -303,7 +303,7 @@ public class DefaultSerializer implements ISerializer {
 
 	/**
 	 * Add each non-transient additional data property to the given JSON node
-	 * 
+	 *
 	 * @param item the object containing additional data
 	 * @param itemJsonElement	   the JSON node to add the additional data properties to
 	 */
@@ -319,7 +319,7 @@ public class DefaultSerializer implements ISerializer {
 
 	/**
 	 * Add each non-transient additional data property to the given JSON node
-	 * 
+	 *
 	 * @param additionalDataManager the additional data bag to iterate through
 	 * @param jsonNode			  the JSON node to add the additional data properties to
 	 */
@@ -330,13 +330,13 @@ public class DefaultSerializer implements ISerializer {
 			}
 		}
 	}
-	
+
 	private final static String ODATA_TYPE_KEY = "@odata.type";
 	/**
 	 * Get the derived class for the given JSON object
 	 * This covers scenarios in which the service may return one of several derived types
 	 * of a base object, which it defines using the odata.type parameter
-	 * 
+	 *
 	 * @param jsonObject  the raw JSON object of the response
 	 * @param parentClass the parent class the derived class should inherit from
 	 * @return			the derived class if found, or null if not applicable
@@ -348,9 +348,9 @@ public class DefaultSerializer implements ISerializer {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
 			final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
 			final Integer lastDotIndex = odataType.lastIndexOf(".");
-			final String derivedType = (odataType.substring(0, lastDotIndex) + 
-											".models.extensions." + 
-											CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, 
+			final String derivedType = (odataType.substring(0, lastDotIndex) +
+											".models." +
+											CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
 																		odataType.substring(lastDotIndex + 1)))
 										.replace("#", "com.");
 			try {
@@ -373,7 +373,7 @@ public class DefaultSerializer implements ISerializer {
 
 	/**
 	 * Gets the logger in use
-	 * 
+	 *
 	 * @return a logger
 	 */
 	@VisibleForTesting
