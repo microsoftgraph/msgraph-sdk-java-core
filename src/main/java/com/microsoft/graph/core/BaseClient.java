@@ -237,7 +237,10 @@ public class BaseClient implements IBaseClient {
 		 *			 if there was an exception creating the client
 		 */
 		@Nonnull
-		protected <ClientType extends BaseClient> ClientType buildClient(ClientType instance) throws ClientException {
+		protected <ClientType extends BaseClient> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
+            if(instance == null) {
+                throw new IllegalArgumentException("The instance cannot be null");
+            }
 			instance.setHttpProvider(this.getHttpProvider());
 			instance.setLogger(this.getLogger());
 			instance.setSerializer(this.getSerializer());
