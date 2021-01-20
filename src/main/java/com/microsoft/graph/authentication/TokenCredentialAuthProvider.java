@@ -4,11 +4,8 @@ import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.microsoft.graph.exceptions.AuthenticationException;
-import com.microsoft.graph.exceptions.Error;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.httpcore.IHttpRequest;
+import com.microsoft.graph.http.IHttpRequest;
 import okhttp3.Request;
-import com.microsoft.graph.exceptions.ErrorConstants.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +17,9 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+/**
+ * An implementation of the Authentication Provider with Azure-identity
+ */
 public class TokenCredentialAuthProvider implements IAuthenticationProvider<Request> {
 
     //TokenCredential expected from user
@@ -40,9 +40,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      */
     public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
         if(tokenCredential == null) {
-            throw new AuthenticationException(new Error(Codes.InvalidArgument,
-                    String.format(Messages.NullParameter, "TokenCredential"))
-                    ,new IllegalArgumentException());
+            throw new AuthenticationException(new IllegalArgumentException("tokenCredential parameter cannot be null."));
         }
 
         this.tokenCredential = tokenCredential;
@@ -127,7 +125,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
             final AccessToken token = this.tokenCredential.getToken(this.context).block(this.tokenBlockTimeout);
             return token.getToken();
         } catch (RuntimeException e) {
-            throw new AuthenticationException(new Error(ErrorConstants.Codes.GeneralException, ErrorConstants.Messages.AuthTimeOut), e);
+            throw new AuthenticationException("Authentication failed or timed out.", e);
         }
     }
 }

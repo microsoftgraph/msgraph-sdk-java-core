@@ -1,14 +1,17 @@
 package com.microsoft.graph.authentication;
 
-public class AuthConstants {
+import com.google.common.annotations.VisibleForTesting;
 
-    public static class Tenants
-    {
-        public static final String Common = "common";
-        public static final String Organizations = "organizations";
-        public static final String Consumers = "consumers";
-    }
-    public static final String BEARER = "Bearer ";
-    public static final String TOKEN_ENDPOINT = "/oauth2/v2.0/token";
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+/**
+ * Internal only.
+ * Constants in use for the authentication provider
+ */
+@VisibleForTesting
+class AuthConstants {
+    /** The bearer value for the authorization request header, contains a space */
+    @VisibleForTesting
+    protected static final String BEARER = "Bearer ";
+    /** The authorization request header name */
+    @VisibleForTesting
+    protected static final String AUTHORIZATION_HEADER = "Authorization";
 }

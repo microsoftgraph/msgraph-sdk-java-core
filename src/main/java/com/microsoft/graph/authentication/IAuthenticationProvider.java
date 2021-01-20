@@ -3,7 +3,7 @@ package com.microsoft.graph.authentication;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.exceptions.AuthenticationException;
-import com.microsoft.graph.httpcore.IHttpRequest;
+import com.microsoft.graph.http.IHttpRequest;
 
 
 /**
