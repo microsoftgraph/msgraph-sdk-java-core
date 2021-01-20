@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +18,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.core.IBaseClient;
 import com.google.gson.JsonParseException;
 
 import okhttp3.Headers;
@@ -123,6 +126,37 @@ public class MSBatchRequestContent {
 
         final String content = batchRequestContentMap.toString();
         return content;
+    }
+
+    /**
+     * Executes the batch requests and returns the response
+     * @param client client to use for the request
+     * @return the batch response
+     * @throws ClientException when the batch couldn't be executed because of client issues.
+     */
+    @Nonnull
+    public MSBatchResponseContent execute(@Nonnull final IBaseClient client) throws ClientException {
+        try {
+            return executeAsync(client).get();
+        } catch (Exception ex) {
+            throw new ClientException("Batch failed to execute", ex);
+        }
+    }
+    /**
+     * Executes the batch requests asynchronously and returns the response
+     * @param client client to use for the request
+     * @return a future with the batch response
+     */
+    @Nonnull
+    public CompletableFuture<MSBatchResponseContent> executeAsync(@Nonnull final IBaseClient client) {
+        if(client == null) {
+            throw new IllegalArgumentException("client parameter cannot be null");
+        }
+        final String content = getBatchRequestContent();
+        return client.customRequest(client.getServiceRoot() + "/$batch", String.class)
+            .buildRequest()
+            .postAsync(content)
+            .thenApply(resp -> new MSBatchResponseContent(client.getServiceRoot() + "/", content, resp));
     }
 
     private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive

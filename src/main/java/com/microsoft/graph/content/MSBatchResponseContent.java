@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonParseException;
 
 import okhttp3.MediaType;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -26,8 +27,9 @@ import okio.Buffer;
  */
 public class MSBatchResponseContent {
 
-    private final Response batchResponse;
-    private LinkedHashMap<String, Request> batchRequestsHashMap;
+    private final Protocol protocol;
+    private final String message;
+    private LinkedHashMap<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
     private JsonArray batchResponseArray;
     private String nextLink;
 
@@ -35,8 +37,24 @@ public class MSBatchResponseContent {
      * @param batchResponse OkHttp batch response on execution of batch requests
      */
     public MSBatchResponseContent(@Nullable final Response batchResponse) {
-        this.batchResponse = batchResponse;
         update(batchResponse);
+        this.message = batchResponse.message();
+        this.protocol = batchResponse.protocol();
+    }
+    /**
+     * intantiates a new response
+     * internal only, used when the content executes the requests
+     * @param baseUrl the base service URL without a trailing slash
+     * @param batchRequestData the batch request payload data as a JSON string
+     * @param batchResponseData the batch response body as a JSON string
+     */
+    protected MSBatchResponseContent(@Nonnull final String baseUrl, @Nonnull final String batchRequestData, @Nonnull final String batchResponseData) {
+        this.protocol = Protocol.HTTP_1_1;
+        this.message = "OK";
+        final Map<String, Request> requestMap = createBatchRequestsHashMap(baseUrl, JsonParser.parseString(batchRequestData).getAsJsonObject());
+        if (requestMap != null)
+            batchRequestsHashMap.putAll(requestMap);
+        updateFromResponseBody(batchResponseData);
     }
 
     /**
@@ -66,14 +84,13 @@ public class MSBatchResponseContent {
                     // Put corresponding request into the constructed response
                     builder.request(batchRequestsHashMap.get(requestId));
                     // copy protocol and message same as of batch response
-                    builder.protocol(batchResponse.protocol());
-                    builder.message(batchResponse.message());
+                    builder.protocol(protocol);
+                    builder.message(message);
 
                     // Put status code of the corresponding request in JsonArray
                     final JsonElement statusElement = jsonresponse.get("status");
                     if (statusElement != null && statusElement.isJsonPrimitive()) {
-                        final Long status = statusElement.getAsLong();
-                        builder.code(status.intValue());
+                        builder.code(statusElement.getAsInt());
                     }
 
                     // Put body from response array for corresponding id into constructing response
@@ -144,8 +161,6 @@ public class MSBatchResponseContent {
             throw new IllegalArgumentException("Batch Response cannot be null");
 
         final Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
-        if (batchRequestsHashMap == null)
-            batchRequestsHashMap = new LinkedHashMap<>();
         if (requestMap != null)
             batchRequestsHashMap.putAll(requestMap);
 
@@ -153,25 +168,28 @@ public class MSBatchResponseContent {
             try {
                 final String batchResponseData = batchResponse.body().string();
                 if (batchResponseData != null) {
-                    final JsonObject batchResponseObj = stringToJSONObject(batchResponseData);
-                    if (batchResponseObj != null) {
-
-                        final JsonElement nextLinkElement = batchResponseObj.get("@odata.nextLink");
-                        if (nextLinkElement != null && nextLinkElement.isJsonPrimitive())
-                            nextLink = nextLinkElement.getAsString();
-
-                        if (batchResponseArray == null)
-                            batchResponseArray = new JsonArray();
-
-                        final JsonElement responseArrayElement = batchResponseObj.get("responses");
-                        if (responseArrayElement != null && responseArrayElement.isJsonArray()) {
-                            final JsonArray responseArray = responseArrayElement.getAsJsonArray();
-                            batchResponseArray.addAll(responseArray);
-                        }
-                    }
+                    updateFromResponseBody(batchResponseData);
                 }
             } catch (final IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    private void updateFromResponseBody(@Nonnull final String batchResponseData) {
+        final JsonObject batchResponseObj = stringToJSONObject(batchResponseData);
+        if (batchResponseObj != null) {
+
+            final JsonElement nextLinkElement = batchResponseObj.get("@odata.nextLink");
+            if (nextLinkElement != null && nextLinkElement.isJsonPrimitive())
+                nextLink = nextLinkElement.getAsString();
+
+            if (batchResponseArray == null)
+                batchResponseArray = new JsonArray();
+
+            final JsonElement responseArrayElement = batchResponseObj.get("responses");
+            if (responseArrayElement != null && responseArrayElement.isJsonArray()) {
+                final JsonArray responseArray = responseArrayElement.getAsJsonArray();
+                batchResponseArray.addAll(responseArray);
             }
         }
     }
@@ -188,8 +206,21 @@ public class MSBatchResponseContent {
         if (batchResponse == null)
             return null;
         try {
-            final Map<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
             final JsonObject requestJSONObject = requestBodyToJSONObject(batchResponse.request());
+            final String baseUrl = batchResponse.request().url().toString().replace("$batch", "");
+            return createBatchRequestsHashMap(baseUrl, requestJSONObject);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    @Nullable
+    protected Map<String, Request> createBatchRequestsHashMap(@Nonnull final String baseUrl, @Nonnull final JsonObject requestJSONObject) {
+        if(baseUrl == null || baseUrl == "" || requestJSONObject == null) {
+            return null;
+        }
+        try {
+            final Map<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
             final JsonElement requestArrayElement = requestJSONObject.get("requests");
             if (requestArrayElement != null && requestArrayElement.isJsonArray()) {
                 final JsonArray requestArray = requestArrayElement.getAsJsonArray();
@@ -202,8 +233,7 @@ public class MSBatchResponseContent {
 
                     final JsonElement urlElement = requestObject.get("url");
                     if (urlElement != null && urlElement.isJsonPrimitive()) {
-                        final StringBuilder fullUrl = new StringBuilder(
-                                batchResponse.request().url().toString().replace("$batch", ""));
+                        final StringBuilder fullUrl = new StringBuilder(baseUrl);
                         fullUrl.append(urlElement.getAsString());
                         builder.url(fullUrl.toString());
                     }
@@ -240,7 +270,7 @@ public class MSBatchResponseContent {
             }
             return batchRequestsHashMap;
 
-        } catch (IOException | JsonParseException e) {
+        } catch (JsonParseException e) {
             e.printStackTrace();
         }
         return null;
