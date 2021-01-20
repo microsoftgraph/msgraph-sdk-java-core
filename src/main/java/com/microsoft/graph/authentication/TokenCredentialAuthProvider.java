@@ -5,6 +5,8 @@ import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.http.IHttpRequest;
+
+import okhttp3.HttpUrl;
 import okhttp3.Request;
 
 import java.net.MalformedURLException;
@@ -22,30 +24,23 @@ import javax.annotation.Nonnull;
  */
 public class TokenCredentialAuthProvider implements IAuthenticationProvider<Request> {
 
-    //TokenCredential expected from user
-    private TokenCredential tokenCredential;
-    //Context options which can be optionally set by the user
-    private TokenRequestContext context;
-    // maximum delay to wait for token obtention
-    private Duration tokenBlockTimeout;
-
-
-    //TODO: Upon further review from Peter, this should include a Null check in the case that this is the first request
-    //There should be just one constructor as scopes should probably not be optional
+    /** TokenCredential expected from user */
+    private final TokenCredential tokenCredential;
+    /** Context options which can be optionally set by the user */
+    private final TokenRequestContext context;
+    /** maximum delay to wait for token obtention */
+    private final Duration tokenBlockTimeout;
+    /** Default scope to use when no scopes are provided */
+    private static final String DEFAULT_GRAPH_SCOPE = "https://graph.microsoft.com/.default";
+    /** Default timeout for token obtention, set to 10 minutes in case of interactive flows to give time to the end user */
+    private static final long DEFAULT_TOKEN_TIMEOUT = 10;
     /**
      * Creates an Authentication provider using a passed in TokenCredential
      *
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
-     * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
-        if(tokenCredential == null) {
-            throw new AuthenticationException(new IllegalArgumentException("tokenCredential parameter cannot be null."));
-        }
-
-        this.tokenCredential = tokenCredential;
-        this.context = new TokenRequestContext();
-        this.tokenBlockTimeout = Duration.ofMinutes(10);
+    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) {
+        this(tokenCredential, Arrays.asList(new String[] {DEFAULT_GRAPH_SCOPE}));
     }
 
     /**
@@ -53,11 +48,9 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      *
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @param scopes Specified desired scopes of the Auth Provider
-     * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
-        this(tokenCredential);
-        this.context.setScopes(scopes);
+    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final List<String> scopes) {
+        this(tokenCredential, scopes, Duration.ofMinutes(DEFAULT_TOKEN_TIMEOUT));
     }
 
     /**
@@ -66,11 +59,20 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @param scopes Specified desired scopes of the Auth Provider
      * @param tokenObtentionTimeout Maximum time to wait for token obtention. Default 10 minutes. Use lower value on application with stable connectivity and no user interactions.
-     * @throws AuthenticationException exception occurs if the TokenCredential parameter is null
      */
-    public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final Duration tokenObtentionTimeout, @Nonnull final TokenCredential tokenCredential) throws AuthenticationException {
-        this(tokenCredential);
+    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final List<String> scopes, @Nonnull final Duration tokenObtentionTimeout) {
+        if(tokenCredential == null) {
+            throw new IllegalArgumentException("tokenCredential parameter cannot be null.");
+        }
+        if(tokenObtentionTimeout == null) {
+            throw new IllegalArgumentException("tokenObtentionTimout parameter cannot be null");
+        }
+        if(scopes == null || scopes.isEmpty()) {
+            throw new IllegalArgumentException("scopes parameter cannot be null or empty");
+        }
+        this.context = new TokenRequestContext();
         this.context.setScopes(scopes);
+        this.tokenCredential = tokenCredential;
         this.tokenBlockTimeout = tokenObtentionTimeout;
     }
 
@@ -81,7 +83,11 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      */
     @Override
     public void authenticateRequest(@Nonnull final IHttpRequest request) throws AuthenticationException {
-        if(ShouldAuthenticateRequest(request.getRequestUrl().toString())) {
+        if(request == null) {
+            throw new IllegalArgumentException("request parameter cannot be null.");
+        }
+        final URL requestUrl = request.getRequestUrl();
+        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.toString())) {
             request.addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken());
         }
     }
@@ -95,7 +101,11 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     @Override
     @Nonnull
     public Request authenticateRequest(@Nonnull final Request request) throws AuthenticationException {
-        if(ShouldAuthenticateRequest(request.url().toString())) {
+        if(request == null) {
+            throw new IllegalArgumentException("request parameter cannot be null.");
+        }
+        final HttpUrl requestUrl = request.url();
+        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.toString())) {
             return request.newBuilder()
                     .addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken())
                     .build();
