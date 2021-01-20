@@ -31,7 +31,7 @@ public class deviceCodeFlowMain {
                 .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})
                 .build();
 
-        final TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(SCOPES, deviceCodeCred);
+        final TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(deviceCodeCred, SCOPES);
         final OkHttpClient httpClient = HttpClients.createDefault(tokenCredAuthProvider);
 
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();

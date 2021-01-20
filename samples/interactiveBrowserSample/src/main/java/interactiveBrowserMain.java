@@ -16,7 +16,7 @@ public class interactiveBrowserMain {
     private final static String CLIENT_ID = "199e4de3-dd3b-4a51-b78a-86b801246e20";
 
     //Set the scopes for your ms-graph request
-    private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All"); 
+    private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All");
 
     public static void main(String args[]) throws Exception {
         interactiveBrowser();
@@ -29,7 +29,7 @@ public class interactiveBrowserMain {
                 .port(8765)
                 .build();
 
-        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(SCOPES, interactiveBrowserCredential);
+        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(interactiveBrowserCredential, SCOPES);
         final OkHttpClient httpClient = HttpClients.createDefault(tokenCredentialAuthProvider);
 
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
