@@ -36,13 +36,13 @@ public class TokenCredentialAuthProviderTest {
         final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
         // Act
-        Assert.assertNull(request.header(AuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
         final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
         // Assert
         Assert.assertEquals(request.url(), authenticatedRequest.url());
-        Assert.assertNotNull(authenticatedRequest.header(AuthConstants.AUTHORIZATION_HEADER));
-        assertEquals(AuthConstants.BEARER + testToken, authenticatedRequest.header(AuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNotNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+        assertEquals(InternalAuthConstants.BEARER + testToken, authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
     }
 
     @Test
@@ -71,8 +71,8 @@ public class TokenCredentialAuthProviderTest {
         Assert.assertFalse(request.getHeaders().isEmpty());
 
         //Assert
-        Assert.assertTrue(request.getHeaders().get(0).getName().equals(AuthConstants.AUTHORIZATION_HEADER));
-        Assert.assertTrue(request.getHeaders().get(0).getValue().equals(AuthConstants.BEARER + this.testToken));
+        Assert.assertTrue(request.getHeaders().get(0).getName().equals(InternalAuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertTrue(request.getHeaders().get(0).getValue().equals(InternalAuthConstants.BEARER + this.testToken));
     }
     @Test
     public void TokenCredentialAuthProviderDoesNotAddTokenOnInvalidDomainsTestICoreAuthentication() throws AuthenticationException {
@@ -83,12 +83,12 @@ public class TokenCredentialAuthProviderTest {
         final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
         //Act
-        Assert.assertNull(request.header(AuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
         final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
         //Assert
         Assert.assertEquals(request.url(), authenticatedRequest.url());
-        Assert.assertNull(authenticatedRequest.header(AuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
     }
 
     @Test

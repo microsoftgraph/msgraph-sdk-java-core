@@ -82,7 +82,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     @Override
     public void authenticateRequest(@Nonnull final IHttpRequest request) throws AuthenticationException {
         if(ShouldAuthenticateRequest(request.getRequestUrl().toString())) {
-            request.addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken());
+            request.addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken());
         }
     }
 
@@ -97,7 +97,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     public Request authenticateRequest(@Nonnull final Request request) throws AuthenticationException {
         if(ShouldAuthenticateRequest(request.url().toString())) {
             return request.newBuilder()
-                    .addHeader(AuthConstants.AUTHORIZATION_HEADER, AuthConstants.BEARER + getAccessToken())
+                    .addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken())
                     .build();
         } else {
             return request;
