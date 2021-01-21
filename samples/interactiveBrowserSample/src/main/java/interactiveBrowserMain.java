@@ -26,7 +26,7 @@ public class interactiveBrowserMain {
 
         final InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
                 .clientId(CLIENT_ID)
-                .port(8765)
+                .redirectUrl("http://localhost:8765")
                 .build();
 
         final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(SCOPES, interactiveBrowserCredential);
