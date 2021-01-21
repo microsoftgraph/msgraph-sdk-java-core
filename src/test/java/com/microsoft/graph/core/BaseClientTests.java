@@ -95,7 +95,7 @@ public class BaseClientTests {
         final CustomRequest<String> abs = stringRequestBuilder.buildRequest();
         abs.setHttpMethod(HttpMethod.POST);
         final Request nat = abs.getHttpRequest("somestring");
-        assertEquals("somestring", getStringFromRequestBody(nat));
+        assertEquals("\"somestring\"", getStringFromRequestBody(nat));
         assertEquals("application", nat.body().contentType().type());
         assertEquals("json", nat.body().contentType().subtype());
     }

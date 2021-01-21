@@ -1,6 +1,7 @@
 package com.microsoft.graph.content;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -13,7 +14,7 @@ import okhttp3.Request;
 public class MSBatchRequestStep {
     private String requestId;
     private Request request;
-    private List<String> arrayOfDependsOnIds;
+    private HashSet<String> dependsOnIds;
 
     /**
      * Initializes a batch step from a raw HTTP request
@@ -21,17 +22,17 @@ public class MSBatchRequestStep {
      * @param request the request to send in the batch
      * @param arrayOfDependsOnIds the ids of steps this step depends on
      */
-    public MSBatchRequestStep(@Nonnull final String requestId, @Nonnull final Request request, @Nullable final List<String> arrayOfDependsOnIds) {
+    public MSBatchRequestStep(@Nonnull final String requestId, @Nonnull final Request request, @Nullable final String... arrayOfDependsOnIds) {
         if(requestId == null)
             throw new IllegalArgumentException("Request Id cannot be null.");
         if(requestId.length() == 0)
             throw new IllegalArgumentException("Request Id cannot be empty.");
         if(request == null)
-            new IllegalArgumentException("Request cannot be null.");
+            throw new IllegalArgumentException("Request cannot be null.");
 
         this.requestId = requestId;
         this.request = request;
-        this.arrayOfDependsOnIds = arrayOfDependsOnIds;
+        this.dependsOnIds = new HashSet<>(Arrays.asList(arrayOfDependsOnIds));
     }
 
     /**
@@ -57,7 +58,7 @@ public class MSBatchRequestStep {
      * @return the list of steps this step depends on
      */
     @Nullable
-    public List<String> getArrayOfDependsOnIds(){
-        return arrayOfDependsOnIds;
+    public HashSet<String> getDependsOnIds(){
+        return dependsOnIds;
     }
 }

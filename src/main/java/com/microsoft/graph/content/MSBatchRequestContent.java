@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,20 +43,14 @@ public class MSBatchRequestContent {
      *
      * @param batchRequestStepsArray List of batch steps for batching
      */
-    public MSBatchRequestContent(@Nonnull final List<MSBatchRequestStep> batchRequestStepsArray) {
-        if (batchRequestStepsArray.size() > MAX_NUMBER_OF_REQUESTS)
+    public MSBatchRequestContent(@Nonnull final MSBatchRequestStep... batchRequestStepsArray) {
+        if (batchRequestStepsArray.length > MAX_NUMBER_OF_REQUESTS)
             throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 
         this.batchRequestStepsHashMap = new LinkedHashMap<>();
         for (final MSBatchRequestStep requestStep : batchRequestStepsArray)
-            addBatchRequestStep(requestStep);
-    }
-
-    /**
-     * Creates empty batch request content
-     */
-    public MSBatchRequestContent() {
-        this.batchRequestStepsHashMap = new LinkedHashMap<>();
+            if(requestStep != null)
+                addBatchRequestStep(requestStep);
     }
 
     /**
@@ -66,6 +60,8 @@ public class MSBatchRequestContent {
      * given
      */
     public boolean addBatchRequestStep(@Nonnull final MSBatchRequestStep batchRequestStep) {
+        if(batchRequestStep == null)
+            throw new IllegalArgumentException("batchRequestStep parameter cannot be null");
         if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
             batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
             return false;
@@ -81,11 +77,13 @@ public class MSBatchRequestContent {
      */
     @Nonnull
     public String addBatchRequestStep(@Nonnull final Request request, @Nullable final String... arrayOfDependsOnIds) {
+        if(request == null)
+            throw new IllegalArgumentException("request parameter cannot be null");
         String requestId;
         do {
             requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
         } while(batchRequestStepsHashMap.keySet().contains(requestId));
-        if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, Arrays.asList(arrayOfDependsOnIds))))
+        if(addBatchRequestStep(new MSBatchRequestStep(requestId, request, arrayOfDependsOnIds)))
             return requestId;
         else
             throw new IllegalArgumentException("unable to add step to batch. Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
@@ -103,8 +101,8 @@ public class MSBatchRequestContent {
             batchRequestStepsHashMap.remove(requestId);
             removed = true;
             for (final Map.Entry<String, MSBatchRequestStep> steps : batchRequestStepsHashMap.entrySet()) {
-                if (steps.getValue() != null && steps.getValue().getArrayOfDependsOnIds() != null) {
-                    while (steps.getValue().getArrayOfDependsOnIds().remove(requestId))
+                if (steps.getValue() != null && steps.getValue().getDependsOnIds() != null) {
+                    while (steps.getValue().getDependsOnIds().remove(requestId))
                         ;
                 }
             }
@@ -112,20 +110,21 @@ public class MSBatchRequestContent {
         return removed;
     }
 
-    /**
-     * @return Batch request content's json as String
-     */
-    @Nonnull
-    public String getBatchRequestContent() {
+    private JsonObject getBatchRequestContentAsJson() {
         final JsonObject batchRequestContentMap = new JsonObject();
         final JsonArray batchContentArray = new JsonArray();
         for (final Map.Entry<String, MSBatchRequestStep> requestStep : batchRequestStepsHashMap.entrySet()) {
             batchContentArray.add(getBatchRequestObjectFromRequestStep(requestStep.getValue()));
         }
         batchRequestContentMap.add("requests", batchContentArray);
-
-        final String content = batchRequestContentMap.toString();
-        return content;
+        return batchRequestContentMap;
+    }
+    /**
+     * @return Batch request content's json as String
+     */
+    @Nonnull
+    public String getBatchRequestContent() {
+        return getBatchRequestContentAsJson().toString();
     }
 
     /**
@@ -135,12 +134,14 @@ public class MSBatchRequestContent {
      * @throws ClientException when the batch couldn't be executed because of client issues.
      */
     @Nonnull
-    public MSBatchResponseContent execute(@Nonnull final IBaseClient client) throws ClientException {
-        try {
-            return executeAsync(client).get();
-        } catch (Exception ex) {
-            throw new ClientException("Batch failed to execute", ex);
-        }
+    public MSBatchResponseContent execute(@Nonnull final IBaseClient client) {
+        final JsonObject content = getBatchRequestContentAsJson();
+        return new MSBatchResponseContent(client.getServiceRoot() + "/",
+                                        content,
+                                        client.customRequest("/$batch")
+                                                .buildRequest()
+                                                .post(content)
+                                                .getAsJsonObject());
     }
     /**
      * Executes the batch requests asynchronously and returns the response
@@ -152,11 +153,11 @@ public class MSBatchRequestContent {
         if(client == null) {
             throw new IllegalArgumentException("client parameter cannot be null");
         }
-        final String content = getBatchRequestContent();
-        return client.customRequest(client.getServiceRoot() + "/$batch", String.class)
+        final JsonObject content = getBatchRequestContentAsJson();
+        return client.customRequest("/$batch")
             .buildRequest()
             .postAsync(content)
-            .thenApply(resp -> new MSBatchResponseContent(client.getServiceRoot() + "/", content, resp));
+            .thenApply(resp -> new MSBatchResponseContent(client.getServiceRoot() + "/", content, resp.getAsJsonObject()));
     }
 
     private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
@@ -180,9 +181,9 @@ public class MSBatchRequestContent {
             contentmap.add("headers", headerMap);
         }
 
-        final List<String> arrayOfDependsOnIds = batchRequestStep.getArrayOfDependsOnIds();
+        final HashSet<String> arrayOfDependsOnIds = batchRequestStep.getDependsOnIds();
         if (arrayOfDependsOnIds != null) {
-            final JsonArray array = new JsonArray();
+            final JsonArray array = new JsonArray(arrayOfDependsOnIds.size());
             for (final String dependsOnId : arrayOfDependsOnIds)
                 array.add(dependsOnId);
             contentmap.add("dependsOn", array);

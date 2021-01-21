@@ -48,10 +48,10 @@ public class MSBatchResponseContent {
      * @param batchRequestData the batch request payload data as a JSON string
      * @param batchResponseData the batch response body as a JSON string
      */
-    protected MSBatchResponseContent(@Nonnull final String baseUrl, @Nonnull final String batchRequestData, @Nonnull final String batchResponseData) {
+    protected MSBatchResponseContent(@Nonnull final String baseUrl, @Nonnull final JsonObject batchRequestData, @Nonnull final JsonObject batchResponseData) {
         this.protocol = Protocol.HTTP_1_1;
         this.message = "OK";
-        final Map<String, Request> requestMap = createBatchRequestsHashMap(baseUrl, JsonParser.parseString(batchRequestData).getAsJsonObject());
+        final Map<String, Request> requestMap = createBatchRequestsHashMap(baseUrl, batchRequestData);
         if (requestMap != null)
             batchRequestsHashMap.putAll(requestMap);
         updateFromResponseBody(batchResponseData);
@@ -168,17 +168,15 @@ public class MSBatchResponseContent {
             try {
                 final String batchResponseData = batchResponse.body().string();
                 if (batchResponseData != null) {
-                    updateFromResponseBody(batchResponseData);
+                    updateFromResponseBody(stringToJSONObject(batchResponseData));
                 }
             } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    private void updateFromResponseBody(@Nonnull final String batchResponseData) {
-        final JsonObject batchResponseObj = stringToJSONObject(batchResponseData);
+    private void updateFromResponseBody(@Nonnull final JsonObject batchResponseObj) {
         if (batchResponseObj != null) {
-
             final JsonElement nextLinkElement = batchResponseObj.get("@odata.nextLink");
             if (nextLinkElement != null && nextLinkElement.isJsonPrimitive())
                 nextLink = nextLinkElement.getAsString();
