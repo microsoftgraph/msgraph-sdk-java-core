@@ -18,7 +18,7 @@ public class deviceCodeFlowMain {
     private final static String CLIENT_ID = "cfb5d84c-c88f-466c-81fb-0fe9fa8da052";
 
     //Set the scopes for your ms-graph request
-    private final static List<String> SCOPES = Arrays.asList("user.ReadBasic.All", "User.Read");
+    private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All", "User.Read");
 
     public static void main(String[] args) throws AuthenticationException {
         deviceCodeFlow();
