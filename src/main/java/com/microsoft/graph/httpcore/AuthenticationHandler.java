@@ -42,7 +42,7 @@ public class AuthenticationHandler implements Interceptor {
         originalRequest.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
 
         Request authenticatedRequest = authProvider.authenticateRequest(originalRequest);
-        return chain.proceed(authenticatedRequest);
+        return authenticatedRequest == null ? chain.proceed(originalRequest) : chain.proceed(authenticatedRequest);
     }
 
 }
