@@ -15,7 +15,7 @@ public class MSBatchRequestStep {
 		if(requestId.length() == 0)
 			throw new IllegalArgumentException("Request Id cannot be empty.");
 		if(request == null)
-			new IllegalArgumentException("Request cannot be null.");
+			throw new IllegalArgumentException("Request cannot be null.");
 				
 		this.requestId = requestId;
 		this.request = request;
