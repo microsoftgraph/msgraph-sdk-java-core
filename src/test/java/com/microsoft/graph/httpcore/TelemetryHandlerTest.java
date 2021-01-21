@@ -33,7 +33,7 @@ public class TelemetryHandlerTest {
         final Response response = client.newCall(request).execute();
         assertNotNull(response);
         assertTrue(response.request().header(TelemetryHandler.SDK_VERSION).contains(expectedHeader));
-        assertTrue(response.request().header(TelemetryHandler.SDK_VERSION).contains(TelemetryHandler.ANDROID_VERSION_PREFIX));
+        assertTrue(!response.request().header(TelemetryHandler.SDK_VERSION).contains(TelemetryHandler.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests runnning on java platform
         assertTrue(response.request().header(TelemetryHandler.SDK_VERSION).contains(TelemetryHandler.JAVA_VERSION_PREFIX));
     }
 
