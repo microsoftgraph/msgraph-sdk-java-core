@@ -29,7 +29,7 @@ public class interactiveBrowserMain {
                 .port(8765)
                 .build();
 
-        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(interactiveBrowserCredential, SCOPES);
+        final TokenCredentialAuthProvider tokenCredentialAuthProvider = new TokenCredentialAuthProvider(SCOPES, interactiveBrowserCredential);
         final OkHttpClient httpClient = HttpClients.createDefault(tokenCredentialAuthProvider);
 
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();

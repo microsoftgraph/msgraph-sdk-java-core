@@ -40,7 +40,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      */
     public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) {
-        this(tokenCredential, Arrays.asList(new String[] {DEFAULT_GRAPH_SCOPE}));
+        this(Arrays.asList(new String[] {DEFAULT_GRAPH_SCOPE}), tokenCredential);
     }
 
     /**
@@ -49,8 +49,8 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @param scopes Specified desired scopes of the Auth Provider
      */
-    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final List<String> scopes) {
-        this(tokenCredential, scopes, Duration.ofMinutes(DEFAULT_TOKEN_TIMEOUT));
+    public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final TokenCredential tokenCredential) {
+        this(scopes, Duration.ofMinutes(DEFAULT_TOKEN_TIMEOUT), tokenCredential);
     }
 
     /**
@@ -60,7 +60,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
      * @param scopes Specified desired scopes of the Auth Provider
      * @param tokenObtentionTimeout Maximum time to wait for token obtention. Default 10 minutes. Use lower value on application with stable connectivity and no user interactions.
      */
-    public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final List<String> scopes, @Nonnull final Duration tokenObtentionTimeout) {
+    public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final Duration tokenObtentionTimeout, @Nonnull final TokenCredential tokenCredential) {
         if(tokenCredential == null) {
             throw new IllegalArgumentException("tokenCredential parameter cannot be null.");
         }
