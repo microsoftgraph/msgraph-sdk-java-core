@@ -44,7 +44,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     }
 
     /**
-     * Creates an Authentication provider using a TokenCredential and list of scopes
+     * Creates an Authentication provider using a TokenCredential and list of scopes with default timeout (10 minutes)
      *
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      * @param scopes Specified desired scopes of the Auth Provider
