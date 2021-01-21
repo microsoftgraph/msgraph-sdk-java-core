@@ -99,7 +99,7 @@ public class MSBatchResponseContent {
                         final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
                         final String bodyAsString = JsonObject.toString();
                         final ResponseBody responseBody = ResponseBody
-                                .create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
+                                .create(bodyAsString, MediaType.parse("application/json; charset=utf-8"));
                         builder.body(responseBody);
                     }
 
@@ -212,8 +212,7 @@ public class MSBatchResponseContent {
             return null;
         }
     }
-    @Nullable
-    protected Map<String, Request> createBatchRequestsHashMap(@Nonnull final String baseUrl, @Nonnull final JsonObject requestJSONObject) {
+    private Map<String, Request> createBatchRequestsHashMap(@Nonnull final String baseUrl, @Nonnull final JsonObject requestJSONObject) {
         if(baseUrl == null || baseUrl == "" || requestJSONObject == null) {
             return null;
         }
@@ -255,7 +254,7 @@ public class MSBatchResponseContent {
                         final JsonObject JsonObject = jsonBodyElement.getAsJsonObject();
                         final String bodyAsString = JsonObject.toString();
                         final RequestBody requestBody = RequestBody
-                                .create(MediaType.parse("application/json; charset=utf-8"), bodyAsString);
+                                .create(bodyAsString, MediaType.parse("application/json; charset=utf-8"));
                         builder.method(jsonMethodElement.getAsString(), requestBody);
                     } else if (jsonMethodElement != null) {
                         builder.method(jsonMethodElement.getAsString(), null);
