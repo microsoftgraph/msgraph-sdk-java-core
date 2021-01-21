@@ -17,6 +17,7 @@ public class TelemetryHandler implements Interceptor{
     public static final String JAVA_VERSION_PREFIX = "java";
     public static final String ANDROID_VERSION_PREFIX = "android";
     public static final String CLIENT_REQUEST_ID = "client-request-id";
+    private static final String DEFAULT_VERSION_VALUE = "0";
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -30,7 +31,9 @@ public class TelemetryHandler implements Interceptor{
         final String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
-        final String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage + " " + JAVA_VERSION_PREFIX + "/" + javaVersion + " " + ANDROID_VERSION_PREFIX + "/" + androidVersion;
+        final String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage +
+                                                (javaVersion == DEFAULT_VERSION_VALUE ? "" : (", " + JAVA_VERSION_PREFIX + "/" + javaVersion)) +
+                                                (androidVersion == DEFAULT_VERSION_VALUE ? "" : (", " + ANDROID_VERSION_PREFIX + "/" + androidVersion));
         telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
 
         if(request.header(CLIENT_REQUEST_ID) == null) {
@@ -61,10 +64,10 @@ public class TelemetryHandler implements Interceptor{
             final Field sdkVersionField = versionClass.getField("SDK_INT");
             final Object value = sdkVersionField.get(null);
             final String valueStr = String.valueOf(value);
-            return valueStr == null || valueStr == "" ? "0" : valueStr;
+            return valueStr == null || valueStr == "" ? DEFAULT_VERSION_VALUE : valueStr;
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException ex) {
             // we're not on android and return "0" to align with java version which returns "0" when running on android
-            return "0";
+            return DEFAULT_VERSION_VALUE;
         }
     }
 }
