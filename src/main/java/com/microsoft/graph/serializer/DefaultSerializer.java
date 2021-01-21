@@ -207,9 +207,6 @@ public class DefaultSerializer implements ISerializer {
 	@Nullable
 	public <T> String serializeObject(@Nonnull final T serializableObject) {
         logger.logDebug("Serializing type " + serializableObject.getClass().getSimpleName());
-        if(serializableObject instanceof String) { // we don't want to over serialize if we already have a serialized string
-            return (String)serializableObject;
-        }
 		JsonElement outJsonTree = gson.toJsonTree(serializableObject);
 
 		if (serializableObject instanceof IJsonBackedObject) {
