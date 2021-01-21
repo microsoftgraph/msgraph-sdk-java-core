@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
@@ -22,21 +22,15 @@ public class MSBatchRequestStepTest {
 
     @Test
     public void defensiveProgrammingTests() {
-        try {
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchRequestStep(null, null);
-            fail("should throw argument exception");
-        } catch (IllegalArgumentException ex) {
-        }
-        try {
+        });
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchRequestStep("id", null);
-            fail("should throw argument exception");
-        } catch (IllegalArgumentException ex) {
-        }
-        try {
+        });
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchRequestStep("", null);
-            fail("should throw argument exception");
-        } catch (IllegalArgumentException ex) {
-        }
+        });
         new MSBatchRequestStep("id", mock(Request.class));
     }
 

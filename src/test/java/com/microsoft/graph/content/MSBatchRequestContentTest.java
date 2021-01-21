@@ -2,17 +2,13 @@ package com.microsoft.graph.content;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonParser;
@@ -28,7 +24,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -115,34 +110,26 @@ public class MSBatchRequestContentTest {
             }
         });
 
-        try {
+        assertThrows("the number of steps cannot exceed 20", IllegalArgumentException.class, () -> {
             new MSBatchRequestContent(null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null);
-            fail("the number of steps cannot exceed 20");
-        } catch (IllegalArgumentException ex) {
-        }
+        });
 
         new MSBatchRequestContent(mockStep, null); // addind a null step doesn't throw
-        try {
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep(null);
-            fail("should throw argument exception");
-        } catch (IllegalArgumentException ex) {
-        }
-        try {
+        });
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep((Request) null);
-            fail("should throw argument exception");
-        } catch (IllegalArgumentException ex) {
-        }
+        });
 
-        try {
+        assertThrows("the number of steps cannot exceed 20", IllegalArgumentException.class, () -> {
             final MSBatchRequestContent batchContent = new MSBatchRequestContent();
             for (int i = 0; i < MSBatchRequestContent.MAX_NUMBER_OF_REQUESTS; i++) {
                 assertNotNull(batchContent.addBatchRequestStep(mock(Request.class)));
             }
             batchContent.addBatchRequestStep(mock(Request.class));
-            fail("the number of steps cannot exceed 20");
-        } catch (IllegalArgumentException ex) {
-        }
+        });
         {
             final MSBatchRequestContent batchContent = new MSBatchRequestContent();
             reservedIds.clear();
