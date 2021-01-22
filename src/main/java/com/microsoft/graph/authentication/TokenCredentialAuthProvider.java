@@ -52,6 +52,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      *
      * @return String representing the retrieved AccessToken
      */
+    @Nonnull
     public CompletableFuture<String> getAuthorizationTokenAsync(@Nonnull final URL requestUrl) {
         if(requestUrl == null)
             throw new IllegalArgumentException("requestUrl parameter cannot be null");
