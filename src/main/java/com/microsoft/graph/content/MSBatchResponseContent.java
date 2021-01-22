@@ -42,7 +42,7 @@ public class MSBatchResponseContent {
         this.protocol = batchResponse.protocol();
     }
     /**
-     * intantiates a new response
+     * instantiates a new response
      * internal only, used when the content executes the requests
      * @param baseUrl the base service URL without a trailing slash
      * @param batchRequestData the batch request payload data as a JSON string
