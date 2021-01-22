@@ -12,16 +12,14 @@ import okhttp3.Request;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
 /**
  * An implementation of the Authentication Provider with Azure-identity
  */
-public class TokenCredentialAuthProvider implements IAuthenticationProvider<Request> {
+public class TokenCredentialAuthProvider extends BaseAuthenticationProvider<Request> {
     /** The bearer value for the authorization request header, contains a space */
     protected static final String BEARER = "Bearer ";
     /** The authorization request header name */
@@ -115,14 +113,6 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
         } else {
             return request;
         }
-    }
-
-    private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
-    private boolean ShouldAuthenticateRequest(@Nonnull final URL requestUrl) {
-        if(requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
-            return false;
-        final String hostName = requestUrl.getHost().toLowerCase(Locale.getDefault());
-        return validGraphHostNames.contains(hostName);
     }
 
     /**
