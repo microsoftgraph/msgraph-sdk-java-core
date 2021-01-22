@@ -1,7 +1,6 @@
 import com.azure.identity.DeviceCodeCredential;
 import com.azure.identity.DeviceCodeCredentialBuilder;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
-import com.microsoft.graph.exceptions.AuthenticationException;
 import com.microsoft.graph.httpcore.HttpClients;
 import okhttp3.*;
 
@@ -20,7 +19,7 @@ public class deviceCodeFlowMain {
     //Set the scopes for your ms-graph request
     private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All", "User.Read");
 
-    public static void main(String[] args) throws AuthenticationException {
+    public static void main(String[] args) throws Exception {
         final DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
                 .clientId(CLIENT_ID)
                 .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})

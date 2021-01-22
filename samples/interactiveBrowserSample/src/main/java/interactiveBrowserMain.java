@@ -6,7 +6,6 @@ import com.azure.identity.InteractiveBrowserCredentialBuilder;
 import com.microsoft.graph.authentication.*;
 import okhttp3.*;
 import com.microsoft.graph.httpcore.HttpClients;
-import com.microsoft.graph.exceptions.*;
 
 public class interactiveBrowserMain {
 
