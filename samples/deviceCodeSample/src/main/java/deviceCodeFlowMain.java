@@ -21,11 +21,6 @@ public class deviceCodeFlowMain {
     private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All", "User.Read");
 
     public static void main(String[] args) throws AuthenticationException {
-        deviceCodeFlow();
-    }
-
-    public static void deviceCodeFlow() throws AuthenticationException {
-
         final DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
                 .clientId(CLIENT_ID)
                 .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})

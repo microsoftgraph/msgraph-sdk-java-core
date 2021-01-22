@@ -19,11 +19,6 @@ public class interactiveBrowserMain {
     private final static List<String> SCOPES = Arrays.asList("User.ReadBasic.All");
 
     public static void main(String args[]) throws Exception {
-        interactiveBrowser();
-    }
-
-    private static void interactiveBrowser() throws AuthenticationException{
-
         final InteractiveBrowserCredential interactiveBrowserCredential = new InteractiveBrowserCredentialBuilder()
                 .clientId(CLIENT_ID)
                 .redirectUrl("http://localhost:8765")
