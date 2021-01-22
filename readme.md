@@ -48,20 +48,17 @@ Register your application by following the steps at [Register your app with the 
 
 ### 2.2 Create an IAuthenticationProvider object
 
-An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `ICoreAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
+An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `IAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
 
-### To get instance of HttpClients
-
-Auth in Java app [here](https://github.com/microsoftgraph/msgraph-sdk-java-auth)
-
-Auth in Android app [here](https://github.com/microsoftgraph/msgraph-sdk-android-auth)
+For an example of how to get an authentication provider, see [the samples](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/master/samples).
 
 ### 2.3 Get a HttpClients object
+
 
 You must get a **HttpClients** object to make requests against the service.
 
 ```java
-OkHttpClient client = HttpClients.createDefault(iCoreAuthenticationProvider);
+OkHttpClient client = HttpClients.createDefault(iAuthenticationProvider);
 ```
 
 ## 3. Make requests against the service
