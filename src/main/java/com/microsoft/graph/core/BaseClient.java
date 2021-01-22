@@ -22,7 +22,7 @@
 
 package com.microsoft.graph.core;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.httpcore.HttpClients;
@@ -93,9 +93,9 @@ public class BaseClient implements IBaseClient {
 	 * @return the instance of this builder
 	 */
 	@Nonnull
-	public CustomRequestBuilder<JsonObject> customRequest(@Nonnull final String url) {
-		return new CustomRequestBuilder<JsonObject>(getServiceRoot() + url, this, null,
-				JsonObject.class);
+	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
+		return new CustomRequestBuilder<JsonElement>(getServiceRoot() + url, this, null,
+				JsonElement.class);
 	}
 
 	/**

@@ -25,7 +25,7 @@ package com.microsoft.graph.core;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
@@ -91,7 +91,7 @@ public interface IBaseClient {
      * @param url the url to send the request to
      */
     @Nonnull
-    CustomRequestBuilder<JsonObject> customRequest(@Nonnull final String url);
+    CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url);
 
     /**
      * Gets the service SDK version if the service SDK is in use, null otherwise

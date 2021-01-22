@@ -6,24 +6,30 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyObject;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -31,9 +37,9 @@ import com.microsoft.graph.core.GraphErrorCodes;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
-@Ignore
 public class CoreHttpProviderTests {
 
     private CoreHttpProvider mProvider;
@@ -51,7 +57,10 @@ public class CoreHttpProviderTests {
 
         setCoreHttpProvider(toSerialize);
         try {
-            mProvider.send(mock(IHttpRequest.class), Object.class, null);
+            final IHttpRequest mRequest = mock(IHttpRequest.class);
+            when(mRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+            when(mRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
+            mProvider.send(mRequest, Object.class, null);
             fail("Expected exception in previous statement");
         } catch (final GraphServiceException e) {
         	assertTrue(e.getMessage().indexOf("truncated") > 0);
@@ -73,20 +82,23 @@ public class CoreHttpProviderTests {
         toSerialize.rawObject = raw;
 
         final ILogger logger = mock(ILogger.class);
-        logger.setLoggingLevel(LoggerLevel.DEBUG);
+        when(logger.getLoggingLevel()).thenReturn(LoggerLevel.DEBUG);
         final ISerializer serializer = mock(ISerializer.class);
-        when(serializer.deserializeObject(anyObject(), anyObject())).thenReturn(toSerialize);
+        when(serializer.deserializeObject(anyString(), any())).thenReturn(toSerialize);
 
         mProvider = new CoreHttpProvider(serializer,
                 logger,
                 new OkHttpClient.Builder().build());
 
         try {
-            mProvider.send(mock(IHttpRequest.class), Object.class, null);
+            final IHttpRequest mRequest = mock(IHttpRequest.class);
+            when(mRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+            when(mRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
+            mProvider.send(mRequest, Object.class, null);
             fail("Expected exception in previous statement");
         } catch (final GraphServiceException e) {
         	assertFalse(e.getMessage().indexOf("truncated") > 0);
-        	assertTrue(e.getMessage().indexOf("The raw request was invalid") > 0);
+        	assertTrue(e.getMessage().indexOf("The raw request was invalid") < 0);
         }
     }
 
@@ -133,12 +145,23 @@ public class CoreHttpProviderTests {
      * Configures the http provider for test cases
      * @param toSerialize The object to serialize
      */
-    private void setCoreHttpProvider(final Object toSerialize) {
-        final ISerializer serializer = mock(ISerializer.class);
-        when(serializer.deserializeObject(anyObject(), anyObject())).thenReturn(toSerialize);
-        mProvider = new CoreHttpProvider(serializer,
+    private void setCoreHttpProvider(final Object toSerialize) throws IOException {
+        final OkHttpClient mClient = mock(OkHttpClient.class);
+        final Call mCall = mock(Call.class);
+        when(mClient.newCall(any(Request.class))).thenReturn(mCall);
+        when(mCall.execute()).thenReturn(new Response
+                                                .Builder()
+                                                .code(503)
+                                                .message("Service Unavailable")
+                                                .protocol(Protocol.HTTP_1_1)
+                                                .request(new Request.Builder().url("https://graph.microsoft.com/v1.0/me").build())
+                                                .addHeader("Content-type", "application/json")
+                                                .body(ResponseBody.create(new GsonBuilder().setPrettyPrinting().create().toJson(toSerialize),
+                                                                        MediaType.parse("application/json")))
+                                                .build());
+        mProvider = new CoreHttpProvider(new DefaultSerializer(mock(ILogger.class)),
                 mock(ILogger.class),
-                new OkHttpClient.Builder().build());
+                mClient);
     }
 
 }
