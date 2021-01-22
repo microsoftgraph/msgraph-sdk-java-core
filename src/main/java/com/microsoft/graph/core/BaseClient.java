@@ -36,7 +36,6 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 /**
  * A client that communications with an OData service
@@ -105,16 +104,15 @@ public class BaseClient implements IBaseClient {
 	 * @return builder to start configuring the client
 	 */
 	@Nonnull
-	public static Builder<OkHttpClient, Request> builder() {
+	public static Builder<OkHttpClient> builder() {
 		return new Builder<>();
 	}
 
 	/**
 	 * Builder to help configure the Graph service client
      * @param <httpClientType> type of the native http library client
-     * @param <httpRequestType> type of the native http library request
 	 */
-	public static class Builder<httpClientType, httpRequestType> {
+	public static class Builder<httpClientType> {
 		private ISerializer serializer;
 		private IHttpProvider httpProvider;
 		private ILogger logger;
@@ -141,7 +139,8 @@ public class BaseClient implements IBaseClient {
 			} else {
 				return serializer;
 			}
-		}
+        }
+        @SuppressWarnings("unchecked")
 		private httpClientType getHttpClient() {
 			if(httpClient == null) {
 				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
@@ -165,7 +164,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> serializer(@Nonnull final ISerializer serializer) {
+		public Builder<httpClientType> serializer(@Nonnull final ISerializer serializer) {
 			checkNotNull(serializer, "serializer");
 			this.serializer = serializer;
 			return this;
@@ -179,7 +178,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> httpProvider(@Nonnull final IHttpProvider httpProvider) {
+		public Builder<httpClientType> httpProvider(@Nonnull final IHttpProvider httpProvider) {
 			checkNotNull(httpProvider, "httpProvider");
 			this.httpProvider = httpProvider;
 			return this;
@@ -193,7 +192,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> logger(@Nonnull final ILogger logger) {
+		public Builder<httpClientType> logger(@Nonnull final ILogger logger) {
 			checkNotNull(logger, "logger");
 			this.logger = logger;
 			return this;
@@ -207,7 +206,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> httpClient(@Nonnull final httpClientType client) {
+		public Builder<httpClientType> httpClient(@Nonnull final httpClientType client) {
 			checkNotNull(client, "client");
 			this.httpClient = client;
 			return this;
@@ -220,7 +219,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
+		public Builder<httpClientType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
 			checkNotNull(auth, "auth");
 			this.auth = auth;
 			return this;
