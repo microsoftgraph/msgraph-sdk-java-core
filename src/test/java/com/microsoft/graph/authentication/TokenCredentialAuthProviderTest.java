@@ -21,58 +21,65 @@ import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class TokenCredentialAuthProviderTest {
 
     public final String testToken = "CredentialTestToken";
+    private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
 
     @Test
     public void TokenCredentialAuthProviderTestICoreAuthentication() throws AuthenticationException {
 
-        // Arrange
-        final Request request = new Request.Builder().url("https://graph.microsoft.com").build();
-        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
-        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+        for(final String hostName : validGraphHostNames) {
+            // Arrange
+            final Request request = new Request.Builder().url("https://" + hostName).build();
+            final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+            final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
-        // Act
-        Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
-        final Request authenticatedRequest = authProvider.authenticateRequest(request);
+            // Act
+            Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+            final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
-        // Assert
-        Assert.assertEquals(request.url(), authenticatedRequest.url());
-        Assert.assertNotNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
-        assertEquals(InternalAuthConstants.BEARER + testToken, authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+            // Assert
+            Assert.assertEquals(request.url(), authenticatedRequest.url());
+            Assert.assertNotNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+            assertEquals(InternalAuthConstants.BEARER + testToken, authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+        }
     }
 
     @Test
     public void TokenCredentialAuthProviderTestIAuthentication() throws AuthenticationException, MalformedURLException {
 
-        // Arrange
-        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
-        final IHttpRequest request = mock(IHttpRequest.class);
-        final List<HeaderOption> headersOptions = new ArrayList<>();
-        when(request.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com"));
-        doAnswer(new Answer<Void>() {
+        for(final String hostName : validGraphHostNames) {
+            // Arrange
+            final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+            final IHttpRequest request = mock(IHttpRequest.class);
+            final List<HeaderOption> headersOptions = new ArrayList<>();
+            when(request.getRequestUrl()).thenReturn(new URL("https://" + hostName));
+            doAnswer(new Answer<Void>() {
 
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                headersOptions.add(new HeaderOption((String)invocation.getArguments()[0], (String)invocation.getArguments()[1]));
-                return null;
-            }
+                @Override
+                public Void answer(InvocationOnMock invocation) throws Throwable {
+                    headersOptions.add(new HeaderOption((String)invocation.getArguments()[0], (String)invocation.getArguments()[1]));
+                    return null;
+                }
 
-        }).when(request).addHeader(any(String.class), any(String.class));
-        when(request.getHeaders()).thenReturn(headersOptions);
-        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+            }).when(request).addHeader(any(String.class), any(String.class));
+            when(request.getHeaders()).thenReturn(headersOptions);
+            final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
-        //Act
-        Assert.assertTrue(request.getHeaders().isEmpty());
-        authProvider.authenticateRequest(request);
-        Assert.assertFalse(request.getHeaders().isEmpty());
+            //Act
+            Assert.assertTrue(request.getHeaders().isEmpty());
+            authProvider.authenticateRequest(request);
+            Assert.assertFalse(request.getHeaders().isEmpty());
 
-        //Assert
-        Assert.assertTrue(request.getHeaders().get(0).getName().equals(InternalAuthConstants.AUTHORIZATION_HEADER));
-        Assert.assertTrue(request.getHeaders().get(0).getValue().equals(InternalAuthConstants.BEARER + this.testToken));
+            //Assert
+            Assert.assertTrue(request.getHeaders().get(0).getName().equals(InternalAuthConstants.AUTHORIZATION_HEADER));
+            Assert.assertTrue(request.getHeaders().get(0).getValue().equals(InternalAuthConstants.BEARER + this.testToken));
+        }
     }
     @Test
     public void TokenCredentialAuthProviderDoesNotAddTokenOnInvalidDomainsTestICoreAuthentication() throws AuthenticationException {
