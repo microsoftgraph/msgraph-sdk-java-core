@@ -9,7 +9,6 @@ import com.microsoft.graph.http.IHttpRequest;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
@@ -87,7 +86,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
             throw new IllegalArgumentException("request parameter cannot be null.");
         }
         final URL requestUrl = request.getRequestUrl();
-        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.toString())) {
+        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl)) {
             request.addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken());
         }
     }
@@ -105,7 +104,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
             throw new IllegalArgumentException("request parameter cannot be null.");
         }
         final HttpUrl requestUrl = request.url();
-        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.toString())) {
+        if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.url())) {
             return request.newBuilder()
                     .addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken())
                     .build();
@@ -115,16 +114,11 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     }
 
     private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
-    private boolean ShouldAuthenticateRequest(@Nonnull final String requestUrl) {
-        try {
-            final URL url = new URL(requestUrl);
-            if(!url.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
-                return false;
-            final String hostName = url.getHost().toLowerCase(Locale.getDefault());
-            return validGraphHostNames.contains(hostName);
-        } catch (MalformedURLException ex) {
+    private boolean ShouldAuthenticateRequest(@Nonnull final URL requestUrl) {
+        if(requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
             return false;
-        }
+        final String hostName = requestUrl.getHost().toLowerCase(Locale.getDefault());
+        return validGraphHostNames.contains(hostName);
     }
 
     /**
