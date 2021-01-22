@@ -29,7 +29,7 @@ android {
     defaultConfig {
         versionCode 1
         versionName "1.0"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 30
     }
 
@@ -55,6 +55,7 @@ android {
         disable "ResourceType"                 // Annotation binding
         disable "GradleDependency"
         disable "NewerVersionAvailable"
+        disable "DuplicatePlatformClasses"      // xpp3 added by azure-identity 
     }
 	sourceSets {
 		main {

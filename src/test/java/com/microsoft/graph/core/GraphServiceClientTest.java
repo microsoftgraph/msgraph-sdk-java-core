@@ -2,6 +2,7 @@ package com.microsoft.graph.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Map;
@@ -14,20 +15,15 @@ import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.http.IStatefulResponseHandler;
-import com.microsoft.graph.httpcore.ICoreAuthenticationProvider;
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
 public class GraphServiceClientTest {
-    private ICoreAuthenticationProvider getAuthProvider() {
-        return new ICoreAuthenticationProvider() {
-            @Override
-            public Request authenticateRequest(Request request) {
-                return request;
-            }
-        };
+    private IAuthenticationProvider getAuthProvider() {
+        return mock(IAuthenticationProvider.class);
     }
 
     @Test

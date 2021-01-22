@@ -2,9 +2,11 @@ package com.microsoft.graph.httpcore;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import org.junit.Test;
 
 import okhttp3.Interceptor;
@@ -20,15 +22,11 @@ public class TelemetryHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void interceptTest() throws IOException {
         final String expectedHeader = TelemetryHandler.GRAPH_VERSION_PREFIX +"/"
                 +TelemetryHandler.VERSION;
-        final OkHttpClient client = HttpClients.createDefault(new ICoreAuthenticationProvider() {
-            @Override
-            public Request authenticateRequest(Request request) {
-                return request;
-            }
-        });
+        final OkHttpClient client = HttpClients.createDefault(mock(IAuthenticationProvider.class));
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
         final Response response = client.newCall(request).execute();
         assertNotNull(response);
@@ -38,15 +36,10 @@ public class TelemetryHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void arrayInterceptorsTest() throws IOException {
 
-        final AuthenticationHandler authenticationHandler = new AuthenticationHandler(new ICoreAuthenticationProvider() {
-
-            @Override
-            public Request authenticateRequest(Request request) {
-                return request;
-            }
-        });
+        final AuthenticationHandler authenticationHandler = new AuthenticationHandler(mock(IAuthenticationProvider.class));
         final Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler(), authenticationHandler};
         final OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
         final String expectedHeader = TelemetryHandler.GRAPH_VERSION_PREFIX +"/"

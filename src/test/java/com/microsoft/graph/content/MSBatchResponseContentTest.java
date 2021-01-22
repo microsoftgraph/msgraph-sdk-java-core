@@ -1,6 +1,6 @@
 package com.microsoft.graph.content;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -20,13 +20,9 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testNullMSBatchResponseContent() {
-        Response response = null;
-        try {
-            new MSBatchResponseContent(response);
-        }
-        catch(IllegalArgumentException e) {
-            assertNotNull(e);
-        }
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+            new MSBatchResponseContent((Response)null);
+        });
     }
 
     @Test
@@ -49,11 +45,9 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testInvalidMSBatchResponseContentWithNullResponseString() {
-        try{
+        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
             new MSBatchResponseContent(null);
-        }catch(Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
+        });
     }
 
     @Test

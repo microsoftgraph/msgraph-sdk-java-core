@@ -1,5 +1,7 @@
 package com.microsoft.graph.httpcore;
 
+import com.microsoft.graph.authentication.IAuthenticationProvider;
+
 import java.util.Arrays;
 
 import javax.annotation.Nullable;
@@ -8,6 +10,7 @@ import javax.annotation.Nonnull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+import okhttp3.Request;
 import okhttp3.OkHttpClient.Builder;
 
 /**
@@ -40,7 +43,7 @@ public class HttpClients {
      * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers
      */
     @Nonnull
-    public static OkHttpClient createDefault(@Nonnull final ICoreAuthenticationProvider auth) {
+    public static OkHttpClient createDefault(@Nonnull final IAuthenticationProvider auth) {
         return custom()
                 .addInterceptor(new AuthenticationHandler(auth))
                 .addInterceptor(new RetryHandler())

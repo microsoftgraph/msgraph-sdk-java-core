@@ -22,11 +22,11 @@
 
 package com.microsoft.graph.core;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.httpcore.HttpClients;
-import com.microsoft.graph.httpcore.ICoreAuthenticationProvider;
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.DefaultSerializer;
@@ -93,9 +93,9 @@ public class BaseClient implements IBaseClient {
 	 * @return the instance of this builder
 	 */
 	@Nonnull
-	public CustomRequestBuilder<JsonObject> customRequest(@Nonnull final String url) {
-		return new CustomRequestBuilder<JsonObject>(getServiceRoot() + url, this, null,
-				JsonObject.class);
+	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
+		return new CustomRequestBuilder<JsonElement>(getServiceRoot() + url, this, null,
+				JsonElement.class);
 	}
 
 	/**
@@ -105,22 +105,23 @@ public class BaseClient implements IBaseClient {
 	 */
 	@Nonnull
 	public static Builder<OkHttpClient> builder() {
-		return new Builder<OkHttpClient>();
+		return new Builder<>();
 	}
 
 	/**
 	 * Builder to help configure the Graph service client
+     * @param <httpClientType> type of the native http library client
 	 */
 	public static class Builder<httpClientType> {
 		private ISerializer serializer;
 		private IHttpProvider httpProvider;
 		private ILogger logger;
 		private httpClientType httpClient;
-		private ICoreAuthenticationProvider auth;
+		private IAuthenticationProvider auth;
 
-		private ICoreAuthenticationProvider getAuthenticationProvider() {
+		private IAuthenticationProvider getAuthenticationProvider() {
 			if(auth == null) {
-				throw new NullPointerException("auth"); // TODO initialize to default once moved to core
+				throw new NullPointerException("auth");
 			} else {
 				return auth;
 			}
@@ -138,8 +139,8 @@ public class BaseClient implements IBaseClient {
 			} else {
 				return serializer;
 			}
-		}
-		@SuppressWarnings("unchecked")
+        }
+        @SuppressWarnings("unchecked")
 		private httpClientType getHttpClient() {
 			if(httpClient == null) {
 				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
@@ -218,7 +219,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> authenticationProvider(@Nonnull final ICoreAuthenticationProvider auth) {
+		public Builder<httpClientType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
 			checkNotNull(auth, "auth");
 			this.auth = auth;
 			return this;

@@ -8,12 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.meta.When;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +26,6 @@ import okhttp3.ResponseBody;
 
 import static org.mockito.Mockito.*;
 
-import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
