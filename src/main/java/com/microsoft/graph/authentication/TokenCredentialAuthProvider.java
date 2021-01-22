@@ -22,6 +22,10 @@ import javax.annotation.Nonnull;
  * An implementation of the Authentication Provider with Azure-identity
  */
 public class TokenCredentialAuthProvider implements IAuthenticationProvider<Request> {
+    /** The bearer value for the authorization request header, contains a space */
+    protected static final String BEARER = "Bearer ";
+    /** The authorization request header name */
+    protected static final String AUTHORIZATION_HEADER = "Authorization";
 
     /** TokenCredential expected from user */
     private final TokenCredential tokenCredential;
@@ -87,7 +91,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
         }
         final URL requestUrl = request.getRequestUrl();
         if(requestUrl != null && ShouldAuthenticateRequest(requestUrl)) {
-            request.addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken());
+            request.addHeader(AUTHORIZATION_HEADER, BEARER + getAccessToken());
         }
     }
 
@@ -106,7 +110,7 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
         final HttpUrl requestUrl = request.url();
         if(requestUrl != null && ShouldAuthenticateRequest(requestUrl.url())) {
             return request.newBuilder()
-                    .addHeader(InternalAuthConstants.AUTHORIZATION_HEADER, InternalAuthConstants.BEARER + getAccessToken())
+                    .addHeader(AUTHORIZATION_HEADER, BEARER + getAccessToken())
                     .build();
         } else {
             return request;

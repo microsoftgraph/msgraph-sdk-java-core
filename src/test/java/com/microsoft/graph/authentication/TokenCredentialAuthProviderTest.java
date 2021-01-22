@@ -40,13 +40,13 @@ public class TokenCredentialAuthProviderTest {
             final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
             // Act
-            Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+            Assert.assertNull(request.header(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
             final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
             // Assert
             Assert.assertEquals(request.url(), authenticatedRequest.url());
-            Assert.assertNotNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
-            assertEquals(InternalAuthConstants.BEARER + testToken, authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+            Assert.assertNotNull(authenticatedRequest.header(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
+            assertEquals(TokenCredentialAuthProvider.BEARER + testToken, authenticatedRequest.header(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
         }
     }
 
@@ -77,8 +77,8 @@ public class TokenCredentialAuthProviderTest {
             Assert.assertFalse(request.getHeaders().isEmpty());
 
             //Assert
-            Assert.assertTrue(request.getHeaders().get(0).getName().equals(InternalAuthConstants.AUTHORIZATION_HEADER));
-            Assert.assertTrue(request.getHeaders().get(0).getValue().equals(InternalAuthConstants.BEARER + this.testToken));
+            Assert.assertTrue(request.getHeaders().get(0).getName().equals(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
+            Assert.assertTrue(request.getHeaders().get(0).getValue().equals(TokenCredentialAuthProvider.BEARER + this.testToken));
         }
     }
     @Test
@@ -90,12 +90,12 @@ public class TokenCredentialAuthProviderTest {
         final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
 
         //Act
-        Assert.assertNull(request.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNull(request.header(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
         final Request authenticatedRequest = authProvider.authenticateRequest(request);
 
         //Assert
         Assert.assertEquals(request.url(), authenticatedRequest.url());
-        Assert.assertNull(authenticatedRequest.header(InternalAuthConstants.AUTHORIZATION_HEADER));
+        Assert.assertNull(authenticatedRequest.header(TokenCredentialAuthProvider.AUTHORIZATION_HEADER));
     }
 
     @Test
