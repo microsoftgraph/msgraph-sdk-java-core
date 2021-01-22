@@ -43,7 +43,7 @@ public class HttpClients {
      * @return OkHttpClient build with authentication provider given, default redirect and default retry handlers
      */
     @Nonnull
-    public static OkHttpClient createDefault(@Nonnull final IAuthenticationProvider<Request> auth) {
+    public static OkHttpClient createDefault(@Nonnull final IAuthenticationProvider auth) {
         return custom()
                 .addInterceptor(new AuthenticationHandler(auth))
                 .addInterceptor(new RetryHandler())

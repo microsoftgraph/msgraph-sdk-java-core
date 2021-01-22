@@ -119,9 +119,9 @@ public class BaseClient implements IBaseClient {
 		private IHttpProvider httpProvider;
 		private ILogger logger;
 		private httpClientType httpClient;
-		private IAuthenticationProvider<httpRequestType> auth;
+		private IAuthenticationProvider auth;
 
-		private IAuthenticationProvider<httpRequestType> getAuthenticationProvider() {
+		private IAuthenticationProvider getAuthenticationProvider() {
 			if(auth == null) {
 				throw new NullPointerException("auth");
 			} else {
@@ -142,10 +142,9 @@ public class BaseClient implements IBaseClient {
 				return serializer;
 			}
 		}
-		@SuppressWarnings("unchecked")
 		private httpClientType getHttpClient() {
 			if(httpClient == null) {
-				return (httpClientType)HttpClients.createDefault((IAuthenticationProvider<Request>)getAuthenticationProvider());
+				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
 			} else {
 				return httpClient;
 			}
@@ -221,7 +220,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType, httpRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider<httpRequestType> auth) {
+		public Builder<httpClientType, httpRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
 			checkNotNull(auth, "auth");
 			this.auth = auth;
 			return this;

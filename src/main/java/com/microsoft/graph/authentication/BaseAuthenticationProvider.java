@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 /**
  * Provides basic common methods for all authentication providers
  */
-public abstract class BaseAuthenticationProvider<T> implements IAuthenticationProvider<T> {
+public abstract class BaseAuthenticationProvider implements IAuthenticationProvider {
     private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
     /**
      * Determines whether a request should be authenticated or not based on it's url.
@@ -18,7 +18,7 @@ public abstract class BaseAuthenticationProvider<T> implements IAuthenticationPr
      * @param requestUrl request URL that is about to be executed
      * @return whether a token should be attached to this request
      */
-    protected boolean ShouldAuthenticateRequest(@Nonnull final URL requestUrl) {
+    protected boolean shouldAuthenticateRequestWithUrl(@Nonnull final URL requestUrl) {
         if(requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
             return false;
         final String hostName = requestUrl.getHost().toLowerCase(Locale.getDefault());

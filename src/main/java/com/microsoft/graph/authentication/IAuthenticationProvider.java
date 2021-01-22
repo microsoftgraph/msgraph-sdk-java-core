@@ -1,28 +1,20 @@
 package com.microsoft.graph.authentication;
 
+import java.net.URL;
+import java.util.concurrent.CompletableFuture;
+
 import javax.annotation.Nonnull;
-
-import com.microsoft.graph.exceptions.AuthenticationException;
-import com.microsoft.graph.http.IHttpRequest;
-
 
 /**
  * Authenticates requests to be sent to the API
- * @param <NativeRequestType> the type of the http native http request from the http client library
  */
-public interface IAuthenticationProvider<NativeRequestType> {
+public interface IAuthenticationProvider {
     /**
      * Authenticates the request
      *
-     * @param request the request to authenticate
-     */
-    void authenticateRequest(@Nonnull final IHttpRequest request) throws AuthenticationException;
-    /**
-     * Authenticates the request
-     *
-     * @param request the request to authenticate
-     * @return Request with Authorization header added to it
+     * @param requestUrl the outgoing request URL
+     * @return a future with the token
      */
     @Nonnull
-    NativeRequestType authenticateRequest(@Nonnull final NativeRequestType request) throws AuthenticationException;
+    CompletableFuture<String> getAuthorizationTokenAsync(@Nonnull final URL requestUrl);
 }

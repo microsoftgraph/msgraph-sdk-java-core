@@ -22,8 +22,7 @@ import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
 public class GraphServiceClientTest {
-    @SuppressWarnings("unchecked")
-    private IAuthenticationProvider<Request> getAuthProvider() {
+    private IAuthenticationProvider getAuthProvider() {
         return mock(IAuthenticationProvider.class);
     }
 
