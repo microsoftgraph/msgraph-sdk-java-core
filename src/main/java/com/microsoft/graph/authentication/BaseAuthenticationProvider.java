@@ -19,7 +19,7 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      * @return whether a token should be attached to this request
      */
     protected boolean shouldAuthenticateRequestWithUrl(@Nonnull final URL requestUrl) {
-        if(requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
+        if (requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
             return false;
         final String hostName = requestUrl.getHost().toLowerCase(Locale.getDefault());
         return validGraphHostNames.contains(hostName);

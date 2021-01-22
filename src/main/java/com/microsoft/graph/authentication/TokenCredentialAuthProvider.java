@@ -26,7 +26,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      */
     public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) {
-        this(Arrays.asList(new String[] {DEFAULT_GRAPH_SCOPE}), tokenCredential);
+        this(Arrays.asList(DEFAULT_GRAPH_SCOPE), tokenCredential);
     }
 
     /**

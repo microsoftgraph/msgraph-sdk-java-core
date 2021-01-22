@@ -22,7 +22,7 @@ public class deviceCodeFlowMain {
     public static void main(String[] args) throws Exception {
         final DeviceCodeCredential deviceCodeCred = new DeviceCodeCredentialBuilder()
                 .clientId(CLIENT_ID)
-                .challengeConsumer(challenge -> {System.out.println(challenge.getMessage());})
+                .challengeConsumer(challenge -> System.out.println(challenge.getMessage()))
                 .build();
 
         final TokenCredentialAuthProvider tokenCredAuthProvider = new TokenCredentialAuthProvider(SCOPES, deviceCodeCred);

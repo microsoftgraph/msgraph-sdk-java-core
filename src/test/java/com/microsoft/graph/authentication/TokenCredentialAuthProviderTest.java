@@ -46,7 +46,7 @@ public class TokenCredentialAuthProviderTest {
         assertNull(token);
     }
     @Test
-    public void providerDefensivePrograming() {
+    public void providerDefensiveProgramming() {
         assertThrows("should throw on null credentials", IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(null); });
         assertThrows("should throw on null scopes", IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(null, mock(TokenCredential.class)); });
         assertThrows("should throw on empty scopes", IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(new ArrayList<String>(), mock(TokenCredential.class)); });
