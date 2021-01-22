@@ -108,4 +108,21 @@ public class TokenCredentialAuthProviderTest {
         //Assert
         Assert.assertTrue(request.getHeaders().isEmpty());
     }
+    @Test
+    public void TokenCredentialAuthProviderDoesNotAddTokenOnInvalidProtocols() throws AuthenticationException,
+            MalformedURLException {
+
+        //Arrange
+        final TokenCredential mockCredential = MockTokenCredential.getMockTokenCredential();
+        final IHttpRequest request = mock(IHttpRequest.class);
+        when(request.getRequestUrl()).thenReturn(new URL("http://graph.microsoft.com"));
+        final TokenCredentialAuthProvider authProvider = new TokenCredentialAuthProvider(mockCredential);
+
+        //Act
+        Assert.assertTrue(request.getHeaders().isEmpty());
+        authProvider.authenticateRequest(request);
+
+        //Assert
+        Assert.assertTrue(request.getHeaders().isEmpty());
+    }
 }

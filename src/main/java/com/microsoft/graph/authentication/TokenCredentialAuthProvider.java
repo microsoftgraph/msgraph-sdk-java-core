@@ -118,6 +118,8 @@ public class TokenCredentialAuthProvider implements IAuthenticationProvider<Requ
     private boolean ShouldAuthenticateRequest(@Nonnull final String requestUrl) {
         try {
             final URL url = new URL(requestUrl);
+            if(!url.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
+                return false;
             final String hostName = url.getHost().toLowerCase(Locale.getDefault());
             return validGraphHostNames.contains(hostName);
         } catch (MalformedURLException ex) {
