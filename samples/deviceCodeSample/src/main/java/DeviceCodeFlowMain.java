@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class deviceCodeFlowMain {
+public class DeviceCodeFlowMain {
 
     //Replace CLIENT_ID with your own client id from an app that is configured according to the requirements below
     //for requirements visit:

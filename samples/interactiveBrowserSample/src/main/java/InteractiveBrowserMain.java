@@ -7,7 +7,7 @@ import com.microsoft.graph.authentication.*;
 import okhttp3.*;
 import com.microsoft.graph.httpcore.HttpClients;
 
-public class interactiveBrowserMain {
+public class InteractiveBrowserMain {
 
     //Replace CLIENT_ID with your own client id from an adequately configured app
     //for requirements visit:
