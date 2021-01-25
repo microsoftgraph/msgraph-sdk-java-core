@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,6 +22,7 @@
 
 package com.microsoft.graph.http;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.ISerializer;
@@ -39,7 +40,7 @@ import javax.annotation.Nonnull;
  */
 public class DeltaCollectionPage<T, T2 extends BaseRequestBuilder<T>> extends BaseCollectionPage<T, T2> {
     /**
-     * The opaque link to query delta after the 
+     * The opaque link to query delta after the
      * initial request
      */
     @Nullable
@@ -53,8 +54,9 @@ public class DeltaCollectionPage<T, T2 extends BaseRequestBuilder<T>> extends Ba
      */
     public DeltaCollectionPage(@Nonnull final ICollectionResponse<T> response, @Nullable final T2 builder) {
        super(response.values(), builder, response.additionalDataManager());
-        if (response.getRawObject().get("@odata.deltaLink") != null) {
-            deltaLink = response.getRawObject().get("@odata.deltaLink").getAsString();
+       final JsonElement deltaLinkRaw = response.additionalDataManager().get("@odata.deltaLink");
+        if (deltaLinkRaw != null) {
+            deltaLink = deltaLinkRaw.getAsString();
         } else {
             deltaLink = null;
         }

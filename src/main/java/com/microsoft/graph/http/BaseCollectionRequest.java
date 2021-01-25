@@ -130,7 +130,6 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
                     .getConstructor(String.class, IBaseClient.class, java.util.List.class)
                     .newInstance(response.nextLink(), getBaseRequest().getClient(), options);
             final T3 page = (T3)this.collectionPageClass.getConstructor(response.getClass(), builder.getClass()).newInstance(response, response.nextLink() == null ? null : builder);
-            page.setRawObject(response.getSerializer(), response.getRawObject());
             return page;
         } catch(IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             return null;
