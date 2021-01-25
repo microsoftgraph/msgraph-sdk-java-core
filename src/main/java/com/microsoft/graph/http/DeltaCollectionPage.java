@@ -23,11 +23,7 @@
 package com.microsoft.graph.http;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.microsoft.graph.serializer.AdditionalDataManager;
-import com.microsoft.graph.serializer.ISerializer;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
