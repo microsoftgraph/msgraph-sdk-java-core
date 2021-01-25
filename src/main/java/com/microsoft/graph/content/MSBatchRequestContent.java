@@ -20,6 +20,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
+import com.microsoft.graph.logger.DefaultLogger;
+import com.microsoft.graph.logger.ILogger;
 import com.google.gson.JsonParseException;
 
 import okhttp3.Headers;
@@ -37,6 +39,7 @@ public class MSBatchRequestContent {
      * Maximum number of requests that can be sent in a batch
      */
     public static final int MAX_NUMBER_OF_REQUESTS = 20;
+    private final ILogger logger;
 
     /**
      * Creates Batch request content using list provided
@@ -44,8 +47,23 @@ public class MSBatchRequestContent {
      * @param batchRequestStepsArray List of batch steps for batching
      */
     public MSBatchRequestContent(@Nonnull final MSBatchRequestStep... batchRequestStepsArray) {
+        this(new DefaultLogger(), batchRequestStepsArray);
+    }
+
+    /**
+     * Creates Batch request content using list provided
+     *
+     * @param batchRequestStepsArray List of batch steps for batching
+     * @param logger logger to use for telemetry
+     */
+    public MSBatchRequestContent(@Nonnull final ILogger logger, @Nonnull final MSBatchRequestStep... batchRequestStepsArray) {
         if (batchRequestStepsArray.length > MAX_NUMBER_OF_REQUESTS)
             throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
+
+        if(logger == null)
+            throw new IllegalArgumentException("logger cannot be null");
+
+        this.logger = logger;
 
         this.batchRequestStepsHashMap = new LinkedHashMap<>();
         for (final MSBatchRequestStep requestStep : batchRequestStepsArray)
@@ -136,7 +154,7 @@ public class MSBatchRequestContent {
     @Nonnull
     public MSBatchResponseContent execute(@Nonnull final IBaseClient client) {
         final JsonObject content = getBatchRequestContentAsJson();
-        return new MSBatchResponseContent(client.getServiceRoot() + "/",
+        return new MSBatchResponseContent(logger, client.getServiceRoot() + "/",
                                         content,
                                         client.customRequest("/$batch")
                                                 .buildRequest()
@@ -157,7 +175,7 @@ public class MSBatchRequestContent {
         return client.customRequest("/$batch")
             .buildRequest()
             .postAsync(content)
-            .thenApply(resp -> new MSBatchResponseContent(client.getServiceRoot() + "/", content, resp.getAsJsonObject()));
+            .thenApply(resp -> new MSBatchResponseContent(logger, client.getServiceRoot() + "/", content, resp.getAsJsonObject()));
     }
 
     private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
@@ -194,7 +212,7 @@ public class MSBatchRequestContent {
             try {
                 contentmap.add("body", requestBodyToJSONObject(batchRequestStep.getRequest()));
             } catch (IOException | JsonParseException e) {
-                e.printStackTrace();
+                logger.logError("error pasing the request JSON body", e);
             }
         }
         return contentmap;

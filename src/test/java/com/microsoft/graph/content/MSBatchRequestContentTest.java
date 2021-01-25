@@ -111,8 +111,11 @@ public class MSBatchRequestContentTest {
         });
 
         assertThrows("the number of steps cannot exceed 20", IllegalArgumentException.class, () -> {
-            new MSBatchRequestContent(null, null, null, null, null, null, null, null, null, null, null, null, null,
+            new MSBatchRequestContent(mock(ILogger.class), null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null);
+        });
+        assertThrows("the logger cannot be null", IllegalArgumentException.class, () -> {
+            new MSBatchRequestContent((ILogger) null, (MSBatchRequestStep)null);
         });
 
         new MSBatchRequestContent(mockStep, null); // addind a null step doesn't throw
@@ -188,7 +191,7 @@ public class MSBatchRequestContentTest {
     }
     @Test
     public void responseParsing() {
-        final MSBatchResponseContent batchResponse = new MSBatchResponseContent("https://graph.microsoft.com/v1.0",
+        final MSBatchResponseContent batchResponse = new MSBatchResponseContent(mock(ILogger.class), "https://graph.microsoft.com/v1.0",
                                                         JsonParser.parseString("{\"requests\":[{\"id\":\"1\",\"method\":\"GET\",\"url\":\"/me\"}]}")
                                                                     .getAsJsonObject(),
                                                         JsonParser.parseString("{\"responses\": [{\"id\": \"1\",\"status\": 200,\"body\": null}]}")

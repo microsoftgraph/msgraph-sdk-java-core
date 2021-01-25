@@ -9,6 +9,8 @@ import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
+import com.microsoft.graph.logger.DefaultLogger;
+import com.microsoft.graph.logger.ILogger;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -69,10 +71,22 @@ public class RetryHandler implements Interceptor{
      */
     private final long DELAY_MILLISECONDS = 1000;
 
+    private final ILogger logger;
+
     /**
      * @param retryOption Create Retry handler using retry option
      */
     public RetryHandler(@Nullable final RetryOptions retryOption) {
+        this(new DefaultLogger(), retryOption);
+    }
+    /**
+     * @param retryOption Create Retry handler using retry option
+     * @param logger logger to use for telemetry
+     */
+    public RetryHandler(@Nonnull final ILogger logger, @Nullable final RetryOptions retryOption) {
+        if(logger == null)
+            throw new IllegalArgumentException("logger parameter cannot be null");
+        this.logger = logger;
         this.mRetryOption = retryOption;
         if(this.mRetryOption == null) {
             this.mRetryOption = new RetryOptions();
@@ -111,7 +125,7 @@ public class RetryHandler implements Interceptor{
             try {
                 Thread.sleep(retryInterval);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.logError("error retrying the request", e);
             }
         }
         return shouldRetry;
