@@ -32,6 +32,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.microsoft.graph.http.BaseCollectionPage;
+import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.core.DateOnly;
 
@@ -230,6 +231,14 @@ final class GsonFactory {
                 return CollectionPageSerializer.deserialize(json, typeOfT, logger);
             }
         };
+        final JsonDeserializer<BaseCollectionResponse<?>> collectionResponseDeserializer = new JsonDeserializer<BaseCollectionResponse<?>>() {
+            @Override
+            public BaseCollectionResponse<?> deserialize(final JsonElement json,
+                                        final Type typeOfT,
+                                        final JsonDeserializationContext context) throws JsonParseException {
+                return CollectionResponseSerializer.deserialize(json, typeOfT, logger);
+            }
+        };
 
         final JsonDeserializer<TimeOfDay> timeOfDayJsonDeserializer = new JsonDeserializer<TimeOfDay>() {
             @Override
@@ -260,6 +269,7 @@ final class GsonFactory {
                 .registerTypeAdapter(Duration.class, durationJsonDeserializer)
                 .registerTypeHierarchyAdapter(BaseCollectionPage.class, collectionPageSerializer)
                 .registerTypeHierarchyAdapter(BaseCollectionPage.class, collectionPageDeserializer)
+                .registerTypeHierarchyAdapter(BaseCollectionResponse.class, collectionResponseDeserializer)
                 .registerTypeAdapter(TimeOfDay.class, timeOfDayJsonDeserializer)
                 .registerTypeAdapterFactory(new FallbackTypeAdapterFactory(logger))
                 .create();

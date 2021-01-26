@@ -347,7 +347,7 @@ public class DefaultSerializer implements ISerializer {
 		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
 			final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
-			final Integer lastDotIndex = odataType.lastIndexOf(".");
+			final int lastDotIndex = odataType.lastIndexOf(".");
 			final String derivedType = (odataType.substring(0, lastDotIndex) +
 											".models." +
 											CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
@@ -356,7 +356,7 @@ public class DefaultSerializer implements ISerializer {
 			try {
 				Class<?> derivedClass = Class.forName(derivedType);
 				//Check that the derived class inherits from the given parent class
-				if (parentClass.isAssignableFrom(derivedClass)) {
+				if (parentClass == null || parentClass.isAssignableFrom(derivedClass)) {
 					return derivedClass;
 				}
 				return null;

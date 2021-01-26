@@ -11,15 +11,14 @@ import javax.annotation.Nonnull;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 import com.microsoft.graph.serializer.AdditionalDataManager;
-import com.microsoft.graph.http.ICollectionResponse;
 
 /**
  * The basic collection response implementation
- * 
+ *
  * @param <T> the entity or complex type
  */
-public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T>, IJsonBackedObject  {
-	
+public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T> {
+
 	/**
      * The list of items within this collection page
      */
@@ -27,7 +26,7 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
     @Expose
     @Nullable
 	public java.util.List<T> value;
-	
+
 
 	/**
      * The list of items within this collection page
@@ -43,7 +42,7 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
     @Expose(serialize = false)
     @Nullable
     public String nextLink;
-	
+
     @Override
     @Nullable
     public String nextLink() {
@@ -69,7 +68,7 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
      */
     @Nullable
 	protected ISerializer serializer;
-	
+
 	/**
      * Gets the raw representation of this class
      *
