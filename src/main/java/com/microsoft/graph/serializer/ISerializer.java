@@ -22,6 +22,8 @@
 
 package com.microsoft.graph.serializer;
 
+import com.google.gson.JsonElement;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -59,14 +61,27 @@ public interface ISerializer {
     /**
      * Deserialize an object from the input string
      * 
-     * @param inputStream     the string that stores the representation of the item
-     * @param clazz           the .class of the item to be deserialized
+     * @param inputStream     the stream that stores the representation of the item
+     * @param clazz           the {@code Class} of the item to be deserialized
      * @param responseHeaders the HTTP response headers
      * @param <T>             the type of the item to be deserialized
      * @return                the deserialized item from the input string
      */
     @Nullable
     <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
+
+    /**
+     * Deserialize an object from the input string
+     *
+     * @param jsonElement     the {@code JsonElement} that stores the representation of the item
+     * @param clazz           the {@code Class} of the item to be deserialized
+     * @param responseHeaders the HTTP response headers
+     * @param <T>             the type of the item to be deserialized
+     * @return                the deserialized item from the input string
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz, @Nonnull Map<String, List<String>> responseHeaders);
 
     /**
      * Serializes an object into a string

@@ -22,6 +22,17 @@
 
 package com.microsoft.graph.http;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.core.Constants;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.logger.LoggerLevel;
+import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.ISerializer;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -30,42 +41,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.Constants;
-import com.microsoft.graph.httpcore.HttpClients;
-import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
-import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
-import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.logger.LoggerLevel;
-import com.microsoft.graph.options.HeaderOption;
-import com.microsoft.graph.serializer.ISerializer;
-
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.Util;
 import okio.BufferedSink;
 
-import static okhttp3.internal.Util.closeQuietly;
+import static com.microsoft.graph.Util.closeQuietly;
 
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library

@@ -44,10 +44,14 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.microsoft.graph.Util.closeQuietly;
+import static java.util.Collections.emptyMap;
+
 /**
  * The default serializer implementation for the SDK
  */
 public class DefaultSerializer implements ISerializer {
+	private static final String graphResponseHeadersKey = "graphResponseHeaders";
 
 	/**
 	 * The instance of the internal serializer
@@ -80,18 +84,33 @@ public class DefaultSerializer implements ISerializer {
 	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz) {
-		return deserializeObject(inputStream, clazz, null);
+		return deserializeObject(inputStream, clazz, emptyMap());
 	}
-	private static final String graphResponseHeadersKey = "graphResponseHeaders";
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz) {
+		final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
+		return deserializeObject(rawElement, clazz, emptyMap());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
-		final JsonElement rawElement = gson.fromJson(new InputStreamReader(inputStream), JsonElement.class);
-		return deserializeObject(rawElement, clazz, responseHeaders);
+		InputStreamReader streamReader = null;
+		try {
+			streamReader = new InputStreamReader(inputStream);
+			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
+			return deserializeObject(rawElement, clazz, responseHeaders);
+		} finally {
+			closeQuietly(streamReader);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
 		final T jsonObject = gson.fromJson(rawElement, clazz);

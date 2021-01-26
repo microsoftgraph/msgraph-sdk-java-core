@@ -1,5 +1,7 @@
 package com.microsoft.graph.core;
 
+import com.google.gson.JsonElement;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -8,6 +10,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import okhttp3.Request;
@@ -76,6 +80,18 @@ public class GraphServiceClientTest {
             @Override
             public <T> T deserializeObject(InputStream inputStream, Class<T> clazz,
                                            Map<String, List<String>> responseHeaders) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <T> T deserializeObject(@NotNull JsonElement jsonElement, @NotNull Class<T> clazz, @NotNull Map<String, List<String>> responseHeaders) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <T> T deserializeObject(@NotNull String inputString, @NotNull Class<T> clazz) {
                 return null;
             }
 
