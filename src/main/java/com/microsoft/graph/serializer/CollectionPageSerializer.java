@@ -121,7 +121,7 @@ public class CollectionPageSerializer {
 					Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
 					if (entityClass == null)
 						entityClass = baseEntityClass;
-					final T1 targetObject = (T1) serializer.deserializeObject(sourceObject, entityClass);
+					final T1 targetObject = (T1) serializer.deserializeObject(sourceObject, entityClass, null);
 					((IJsonBackedObject) targetObject).setRawObject(serializer, sourceObject);
 					list.add(targetObject);
 				}
