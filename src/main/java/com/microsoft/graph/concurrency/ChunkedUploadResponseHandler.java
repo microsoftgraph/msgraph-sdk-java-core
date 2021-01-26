@@ -133,8 +133,4 @@ public class ChunkedUploadResponseHandler<UploadType>
 		}
 		return new ChunkedUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
 	}
-
-	private boolean isUploadSessionCompleted(Response response) {
-		return response.code() == HTTP_OK || response.code() == HTTP_CREATED;
-	}
 }
