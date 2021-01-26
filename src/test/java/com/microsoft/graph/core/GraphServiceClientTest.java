@@ -77,6 +77,13 @@ public class GraphServiceClientTest {
                 return null;
             }
 
+            @Nullable
+            @Override
+            public <T> T deserializeObject(String inputString, Class<T> clazz,
+                                           Map<String, List<String>> responseHeaders) {
+                return null;
+            }
+
             @Override
             public <T> T deserializeObject(InputStream inputStream, Class<T> clazz,
                                            Map<String, List<String>> responseHeaders) {
@@ -85,18 +92,8 @@ public class GraphServiceClientTest {
 
             @Nullable
             @Override
-            public <T> T deserializeObject(@NotNull JsonElement jsonElement, @NotNull Class<T> clazz, @NotNull Map<String, List<String>> responseHeaders) {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public <T> T deserializeObject(@NotNull String inputString, @NotNull Class<T> clazz) {
-                return null;
-            }
-
-            @Override
-            public <T> T deserializeObject(InputStream inputString, Class<T> clazz) {
+            public <T> T deserializeObject(JsonElement jsonElement, Class<T> clazz,
+                                           Map<String, List<String>> responseHeaders) {
                 return null;
             }
         };

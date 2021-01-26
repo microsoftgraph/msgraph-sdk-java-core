@@ -73,26 +73,12 @@ public class DefaultSerializer implements ISerializer {
 		this.gson = GsonFactory.getGsonInstance(logger);
 	}
 
-	/**
-	 * Deserializes an object from the input string
-	 *
-	 * @param inputStream the string that stores the representation of the item
-	 * @param clazz	   the class of the item to be deserialized
-	 * @param <T>		 the type of the item to be deserialized
-	 * @return			the deserialized item from the input string
-	 */
-	@Override
-	@Nullable
-	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz) {
-		return deserializeObject(inputStream, clazz, emptyMap());
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
-	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz) {
+	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
 		final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
-		return deserializeObject(rawElement, clazz, emptyMap());
+		return deserializeObject(rawElement, clazz, responseHeaders);
 	}
 
 	@SuppressWarnings("unchecked")
