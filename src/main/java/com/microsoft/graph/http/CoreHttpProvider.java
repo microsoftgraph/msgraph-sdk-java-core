@@ -419,8 +419,8 @@ public class CoreHttpProvider implements IHttpProvider {
 
                 final Map<String, String> headers = responseHeadersHelper.getResponseHeadersAsMapStringString(response);
 
-                if(response.body() == null || response.body().contentLength() == 0)
-                    return (Result) null;
+				if (response.body() == null || response.body().contentLength() == 0)
+					return null;
 
                 final String contentType = headers.get(Constants.CONTENT_TYPE_HEADER_NAME);
                 if (contentType != null && resultClass != InputStream.class &&
@@ -435,7 +435,7 @@ public class CoreHttpProvider implements IHttpProvider {
                             contentType.contains(Constants.TEXT_CONTENT_TYPE)) {
                     return handleRawResponse(in, resultClass);
                 } else {
-                    return (Result) null;
+                    return null;
                 }
             } finally {
                 if (!isBinaryStreamInput) {
@@ -463,7 +463,7 @@ public class CoreHttpProvider implements IHttpProvider {
 	 *
 	 * @param request      the request that caused the failed response
 	 * @param serializable the body of the request
-	 * @param connection   the URL connection
+	 * @param response     the original response object
 	 * @throws IOException an exception occurs if there were any problems interacting with the connection object
 	 */
 	private <Body> void handleErrorResponse(final IHttpRequest request,
