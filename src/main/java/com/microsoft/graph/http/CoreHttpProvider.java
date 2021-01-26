@@ -62,7 +62,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 import okio.BufferedSink;
+
+import static okhttp3.internal.Util.closeQuietly;
 
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
@@ -502,8 +505,12 @@ public class CoreHttpProvider implements IHttpProvider {
 			return null;
 		}
 
-		final String rawJson = CoreHttpProvider.streamToString(in);
-		return serializer.deserializeObject(rawJson, clazz, responseHeaders);
+		try {
+			return serializer.deserializeObject(in, clazz, responseHeaders);
+		} finally {
+			closeQuietly(in);
+		}
+
     }
     /**
 	 * Handles the cause where the response is a Text object

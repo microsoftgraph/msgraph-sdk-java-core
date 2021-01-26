@@ -84,7 +84,7 @@ public class CoreHttpProviderTests {
         final ILogger logger = mock(ILogger.class);
         when(logger.getLoggingLevel()).thenReturn(LoggerLevel.DEBUG);
         final ISerializer serializer = mock(ISerializer.class);
-        when(serializer.deserializeObject(anyString(), any())).thenReturn(toSerialize);
+        when(serializer.deserializeObject(any(), any())).thenReturn(toSerialize);
 
         mProvider = new CoreHttpProvider(serializer,
                 logger,

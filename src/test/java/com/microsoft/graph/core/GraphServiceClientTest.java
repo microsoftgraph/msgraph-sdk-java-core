@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -73,13 +74,13 @@ public class GraphServiceClientTest {
             }
 
             @Override
-            public <T> T deserializeObject(String inputString, Class<T> clazz,
-                    Map<String, List<String>> responseHeaders) {
+            public <T> T deserializeObject(InputStream inputStream, Class<T> clazz,
+                                           Map<String, List<String>> responseHeaders) {
                 return null;
             }
 
             @Override
-            public <T> T deserializeObject(String inputString, Class<T> clazz) {
+            public <T> T deserializeObject(InputStream inputString, Class<T> clazz) {
                 return null;
             }
         };
@@ -90,7 +91,7 @@ public class GraphServiceClientTest {
         assertEquals(serializer, client.getSerializer());
         assertNotNull(client.getHttpProvider());
         assertNotNull(client.getLogger());
-        assertEquals(serializer, ((CoreHttpProvider) client.getHttpProvider()).getSerializer());
+        assertEquals(serializer, client.getHttpProvider().getSerializer());
     }
 
     @Test

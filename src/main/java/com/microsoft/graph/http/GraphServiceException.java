@@ -22,8 +22,10 @@
 
 package com.microsoft.graph.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +44,8 @@ import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.serializer.ISerializer;
 
 import okhttp3.Response;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.internal.Util.closeQuietly;
 
 /**
@@ -377,7 +381,7 @@ public class GraphServiceException extends ClientException {
         }
 
         final String responseMessage = response.message();
-        String rawOutput = "{}";
+        String rawOutput;
 
         InputStream is = response.body().byteStream();
         try {
@@ -387,7 +391,12 @@ public class GraphServiceException extends ClientException {
         }
         GraphErrorResponse error;
         try {
-            error = serializer.deserializeObject(rawOutput, GraphErrorResponse.class, responseHeadersHelper.getResponseHeadersAsMapOfStringList(response));
+            // we need a "copy" of the stream, so we can log the raw output if it cannot be parsed
+            error = serializer.deserializeObject(
+                    new ByteArrayInputStream(rawOutput.getBytes(UTF_8)),
+                    GraphErrorResponse.class,
+                    responseHeadersHelper.getResponseHeadersAsMapOfStringList(response)
+            );
         } catch (final Exception ex) {
             error = new GraphErrorResponse();
             error.error = new GraphError();

@@ -106,7 +106,7 @@ public class CollectionPageSerializer {
 		}
 		serializer = new DefaultSerializer(logger);
 		final JsonArray sourceArray = json.getAsJsonArray();
-		final ArrayList<T1> list = new ArrayList<T1>(sourceArray.size());
+		final ArrayList<T1> list = new ArrayList<>(sourceArray.size());
 		/** eg: com.microsoft.graph.requests.AttachmentCollectionPage */
 		final String collectionPageClassCanonicalName = ((Class<?>)typeOfT).getName();
 		/** eg: com.microsoft.graph.models.Attachment */
@@ -115,14 +115,14 @@ public class CollectionPageSerializer {
 					.replace("requests", "models");
 		try {
 			final Class<?> baseEntityClass = Class.forName(baseEntityClassCanonicalName);
-			for(JsonElement sourceElement : sourceArray) {
-				if(sourceElement.isJsonObject()) {
+			for (JsonElement sourceElement : sourceArray) {
+				if (sourceElement.isJsonObject()) {
 					final JsonObject sourceObject = sourceElement.getAsJsonObject();
 					Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
-					if(entityClass == null)
+					if (entityClass == null)
 						entityClass = baseEntityClass;
-					final T1 targetObject = (T1)serializer.deserializeObject(sourceObject.toString(), entityClass);
-					((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
+					final T1 targetObject = (T1) serializer.deserializeObject(sourceObject, entityClass, null);
+					((IJsonBackedObject) targetObject).setRawObject(serializer, sourceObject);
 					list.add(targetObject);
 				}
 			}

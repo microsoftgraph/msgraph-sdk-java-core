@@ -22,6 +22,7 @@
 
 package com.microsoft.graph.serializer;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -36,25 +37,25 @@ public interface ISerializer {
     /**
      * Deserialize an object from the input string
      * 
-     * @param inputString the string that stores the representation of the item
+     * @param inputStream the string that stores the representation of the item
      * @param clazz       the .class of the item to be deserialized
      * @param <T>         the type of the item to be deserialized
      * @return            the deserialized item from the input string
      */
     @Nullable
-    <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz);
+    <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz);
     
     /**
      * Deserialize an object from the input string
      * 
-     * @param inputString     the string that stores the representation of the item
+     * @param inputStream     the string that stores the representation of the item
      * @param clazz           the .class of the item to be deserialized
      * @param responseHeaders the HTTP response headers
      * @param <T>             the type of the item to be deserialized
      * @return                the deserialized item from the input string
      */
     @Nullable
-    <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
+    <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
 
     /**
      * Serializes an object into a string

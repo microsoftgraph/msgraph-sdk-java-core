@@ -22,17 +22,9 @@
 
 package com.microsoft.graph.concurrency;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
-
-import com.microsoft.graph.http.CoreHttpProvider;
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.http.GraphServiceException;
-import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.HttpResponseCode;
 import com.microsoft.graph.http.HttpResponseHeadersHelper;
 import com.microsoft.graph.http.IHttpRequest;
@@ -40,7 +32,17 @@ import com.microsoft.graph.http.IStatefulResponseHandler;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import okhttp3.Response;
+
+import static com.microsoft.graph.http.HttpResponseCode.HTTP_CREATED;
+import static com.microsoft.graph.http.HttpResponseCode.HTTP_OK;
 
 /**
  * Handles the stateful response from the OneDrive upload session
@@ -98,35 +100,38 @@ public class ChunkedUploadResponseHandler<UploadType>
 		if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
 			logger.logDebug("Receiving error during upload, see detail on result error");
 
-			return new ChunkedUploadResult<UploadType>(
+			return new ChunkedUploadResult<>(
 					GraphServiceException.createFromResponse(request, null, serializer,
-						response, logger));
-		} else if (response.code() >= HttpResponseCode.HTTP_OK
+							response, logger));
+		} else if (response.code() >= HTTP_OK
 				&& response.code() < HttpResponseCode.HTTP_MULTIPLE_CHOICES) {
 			final Map<String, String> headers = responseHeadersHelper.getResponseHeadersAsMapStringString(response);
 			final String contentType = headers.get(Constants.CONTENT_TYPE_HEADER_NAME);
 			final String location = headers.get("Location");
-			if(contentType != null
-				&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
+			if (contentType != null
+					&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
 				try (final InputStream in = new BufferedInputStream(response.body().byteStream())) {
-					final String rawJson = CoreHttpProvider.streamToString(in);
-					final IUploadSession session = serializer.deserializeObject(rawJson, uploadSessionClass);
-					if(session == null || session.getNextExpectedRanges() == null) {
+					if (isUploadSessionCompleted(response)) {
 						logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
-						final UploadType uploadedItem = serializer.deserializeObject(rawJson, this.deserializeTypeClass);
-						return new ChunkedUploadResult<UploadType>(uploadedItem);
+						final UploadType uploadedItem = serializer.deserializeObject(in, this.deserializeTypeClass);
+						return new ChunkedUploadResult<>(uploadedItem);
 					} else {
+						final IUploadSession session = serializer.deserializeObject(in, uploadSessionClass);
 						logger.logDebug("Chunk bytes has been accepted by the server.");
-						return new ChunkedUploadResult<UploadType>(session);
+						return new ChunkedUploadResult<>(session);
 					}
 				}
-			} else if(location != null) {
+			} else if (location != null) {
 				logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");
-				return new ChunkedUploadResult<UploadType>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
+				return new ChunkedUploadResult<>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
 			} else {
 				logger.logDebug("Upload session returned an unexpected response");
 			}
 		}
-		return new ChunkedUploadResult<UploadType>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
+		return new ChunkedUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
+	}
+
+	private boolean isUploadSessionCompleted(Response response) {
+		return response.code() == HTTP_OK || response.code() == HTTP_CREATED;
 	}
 }
