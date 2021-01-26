@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -60,10 +61,7 @@ public class MSBatchRequestContent {
         if (batchRequestStepsArray.length > MAX_NUMBER_OF_REQUESTS)
             throw new IllegalArgumentException("Number of batch request steps cannot exceed " + MAX_NUMBER_OF_REQUESTS);
 
-        if(logger == null)
-            throw new IllegalArgumentException("logger cannot be null");
-
-        this.logger = logger;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
 
         this.batchRequestStepsHashMap = new LinkedHashMap<>();
         for (final MSBatchRequestStep requestStep : batchRequestStepsArray)
@@ -78,8 +76,7 @@ public class MSBatchRequestContent {
      * given
      */
     public boolean addBatchRequestStep(@Nonnull final MSBatchRequestStep batchRequestStep) {
-        if(batchRequestStep == null)
-            throw new IllegalArgumentException("batchRequestStep parameter cannot be null");
+        Objects.requireNonNull(batchRequestStep, "batchRequestStep parameter cannot be null");
         if (batchRequestStepsHashMap.containsKey(batchRequestStep.getRequestId()) ||
             batchRequestStepsHashMap.size() >= MAX_NUMBER_OF_REQUESTS)
             return false;
@@ -95,8 +92,7 @@ public class MSBatchRequestContent {
      */
     @Nonnull
     public String addBatchRequestStep(@Nonnull final Request request, @Nullable final String... arrayOfDependsOnIds) {
-        if(request == null)
-            throw new IllegalArgumentException("request parameter cannot be null");
+        Objects.requireNonNull(request, "request parameter cannot be null");
         String requestId;
         do {
             requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
@@ -168,9 +164,7 @@ public class MSBatchRequestContent {
      */
     @Nonnull
     public CompletableFuture<MSBatchResponseContent> executeAsync(@Nonnull final IBaseClient client) {
-        if(client == null) {
-            throw new IllegalArgumentException("client parameter cannot be null");
-        }
+        Objects.requireNonNull(client, "client parameter cannot be null");
         final JsonObject content = getBatchRequestContentAsJson();
         return client.customRequest("/$batch")
             .buildRequest()

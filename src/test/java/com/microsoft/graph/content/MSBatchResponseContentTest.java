@@ -20,7 +20,7 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testNullMSBatchResponseContent() {
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchResponseContent((Response)null);
         });
     }
@@ -45,7 +45,7 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testInvalidMSBatchResponseContentWithNullResponseString() {
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchResponseContent(null);
         });
     }

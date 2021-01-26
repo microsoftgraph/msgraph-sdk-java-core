@@ -114,15 +114,15 @@ public class MSBatchRequestContentTest {
             new MSBatchRequestContent(mock(ILogger.class), null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null);
         });
-        assertThrows("the logger cannot be null", IllegalArgumentException.class, () -> {
+        assertThrows("the logger cannot be null", NullPointerException.class, () -> {
             new MSBatchRequestContent((ILogger) null, (MSBatchRequestStep)null);
         });
 
         new MSBatchRequestContent(mockStep, null); // addind a null step doesn't throw
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep(null);
         });
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep((Request) null);
         });
 

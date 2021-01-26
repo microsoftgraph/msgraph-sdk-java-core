@@ -1,6 +1,7 @@
 package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -84,9 +85,7 @@ public class RetryHandler implements Interceptor{
      * @param logger logger to use for telemetry
      */
     public RetryHandler(@Nonnull final ILogger logger, @Nullable final RetryOptions retryOption) {
-        if(logger == null)
-            throw new IllegalArgumentException("logger parameter cannot be null");
-        this.logger = logger;
+        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");
         this.mRetryOption = retryOption;
         if(this.mRetryOption == null) {
             this.mRetryOption = new RetryOptions();

@@ -33,6 +33,9 @@ import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
@@ -236,9 +239,7 @@ public class BaseClient implements IBaseClient {
 		 */
 		@Nonnull
 		protected <ClientType extends BaseClient> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
-            if(instance == null) {
-                throw new IllegalArgumentException("The instance cannot be null");
-            }
+            Objects.requireNonNull(instance, "The instance cannot be null");
 			instance.setHttpProvider(this.getHttpProvider());
 			instance.setLogger(this.getLogger());
 			instance.setSerializer(this.getSerializer());

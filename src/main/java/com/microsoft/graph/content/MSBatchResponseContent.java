@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -48,9 +49,7 @@ public class MSBatchResponseContent {
      * @param logger logger to use for telemetry
      */
     public MSBatchResponseContent(@Nonnull final ILogger logger, @Nullable final Response batchResponse) {
-        if(logger == null)
-            throw new IllegalArgumentException("logger parameter cannot be null");
-        this.logger = logger;
+        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");
         update(batchResponse);
         this.message = batchResponse.message();
         this.protocol = batchResponse.protocol();
@@ -173,10 +172,7 @@ public class MSBatchResponseContent {
      * @param batchResponse the response from the service.
      */
     public void update(@Nonnull final Response batchResponse) {
-        if (batchResponse == null)
-            throw new IllegalArgumentException("Batch Response cannot be null");
-
-        final Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
+        final Map<String, Request> requestMap = createBatchRequestsHashMap(Objects.requireNonNull(batchResponse, "Batch Response cannot be null"));
         if (requestMap != null)
             batchRequestsHashMap.putAll(requestMap);
 

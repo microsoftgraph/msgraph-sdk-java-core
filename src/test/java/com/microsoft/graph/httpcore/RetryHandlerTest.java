@@ -151,7 +151,7 @@ public class RetryHandlerTest {
     }
     @Test
     public void defensiveProgramming() {
-        assertThrows("logger cannot be null", IllegalArgumentException.class, () -> {
+        assertThrows("logger cannot be null", NullPointerException.class, () -> {
             new RetryHandler(null, mock(RetryOptions.class));
         });
     }
