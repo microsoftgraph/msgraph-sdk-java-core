@@ -24,6 +24,7 @@ package com.microsoft.graph.concurrency;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.Constants;
+import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.http.HttpResponseCode;
 import com.microsoft.graph.http.HttpResponseHeadersHelper;
@@ -111,12 +112,14 @@ public class ChunkedUploadResponseHandler<UploadType>
 			if (contentType != null
 					&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
 				try (final InputStream in = new BufferedInputStream(response.body().byteStream())) {
-					if (isUploadSessionCompleted(response)) {
+					final String rawJson = CoreHttpProvider.streamToString(in);
+					final IUploadSession session = serializer.deserializeObject(rawJson, uploadSessionClass);
+
+					if (session == null || session.getNextExpectedRanges() == null) {
 						logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
 						final UploadType uploadedItem = serializer.deserializeObject(in, this.deserializeTypeClass);
 						return new ChunkedUploadResult<>(uploadedItem);
 					} else {
-						final IUploadSession session = serializer.deserializeObject(in, uploadSessionClass);
 						logger.logDebug("Chunk bytes has been accepted by the server.");
 						return new ChunkedUploadResult<>(session);
 					}
