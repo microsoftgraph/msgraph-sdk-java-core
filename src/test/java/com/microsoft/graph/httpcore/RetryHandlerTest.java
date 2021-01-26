@@ -2,7 +2,9 @@ package com.microsoft.graph.httpcore;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.net.HttpURLConnection;
 
@@ -146,6 +148,12 @@ public class RetryHandlerTest {
         RetryHandler retryHandler = new RetryHandler();
         long delay = retryHandler.getRetryAfter(TestResponse(), 190, 1);
         assertTrue(delay == 180000);
+    }
+    @Test
+    public void defensiveProgramming() {
+        assertThrows("logger cannot be null", NullPointerException.class, () -> {
+            new RetryHandler(null, mock(RetryOptions.class));
+        });
     }
 
     Response TestResponse() {

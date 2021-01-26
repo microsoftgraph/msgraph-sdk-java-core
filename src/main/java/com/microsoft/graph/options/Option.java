@@ -22,6 +22,8 @@
 
 package com.microsoft.graph.options;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -46,8 +48,9 @@ public class Option {
      * @param value the value of the option
      */
     protected Option(@Nonnull final String name, @Nonnull final Object value) {
-        if(name == null || name == "") {
-            throw new IllegalArgumentException("name should not be null or empty");
+        Objects.requireNonNull(name, "name should not be null");
+        if(name.isEmpty()) {
+            throw new IllegalArgumentException("name should not empty");
         }
         this.name = name;
         this.value = value;

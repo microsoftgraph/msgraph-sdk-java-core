@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -12,6 +13,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.microsoft.graph.logger.DefaultLogger;
+import com.microsoft.graph.logger.ILogger;
 import com.google.gson.JsonParseException;
 
 import okhttp3.MediaType;
@@ -32,11 +35,21 @@ public class MSBatchResponseContent {
     private LinkedHashMap<String, Request> batchRequestsHashMap = new LinkedHashMap<>();
     private JsonArray batchResponseArray;
     private String nextLink;
+    private final ILogger logger;
 
     /**
      * @param batchResponse OkHttp batch response on execution of batch requests
      */
     public MSBatchResponseContent(@Nullable final Response batchResponse) {
+        this(new DefaultLogger(), batchResponse);
+    }
+
+    /**
+     * @param batchResponse OkHttp batch response on execution of batch requests
+     * @param logger logger to use for telemetry
+     */
+    public MSBatchResponseContent(@Nonnull final ILogger logger, @Nullable final Response batchResponse) {
+        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");
         update(batchResponse);
         this.message = batchResponse.message();
         this.protocol = batchResponse.protocol();
@@ -47,8 +60,10 @@ public class MSBatchResponseContent {
      * @param baseUrl the base service URL without a trailing slash
      * @param batchRequestData the batch request payload data as a JSON string
      * @param batchResponseData the batch response body as a JSON string
+     * @param logger logger to use for telemetry
      */
-    protected MSBatchResponseContent(@Nonnull final String baseUrl, @Nonnull final JsonObject batchRequestData, @Nonnull final JsonObject batchResponseData) {
+    protected MSBatchResponseContent(@Nonnull final ILogger logger, @Nonnull final String baseUrl, @Nonnull final JsonObject batchRequestData, @Nonnull final JsonObject batchResponseData) {
+        this.logger = logger;
         this.protocol = Protocol.HTTP_1_1;
         this.message = "OK";
         final Map<String, Request> requestMap = createBatchRequestsHashMap(baseUrl, batchRequestData);
@@ -157,10 +172,7 @@ public class MSBatchResponseContent {
      * @param batchResponse the response from the service.
      */
     public void update(@Nonnull final Response batchResponse) {
-        if (batchResponse == null)
-            throw new IllegalArgumentException("Batch Response cannot be null");
-
-        final Map<String, Request> requestMap = createBatchRequestsHashMap(batchResponse);
+        final Map<String, Request> requestMap = createBatchRequestsHashMap(Objects.requireNonNull(batchResponse, "Batch Response cannot be null"));
         if (requestMap != null)
             batchRequestsHashMap.putAll(requestMap);
 
@@ -171,7 +183,7 @@ public class MSBatchResponseContent {
                     updateFromResponseBody(stringToJSONObject(batchResponseData));
                 }
             } catch (final IOException e) {
-                e.printStackTrace();
+                logger.logError("error updating batch response content from response body", e);
             }
         }
     }
@@ -208,7 +220,7 @@ public class MSBatchResponseContent {
             final String baseUrl = batchResponse.request().url().toString().replace("$batch", "");
             return createBatchRequestsHashMap(baseUrl, requestJSONObject);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.logError("error parsing batch requests to get batch response content", ex);
             return null;
         }
     }
@@ -268,7 +280,7 @@ public class MSBatchResponseContent {
             return batchRequestsHashMap;
 
         } catch (JsonParseException e) {
-            e.printStackTrace();
+            logger.logError("error parsing batch request", e);
         }
         return null;
     }
@@ -280,7 +292,7 @@ public class MSBatchResponseContent {
                 JsonObject = JsonParser.parseString(input).getAsJsonObject();
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            logger.logError("error parsing input into JSONObject", e);
         }
         return JsonObject;
     }

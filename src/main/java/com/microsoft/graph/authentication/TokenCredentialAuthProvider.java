@@ -6,6 +6,7 @@ import com.azure.core.credential.TokenRequestContext;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nonnull;
@@ -36,15 +37,12 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      * @param scopes Specified desired scopes of the Auth Provider
      */
     public TokenCredentialAuthProvider(@Nonnull final List<String> scopes, @Nonnull final TokenCredential tokenCredential) {
-        if(tokenCredential == null) {
-            throw new IllegalArgumentException("tokenCredential parameter cannot be null.");
-        }
         if(scopes == null || scopes.isEmpty()) {
             throw new IllegalArgumentException("scopes parameter cannot be null or empty");
         }
         this.context = new TokenRequestContext();
         this.context.setScopes(scopes);
-        this.tokenCredential = tokenCredential;
+        this.tokenCredential = Objects.requireNonNull(tokenCredential, "tokenCredential parameter cannot be null.");
     }
 
     /**
@@ -54,9 +52,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      */
     @Nonnull
     public CompletableFuture<String> getAuthorizationTokenAsync(@Nonnull final URL requestUrl) {
-        if(requestUrl == null)
-            throw new IllegalArgumentException("requestUrl parameter cannot be null");
-        else if(shouldAuthenticateRequestWithUrl(requestUrl))
+        if(shouldAuthenticateRequestWithUrl(Objects.requireNonNull(requestUrl, "requestUrl parameter cannot be null")))
             return this.tokenCredential
                         .getToken(this.context)
                         .toFuture()

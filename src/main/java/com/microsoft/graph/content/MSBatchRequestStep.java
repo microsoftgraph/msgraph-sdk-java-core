@@ -2,6 +2,7 @@ package com.microsoft.graph.content;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -23,15 +24,12 @@ public class MSBatchRequestStep {
      * @param arrayOfDependsOnIds the ids of steps this step depends on
      */
     public MSBatchRequestStep(@Nonnull final String requestId, @Nonnull final Request request, @Nullable final String... arrayOfDependsOnIds) {
-        if(requestId == null)
-            throw new IllegalArgumentException("Request Id cannot be null.");
-        if(requestId.length() == 0)
+        Objects.requireNonNull(requestId, "Request Id cannot be null.");
+        if(requestId.isEmpty())
             throw new IllegalArgumentException("Request Id cannot be empty.");
-        if(request == null)
-            throw new IllegalArgumentException("Request cannot be null.");
 
         this.requestId = requestId;
-        this.request = request;
+        this.request = Objects.requireNonNull(request, "Request cannot be null.");
         this.dependsOnIds = new HashSet<>(Arrays.asList(arrayOfDependsOnIds));
     }
 

@@ -22,10 +22,10 @@ public class MSBatchRequestStepTest {
 
     @Test
     public void defensiveProgrammingTests() {
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchRequestStep(null, null);
         });
-        assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
+        assertThrows("should throw argument exception", NullPointerException.class, () -> {
             new MSBatchRequestStep("id", null);
         });
         assertThrows("should throw argument exception", IllegalArgumentException.class, () -> {
