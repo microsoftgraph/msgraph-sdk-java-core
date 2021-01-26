@@ -83,7 +83,6 @@ public class DefaultSerializer implements ISerializer {
 		return deserializeObject(inputStream, clazz, null);
 	}
 	private static final String graphResponseHeadersKey = "graphResponseHeaders";
-	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
