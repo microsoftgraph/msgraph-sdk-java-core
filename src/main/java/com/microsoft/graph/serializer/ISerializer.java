@@ -37,8 +37,19 @@ public interface ISerializer {
     /**
      * Deserialize an object from the input string
      * 
-     * @param inputStream the string that stores the representation of the item
-     * @param clazz       the .class of the item to be deserialized
+     * @param inputString the string that stores the representation of the item
+     * @param clazz       the {@code Class} of the item to be deserialized
+     * @param <T>         the type of the item to be deserialized
+     * @return            the deserialized item from the input string
+     */
+    @Nullable
+    <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz);
+
+    /**
+     * Deserialize an object from the input string
+     *
+     * @param inputStream the stream that stores the representation of the item
+     * @param clazz       the {@code Class} of the item to be deserialized
      * @param <T>         the type of the item to be deserialized
      * @return            the deserialized item from the input string
      */
