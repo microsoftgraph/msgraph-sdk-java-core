@@ -5,7 +5,7 @@ import java.io.Closeable;
 import javax.annotation.Nullable;
 
 /**
- * Class with commonly used utility methods.<br/>
+ * Class with commonly used utility methods.<br>
  * <b>Note</b>: This class is meant for internal SDK use only and SDK users should not take a
  * dependency on it.
  */
