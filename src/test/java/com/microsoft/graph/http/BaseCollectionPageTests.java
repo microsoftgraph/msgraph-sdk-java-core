@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -64,13 +63,7 @@ public class BaseCollectionPageTests {
     public void testRawObject() {
         ISerializer serializer = mock(ISerializer.class);
         JsonObject jsonObject = new JsonObject();
-        assertNull(baseCollectionPage.getRawObject());
-        assertNull(baseCollectionPage.getSerializer());
         baseCollectionPage.setRawObject(serializer,jsonObject);
-        assertNotNull(baseCollectionPage.getRawObject());
-        assertNotNull(baseCollectionPage.getSerializer());
-        assertEquals(serializer, baseCollectionPage.getSerializer());
-        assertEquals(jsonObject, baseCollectionPage.getRawObject());
     }
 
 }

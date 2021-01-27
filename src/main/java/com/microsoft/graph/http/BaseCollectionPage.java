@@ -54,16 +54,6 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
     private final T2 requestBuilder;
 
     /**
-     * The raw representation of this class
-     */
-    private JsonObject rawObject;
-
-    /**
-     * The serializer
-     */
-    private ISerializer serializer;
-
-    /**
      * A collection page for WorkforceIntegration
      *
      * @param response the serialized WorkforceIntegrationCollectionResponse from the service
@@ -119,35 +109,12 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
     }
 
     /**
-     * Gets the raw representation of this class
-     *
-     * @return the raw representation of this class
-     */
-    @Nullable
-    public JsonObject getRawObject() {
-        return rawObject;
-    }
-
-    /**
-     * Gets the serializer
-     *
-     * @return the serializer
-     */
-    @Override
-    @Nullable
-    public ISerializer getSerializer() {
-        return serializer;
-    }
-
-    /**
      * Sets the raw JSON object
      *
      * @param serializer the serializer
      * @param json       the JSON object to set this object to
      */
     public void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json) {
-        this.serializer = serializer;
-        rawObject = json;
     }
 
     @Override

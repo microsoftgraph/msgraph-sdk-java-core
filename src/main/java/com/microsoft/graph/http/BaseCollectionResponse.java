@@ -57,39 +57,6 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
         return additionalDataManager;
     }
 
-    /**
-     * The raw representation of this class
-     */
-    @Nullable
-    protected JsonObject rawObject;
-
-    /**
-     * The serializer
-     */
-    @Nullable
-	protected ISerializer serializer;
-
-	/**
-     * Gets the raw representation of this class
-     *
-     * @return the raw representation of this class
-     */
-    @Nullable
-    public JsonObject getRawObject() {
-        return rawObject;
-    }
-
-    /**
-     * Gets serializer
-     *
-     * @return the serializer
-     */
-    @Override
-    @Nullable
-    public ISerializer getSerializer() {
-        return serializer;
-	}
-
 	/**
      * Sets the raw JSON object
      *
@@ -97,8 +64,6 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
      * @param json the JSON object to set this object to
      */
     public void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json) {
-        this.serializer = serializer;
-        rawObject = json;
         if (json.has("value")) {
             final JsonArray array = json.getAsJsonArray("value");
             for (int i = 0; i < array.size(); i++) {
