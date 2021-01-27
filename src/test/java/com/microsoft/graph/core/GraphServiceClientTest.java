@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import okhttp3.Request;
@@ -25,6 +23,8 @@ import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
+
+import javax.annotation.Nullable;
 
 public class GraphServiceClientTest {
     private IAuthenticationProvider getAuthProvider() {

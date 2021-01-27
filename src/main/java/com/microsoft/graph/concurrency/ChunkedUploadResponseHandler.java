@@ -26,7 +26,6 @@ import com.google.common.io.ByteStreams;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.Constants;
-import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.http.HttpResponseCode;
 import com.microsoft.graph.http.HttpResponseHeadersHelper;
@@ -35,9 +34,6 @@ import com.microsoft.graph.http.IStatefulResponseHandler;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +44,6 @@ import javax.annotation.Nullable;
 
 import okhttp3.Response;
 
-import static com.microsoft.graph.http.HttpResponseCode.HTTP_CREATED;
 import static com.microsoft.graph.http.HttpResponseCode.HTTP_OK;
 
 /**
@@ -128,8 +123,8 @@ public class ChunkedUploadResponseHandler<UploadType>
 		return new ChunkedUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
 	}
 
-	@NotNull
-	private ChunkedUploadResult<UploadType> parseJsonUploadResult(@NotNull Response response, @NotNull ISerializer serializer, @NotNull ILogger logger) throws IOException {
+	@Nonnull
+	private ChunkedUploadResult<UploadType> parseJsonUploadResult(@Nonnull Response response, @Nonnull ISerializer serializer, @Nonnull ILogger logger) throws IOException {
 		try (final InputStream in = response.body().byteStream()) {
 			final byte[] responseBytes = ByteStreams.toByteArray(in);
 			final IUploadSession session = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), uploadSessionClass);

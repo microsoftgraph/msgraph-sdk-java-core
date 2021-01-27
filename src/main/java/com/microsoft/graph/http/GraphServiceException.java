@@ -22,28 +22,27 @@
 
 package com.microsoft.graph.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
-
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.serializer.ISerializer;
 
-import org.jetbrains.annotations.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import okhttp3.Response;
 
@@ -409,8 +408,8 @@ public class GraphServiceException extends ClientException {
                 isVerbose);
     }
 
-    private static GraphErrorResponse parseErrorResponse(@NotNull ISerializer serializer,
-                                                         @NotNull Response response)
+    private static GraphErrorResponse parseErrorResponse(@Nonnull ISerializer serializer,
+                                                         @Nonnull Response response)
             throws IOException {
 
         byte[] responseBytes;
