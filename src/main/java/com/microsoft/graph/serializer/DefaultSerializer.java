@@ -45,7 +45,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.microsoft.graph.Util.closeQuietly;
-import static java.util.Collections.emptyMap;
 
 /**
  * The default serializer implementation for the SDK

@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,8 +31,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static java.util.Collections.emptyMap;
-
 /**
  * Serializes and deserializes items from strings into their types
  */
@@ -40,7 +38,7 @@ public interface ISerializer {
 
     /**
      * Deserialize an object from the input string
-     * 
+     *
      * @param inputString the string that stores the representation of the item
      * @param clazz       the {@code Class} of the item to be deserialized
      * @param <T>         the type of the item to be deserialized
@@ -48,7 +46,7 @@ public interface ISerializer {
      */
     @Nullable
     default <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz) {
-        return deserializeObject(inputString, clazz, emptyMap());
+        return deserializeObject(inputString, clazz, null);
     }
 
     /**
@@ -73,12 +71,12 @@ public interface ISerializer {
      */
     @Nullable
     default <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz) {
-        return deserializeObject(inputStream, clazz, emptyMap());
+        return deserializeObject(inputStream, clazz, null);
     }
 
     /**
      * Deserialize an object from the input stream
-     * 
+     *
      * @param inputStream     the stream that stores the representation of the item
      * @param clazz           the {@code Class} of the item to be deserialized
      * @param responseHeaders the HTTP response headers
@@ -99,7 +97,7 @@ public interface ISerializer {
     @SuppressWarnings("unchecked")
     @Nullable
     default <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz) {
-        return deserializeObject(jsonElement, clazz, emptyMap());
+        return deserializeObject(jsonElement, clazz, null);
     }
 
     /**
@@ -117,7 +115,7 @@ public interface ISerializer {
 
     /**
      * Serializes an object into a string
-     * 
+     *
      * @param serializableObject the object to convert into a string
      * @param <T>                the type of the item to be serialized
      * @return                   the string representation of that item
