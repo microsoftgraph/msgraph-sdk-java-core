@@ -13,6 +13,7 @@ import com.microsoft.graph.serializer.ISerializer;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,7 +75,7 @@ public class BaseCollectionRequestTests {
         final ICollectionResponse<JsonObject> result = mock(ICollectionResponse.class);
         when(result.values()).thenReturn(new ArrayList<>(Arrays.asList(resultobj)));
         final ISerializer mSerializer = mock(ISerializer.class);
-        when(mSerializer.deserializeObject(anyString(), any())).thenReturn(result);
+        when(mSerializer.deserializeObject(any(InputStream.class), any(), any())).thenReturn(result);
         when(mSerializer.serializeObject(any())).thenReturn("[{ \"id\": \"zzz\" }]");
         CoreHttpProvider mProvider = new CoreHttpProvider(mSerializer,
                 mock(ILogger.class),
