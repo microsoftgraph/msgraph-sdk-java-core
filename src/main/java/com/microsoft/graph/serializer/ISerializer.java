@@ -25,12 +25,11 @@ package com.microsoft.graph.serializer;
 import com.google.gson.JsonElement;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static java.util.Collections.emptyMap;
 
@@ -88,6 +87,20 @@ public interface ISerializer {
      */
     @Nullable
     <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
+
+    /**
+     * Deserialize an object from the input JsonElement
+     *
+     * @param jsonElement     the {@code JsonElement} that stores the representation of the item
+     * @param clazz           the {@code Class} of the item to be deserialized
+     * @param <T>             the type of the item to be deserialized
+     * @return the deserialized item from the input string
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    default <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz) {
+        return deserializeObject(jsonElement, clazz, emptyMap());
+    }
 
     /**
      * Deserialize an object from the input JsonElement
