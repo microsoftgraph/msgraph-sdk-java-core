@@ -22,6 +22,8 @@
 
 package com.microsoft.graph.concurrency;
 
+import com.google.common.io.ByteStreams;
+
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.http.CoreHttpProvider;
@@ -33,7 +35,11 @@ import com.microsoft.graph.http.IStatefulResponseHandler;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -111,19 +117,7 @@ public class ChunkedUploadResponseHandler<UploadType>
 			final String location = headers.get("Location");
 			if (contentType != null
 					&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
-				try (final InputStream in = new BufferedInputStream(response.body().byteStream())) {
-					final String rawJson = CoreHttpProvider.streamToString(in);
-					final IUploadSession session = serializer.deserializeObject(rawJson, uploadSessionClass);
-
-					if (session == null || session.getNextExpectedRanges() == null) {
-						logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
-						final UploadType uploadedItem = serializer.deserializeObject(in, this.deserializeTypeClass);
-						return new ChunkedUploadResult<>(uploadedItem);
-					} else {
-						logger.logDebug("Chunk bytes has been accepted by the server.");
-						return new ChunkedUploadResult<>(session);
-					}
-				}
+				return parseJsonUploadResult(response, serializer, logger);
 			} else if (location != null) {
 				logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");
 				return new ChunkedUploadResult<>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
@@ -132,5 +126,22 @@ public class ChunkedUploadResponseHandler<UploadType>
 			}
 		}
 		return new ChunkedUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
+	}
+
+	@NotNull
+	private ChunkedUploadResult<UploadType> parseJsonUploadResult(@NotNull Response response, @NotNull ISerializer serializer, @NotNull ILogger logger) throws IOException {
+		try (final InputStream in = response.body().byteStream()) {
+			final byte[] responseBytes = ByteStreams.toByteArray(in);
+			final IUploadSession session = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), uploadSessionClass);
+
+			if (session == null || session.getNextExpectedRanges() == null) {
+				logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
+				final UploadType uploadedItem = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), this.deserializeTypeClass);
+				return new ChunkedUploadResult<>(uploadedItem);
+			} else {
+				logger.logDebug("Chunk bytes has been accepted by the server.");
+				return new ChunkedUploadResult<>(session);
+			}
+		}
 	}
 }
