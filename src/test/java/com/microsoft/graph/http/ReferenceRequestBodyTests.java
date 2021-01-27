@@ -1,7 +1,5 @@
 package com.microsoft.graph.http;
 
-import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
@@ -17,8 +15,6 @@ public class ReferenceRequestBodyTests {
         ISerializer serializer = mock(ISerializer.class);
         JsonObject jsonObject = new JsonObject();
         body.setRawObject(serializer,jsonObject);
-        assertEquals(serializer,body.getSerializer());
-        assertEquals(jsonObject,body.getRawObject());
     }
 
 }
