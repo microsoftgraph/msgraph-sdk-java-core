@@ -94,7 +94,6 @@ public interface ISerializer {
      * @param <T>             the type of the item to be deserialized
      * @return the deserialized item from the input string
      */
-    @SuppressWarnings("unchecked")
     @Nullable
     default <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz) {
         return deserializeObject(jsonElement, clazz, null);
@@ -109,7 +108,6 @@ public interface ISerializer {
      * @param <T>             the type of the item to be deserialized
      * @return                the deserialized item from the input string
      */
-    @SuppressWarnings("unchecked")
     @Nullable
     <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz, @Nonnull Map<String, List<String>> responseHeaders);
 
