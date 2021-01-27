@@ -29,6 +29,10 @@ hs_err_pid*
 .classpath
 .settings
 
+# IntelliJ
+*.iml
+.idea/
+
 # Maven
 /target/
 local.properties

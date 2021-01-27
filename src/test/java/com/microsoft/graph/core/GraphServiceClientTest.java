@@ -1,9 +1,12 @@
 package com.microsoft.graph.core;
 
+import com.google.gson.JsonElement;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
+
+import javax.annotation.Nullable;
 
 public class GraphServiceClientTest {
     private IAuthenticationProvider getAuthProvider() {
@@ -72,14 +77,23 @@ public class GraphServiceClientTest {
                 return null;
             }
 
+            @Nullable
             @Override
             public <T> T deserializeObject(String inputString, Class<T> clazz,
-                    Map<String, List<String>> responseHeaders) {
+                                           Map<String, List<String>> responseHeaders) {
                 return null;
             }
 
             @Override
-            public <T> T deserializeObject(String inputString, Class<T> clazz) {
+            public <T> T deserializeObject(InputStream inputStream, Class<T> clazz,
+                                           Map<String, List<String>> responseHeaders) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public <T> T deserializeObject(JsonElement jsonElement, Class<T> clazz,
+                                           Map<String, List<String>> responseHeaders) {
                 return null;
             }
         };
@@ -90,7 +104,7 @@ public class GraphServiceClientTest {
         assertEquals(serializer, client.getSerializer());
         assertNotNull(client.getHttpProvider());
         assertNotNull(client.getLogger());
-        assertEquals(serializer, ((CoreHttpProvider) client.getHttpProvider()).getSerializer());
+        assertEquals(serializer, client.getHttpProvider().getSerializer());
     }
 
     @Test

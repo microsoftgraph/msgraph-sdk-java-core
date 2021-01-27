@@ -24,15 +24,12 @@ package com.microsoft.graph.http;
 
 import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.ICollectionResponse;
-import com.microsoft.graph.http.BaseCollectionPage;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRedirect;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.options.FunctionOption;
@@ -96,7 +93,6 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * Send this request
      *
      * @return the response object
-     * @deprecated use the future API instead
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable

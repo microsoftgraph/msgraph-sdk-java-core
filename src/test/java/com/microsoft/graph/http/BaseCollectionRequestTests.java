@@ -1,26 +1,22 @@
 package com.microsoft.graph.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.meta.When;
+import com.microsoft.graph.core.IBaseClient;
+import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.options.FunctionOption;
+import com.microsoft.graph.options.Option;
+import com.microsoft.graph.options.QueryOption;
+import com.microsoft.graph.serializer.ISerializer;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import okhttp3.Call;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -28,14 +24,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.options.FunctionOption;
-import com.microsoft.graph.options.Option;
-import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.serializer.ISerializer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for {@see BaseCollectionRequest}
@@ -79,10 +73,10 @@ public class BaseCollectionRequestTests {
         resultobj.add("id", new JsonPrimitive("zzz"));
         @SuppressWarnings("unchecked")
         final ICollectionResponse<JsonObject> result = mock(ICollectionResponse.class);
-        when(result.values()).thenReturn(new ArrayList<JsonObject>(Arrays.asList(resultobj)));
+        when(result.values()).thenReturn(new ArrayList<>(Arrays.asList(resultobj)));
         final ISerializer mSerializer = mock(ISerializer.class);
-        when(mSerializer.deserializeObject(anyObject(), anyObject(), anyObject())).thenReturn(result);
-        when(mSerializer.serializeObject(anyObject())).thenReturn("[{ \"id\": \"zzz\" }]");
+        when(mSerializer.deserializeObject(any(InputStream.class), any(), any())).thenReturn(result);
+        when(mSerializer.serializeObject(any())).thenReturn("[{ \"id\": \"zzz\" }]");
         CoreHttpProvider mProvider = new CoreHttpProvider(mSerializer,
                 mock(ILogger.class),
                 mockClient);

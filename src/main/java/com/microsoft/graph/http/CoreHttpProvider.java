@@ -22,6 +22,17 @@
 
 package com.microsoft.graph.http;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.core.Constants;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.logger.LoggerLevel;
+import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.ISerializer;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -30,39 +41,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.Constants;
-import com.microsoft.graph.httpcore.HttpClients;
-import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
-import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
-import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.logger.LoggerLevel;
-import com.microsoft.graph.options.HeaderOption;
-import com.microsoft.graph.serializer.ISerializer;
-
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
+
+import static com.microsoft.graph.Util.closeQuietly;
 
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
@@ -425,8 +419,8 @@ public class CoreHttpProvider implements IHttpProvider {
 
                 final Map<String, String> headers = responseHeadersHelper.getResponseHeadersAsMapStringString(response);
 
-                if(response.body() == null || response.body().contentLength() == 0)
-                    return (Result) null;
+				if (response.body() == null || response.body().contentLength() == 0)
+					return null;
 
                 final String contentType = headers.get(Constants.CONTENT_TYPE_HEADER_NAME);
                 if (contentType != null && resultClass != InputStream.class &&
@@ -441,7 +435,7 @@ public class CoreHttpProvider implements IHttpProvider {
                             contentType.contains(Constants.TEXT_CONTENT_TYPE)) {
                     return handleRawResponse(in, resultClass);
                 } else {
-                    return (Result) null;
+                    return null;
                 }
             } finally {
                 if (!isBinaryStreamInput) {
@@ -469,7 +463,7 @@ public class CoreHttpProvider implements IHttpProvider {
 	 *
 	 * @param request      the request that caused the failed response
 	 * @param serializable the body of the request
-	 * @param connection   the URL connection
+	 * @param response     the original response object
 	 * @throws IOException an exception occurs if there were any problems interacting with the connection object
 	 */
 	private <Body> void handleErrorResponse(final IHttpRequest request,
@@ -502,8 +496,12 @@ public class CoreHttpProvider implements IHttpProvider {
 			return null;
 		}
 
-		final String rawJson = CoreHttpProvider.streamToString(in);
-		return serializer.deserializeObject(rawJson, clazz, responseHeaders);
+		try {
+			return serializer.deserializeObject(in, clazz, responseHeaders);
+		} finally {
+			closeQuietly(in);
+		}
+
     }
     /**
 	 * Handles the cause where the response is a Text object

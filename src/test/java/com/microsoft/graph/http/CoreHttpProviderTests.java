@@ -1,9 +1,20 @@
 package com.microsoft.graph.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+import com.microsoft.graph.core.GraphErrorCodes;
+import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.logger.LoggerLevel;
+import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.DefaultSerializer;
+import com.microsoft.graph.serializer.ISerializer;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -11,17 +22,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.junit.Test;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -31,14 +31,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.microsoft.graph.core.GraphErrorCodes;
-import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.logger.LoggerLevel;
-import com.microsoft.graph.options.HeaderOption;
-import com.microsoft.graph.serializer.DefaultSerializer;
-import com.microsoft.graph.serializer.ISerializer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CoreHttpProviderTests {
 

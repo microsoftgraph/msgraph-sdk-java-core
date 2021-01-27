@@ -28,8 +28,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.microsoft.graph.logger.ILogger;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -38,13 +41,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static com.microsoft.graph.Util.closeQuietly;
 
 /**
  * The default serializer implementation for the SDK
  */
 public class DefaultSerializer implements ISerializer {
+	private static final String graphResponseHeadersKey = "graphResponseHeaders";
 
 	/**
 	 * The instance of the internal serializer
@@ -66,38 +72,45 @@ public class DefaultSerializer implements ISerializer {
 		this.gson = GsonFactory.getGsonInstance(logger);
 	}
 
-	/**
-	 * Deserializes an object from the input string
-	 *
-	 * @param inputString the string that stores the representation of the item
-	 * @param clazz	   the class of the item to be deserialized
-	 * @param <T>		 the type of the item to be deserialized
-	 * @return			the deserialized item from the input string
-	 */
-	@Override
-	@Nullable
-	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz) {
-		return deserializeObject(inputString, clazz, null);
-	}
-	private static final String graphResponseHeadersKey = "graphResponseHeaders";
 	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
-	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, java.util.List<String>> responseHeaders) {
-		final T jsonObject = gson.fromJson(inputString, clazz);
+	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
+		final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
+		return deserializeObject(rawElement, clazz, responseHeaders);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
+		InputStreamReader streamReader = null;
+		try {
+			streamReader = new InputStreamReader(inputStream);
+			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
+			return deserializeObject(rawElement, clazz, responseHeaders);
+		} finally {
+			closeQuietly(streamReader);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
+		final T jsonObject = gson.fromJson(rawElement, clazz);
 
 		// Populate the JSON-backed fields for any annotations that are not in the object model
 		if (jsonObject instanceof IJsonBackedObject) {
 			logger.logDebug("Deserializing type " + clazz.getSimpleName());
-			final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
 			final JsonObject rawObject = rawElement.isJsonObject() ? rawElement.getAsJsonObject() : null;
 
 			// If there is a derived class, try to get it and deserialize to it
 			T jo = jsonObject;
 			if (rawElement.isJsonObject()) {
 				final Class<?> derivedClass = this.getDerivedClass(rawObject, clazz);
-				if(derivedClass != null)
-					jo = (T) gson.fromJson(inputString, derivedClass);
+				if (derivedClass != null)
+					jo = (T) gson.fromJson(rawElement, derivedClass);
 			}
 
 			final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jo;
