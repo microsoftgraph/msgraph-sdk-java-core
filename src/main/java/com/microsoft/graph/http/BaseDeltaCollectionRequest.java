@@ -22,9 +22,6 @@
 
 package com.microsoft.graph.http;
 
-import java.net.URL;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

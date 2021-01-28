@@ -73,7 +73,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testFunctionParameters() {
         final Option fo1 = new FunctionOption("1", "one");
         final Option fo2 = new FunctionOption("2", null);
@@ -85,7 +84,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testQueryParameters() {
         final Option q1 = new QueryOption("q1","option1 ");
         final Option q2 = new QueryOption("q2","option2");
@@ -97,7 +95,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testFunctionAndQueryParameters() {
         final Option f1 = new FunctionOption("f1", "fun1");
         final Option f2 = new FunctionOption("f2", null);
@@ -109,7 +106,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testHttpMethod() {
         final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), null, null){};
         assertNull(request.getHttpMethod());
@@ -118,7 +114,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testHeader() {
         final String expectedHeader = "header key";
         final String expectedValue = "header value";
@@ -129,7 +124,6 @@ public class BaseRequestTests {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testProtectedProperties() {
         assertEquals(0, mRequest.functionOptions.size());
         assertEquals(0, mRequest.queryOptions.size());
