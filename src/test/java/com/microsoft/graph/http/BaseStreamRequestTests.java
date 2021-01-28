@@ -59,7 +59,7 @@ public class BaseStreamRequestTests {
                 mock(ILogger.class),
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
-        final BaseStreamRequest<String> request = new BaseStreamRequest<String>("https://a.b.c/", mBaseClient,null, null){};
+        final BaseStreamRequest<String> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, null){};
         request.send();
     }
 
@@ -80,7 +80,7 @@ public class BaseStreamRequestTests {
                 mock(ILogger.class),
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
-        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
+        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, InputStream.class){};
         final java.util.concurrent.CompletableFuture<InputStream> result = request.sendAsync();
         assertNotNull(result.get());
         assertTrue(result.isDone());
@@ -104,7 +104,7 @@ public class BaseStreamRequestTests {
                 mock(ILogger.class),
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
-        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
+        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, InputStream.class){};
         final java.util.concurrent.CompletableFuture<InputStream> result = request.sendAsync(new byte[]{1, 2, 3, 4});
         assertNotNull(result.get());
         assertTrue(result.isDone());
@@ -129,13 +129,13 @@ public class BaseStreamRequestTests {
                 mock(ILogger.class),
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
-        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
+        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, InputStream.class){};
         request.send(new byte[]{1, 2, 3, 4});
     }
 
     @Test
     public void testBaseMethod() {
-        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<InputStream>("https://a.b.c/", mBaseClient,null, InputStream.class){};
+        final BaseStreamRequest<InputStream> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, InputStream.class){};
         assertEquals("https://a.b.c/", request.getRequestUrl().toString());
         request.addHeader("header key", "header value");
         assertEquals(1,request.getHeaders().size());

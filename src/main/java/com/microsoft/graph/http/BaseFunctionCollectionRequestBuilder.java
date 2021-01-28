@@ -39,7 +39,7 @@ public class BaseFunctionCollectionRequestBuilder<T, T2 extends BaseRequestBuild
      */
     public BaseFunctionCollectionRequestBuilder(
             @Nonnull final String requestUrl,
-            @Nonnull final IBaseClient client,
+            @Nonnull final IBaseClient<?> client,
             @Nullable final List<? extends Option> options,
             @Nonnull final Class<T2> requestBuilderClass,
             @Nonnull final Class<T5> collectionRequestClass

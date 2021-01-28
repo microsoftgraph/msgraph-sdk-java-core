@@ -32,10 +32,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.ICollectionResponse;
-import com.microsoft.graph.http.BaseCollectionPage;
 import com.microsoft.graph.options.Option;
 import com.microsoft.graph.options.QueryOption;
 
@@ -61,7 +58,7 @@ public abstract class BaseDeltaCollectionRequest<T, T2 extends ICollectionRespon
      * @param collectionRequestBuilderClass the class for the collection request builder
      */
     public BaseDeltaCollectionRequest(@Nonnull final String requestUrl,
-                                 @Nonnull final IBaseClient client,
+                                 @Nonnull final IBaseClient<?> client,
                                  @Nullable final List<? extends Option> options,
                                  @Nonnull final Class<T2> responseCollectionClass,
                                  @Nonnull final Class<T3> collectionPageClass,

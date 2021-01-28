@@ -7,6 +7,8 @@ import com.google.gson.JsonPrimitive;
 
 import org.junit.jupiter.api.Test;
 
+import okhttp3.Request;
+
 public class DeltaCollectionPageTests {
     @SuppressWarnings("unchecked")
     @Test

@@ -5,12 +5,9 @@
 package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.BaseRequestBuilder;
 import com.microsoft.graph.options.Option;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +31,7 @@ public class BaseActionCollectionRequestBuilder<T, T2 extends BaseRequestBuilder
      */
     public BaseActionCollectionRequestBuilder(
             @Nonnull final String requestUrl,
-            @Nonnull final IBaseClient client,
+            @Nonnull final IBaseClient<?> client,
             @Nullable final List<? extends Option> options,
             @Nonnull final Class<T2> requestBuilderClass,
             @Nonnull final Class<T5> collectionRequestClass

@@ -29,8 +29,6 @@ import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 
-import okhttp3.Request;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -59,7 +57,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param responseClass the class for the response
      */
     public BaseStreamRequest(@Nonnull final String requestUrl,
-                             @Nonnull final IBaseClient client,
+                             @Nonnull final IBaseClient<?> client,
                              @Nullable final List<? extends Option> options,
                              @Nonnull final Class<T> responseClass) {
         baseRequest = new BaseRequest<T>(requestUrl, client, options, responseClass) {
@@ -295,24 +293,15 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
 
     /**
      * Returns the Request object to be executed
-     * @return the Request object to be executed
-     */
-    @Override
-    @Nullable
-    public Request getHttpRequest() throws ClientException {
-        return baseRequest.getHttpRequest();
-    }
-
-    /**
-     * Returns the Request object to be executed
      * @param serializedObject the object to serialize at the body of the request
      * @param <requestBodyType> the type of the serialized object
      * @param <responseType> the type of the response
+     * @param <NativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Override
     @Nullable
-    public <requestBodyType, responseType> Request getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+    public <requestBodyType, responseType, NativeRequestType> NativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
         return baseRequest.getHttpRequest(serializedObject);
     }
 }

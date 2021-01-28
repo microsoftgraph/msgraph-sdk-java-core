@@ -1,13 +1,9 @@
 package com.microsoft.graph.core;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,14 +31,14 @@ import com.microsoft.graph.serializer.ISerializer;
  */
 public class BaseClientTests {
 	public static final String DEFAULT_GRAPH_ENDPOINT = "https://graph.microsoft.com/v1.0";
-    private BaseClient baseClient;
-    private IHttpProvider mHttpProvider;
+    private BaseClient<Request> baseClient;
+    private IHttpProvider<Request> mHttpProvider;
     private ILogger mLogger;
     private ISerializer mSerializer;
 
 	@BeforeEach
 	public void setUp() throws Exception {
-        baseClient = new BaseClient();
+        baseClient = new BaseClient<>();
         mLogger = mock(ILogger.class);
         mSerializer = mock(ISerializer.class);
         mHttpProvider = new CoreHttpProvider(mSerializer,

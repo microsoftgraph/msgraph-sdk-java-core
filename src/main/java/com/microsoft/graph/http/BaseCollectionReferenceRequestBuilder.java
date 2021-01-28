@@ -23,10 +23,6 @@
 package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.options.Option;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +43,7 @@ public class BaseCollectionReferenceRequestBuilder<T, T2 extends BaseRequestBuil
      * @param requestBuilderClass the class for the request builder
      * @param collectionRequestClass the class for the collection request
      */
-    public BaseCollectionReferenceRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
+    public BaseCollectionReferenceRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
 										@Nonnull final Class<T2> requestBuilderClass,
 										@Nonnull final Class<T5> collectionRequestClass) {
         super(requestUrl, client, requestOptions, requestBuilderClass, collectionRequestClass);

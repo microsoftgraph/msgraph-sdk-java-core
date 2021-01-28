@@ -37,8 +37,6 @@ import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 import com.microsoft.graph.options.QueryOption;
 
-import okhttp3.Request;
-
 /**
  * A request against a collection
  *
@@ -78,7 +76,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param collectionRequestBuilderClass the class for the collection request builder
      */
     public BaseCollectionRequest(@Nonnull final String requestUrl,
-                                 @Nonnull final IBaseClient client,
+                                 @Nonnull final IBaseClient<?> client,
                                  @Nullable final List<? extends Option> options,
                                  @Nonnull final Class<T2> responseCollectionClass,
                                  @Nonnull final Class<T3> collectionPageClass,
@@ -418,26 +416,18 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
         baseRequest.setHttpMethod(httpMethod);
         return this;
     }
-    /**
-     * Returns the Request object to be executed
-     * @return the Request object to be executed
-     */
-    @Override
-    @Nullable
-    public Request getHttpRequest() throws ClientException {
-        return baseRequest.getHttpRequest();
-    }
 
     /**
      * Returns the Request object to be executed
      * @param serializedObject the object to serialize at the body of the request
      * @param <requestBodyType> the type of the serialized object
      * @param <responseType> the type of the response
+     * @param <NativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Override
     @Nullable
-    public <requestBodyType, responseType> Request getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+    public <requestBodyType, responseType, NativeRequestType> NativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
         return baseRequest.getHttpRequest(serializedObject);
     }
 }

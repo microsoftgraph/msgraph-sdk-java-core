@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,10 +23,8 @@
 package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.options.Option;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -49,7 +47,7 @@ public abstract class BaseWithReferenceRequestBuilder<T, T2 extends BaseWithRefe
      * @param withReferenceRequestClass the class for the request
      * @param referenceRequestBuilderClass the class for the request builder
      */
-    public BaseWithReferenceRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
+    public BaseWithReferenceRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
                                             @Nonnull final Class<T2> withReferenceRequestClass,
                                             @Nonnull final Class<T3> referenceRequestBuilderClass) {
         super(requestUrl, client, requestOptions);
@@ -86,7 +84,7 @@ public abstract class BaseWithReferenceRequestBuilder<T, T2 extends BaseWithRefe
 
     /**
      * Creates a request builder to get the reference to the entity
-     * 
+     *
      * @return the request builder
      */
     @Nullable

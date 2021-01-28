@@ -59,7 +59,7 @@ import okio.BufferedSink;
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
  */
-public class CoreHttpProvider implements IHttpProvider {
+public class CoreHttpProvider implements IHttpProvider<Request> {
     /**
      * The content type header
      */

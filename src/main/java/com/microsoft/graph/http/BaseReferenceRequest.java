@@ -24,9 +24,6 @@ package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.options.Option;
-
-import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -46,7 +43,7 @@ public abstract class BaseReferenceRequest<T> extends BaseRequest<T> {
      * @param requestOptions the options for this request
      * @param entityType     the class for the entity
      */
-    public BaseReferenceRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> entityType) {
+    public BaseReferenceRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> entityType) {
         super(requestUrl, client, requestOptions, entityType);
     }
 

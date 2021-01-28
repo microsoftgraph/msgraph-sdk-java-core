@@ -24,19 +24,16 @@ package com.microsoft.graph.http;
 
 import javax.annotation.Nullable;
 
-import java.util.concurrent.ExecutorService;
-
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.serializer.ISerializer;
 
-import okhttp3.Request;
-
 /**
  * Sends HTTP requests
+ * @param <NativeRequestType> type of a request for the native http client
  */
-public interface IHttpProvider {
+public interface IHttpProvider<NativeRequestType> {
 
     /**
      * Get the serializer for this HTTP provider
@@ -130,7 +127,7 @@ public interface IHttpProvider {
 	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
 	 */
     @Nullable
-    <Result, BodyType> Request getHttpRequest(@Nonnull final IHttpRequest request,
+    <Result, BodyType> NativeRequestType getHttpRequest(@Nonnull final IHttpRequest request,
                                               @Nonnull final Class<Result> resultClass,
                                               @Nullable final BodyType serializable)
             throws ClientException;
