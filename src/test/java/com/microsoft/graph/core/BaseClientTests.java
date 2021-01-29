@@ -9,12 +9,12 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,7 +40,7 @@ public class BaseClientTests {
     private ILogger mLogger;
     private ISerializer mSerializer;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
         baseClient = new BaseClient();
         mLogger = mock(ILogger.class);

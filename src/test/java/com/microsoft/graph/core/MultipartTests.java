@@ -1,9 +1,9 @@
 package com.microsoft.graph.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Multipart functionality
@@ -12,7 +12,7 @@ public class MultipartTests {
 
 	private Multipart multipart;
 
-	@Before
+	@BeforeEach
     public void setUp() {
 		multipart =  new Multipart();
 	}

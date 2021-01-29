@@ -1,13 +1,13 @@
 package com.microsoft.graph.content;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -20,9 +20,9 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testNullMSBatchResponseContent() {
-        assertThrows("should throw argument exception", NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new MSBatchResponseContent((Response)null);
-        });
+        }, "should throw argument exception");
     }
 
     @Test
@@ -45,9 +45,9 @@ public class MSBatchResponseContentTest {
 
     @Test
     public void testInvalidMSBatchResponseContentWithNullResponseString() {
-        assertThrows("should throw argument exception", NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new MSBatchResponseContent(null);
-        });
+        }, "should throw argument exception");
     }
 
     @Test

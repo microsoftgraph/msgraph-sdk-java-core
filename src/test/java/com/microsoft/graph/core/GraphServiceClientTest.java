@@ -2,15 +2,16 @@ package com.microsoft.graph.core;
 
 import com.google.gson.JsonElement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import okhttp3.Request;
 
@@ -155,14 +156,14 @@ public class GraphServiceClientTest {
         assertNotNull(client.getLogger());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testHttpProviderCannotBeNull() {
-        BaseClient.builder().httpProvider(null);
+        assertThrows(NullPointerException.class, () -> { BaseClient.builder().httpProvider(null); } );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testLoggerCannotBeNull() {
-        BaseClient.builder().logger(null);
+        assertThrows(NullPointerException.class, () -> { BaseClient.builder().logger(null);});
     }
 
     private static ILogger createLogger() {

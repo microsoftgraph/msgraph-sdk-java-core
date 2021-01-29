@@ -1,14 +1,14 @@
 package com.microsoft.graph.httpcore;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.net.HttpURLConnection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
@@ -151,9 +151,9 @@ public class RetryHandlerTest {
     }
     @Test
     public void defensiveProgramming() {
-        assertThrows("logger cannot be null", NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new RetryHandler(null, mock(RetryOptions.class));
-        });
+        }, "logger cannot be null");
     }
 
     Response TestResponse() {
