@@ -26,8 +26,6 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRedirect;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
-import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
-import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 
