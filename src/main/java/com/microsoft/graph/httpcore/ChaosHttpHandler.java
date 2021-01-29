@@ -32,7 +32,7 @@ public class ChaosHttpHandler implements Interceptor {
     /**
      * Denominator for the failure rate (i.e. 1/X)
      */
-    private final Integer failureRate = 3;
+    private final int failureRate = 3;
     /**
      * default value to return on retry after
      */
@@ -55,7 +55,7 @@ public class ChaosHttpHandler implements Interceptor {
             request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
         request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
 
-        final Integer dice = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
+        final int dice = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
 
         if(dice % failureRate == 0) {
             return new Response

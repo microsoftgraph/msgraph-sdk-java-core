@@ -17,7 +17,7 @@ import com.microsoft.graph.serializer.AdditionalDataManager;
  *
  * @param <T> the entity or complex type
  */
-public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T>  {
+public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T> {
 
 	/**
      * The list of items within this collection page
