@@ -2,7 +2,7 @@ package com.microsoft.graph.http;
 
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonObject;
 import com.microsoft.graph.serializer.ISerializer;

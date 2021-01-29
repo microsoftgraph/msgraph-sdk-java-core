@@ -3,9 +3,9 @@ package com.microsoft.graph.authentication;
 import com.azure.core.credential.TokenCredential;
 import com.microsoft.graph.mocks.MockTokenCredential;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import java.net.MalformedURLException;
@@ -47,10 +47,10 @@ public class TokenCredentialAuthProviderTest {
     }
     @Test
     public void providerDefensiveProgramming() {
-        assertThrows("should throw on null credentials", NullPointerException.class, () -> { new TokenCredentialAuthProvider(null); });
-        assertThrows("should throw on null scopes", IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(null, mock(TokenCredential.class)); });
-        assertThrows("should throw on empty scopes", IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(new ArrayList<String>(), mock(TokenCredential.class)); });
+        assertThrows(NullPointerException.class, () -> { new TokenCredentialAuthProvider(null); }, "should throw on null credentials");
+        assertThrows(IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(null, mock(TokenCredential.class)); }, "should throw on null scopes");
+        assertThrows(IllegalArgumentException.class, () -> { new TokenCredentialAuthProvider(new ArrayList<String>(), mock(TokenCredential.class)); }, "should throw on empty scopes");
         final TokenCredentialAuthProvider provider = new TokenCredentialAuthProvider(mock(TokenCredential.class));
-        assertThrows("should throw on null url", NullPointerException.class, () -> { provider.getAuthorizationTokenAsync(null); });
+        assertThrows(NullPointerException.class, () -> { provider.getAuthorizationTokenAsync(null); }, "should throw on null url");
     }
 }

@@ -1,11 +1,11 @@
 package com.microsoft.graph.options;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OptionTests {
 
@@ -27,12 +27,12 @@ public class OptionTests {
         assertEquals("o1",option.getName());
         assertEquals("ov1",option.getValue());
 
-        assertThrows("should fail on null name", NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new Option(null, "onion");
-        });
-        assertThrows("should fail on empty name", IllegalArgumentException.class, () -> {
+        }, "should fail on null name");
+        assertThrows(IllegalArgumentException.class, () -> {
             new Option("", "onion");
-        });
+        }, "should fail on empty name");
     }
 
 }

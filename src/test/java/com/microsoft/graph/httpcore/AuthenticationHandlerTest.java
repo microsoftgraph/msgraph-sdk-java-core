@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

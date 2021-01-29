@@ -1,9 +1,9 @@
 package com.microsoft.graph.content;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.DefaultSerializer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -110,35 +110,34 @@ public class MSBatchRequestContentTest {
             }
         });
 
-        assertThrows("the number of steps cannot exceed 20", IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new MSBatchRequestContent(mock(ILogger.class), null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null);
-        });
-        assertThrows("the logger cannot be null", NullPointerException.class, () -> {
+        }, "the number of steps cannot exceed 20");
+        assertThrows(NullPointerException.class, () -> {
             new MSBatchRequestContent((ILogger) null, (MSBatchRequestStep)null);
-        });
+        }, "the logger cannot be null");
 
         new MSBatchRequestContent(mockStep, null); // addind a null step doesn't throw
-        assertThrows("should throw argument exception", NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep(null);
-        });
-        assertThrows("should throw argument exception", NullPointerException.class, () -> {
+        }, "should throw argument exception");
+        assertThrows(NullPointerException.class, () -> {
             new MSBatchRequestContent().addBatchRequestStep((Request) null);
-        });
+        }, "should throw argument exception");
 
-        assertThrows("the number of steps cannot exceed 20", IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             final MSBatchRequestContent batchContent = new MSBatchRequestContent();
             for (int i = 0; i < MSBatchRequestContent.MAX_NUMBER_OF_REQUESTS; i++) {
                 assertNotNull(batchContent.addBatchRequestStep(mock(Request.class)));
             }
             batchContent.addBatchRequestStep(mock(Request.class));
-        });
+        }, "the number of steps cannot exceed 20");
         {
             final MSBatchRequestContent batchContent = new MSBatchRequestContent();
             reservedIds.clear();
             for (int i = 0; i < MSBatchRequestContent.MAX_NUMBER_OF_REQUESTS; i++) {
-                assertTrue("item number " + i + " should be added successfully",
-                        batchContent.addBatchRequestStep(mockStep));
+                assertTrue(batchContent.addBatchRequestStep(mockStep), "item number " + i + " should be added successfully");
             }
             assertFalse(batchContent.addBatchRequestStep(mockStep));
         }

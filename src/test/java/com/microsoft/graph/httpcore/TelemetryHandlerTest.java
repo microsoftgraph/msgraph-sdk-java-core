@@ -1,13 +1,13 @@
 package com.microsoft.graph.httpcore;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
