@@ -40,7 +40,7 @@ public class CollectionResponseSerializer {
         serializer = new DefaultSerializer(logger);
         final JsonObject jsonAsObject = json.getAsJsonObject();
         final JsonArray sourceArray = jsonAsObject.get("value").getAsJsonArray();
-        final ArrayList<T1> list = new ArrayList<T1>(sourceArray.size());
+        final ArrayList<T1> list = new ArrayList<>(sourceArray.size());
         /** eg: com.microsoft.graph.requests.AttachmentCollectionResponse */
         /** eg: com.microsoft.graph.requests.DriveItemDeltaCollectionResponse */
         /** eg: com.microsoft.graph.requests.DriveItemGetActivitiesByIntervalCollectionResponse */
@@ -66,7 +66,7 @@ public class CollectionResponseSerializer {
                     Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
                     if(entityClass == null && baseEntityClass != null)
                         entityClass = baseEntityClass; // it is possible the odata type is absent or we can't find the derived type (not in SDK yet)
-                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject.toString(), entityClass);
+                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, entityClass);
                     ((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
                     list.add(targetObject);
                 }

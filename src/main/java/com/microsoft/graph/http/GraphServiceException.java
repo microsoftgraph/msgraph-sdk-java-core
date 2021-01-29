@@ -22,26 +22,31 @@
 
 package com.microsoft.graph.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
-
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.serializer.ISerializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import okhttp3.Response;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.internal.Util.closeQuietly;
 
 /**
@@ -377,25 +382,8 @@ public class GraphServiceException extends ClientException {
         }
 
         final String responseMessage = response.message();
-        String rawOutput = "{}";
 
-        InputStream is = response.body().byteStream();
-        try {
-            rawOutput = CoreHttpProvider.streamToString(is);
-        } finally {
-            closeQuietly(is);
-        }
-        GraphErrorResponse error;
-        try {
-            error = serializer.deserializeObject(rawOutput, GraphErrorResponse.class, responseHeadersHelper.getResponseHeadersAsMapOfStringList(response));
-        } catch (final Exception ex) {
-            error = new GraphErrorResponse();
-            error.error = new GraphError();
-            error.error.code = "Unable to parse error response message";
-            error.error.message = "Raw error: " + rawOutput;
-            error.error.innererror = new GraphInnerError();
-            error.error.innererror.code = ex.getMessage();
-        }
+        GraphErrorResponse error = parseErrorResponse(serializer, response);
 
         if (responseCode >= INTERNAL_SERVER_ERROR) {
             return new GraphFatalServiceException(method,
@@ -418,5 +406,35 @@ public class GraphServiceException extends ClientException {
                 responseHeaders,
                 error,
                 isVerbose);
+    }
+
+    private static GraphErrorResponse parseErrorResponse(@Nonnull ISerializer serializer,
+                                                         @Nonnull Response response)
+            throws IOException {
+
+        byte[] responseBytes;
+        InputStream is = response.body().byteStream();
+        try {
+            responseBytes = ByteStreams.toByteArray(is);
+        } finally {
+            closeQuietly(is);
+        }
+        GraphErrorResponse error;
+        try {
+            // we need a "copy" of the stream, so we can log the raw output if it cannot be parsed
+            error = serializer.deserializeObject(
+                    new ByteArrayInputStream(responseBytes),
+                    GraphErrorResponse.class,
+                    responseHeadersHelper.getResponseHeadersAsMapOfStringList(response)
+            );
+        } catch (final Exception ex) {
+            error = new GraphErrorResponse();
+            error.error = new GraphError();
+            error.error.code = "Unable to parse error response message";
+            error.error.message = "Raw error: " + new String(responseBytes, UTF_8);
+            error.error.innererror = new GraphInnerError();
+            error.error.innererror.code = ex.getMessage();
+        }
+        return error;
     }
 }
