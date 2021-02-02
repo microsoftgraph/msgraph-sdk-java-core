@@ -55,7 +55,7 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable
-    protected BatchResponseContent post(@Nonnull final BatchRequestContent content) throws ClientException {
+    public BatchResponseContent post(@Nonnull final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
         return this.getClient().getHttpProvider().send(this, BatchResponseContent.class, content);
     }
@@ -67,7 +67,7 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable
-    protected java.util.concurrent.CompletableFuture<BatchResponseContent> postAsync(@Nonnull final BatchRequestContent content) throws ClientException {
+    public java.util.concurrent.CompletableFuture<BatchResponseContent> postAsync(@Nonnull final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
         return this.getClient().getHttpProvider().sendAsync(this, BatchResponseContent.class, content);
     }
