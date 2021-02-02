@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.microsoft.graph.http.HttpMethod;
 
 /** the http request for the batch step */
 public class BatchRequestStep<T> extends BatchStep<T> {
@@ -40,7 +39,7 @@ public class BatchRequestStep<T> extends BatchStep<T> {
     /** The HTTP method to use to execute the request */
     @Expose
     @SerializedName("method")
-    public HttpMethod method;
+    public String method;
     /** The IDs of the steps this step depends on before being executed */
     @Expose
     @SerializedName("dependsOn")

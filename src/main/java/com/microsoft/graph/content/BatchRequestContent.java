@@ -40,6 +40,7 @@ import com.google.gson.annotations.SerializedName;
 import com.microsoft.graph.http.HttpMethod;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.IJsonBackedObject;
 
 /** Respresents the content of a JSON batch request */
 public class BatchRequestContent {
@@ -105,7 +106,7 @@ public class BatchRequestContent {
         final BatchRequestStep<T> step = new BatchRequestStep<T>() {{
             url = protocolAndHostReplacementMatcher.replaceAll("");
             body = serializableBody;
-            method = httpMethod;
+            method = httpMethod.toString().toUpperCase();
             dependsOn = dependsOnRequestsIds != null && dependsOnRequestsIds.length > 0 ? new HashSet<String>(Arrays.asList(dependsOnRequestsIds)) : null;
             id = getNextRequestId();
         }};
@@ -113,11 +114,18 @@ public class BatchRequestContent {
         if(!request.getHeaders().isEmpty()) {
             step.headers = new HashMap<>();
             for(final HeaderOption headerOption : request.getHeaders())
-                step.headers.putIfAbsent(headerOption.getName(), headerOption.getValue().toString());
+                step.headers.putIfAbsent(headerOption.getName().toLowerCase(), headerOption.getValue().toString());
+        }
+        if(step.body != null && step.body instanceof IJsonBackedObject &&
+            (step.headers == null || !step.headers.containsKey(contentTypeHeaderKey))) {
+            if(step.headers == null)
+                step.headers = new HashMap<>();
+            step.headers.putIfAbsent(contentTypeHeaderKey, "application/json");
         }
         requests.add(step);
         return step.id;
     }
+    private static final String contentTypeHeaderKey = "content-type";
     /**
      * Removes requests from the requests to be executed by the batch. Also removes any dependency references that might exist.
      * @param stepIds ids of steps to be removed.

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.BaseClient;
@@ -26,7 +27,10 @@ import com.microsoft.graph.http.HttpMethod;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.DefaultSerializer;
+import com.microsoft.graph.serializer.IJsonBackedObject;
+import com.microsoft.graph.serializer.ISerializer;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -62,7 +66,8 @@ public class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"get\",\"id\":\""+stepId+"\"}]}";
+        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+                + stepId + "\"}]}";
         assertEquals(expectedContent, content);
     }
 
@@ -74,7 +79,8 @@ public class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"get\",\"id\":\""+stepId+"\",\"headers\":{\"testkey\":\"testvalue\"}}]}";
+        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+                + stepId + "\",\"headers\":{\"testkey\":\"testvalue\"}}]}";
         assertEquals(expectedContent, content);
     }
 
@@ -104,7 +110,8 @@ public class BatchRequestContentTest {
 
         requestContent.removeBatchRequestStepWithId(stepId);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"get\",\"id\":\""+step1Id+"\"}]}";
+        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+                + step1Id + "\"}]}";
         assertEquals(expectedContent, content);
     }
 
@@ -122,7 +129,11 @@ public class BatchRequestContentTest {
         }, "get step by id with null id throws");
 
         assertThrows(NullPointerException.class, () -> {
-            new BatchRequestContent() {{ requests = new ArrayList<>(); }}.removeBatchRequestStepWithId((String)null);
+            new BatchRequestContent() {
+                {
+                    requests = new ArrayList<>();
+                }
+            }.removeBatchRequestStepWithId((String) null);
         }, "remove step by id with null id throws");
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -141,49 +152,42 @@ public class BatchRequestContentTest {
         final Call mCall = mock(Call.class);
         when(mHttpClient.newCall(any(Request.class))).thenReturn(mCall);
 
-        final CoreHttpProvider mHttpProvider = new CoreHttpProvider(new DefaultSerializer(mock(ILogger.class)), mock(ILogger.class), mHttpClient);
-        final IBaseClient mClient = BaseClient.builder()
-                                            .authenticationProvider(mock(IAuthenticationProvider.class))
-                                            .httpProvider(mHttpProvider)
-                                            .buildClient();
-        final Response mResponse = new Response
-                                            .Builder()
-                                            .request(new Request
-                                                        .Builder()
-                                                        .url("https://graph.microsoft.com/v1.0/$batch")
-                                                        .build())
-                                            .code(200)
-                                            .protocol(Protocol.HTTP_1_1)
-                                            .message("OK")
-                                            .addHeader("Content-type", "application/json")
-                                            .body(ResponseBody.create("{\"responses\": [{\"id\": \""+stepId+"\",\"status\": 200,\"body\": null}]}",
-                                                    MediaType.parse("application/json")))
-                                            .build();
+        final CoreHttpProvider mHttpProvider = new CoreHttpProvider(new DefaultSerializer(mock(ILogger.class)),
+                mock(ILogger.class), mHttpClient);
+        final IBaseClient mClient = BaseClient.builder().authenticationProvider(mock(IAuthenticationProvider.class))
+                .httpProvider(mHttpProvider).buildClient();
+        final Response mResponse = new Response.Builder()
+                .request(new Request.Builder().url("https://graph.microsoft.com/v1.0/$batch").build()).code(200)
+                .protocol(Protocol.HTTP_1_1).message("OK").addHeader("Content-type", "application/json")
+                .body(ResponseBody.create(
+                        "{\"responses\": [{\"id\": \"" + stepId + "\",\"status\": 200,\"body\": null}]}",
+                        MediaType.parse("application/json")))
+                .build();
         when(mCall.execute()).thenReturn(mResponse);
         final BatchResponseContent batchResponse = mClient.batch().buildRequest().post(content);
         assertNotNull(mClient.batch().buildRequest().postAsync(content));
         final BatchResponseStep<?> response = batchResponse.getResponseById(stepId);
         assertNotNull(response);
     }
+
     @Test
-    public void usesHttpMethodFromRequestIfAlreadySet() throws MalformedURLException
-    {
+    public void usesHttpMethodFromRequestIfAlreadySet() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         when(requestStep.getHttpMethod()).thenReturn(HttpMethod.DELETE);
         final BatchRequestContent batchRequest = new BatchRequestContent();
         final String stepId = batchRequest.addBatchRequestStep(requestStep);
-        assertEquals(HttpMethod.DELETE, batchRequest.getStepById(stepId).method);
+        assertEquals("DELETE", batchRequest.getStepById(stepId).method);
     }
+
     @Test
-    public void doesntThrowWhenTryingToRemoveRequestFromNull()
-    {
+    public void doesntThrowWhenTryingToRemoveRequestFromNull() {
         final BatchRequestContent batchRequest = new BatchRequestContent();
         batchRequest.removeBatchRequestStepWithId("id");
     }
+
     @Test
-    public void doesntRemoveDependsOnWhenNotEmpty() throws MalformedURLException
-    {
+    public void doesntRemoveDependsOnWhenNotEmpty() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         final BatchRequestContent batchRequest = new BatchRequestContent();
@@ -194,5 +198,31 @@ public class BatchRequestContentTest {
         batchRequest.removeBatchRequestStepWithId(stepId);
 
         assertNotNull(batchRequest.getStepById(stepId3).dependsOn);
+    }
+
+    @Test
+    public void addsContentTypeForBodies() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
+        final BatchRequestContent batchRequest = new BatchRequestContent();
+        final IJsonBackedObject body = new IJsonBackedObject() {
+
+            @Override
+            public void setRawObject(ISerializer serializer, JsonObject json) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public AdditionalDataManager additionalDataManager() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+        };
+        final String stepId = batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, body);
+        final BatchRequestStep<?> step = batchRequest.getStepById(stepId);
+        assertNotNull(step.headers);
+        assertEquals("application/json", step.headers.get("content-type"));
     }
 }
