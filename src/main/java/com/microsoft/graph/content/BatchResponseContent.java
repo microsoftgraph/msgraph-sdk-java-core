@@ -35,6 +35,7 @@ import com.google.gson.annotations.SerializedName;
 /** Respresents the result of a JSON batch request */
 public class BatchResponseContent {
     /** Responses to the steps from the request */
+    @Nullable
     @Expose
     @SerializedName("responses")
     public List<BatchResponseStep<JsonElement>> responses;

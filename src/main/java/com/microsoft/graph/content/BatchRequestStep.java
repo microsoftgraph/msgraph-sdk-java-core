@@ -37,10 +37,12 @@ public class BatchRequestStep<T> extends BatchStep<T> {
     @SerializedName("url")
     public String url;
     /** The HTTP method to use to execute the request */
+    @Nullable
     @Expose
     @SerializedName("method")
     public String method;
     /** The IDs of the steps this step depends on before being executed */
+    @Nullable
     @Expose
     @SerializedName("dependsOn")
     public HashSet<String> dependsOn;

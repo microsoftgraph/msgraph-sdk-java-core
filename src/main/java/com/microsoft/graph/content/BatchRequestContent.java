@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -46,6 +47,7 @@ import com.microsoft.graph.serializer.IJsonBackedObject;
 public class BatchRequestContent {
     /** Steps part of the batch request */
     @Expose
+    @Nullable
     @SerializedName("requests")
     public List<BatchRequestStep<?>> requests;
 
@@ -90,6 +92,7 @@ public class BatchRequestContent {
      * @param dependsOnRequestsIds the ids of steps this request depends on
      * @return the id of the step that was just added to the batch
      */
+    @Nonnull
     public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody, @Nullable final String ...dependsOnRequestsIds) {
         Objects.requireNonNull(request, "request parameter cannot be null");
         Objects.requireNonNull(httpMethod, "httpMethod parameter cannot be null");
@@ -106,7 +109,7 @@ public class BatchRequestContent {
         final BatchRequestStep<T> step = new BatchRequestStep<T>() {{
             url = protocolAndHostReplacementMatcher.replaceAll("");
             body = serializableBody;
-            method = httpMethod.toString().toUpperCase();
+            method = httpMethod.toString().toUpperCase(Locale.getDefault());
             dependsOn = dependsOnRequestsIds != null && dependsOnRequestsIds.length > 0 ? new HashSet<String>(Arrays.asList(dependsOnRequestsIds)) : null;
             id = getNextRequestId();
         }};
@@ -114,7 +117,7 @@ public class BatchRequestContent {
         if(!request.getHeaders().isEmpty()) {
             step.headers = new HashMap<>();
             for(final HeaderOption headerOption : request.getHeaders())
-                step.headers.putIfAbsent(headerOption.getName().toLowerCase(), headerOption.getValue().toString());
+                step.headers.putIfAbsent(headerOption.getName().toLowerCase(Locale.getDefault()), headerOption.getValue().toString());
         }
         if(step.body != null && step.body instanceof IJsonBackedObject &&
             (step.headers == null || !step.headers.containsKey(contentTypeHeaderKey))) {
@@ -163,8 +166,15 @@ public class BatchRequestContent {
         }
         return null;
     }
-    private static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
-    private String getNextRequestId() {
+    /** pattern to replace the protocol and host part of the request if specified */
+    @Nonnull
+    protected static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
+    /**
+     * Generates a randomly available request id
+     * @return a random request id
+     */
+    @Nonnull
+    protected String getNextRequestId() {
         String requestId;
         do {
             requestId = Integer.toString(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));

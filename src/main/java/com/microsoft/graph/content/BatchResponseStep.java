@@ -42,6 +42,7 @@ public class BatchResponseStep<T> extends BatchStep<T> {
     @SerializedName("status")
     public int status;
     /** Serializer to use for response deserialization */
+    @Nullable
     protected ISerializer serializer;
 
     /**

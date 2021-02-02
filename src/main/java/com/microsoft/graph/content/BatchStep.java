@@ -42,6 +42,7 @@ public abstract class BatchStep<T> {
     @SerializedName("headers")
     public HashMap<String, String> headers;
     /** The body of request/response for the step */
+    @Nullable
     @Expose
     @SerializedName("body")
     public T body;
