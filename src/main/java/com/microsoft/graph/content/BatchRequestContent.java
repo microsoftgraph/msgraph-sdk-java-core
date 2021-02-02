@@ -23,6 +23,7 @@
 package com.microsoft.graph.content;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +78,7 @@ public class BatchRequestContent {
      */
     @Nonnull
     public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody) {
-        return addBatchRequestStep(request, httpMethod, serializableBody, null);
+        return addBatchRequestStep(request, httpMethod, serializableBody, (String[])null);
     }
     /**
      * Adds a request as a step to the current batch
@@ -88,7 +89,7 @@ public class BatchRequestContent {
      * @param dependsOnRequestsIds the ids of steps this request depends on
      * @return the id of the step that was just added to the batch
      */
-    public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody, @Nullable final HashSet<String> dependsOnRequestsIds) {
+    public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody, @Nullable final String ...dependsOnRequestsIds) {
         Objects.requireNonNull(request, "request parameter cannot be null");
         Objects.requireNonNull(httpMethod, "httpMethod parameter cannot be null");
         if(dependsOnRequestsIds != null)
@@ -105,7 +106,7 @@ public class BatchRequestContent {
             url = protocolAndHostReplacementMatcher.replaceAll("");
             body = serializableBody;
             method = httpMethod;
-            dependsOn = dependsOnRequestsIds;
+            dependsOn = dependsOnRequestsIds != null && dependsOnRequestsIds.length > 0 ? new HashSet<String>(Arrays.asList(dependsOnRequestsIds)) : null;
             id = getNextRequestId();
         }};
 

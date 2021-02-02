@@ -100,7 +100,7 @@ public class BatchRequestContentTest {
         IHttpRequest requestStep1 = mock(IHttpRequest.class);
         when(requestStep1.getRequestUrl()).thenReturn(new URL(testurl));
 
-        String step1Id = requestContent.addBatchRequestStep(requestStep1, HttpMethod.GET, null, new HashSet<String>(Arrays.asList(stepId)));
+        String step1Id = requestContent.addBatchRequestStep(requestStep1, HttpMethod.GET, null, stepId);
 
         requestContent.removeBatchRequestStepWithId(stepId);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
@@ -126,7 +126,7 @@ public class BatchRequestContentTest {
         }, "remove step by id with null id throws");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new BatchRequestContent().addBatchRequestStep(mock(IHttpRequest.class), HttpMethod.GET, null, new HashSet<String>(Arrays.asList("1")));
+            new BatchRequestContent().addBatchRequestStep(mock(IHttpRequest.class), HttpMethod.GET, null, "1");
         }, "dependency on inexisting step throws");
     }
 
@@ -189,7 +189,7 @@ public class BatchRequestContentTest {
         final BatchRequestContent batchRequest = new BatchRequestContent();
         final String stepId = batchRequest.addBatchRequestStep(requestStep);
         final String stepId2 = batchRequest.addBatchRequestStep(requestStep);
-        final String stepId3 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.GET, null, new HashSet<String>(Arrays.asList(stepId, stepId2)));
+        final String stepId3 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.GET, null, stepId, stepId2);
 
         batchRequest.removeBatchRequestStepWithId(stepId);
 
