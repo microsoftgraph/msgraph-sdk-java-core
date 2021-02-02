@@ -40,24 +40,54 @@ import com.microsoft.graph.http.HttpMethod;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.options.HeaderOption;
 
+/** Respresents the content of a JSON batch request */
 public class BatchRequestContent {
+    /** Steps part of the batch request */
     @Expose
     @SerializedName("requests")
     public List<BatchRequestStep<?>> requests;
 
+    /**
+     * Adds a request as a step to the current batch. Defaults to GET if the HTTP method is not set in the request.
+     * @param request the request to add as a step
+     * @return the id of the step that was just added to the batch
+     */
     @Nonnull
     public String addBatchRequestStep(@Nonnull final IHttpRequest request) {
         Objects.requireNonNull(request, "request parameter cannot be null");
         return addBatchRequestStep(request, request.getHttpMethod() == null ? HttpMethod.GET : request.getHttpMethod());
     }
+    /**
+     * Adds a request as a step to the current batch
+     * @param request the request to add as a step
+     * @param httpMethod the HttpMethod to execute the request with
+     * @return the id of the step that was just added to the batch
+     */
     @Nonnull
     public String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod) {
         return addBatchRequestStep(request, httpMethod, null);
     }
+    /**
+     * Adds a request as a step to the current batch
+     * @param request the request to add as a step
+     * @param httpMethod the HttpMethod to execute the request with
+     * @param <T> the type of the request body
+     * @param serializableBody the body of the request to be serialized
+     * @return the id of the step that was just added to the batch
+     */
     @Nonnull
     public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody) {
         return addBatchRequestStep(request, httpMethod, serializableBody, null);
     }
+    /**
+     * Adds a request as a step to the current batch
+     * @param request the request to add as a step
+     * @param httpMethod the HttpMethod to execute the request with
+     * @param <T> the type of the request body
+     * @param serializableBody the body of the request to be serialized
+     * @param dependsOnRequestsIds the ids of steps this request depends on
+     * @return the id of the step that was just added to the batch
+     */
     public <T> String addBatchRequestStep(@Nonnull final IHttpRequest request, @Nonnull final HttpMethod httpMethod, @Nullable final T serializableBody, @Nullable final HashSet<String> dependsOnRequestsIds) {
         Objects.requireNonNull(request, "request parameter cannot be null");
         Objects.requireNonNull(httpMethod, "httpMethod parameter cannot be null");
@@ -87,6 +117,10 @@ public class BatchRequestContent {
         requests.add(step);
         return step.id;
     }
+    /**
+     * Removes requests from the requests to be executed by the batch. Also removes any dependency references that might exist.
+     * @param stepIds ids of steps to be removed.
+     */
     public void removeBatchRequestStepWithId(@Nonnull final String ...stepIds) {
         if(requests == null) return;
 
@@ -102,6 +136,12 @@ public class BatchRequestContent {
             }
         }
     }
+    /**
+     * Gets a step by its step id
+     * @param <T> the type of the request body
+     * @param stepId the request step id returned from the add method
+     * @return the request corresponding to the provided id or null
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> BatchRequestStep<T> getStepById(@Nonnull final String stepId) {

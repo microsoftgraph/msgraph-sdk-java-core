@@ -31,11 +31,19 @@ import javax.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/** Respresents the result of a JSON batch request */
 public class BatchResponseContent {
+    /** Responses to the steps from the request */
     @Expose
     @SerializedName("responses")
     public List<BatchResponseStep<?>> responses;
 
+    /**
+     * Gets a response to a request in the batch by its id
+     * @param <T> Type of the response body
+     * @param stepId Id of the request step in the batch request
+     * @return The step response corresponding to the ID or null
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> BatchResponseStep<T> getResponseById(@Nonnull final String stepId) {
