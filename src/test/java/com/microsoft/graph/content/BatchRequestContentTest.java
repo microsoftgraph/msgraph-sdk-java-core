@@ -224,5 +224,22 @@ public class BatchRequestContentTest {
         final BatchRequestStep<?> step = batchRequest.getStepById(stepId);
         assertNotNull(step.headers);
         assertEquals("application/json", step.headers.get("content-type"));
+
+        when(requestStep.getHeaders()).thenReturn(Arrays.asList(new HeaderOption("dummy", "dummy")));
+        final String stepId2 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, body);
+        final BatchRequestStep<?> step2 = batchRequest.getStepById(stepId2);
+        assertNotNull(step2.headers);
+        assertEquals("application/json", step2.headers.get("content-type"));
+
+        final String stepId3 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, Integer.valueOf(10));
+        final BatchRequestStep<?> step3 = batchRequest.getStepById(stepId3);
+        assertNotNull(step3.headers);
+        assertNull(step3.headers.get("content-type"));
+
+        when(requestStep.getHeaders()).thenReturn(Arrays.asList(new HeaderOption("Content-type", "application/octect-stream")));
+        final String stepId4 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, Integer.valueOf(10));
+        final BatchRequestStep<?> step4 = batchRequest.getStepById(stepId4);
+        assertNotNull(step4.headers);
+        assertEquals("application/octect-stream", step4.headers.get("content-type"));
     }
 }
