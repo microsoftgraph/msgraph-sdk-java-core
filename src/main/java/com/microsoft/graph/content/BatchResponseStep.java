@@ -21,8 +21,19 @@
 // ------------------------------------------------------------------------------
 package com.microsoft.graph.content;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.microsoft.graph.http.GraphErrorResponse;
+import com.microsoft.graph.http.GraphFatalServiceException;
+import com.microsoft.graph.http.GraphServiceException;
+import com.microsoft.graph.serializer.ISerializer;
 
 /** Response for the batch step */
 public class BatchResponseStep<T> extends BatchStep<T> {
@@ -30,4 +41,25 @@ public class BatchResponseStep<T> extends BatchStep<T> {
     @Expose
     @SerializedName("status")
     public int status;
+
+    /**
+     * Returned the deserialized response body of the current step
+     * @param <T2> type of the response body
+     * @param serializer serializer to use for deserialization. graphClient.getSerializer()
+     * @param resultClass class of the resulting response body
+     * @return the deserialized response body
+     * @throws GraphServiceException when a bad request was sent
+     * @throws GraphFatalServiceException when the service did not complete the operation as expected because of an internal error
+     */
+    @Nullable
+    public <T2> T2 getDeserializedBody(@Nonnull final ISerializer serializer, @Nonnull final Class<T2> resultClass) throws GraphServiceException, GraphFatalServiceException {
+        Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
+        if(body == null || !(body instanceof JsonElement)) return null;
+
+        final GraphErrorResponse error = serializer.deserializeObject((JsonElement)body, GraphErrorResponse.class);
+        if(error == null || error.error == null) {
+            return serializer.deserializeObject((JsonElement)body, resultClass);
+        } else
+            throw GraphServiceException.createFromResponse("", "", new ArrayList<>(), "", headers, "", status, error, false);
+    }
 }

@@ -28,6 +28,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -36,23 +37,21 @@ public class BatchResponseContent {
     /** Responses to the steps from the request */
     @Expose
     @SerializedName("responses")
-    public List<BatchResponseStep<?>> responses;
+    public List<BatchResponseStep<JsonElement>> responses;
 
     /**
      * Gets a response to a request in the batch by its id
-     * @param <T> Type of the response body
      * @param stepId Id of the request step in the batch request
      * @return The step response corresponding to the ID or null
      */
     @Nullable
-    @SuppressWarnings("unchecked")
-    public <T> BatchResponseStep<T> getResponseById(@Nonnull final String stepId) {
+    public BatchResponseStep<JsonElement> getResponseById(@Nonnull final String stepId) {
         Objects.requireNonNull(stepId, "parameter stepId cannot be null");
         if(responses == null) return null;
 
-        for(final BatchResponseStep<?> step : responses) {
+        for(final BatchResponseStep<JsonElement> step : responses) {
             if(stepId.equals(step.id))
-                return (BatchResponseStep<T>)step;
+                return step;
         }
         return null;
     }
