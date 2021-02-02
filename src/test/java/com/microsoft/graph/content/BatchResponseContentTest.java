@@ -102,11 +102,15 @@ public class BatchResponseContentTest {
         String responsebody = "{\"responses\":[{\"id\":\"1\",\"status\":400,\"headers\":{\"Cache-Control\":\"no-cache\",\"x-ms-resource-unit\":\"1\",\"Content-Type\":\"application/json\"},\"body\":{\"error\":{\"code\":\"Request_BadRequest\",\"message\":\"Avalueisrequiredforproperty'displayName'ofresource'User'.\",\"innerError\":{\"date\":\"2021-02-02T19:19:38\",\"request-id\":\"408b8e64-4047-4c97-95b6-46e9f212ab48\",\"client-request-id\":\"102910da-260c-3028-0fb3-7d6903a02622\"}}}}]}";
         ISerializer serializer = new DefaultSerializer(mock(ILogger.class));
         BatchResponseContent batchresponse = serializer.deserializeObject(responsebody, BatchResponseContent.class);
+        if(batchresponse != null && batchresponse.responses != null) // this is done by the batch request in the fluent API
+            for(final BatchResponseStep<?> step : batchresponse.responses) {
+                step.serializer = serializer;
+            }
         assertThrows(GraphServiceException.class, () -> {
-            final Object body = batchresponse.getResponseById("1").getDeserializedBody(serializer, BatchRequestContent.class);
+            final Object body = batchresponse.getResponseById("1").getDeserializedBody(BatchRequestContent.class);
         });
         try {
-            final Object body = batchresponse.getResponseById("1").getDeserializedBody(serializer, BatchRequestContent.class);
+            final Object body = batchresponse.getResponseById("1").getDeserializedBody(BatchRequestContent.class);
         } catch(GraphServiceException ex) {
             final GraphErrorResponse response = ex.getError();
             assertNotNull(response);

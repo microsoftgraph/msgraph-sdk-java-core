@@ -57,7 +57,9 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
     @Nullable
     public BatchResponseContent post(@Nonnull final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
-        return this.getClient().getHttpProvider().send(this, BatchResponseContent.class, content);
+        final BatchResponseContent response = this.getClient().getHttpProvider().send(this, BatchResponseContent.class, content);
+        setSerializerOnSteps(response);
+        return response;
     }
     /**
      * Send this request
@@ -69,6 +71,15 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
     @Nullable
     public java.util.concurrent.CompletableFuture<BatchResponseContent> postAsync(@Nonnull final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
-        return this.getClient().getHttpProvider().sendAsync(this, BatchResponseContent.class, content);
+        return this.getClient().getHttpProvider().sendAsync(this, BatchResponseContent.class, content).thenApply(response -> {
+            setSerializerOnSteps(response);
+            return response;
+        });
+    }
+    private void setSerializerOnSteps(final BatchResponseContent response) {
+        if(response.responses != null)
+            for(final BatchResponseStep<?> step : response.responses) {
+                step.serializer = this.getClient().getSerializer();
+            }
     }
 }
