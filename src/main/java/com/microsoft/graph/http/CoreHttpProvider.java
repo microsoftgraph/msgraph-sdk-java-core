@@ -54,15 +54,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.BufferedSink;
-
-import static com.microsoft.graph.Util.closeQuietly;
 
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
  */
 public class CoreHttpProvider implements IHttpProvider {
-	private final static HttpResponseHeadersHelper responseHeadersHelper = new HttpResponseHeadersHelper();
 	/**
 	 * The serializer
 	 */
@@ -376,86 +374,88 @@ public class CoreHttpProvider implements IHttpProvider {
                                                                     final Class<Result> resultClass,
                                                                     final Body serializable,
                                                                     final IStatefulResponseHandler<Result, DeserializeType> handler) {
-		try {
-            InputStream in = null;
-            boolean isBinaryStreamInput = false;
+        try(final ResponseBody body = response.body()) {
             try {
+                InputStream in = null;
+                boolean isBinaryStreamInput = false;
+                try {
 
-                // Call being executed
+                    // Call being executed
 
 
-                if (handler != null) {
-                    handler.configConnection(response);
-                }
-
-                logger.logDebug(String.format(Locale.ROOT, "Response code %d, %s",
-                        response.code(),
-                        response.message()));
-
-                if (handler != null) {
-                    logger.logDebug("StatefulResponse is handling the HTTP response.");
-                    return handler.generateResult(
-                            request, response, this.serializer, this.logger);
-                }
-
-                if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
-                    logger.logDebug("Handling error response");
-                    in = response.body().byteStream();
-                    handleErrorResponse(request, serializable, response);
-                }
-
-                if (response.code() == HttpResponseCode.HTTP_NOBODY
-                        || response.code() == HttpResponseCode.HTTP_NOT_MODIFIED) {
-                    logger.logDebug("Handling response with no body");
-                    return handleEmptyResponse(responseHeadersHelper.getResponseHeadersAsMapOfStringList(response), resultClass);
-                }
-
-                if (response.code() == HttpResponseCode.HTTP_ACCEPTED) {
-                    logger.logDebug("Handling accepted response");
-                    return handleEmptyResponse(responseHeadersHelper.getResponseHeadersAsMapOfStringList(response), resultClass);
-                }
-
-                in = new BufferedInputStream(response.body().byteStream());
-
-                final Map<String, String> headers = responseHeadersHelper.getResponseHeadersAsMapStringString(response);
-
-				if (response.body() == null || response.body().contentLength() == 0)
-					return null;
-
-                final String contentType = headers.get(Constants.CONTENT_TYPE_HEADER_NAME);
-                if (contentType != null && resultClass != InputStream.class &&
-                            contentType.contains(Constants.JSON_CONTENT_TYPE)) {
-                    logger.logDebug("Response json");
-                    return handleJsonResponse(in, responseHeadersHelper.getResponseHeadersAsMapOfStringList(response), resultClass);
-                } else if (resultClass == InputStream.class) {
-                    logger.logDebug("Response binary");
-                    isBinaryStreamInput = true;
-                    return (Result) handleBinaryStream(in);
-                } else if (contentType != null && resultClass != InputStream.class &&
-                            contentType.contains(Constants.TEXT_CONTENT_TYPE)) {
-                    return handleRawResponse(in, resultClass);
-                } else {
-                    return null;
-                }
-            } finally {
-                if (!isBinaryStreamInput) {
-                    try{
-                        if (in != null) in.close();
-                    }catch(IOException e) {
-                        logger.logError(e.getMessage(), e);
+                    if (handler != null) {
+                        handler.configConnection(response);
                     }
-                    if (response != null) response.close();
+
+                    logger.logDebug(String.format(Locale.ROOT, "Response code %d, %s",
+                            response.code(),
+                            response.message()));
+
+                    if (handler != null) {
+                        logger.logDebug("StatefulResponse is handling the HTTP response.");
+                        return handler.generateResult(
+                                request, response, this.serializer, this.logger);
+                    }
+
+                    if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
+                        logger.logDebug("Handling error response");
+                        in = body.byteStream();
+                        handleErrorResponse(request, serializable, response);
+                    }
+
+                    final Map<String, List<String>> responseHeaders = response.headers().toMultimap();
+
+                    if (response.code() == HttpResponseCode.HTTP_NOBODY
+                            || response.code() == HttpResponseCode.HTTP_NOT_MODIFIED) {
+                        logger.logDebug("Handling response with no body");
+                        return handleEmptyResponse(responseHeaders, resultClass);
+                    }
+
+                    if (response.code() == HttpResponseCode.HTTP_ACCEPTED) {
+                        logger.logDebug("Handling accepted response");
+                        return handleEmptyResponse(responseHeaders, resultClass);
+                    }
+
+                    in = new BufferedInputStream(body.byteStream());
+
+                    if (body == null || body.contentLength() == 0)
+                        return null;
+
+                    if (body.contentType() != null && body.contentType().subtype().contains("json")
+                        && resultClass != InputStream.class) {
+                        logger.logDebug("Response json");
+                        return handleJsonResponse(in, responseHeaders, resultClass);
+                    } else if (resultClass == InputStream.class) {
+                        logger.logDebug("Response binary");
+                        isBinaryStreamInput = true;
+                        return (Result) handleBinaryStream(in);
+                    } else if (body.contentType() != null && resultClass != InputStream.class &&
+                        body.contentType().type().contains("text") &&
+                        body.contentType().subtype().contains("plain")) {
+                        return handleRawResponse(in, resultClass);
+                    } else {
+                        return null;
+                    }
+                } finally {
+                    if (!isBinaryStreamInput) {
+                        try{
+                            if (in != null) in.close();
+                        }catch(IOException e) {
+                            logger.logError(e.getMessage(), e);
+                        }
+                        if (response != null) response.close();
+                    }
                 }
+            } catch (final GraphServiceException ex) {
+                final boolean shouldLogVerbosely = logger.getLoggingLevel() == LoggerLevel.DEBUG;
+                logger.logError("Graph service exception " + ex.getMessage(shouldLogVerbosely), ex);
+                throw ex;
+            } catch (final Exception ex) {
+                final ClientException clientException = new ClientException("Error during http request",
+                        ex);
+                logger.logError("Error during http request", clientException);
+                throw clientException;
             }
-        } catch (final GraphServiceException ex) {
-            final boolean shouldLogVerbosely = logger.getLoggingLevel() == LoggerLevel.DEBUG;
-            logger.logError("Graph service exception " + ex.getMessage(shouldLogVerbosely), ex);
-            throw ex;
-        } catch (final Exception ex) {
-            final ClientException clientException = new ClientException("Error during http request",
-                    ex);
-            logger.logError("Error during http request", clientException);
-            throw clientException;
         }
     }
     /**
@@ -496,12 +496,7 @@ public class CoreHttpProvider implements IHttpProvider {
 			return null;
 		}
 
-		try {
-			return serializer.deserializeObject(in, clazz, responseHeaders);
-		} finally {
-			closeQuietly(in);
-		}
-
+        return serializer.deserializeObject(in, clazz, responseHeaders);
     }
     /**
 	 * Handles the cause where the response is a Text object
@@ -538,8 +533,13 @@ public class CoreHttpProvider implements IHttpProvider {
 	private <Result> Result handleEmptyResponse(Map<String, List<String>> responseHeaders, final Class<Result> clazz)
         throws UnsupportedEncodingException{
         //Create an empty object to attach the response headers to
-        InputStream in = new ByteArrayInputStream("{}".getBytes(Constants.JSON_ENCODING));
-        return handleJsonResponse(in, responseHeaders, clazz);
+        Result result = null;
+        try(final InputStream in = new ByteArrayInputStream("{}".getBytes(Constants.JSON_ENCODING))) {
+            result = handleJsonResponse(in, responseHeaders, clazz);
+        } catch (IOException ex) {
+            //noop we couldnt close the byte array stream we just opened and its ok
+        }
+        return result;
     }
 
 	private Request convertIHttpRequestToOkHttpRequest(IHttpRequest request) {
