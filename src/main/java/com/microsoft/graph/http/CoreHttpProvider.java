@@ -25,7 +25,6 @@ package com.microsoft.graph.http;
 import com.google.common.annotations.VisibleForTesting;
 
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.logger.ILogger;
@@ -61,7 +60,23 @@ import okio.BufferedSink;
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
  */
 public class CoreHttpProvider implements IHttpProvider {
-	/**
+    /**
+     * The content type header
+     */
+    private static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
+    /**
+     * The encoding type for getBytes
+     */
+    private static final String JSON_ENCODING = "UTF-8";
+    /**
+     * The content type for JSON responses
+     */
+    private static final String JSON_CONTENT_TYPE = "application/json";
+    /**
+     * The binary content type header's value
+     */
+    private static final String BINARY_CONTENT_TYPE = "application/octet-stream";
+    /**
 	 * The serializer
 	 */
 	private final ISerializer serializer;
@@ -234,7 +249,7 @@ public class CoreHttpProvider implements IHttpProvider {
 		final List<HeaderOption> requestHeaders = request.getHeaders();
 
 		for(HeaderOption headerOption : requestHeaders) {
-			if(headerOption.getName().equalsIgnoreCase(Constants.CONTENT_TYPE_HEADER_NAME)) {
+			if(headerOption.getName().equalsIgnoreCase(CONTENT_TYPE_HEADER_NAME)) {
 				contenttype = headerOption.getValue().toString();
 				break;
 			}
@@ -248,7 +263,7 @@ public class CoreHttpProvider implements IHttpProvider {
 			if (request.getHttpMethod() == HttpMethod.POST) {
 				bytesToWrite = new byte[0];
 				if(contenttype == null) {
-					contenttype = Constants.BINARY_CONTENT_TYPE;
+					contenttype = BINARY_CONTENT_TYPE;
 				}
 			}
 			else {
@@ -259,15 +274,15 @@ public class CoreHttpProvider implements IHttpProvider {
 			bytesToWrite = (byte[]) serializable;
 
 			// If the user hasn't specified a Content-Type for the request
-			if (!hasHeader(requestHeaders, Constants.CONTENT_TYPE_HEADER_NAME)) {
-				corehttpRequestBuilder.addHeader(Constants.CONTENT_TYPE_HEADER_NAME, Constants.BINARY_CONTENT_TYPE);
-				contenttype = Constants.BINARY_CONTENT_TYPE;
+			if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
+				corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, BINARY_CONTENT_TYPE);
+				contenttype = BINARY_CONTENT_TYPE;
 			}
 		} else {
 			logger.logDebug("Sending " + serializable.getClass().getName() + " as request body");
 			final String serializeObject = serializer.serializeObject(serializable);
 			try {
-				bytesToWrite = serializeObject.getBytes(Constants.JSON_ENCODING);
+				bytesToWrite = serializeObject.getBytes(JSON_ENCODING);
 			} catch (final UnsupportedEncodingException ex) {
 				final ClientException clientException = new ClientException("Unsupported encoding problem: ",
 						ex);
@@ -276,9 +291,9 @@ public class CoreHttpProvider implements IHttpProvider {
 			}
 
 			// If the user hasn't specified a Content-Type for the request
-			if (!hasHeader(requestHeaders, Constants.CONTENT_TYPE_HEADER_NAME)) {
-				corehttpRequestBuilder.addHeader(Constants.CONTENT_TYPE_HEADER_NAME, Constants.JSON_CONTENT_TYPE);
-				contenttype = Constants.JSON_CONTENT_TYPE;
+			if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
+				corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, JSON_CONTENT_TYPE);
+				contenttype = JSON_CONTENT_TYPE;
 			}
 		}
 
@@ -534,7 +549,7 @@ public class CoreHttpProvider implements IHttpProvider {
         throws UnsupportedEncodingException{
         //Create an empty object to attach the response headers to
         Result result = null;
-        try(final InputStream in = new ByteArrayInputStream("{}".getBytes(Constants.JSON_ENCODING))) {
+        try(final InputStream in = new ByteArrayInputStream("{}".getBytes(JSON_ENCODING))) {
             result = handleJsonResponse(in, responseHeaders, clazz);
         } catch (IOException ex) {
             //noop we couldnt close the byte array stream we just opened and its ok

@@ -34,11 +34,9 @@ import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.options.FunctionOption;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
