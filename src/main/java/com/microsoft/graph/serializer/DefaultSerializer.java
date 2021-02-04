@@ -31,6 +31,7 @@ import com.google.gson.JsonObject;
 
 import com.microsoft.graph.logger.ILogger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
@@ -43,8 +44,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static com.microsoft.graph.Util.closeQuietly;
 
 /**
  * The default serializer implementation for the SDK
@@ -72,7 +71,6 @@ public class DefaultSerializer implements ISerializer {
 		this.gson = GsonFactory.getGsonInstance(logger);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
@@ -80,18 +78,17 @@ public class DefaultSerializer implements ISerializer {
 		return deserializeObject(rawElement, clazz, responseHeaders);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
-		InputStreamReader streamReader = null;
-		try {
-			streamReader = new InputStreamReader(inputStream);
+        T result = null;
+        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream)) {
 			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
-			return deserializeObject(rawElement, clazz, responseHeaders);
-		} finally {
-			closeQuietly(streamReader);
-		}
+			result = deserializeObject(rawElement, clazz, responseHeaders);
+        } catch (IOException ex) {
+            //noop we couldn't close the stream reader we just opened and it's ok
+        }
+        return result;
 	}
 
 	@SuppressWarnings("unchecked")
