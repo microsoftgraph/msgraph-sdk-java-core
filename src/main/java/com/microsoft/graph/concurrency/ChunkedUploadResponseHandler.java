@@ -25,10 +25,8 @@ package com.microsoft.graph.concurrency;
 import com.google.common.io.ByteStreams;
 
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.core.Constants;
 import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.http.HttpResponseCode;
-import com.microsoft.graph.http.HttpResponseHeadersHelper;
 import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.http.IStatefulResponseHandler;
 import com.microsoft.graph.logger.ILogger;
@@ -37,12 +35,12 @@ import com.microsoft.graph.serializer.ISerializer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static com.microsoft.graph.http.HttpResponseCode.HTTP_OK;
 
@@ -53,8 +51,6 @@ import static com.microsoft.graph.http.HttpResponseCode.HTTP_OK;
  */
 public class ChunkedUploadResponseHandler<UploadType>
 		implements IStatefulResponseHandler<ChunkedUploadResult<UploadType>, UploadType> {
-
-	private final static HttpResponseHeadersHelper  responseHeadersHelper = new HttpResponseHeadersHelper();
 	/**
 	 * The expected deserialized upload type
 	 */
@@ -107,25 +103,24 @@ public class ChunkedUploadResponseHandler<UploadType>
 							response, logger));
 		} else if (response.code() >= HTTP_OK
 				&& response.code() < HttpResponseCode.HTTP_MULTIPLE_CHOICES) {
-			final Map<String, String> headers = responseHeadersHelper.getResponseHeadersAsMapStringString(response);
-			final String contentType = headers.get(Constants.CONTENT_TYPE_HEADER_NAME);
-			final String location = headers.get("Location");
-			if (contentType != null
-					&& contentType.contains(Constants.JSON_CONTENT_TYPE)) {
-				return parseJsonUploadResult(response, serializer, logger);
-			} else if (location != null) {
-				logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");
-				return new ChunkedUploadResult<>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
-			} else {
-				logger.logDebug("Upload session returned an unexpected response");
-			}
+            try(final ResponseBody body = response.body()) {
+                final String location = response.headers().get("Location");
+                if (body.contentType() != null && body.contentType().subtype().contains("json")) {
+                    return parseJsonUploadResult(body, serializer, logger);
+                } else if (location != null) {
+                    logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");
+                    return new ChunkedUploadResult<>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
+                } else {
+                    logger.logDebug("Upload session returned an unexpected response");
+                }
+            }
 		}
 		return new ChunkedUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
 	}
 
 	@Nonnull
-	private ChunkedUploadResult<UploadType> parseJsonUploadResult(@Nonnull Response response, @Nonnull ISerializer serializer, @Nonnull ILogger logger) throws IOException {
-		try (final InputStream in = response.body().byteStream()) {
+	private ChunkedUploadResult<UploadType> parseJsonUploadResult(@Nonnull final ResponseBody responseBody, @Nonnull final ISerializer serializer, @Nonnull final ILogger logger) throws IOException {
+		try (final InputStream in = responseBody.byteStream()) {
 			final byte[] responseBytes = ByteStreams.toByteArray(in);
 			final IUploadSession session = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), uploadSessionClass);
 
