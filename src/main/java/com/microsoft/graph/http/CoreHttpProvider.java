@@ -389,88 +389,88 @@ public class CoreHttpProvider implements IHttpProvider {
                                                                     final Class<Result> resultClass,
                                                                     final Body serializable,
                                                                     final IStatefulResponseHandler<Result, DeserializeType> handler) {
-        try(final ResponseBody body = response.body()) {
+        final ResponseBody body = response.body();
+        try {
+            InputStream in = null;
+            boolean isBinaryStreamInput = false;
             try {
-                InputStream in = null;
-                boolean isBinaryStreamInput = false;
-                try {
 
-                    // Call being executed
+                // Call being executed
 
 
-                    if (handler != null) {
-                        handler.configConnection(response);
-                    }
-
-                    logger.logDebug(String.format(Locale.ROOT, "Response code %d, %s",
-                            response.code(),
-                            response.message()));
-
-                    if (handler != null) {
-                        logger.logDebug("StatefulResponse is handling the HTTP response.");
-                        return handler.generateResult(
-                                request, response, this.serializer, this.logger);
-                    }
-
-                    if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
-                        logger.logDebug("Handling error response");
-                        in = body.byteStream();
-                        handleErrorResponse(request, serializable, response);
-                    }
-
-                    final Map<String, List<String>> responseHeaders = response.headers().toMultimap();
-
-                    if (response.code() == HttpResponseCode.HTTP_NOBODY
-                            || response.code() == HttpResponseCode.HTTP_NOT_MODIFIED) {
-                        logger.logDebug("Handling response with no body");
-                        return handleEmptyResponse(responseHeaders, resultClass);
-                    }
-
-                    if (response.code() == HttpResponseCode.HTTP_ACCEPTED) {
-                        logger.logDebug("Handling accepted response");
-                        return handleEmptyResponse(responseHeaders, resultClass);
-                    }
-
-                    in = new BufferedInputStream(body.byteStream());
-
-                    if (body == null || body.contentLength() == 0)
-                        return null;
-
-                    if (body.contentType() != null && body.contentType().subtype().contains("json")
-                        && resultClass != InputStream.class) {
-                        logger.logDebug("Response json");
-                        return handleJsonResponse(in, responseHeaders, resultClass);
-                    } else if (resultClass == InputStream.class) {
-                        logger.logDebug("Response binary");
-                        isBinaryStreamInput = true;
-                        return (Result) handleBinaryStream(in);
-                    } else if (body.contentType() != null && resultClass != InputStream.class &&
-                        body.contentType().type().contains("text") &&
-                        body.contentType().subtype().contains("plain")) {
-                        return handleRawResponse(in, resultClass);
-                    } else {
-                        return null;
-                    }
-                } finally {
-                    if (!isBinaryStreamInput) {
-                        try{
-                            if (in != null) in.close();
-                        }catch(IOException e) {
-                            logger.logError(e.getMessage(), e);
-                        }
-                        if (response != null) response.close();
-                    }
+                if (handler != null) {
+                    handler.configConnection(response);
                 }
-            } catch (final GraphServiceException ex) {
-                final boolean shouldLogVerbosely = logger.getLoggingLevel() == LoggerLevel.DEBUG;
-                logger.logError("Graph service exception " + ex.getMessage(shouldLogVerbosely), ex);
-                throw ex;
-            } catch (final Exception ex) {
-                final ClientException clientException = new ClientException("Error during http request",
-                        ex);
-                logger.logError("Error during http request", clientException);
-                throw clientException;
+
+                logger.logDebug(String.format(Locale.ROOT, "Response code %d, %s",
+                        response.code(),
+                        response.message()));
+
+                if (handler != null) {
+                    logger.logDebug("StatefulResponse is handling the HTTP response.");
+                    return handler.generateResult(
+                            request, response, this.serializer, this.logger);
+                }
+
+                if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
+                    logger.logDebug("Handling error response");
+                    in = body.byteStream();
+                    handleErrorResponse(request, serializable, response);
+                }
+
+                final Map<String, List<String>> responseHeaders = response.headers().toMultimap();
+
+                if (response.code() == HttpResponseCode.HTTP_NOBODY
+                        || response.code() == HttpResponseCode.HTTP_NOT_MODIFIED) {
+                    logger.logDebug("Handling response with no body");
+                    return handleEmptyResponse(responseHeaders, resultClass);
+                }
+
+                if (response.code() == HttpResponseCode.HTTP_ACCEPTED) {
+                    logger.logDebug("Handling accepted response");
+                    return handleEmptyResponse(responseHeaders, resultClass);
+                }
+
+                in = new BufferedInputStream(body.byteStream());
+
+                if (body == null || body.contentLength() == 0)
+                    return null;
+
+                if (body.contentType() != null && body.contentType().subtype().contains("json")
+                    && resultClass != InputStream.class) {
+                    logger.logDebug("Response json");
+                    return handleJsonResponse(in, responseHeaders, resultClass);
+                } else if (resultClass == InputStream.class) {
+                    logger.logDebug("Response binary");
+                    isBinaryStreamInput = true;
+                    return (Result) handleBinaryStream(in);
+                } else if (body.contentType() != null && resultClass != InputStream.class &&
+                    body.contentType().type().contains("text") &&
+                    body.contentType().subtype().contains("plain")) {
+                    return handleRawResponse(in, resultClass);
+                } else {
+                    return null;
+                }
+            } finally {
+                if (!isBinaryStreamInput) {
+                    try{
+                        if (in != null) in.close();
+                        if (body != null) body.close();
+                    }catch(IOException e) {
+                        logger.logError(e.getMessage(), e);
+                    }
+                    if (response != null) response.close();
+                }
             }
+        } catch (final GraphServiceException ex) {
+            final boolean shouldLogVerbosely = logger.getLoggingLevel() == LoggerLevel.DEBUG;
+            logger.logError("Graph service exception " + ex.getMessage(shouldLogVerbosely), ex);
+            throw ex;
+        } catch (final Exception ex) {
+            final ClientException clientException = new ClientException("Error during http request",
+                    ex);
+            logger.logError("Error during http request", clientException);
+            throw clientException;
         }
     }
     /**
