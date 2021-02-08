@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
-import okhttp3.Request;
 import okhttp3.OkHttpClient.Builder;
 
 /**
@@ -32,6 +31,7 @@ public class HttpClients {
         return new OkHttpClient.Builder()
                     .addInterceptor(new TelemetryHandler())
                     .followRedirects(false)
+                    .followSslRedirects(false)
                     .protocols(Arrays.asList(Protocol.HTTP_1_1)); //https://stackoverflow.com/questions/62031298/sockettimeout-on-java-11-but-not-on-java-8
     }
 
