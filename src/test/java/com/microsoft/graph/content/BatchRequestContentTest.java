@@ -56,7 +56,7 @@ public class BatchRequestContentTest {
             when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
             requestContent.addBatchRequestStep(requestStep);
         }
-        assertTrue(requestContent.requests != null);
+        assertNotNull(requestContent.requests);
     }
 
     @Test
@@ -177,17 +177,17 @@ public class BatchRequestContentTest {
         when(requestStep.getHttpMethod()).thenReturn(HttpMethod.DELETE);
         final BatchRequestContent batchRequest = new BatchRequestContent();
         final String stepId = batchRequest.addBatchRequestStep(requestStep);
-        assertEquals("DELETE", batchRequest.getStepById(stepId).method);
+        assertEquals(HttpMethod.DELETE.toString(), batchRequest.getStepById(stepId).method);
     }
 
     @Test
-    public void doesntThrowWhenTryingToRemoveRequestFromNull() {
+    public void doesNotThrowWhenTryingToRemoveRequestFromNull() {
         final BatchRequestContent batchRequest = new BatchRequestContent();
         batchRequest.removeBatchRequestStepWithId("id");
     }
 
     @Test
-    public void doesntRemoveDependsOnWhenNotEmpty() throws MalformedURLException {
+    public void doesNotRemoveDependsOnWhenNotEmpty() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         final BatchRequestContent batchRequest = new BatchRequestContent();
@@ -236,10 +236,10 @@ public class BatchRequestContentTest {
         assertNotNull(step3.headers);
         assertNull(step3.headers.get("content-type"));
 
-        when(requestStep.getHeaders()).thenReturn(Arrays.asList(new HeaderOption("Content-type", "application/octect-stream")));
+        when(requestStep.getHeaders()).thenReturn(Arrays.asList(new HeaderOption("Content-type", "application/octet-stream")));
         final String stepId4 = batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, Integer.valueOf(10));
         final BatchRequestStep<?> step4 = batchRequest.getStepById(stepId4);
         assertNotNull(step4.headers);
-        assertEquals("application/octect-stream", step4.headers.get("content-type"));
+        assertEquals("application/octet-stream", step4.headers.get("content-type"));
     }
 }
