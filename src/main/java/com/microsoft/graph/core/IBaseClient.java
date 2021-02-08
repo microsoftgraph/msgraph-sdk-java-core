@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.google.gson.JsonElement;
+import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
@@ -92,6 +93,13 @@ public interface IBaseClient {
      */
     @Nonnull
     CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url);
+
+    /**
+     * Get the batch request builder.
+     * @return a request builder to execute a batch.
+     */
+    @Nonnull
+    public BatchRequestBuilder batch();
 
     /**
      * Gets the service SDK version if the service SDK is in use, null otherwise

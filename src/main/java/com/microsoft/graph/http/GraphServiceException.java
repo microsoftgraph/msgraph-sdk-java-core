@@ -368,8 +368,32 @@ public class GraphServiceException extends ClientException {
         }
 
         final int responseCode = response.code();
-        final List<String> responseHeaders = new LinkedList<>();
         final Map<String, String> headers = getResponseHeadersAsMapStringString(response);
+        final String responseMessage = response.message();
+        GraphErrorResponse error = parseErrorResponse(serializer, response);
+
+        return createFromResponse(url, method, requestHeaders, requestBody, headers, responseMessage, responseCode, error, isVerbose);
+
+    }
+    /**
+     * Creates a Graph service exception.
+     * @param url url of the original request
+     * @param method http method of the original request
+     * @param requestHeaders headers of the original request
+     * @param requestBody body of the original request
+     * @param headers response headers
+     * @param responseMessage reponse status message
+     * @param responseCode response status code
+     * @param error graph error response object
+     * @param isVerbose whether to display a verbose message or not
+     * @return the Exception to be thrown
+     */
+    @Nonnull
+    public static GraphServiceException createFromResponse(@Nullable final String url, @Nullable final String method, @Nonnull final List<String> requestHeaders,
+        @Nullable final String requestBody,
+        @Nonnull final Map<String,String> headers, @Nonnull final String responseMessage, final int responseCode,
+        @Nonnull final GraphErrorResponse error, final boolean isVerbose) {
+        final List<String> responseHeaders = new LinkedList<>();
         for (final String key : headers.keySet()) {
             final String fieldPrefix;
             if (key == null) {
@@ -380,9 +404,7 @@ public class GraphServiceException extends ClientException {
             responseHeaders.add(fieldPrefix + headers.get(key));
         }
 
-        final String responseMessage = response.message();
 
-        GraphErrorResponse error = parseErrorResponse(serializer, response);
 
         if (responseCode >= INTERNAL_SERVER_ERROR) {
             return new GraphFatalServiceException(method,

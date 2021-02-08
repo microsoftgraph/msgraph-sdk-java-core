@@ -27,6 +27,7 @@ import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
 import com.microsoft.graph.httpcore.HttpClients;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.DefaultSerializer;
@@ -99,7 +100,16 @@ public class BaseClient implements IBaseClient {
 	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
 		return new CustomRequestBuilder<JsonElement>(getServiceRoot() + url, this, null,
 				JsonElement.class);
-	}
+    }
+
+    /**
+     * Get the batch request builder.
+     * @return a request builder to execute a batch.
+     */
+    @Nonnull
+    public BatchRequestBuilder batch() {
+        return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, null);
+    }
 
 	/**
 	 * Gets the builder to start configuring the client
