@@ -11,7 +11,6 @@ buildscript {
         classpath "com.gradle:gradle-enterprise-gradle-plugin:3.5"
         classpath "com.android.tools.build:gradle:4.0.1"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5"
     }
 }
 
