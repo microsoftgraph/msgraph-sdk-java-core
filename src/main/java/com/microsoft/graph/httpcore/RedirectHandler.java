@@ -132,15 +132,16 @@ public class RedirectHandler implements Interceptor{
 
         while(true) {
             response = chain.proceed(request);
-            boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
+            final boolean shouldRedirect = isRedirected(request, response, requestsCount, redirectOptions)
                     && redirectOptions.shouldRedirect().shouldRedirect(response);
             if(!shouldRedirect) break;
 
-            Request followup = getRedirect(request, response);
-            if(followup == null) break;
-            request = followup;
-
-            requestsCount++;
+            final Request followup = getRedirect(request, response);
+            if(followup != null) {
+                response.close();
+                request = followup;
+                requestsCount++;
+            }
         }
         return response;
     }
