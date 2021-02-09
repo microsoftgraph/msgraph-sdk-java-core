@@ -15,7 +15,7 @@ Add the repository and a compile dependency for `microsoft-graph-core` to your p
 
 ```gradle
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
