@@ -33,9 +33,9 @@ import com.microsoft.graph.serializer.ISerializer;
 
 /**
  * A client that communications with an OData service
- * @param <NativeRequestType> type of a request for the native http client
+ * @param <nativeRequestType> type of a request for the native http client
  */
-public interface IBaseClient<NativeRequestType> {
+public interface IBaseClient<nativeRequestType> {
     /**
      * Gets the service root
      *
@@ -57,7 +57,7 @@ public interface IBaseClient<NativeRequestType> {
      * @return the HTTP provider
      */
     @Nullable
-    IHttpProvider<NativeRequestType> getHttpProvider();
+    IHttpProvider<nativeRequestType> getHttpProvider();
 
     /**
      * Gets the logger

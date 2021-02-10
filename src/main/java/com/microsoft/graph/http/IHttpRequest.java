@@ -176,11 +176,11 @@ public interface IHttpRequest {
 
     /**
      * Returns the Request object to be executed
-     * @param <NativeRequestType> type of a request for the native http client
+     * @param <nativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Nullable
-    default <NativeRequestType> NativeRequestType getHttpRequest() throws ClientException {
+    default <nativeRequestType> nativeRequestType getHttpRequest() throws ClientException {
         return getHttpRequest(null); //TODO do something for the nonnull annotation
     }
 
@@ -189,10 +189,10 @@ public interface IHttpRequest {
      * @param serializedObject the object to serialize at the body of the request
      * @param <requestBodyType> the type of the serialized object
      * @param <responseType> the type of the response
-     * @param <NativeRequestType> type of a request for the native http client
+     * @param <nativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Nullable
-    <requestBodyType, responseType, NativeRequestType> NativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException;
+    <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException;
 }
 

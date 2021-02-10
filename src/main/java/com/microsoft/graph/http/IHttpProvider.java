@@ -31,9 +31,9 @@ import com.microsoft.graph.serializer.ISerializer;
 
 /**
  * Sends HTTP requests
- * @param <NativeRequestType> type of a request for the native http client
+ * @param <nativeRequestType> type of a request for the native http client
  */
-public interface IHttpProvider<NativeRequestType> {
+public interface IHttpProvider<nativeRequestType> {
 
     /**
      * Get the serializer for this HTTP provider
@@ -127,7 +127,7 @@ public interface IHttpProvider<NativeRequestType> {
 	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
 	 */
     @Nullable
-    <Result, BodyType> NativeRequestType getHttpRequest(@Nonnull final IHttpRequest request,
+    <Result, BodyType> nativeRequestType getHttpRequest(@Nonnull final IHttpRequest request,
                                               @Nonnull final Class<Result> resultClass,
                                               @Nullable final BodyType serializable)
             throws ClientException;

@@ -201,14 +201,14 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param serializedObject the object to serialize at the body of the request
      * @param <requestBodyType> the type of the serialized object
      * @param <responseType> the type of the response
-     * @param <NativeRequestType> type of a request for the native http client
+     * @param <nativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Override
     @Nullable
     @SuppressWarnings("unchecked")
-    public <requestBodyType, responseType, NativeRequestType> NativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
-        return (NativeRequestType)client.getHttpProvider().getHttpRequest(this, (Class<responseType>) responseClass, serializedObject);
+    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+        return (nativeRequestType)client.getHttpProvider().getHttpRequest(this, (Class<responseType>) responseClass, serializedObject);
     }
 
     private String addFunctionParameters() {
