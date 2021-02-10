@@ -375,7 +375,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param maxRetries Max retries for a request
      */
     public void setMaxRetries(int maxRetries) {
-    	baseRequest.setMaxRedirects(maxRetries);
+    	baseRequest.setMaxRetries(maxRetries);
     }
 
     /**
