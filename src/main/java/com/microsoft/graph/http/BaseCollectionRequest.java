@@ -126,7 +126,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
             final T3 page = (T3)this.collectionPageClass.getConstructor(response.getClass(), builder.getClass()).newInstance(response, response.nextLink() == null ? null : builder);
             return page;
         } catch(IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            return null;
+            throw new ClientException("Could not find the required class", ex);
         }
     }
 
