@@ -7,17 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -27,7 +23,6 @@ import okhttp3.ResponseBody;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.FunctionOption;
 import com.microsoft.graph.options.Option;
@@ -38,9 +33,8 @@ import com.microsoft.graph.core.BaseClient;
  * Test cases for {@see BaseRequest}
  */
 public class BaseRequestTests {
-    private IBaseClient mBaseClient;
+    private IBaseClient<Request> mBaseClient;
     private BaseRequest<JsonObject> mRequest;
-    private JsonObject callbackJsonObject;
 
     @BeforeEach
     public void setUp() throws Exception {

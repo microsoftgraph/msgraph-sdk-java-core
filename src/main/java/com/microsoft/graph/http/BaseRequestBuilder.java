@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,7 +41,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
     /**
      * The backing client for this request.
      */
-    private final IBaseClient client;
+    private final IBaseClient<?> client;
 
     /**
      * The URL for this request
@@ -62,7 +62,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      */
     public BaseRequestBuilder(
             @Nonnull final String requestUrl,
-            @Nonnull final IBaseClient client,
+            @Nonnull final IBaseClient<?> client,
             @Nullable final List<? extends Option> options
     ) {
         this.requestUrl = requestUrl;
@@ -78,7 +78,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      * @return the client
      */
     @Nullable
-    public IBaseClient getClient() {
+    public IBaseClient<?> getClient() {
         return client;
     }
 
@@ -100,8 +100,8 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      */
     @Nonnull
     public List<? extends Option> getOptions(@Nonnull final Option... requestOptions) {
-        return Collections.unmodifiableList(requestOptions != null && requestOptions.length > 0 ? 
-                Arrays.asList(requestOptions) 
+        return Collections.unmodifiableList(requestOptions != null && requestOptions.length > 0 ?
+                Arrays.asList(requestOptions)
                 : options);
     }
 

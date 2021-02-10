@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import okhttp3.Request;
+
 import com.google.gson.JsonObject;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.serializer.ISerializer;
@@ -26,14 +28,15 @@ public class BaseCollectionPageTests {
     private String requestUrl = "https://a.b.c/";
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         list = new ArrayList<String>();
         list.add("Object1");
         list.add("Object2");
         list.add("Object3");
-        IBaseClient mBaseClient = mock(IBaseClient.class);
-        mRequestBuilder = new BaseRequestBuilder<String>(requestUrl, mBaseClient, null) {};
-        baseCollectionPage = new BaseCollectionPage<String, BaseRequestBuilder<String>>(list, mRequestBuilder) {};
+        final IBaseClient<Request> mBaseClient = mock(IBaseClient.class);
+        mRequestBuilder = new BaseRequestBuilder<>(requestUrl, mBaseClient, null) {};
+        baseCollectionPage = new BaseCollectionPage<>(list, mRequestBuilder) {};
     }
 
     @Test

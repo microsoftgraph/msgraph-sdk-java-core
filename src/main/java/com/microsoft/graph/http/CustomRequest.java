@@ -47,7 +47,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      * @param requestOptions the options to apply to the request
      * @param responseClass the class for response deserialization
      */
-	public CustomRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends Option> requestOptions, @Nonnull final Class<T> responseClass) {
+	public CustomRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends Option> requestOptions, @Nonnull final Class<T> responseClass) {
 		super(requestUrl, client, requestOptions, responseClass);
     }
 
@@ -60,7 +60,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      * @return the request to execute against the service
      */
     @Nonnull
-    public static CustomRequest<JsonObject> create(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends Option> requestOptions) {
+    public static CustomRequest<JsonObject> create(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends Option> requestOptions) {
         return new CustomRequest<JsonObject>(requestUrl, client, requestOptions, JsonObject.class);
     }
 

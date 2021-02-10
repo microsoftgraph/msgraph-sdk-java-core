@@ -5,7 +5,6 @@
 package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.BaseRequestBuilder;
 import com.microsoft.graph.options.FunctionOption;
 import com.microsoft.graph.options.Option;
 
@@ -35,7 +34,7 @@ public class BaseFunctionRequestBuilder<T> extends BaseRequestBuilder<T> {
      */
     public BaseFunctionRequestBuilder(
             @Nonnull final String requestUrl,
-            @Nonnull final IBaseClient client,
+            @Nonnull final IBaseClient<?> client,
             @Nullable final List<? extends Option> options
     ) {
         super(requestUrl, client, options);

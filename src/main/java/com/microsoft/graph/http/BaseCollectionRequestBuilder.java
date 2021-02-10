@@ -30,7 +30,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
      * @param requestBuilderClass the class for the request builder
      * @param collectionRequestClass the class for the collection request
      */
-	public BaseCollectionRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
+	public BaseCollectionRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
                                         @Nonnull final Class<T2> requestBuilderClass,
 										@Nonnull final Class<T5> collectionRequestClass) {
         super(requestUrl, client, requestOptions);
@@ -67,7 +67,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
 
     /**
      * Gets a builder to request an item within a collection
-     * 
+     *
      * @return builder to request an item within a collection
      * @param id identifier for the item
      */

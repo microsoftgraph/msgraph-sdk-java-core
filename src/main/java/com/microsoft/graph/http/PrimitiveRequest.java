@@ -22,13 +22,10 @@
 
 package com.microsoft.graph.http;
 
-import com.microsoft.graph.http.IRequestBuilder;
 import com.microsoft.graph.core.ClientException;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.BaseRequest;
-import com.microsoft.graph.http.HttpMethod;
 
 /**
  * The class for the Primitive Request.
@@ -44,7 +41,7 @@ public class PrimitiveRequest<T> extends BaseRequest<T> {
      * @param requestOptions the options for this request
      * @param primitiveTypeClass the return type class for the request
      */
-    public PrimitiveRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> primitiveTypeClass) {
+    public PrimitiveRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> primitiveTypeClass) {
         super(requestUrl, client, requestOptions, primitiveTypeClass);
     }
 

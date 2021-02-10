@@ -23,7 +23,6 @@
 package com.microsoft.graph.http;
 
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 import okhttp3.HttpUrl.Builder;
 
 import com.microsoft.graph.core.IBaseClient;
@@ -77,7 +76,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     /**
      * The backing client for this request
      */
-    private final IBaseClient client;
+    private final IBaseClient<?> client;
 
     /**
      * The header options for this request
@@ -138,7 +137,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param responseClass the class for the response
      */
     public BaseRequest(@Nonnull final String requestUrl,
-                       @Nonnull final IBaseClient client,
+                       @Nonnull final IBaseClient<?> client,
                        @Nullable final List<? extends Option> options,
                        @Nonnull final Class<? extends T> responseClass) {
         this.requestUrl = requestUrl;
@@ -199,26 +198,17 @@ public abstract class BaseRequest<T> implements IHttpRequest {
 
     /**
      * Returns the Request object to be executed
-     * @return the Request object to be executed
-     */
-    @Override
-    @Nullable
-    public Request getHttpRequest() throws ClientException {
-        return getHttpRequest(null);
-    }
-
-    /**
-     * Returns the Request object to be executed
      * @param serializedObject the object to serialize at the body of the request
      * @param <requestBodyType> the type of the serialized object
      * @param <responseType> the type of the response
+     * @param <nativeRequestType> type of a request for the native http client
      * @return the Request object to be executed
      */
     @Override
     @Nullable
     @SuppressWarnings("unchecked")
-    public <requestBodyType, responseType> Request getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
-        return client.getHttpProvider().getHttpRequest(this, (Class<responseType>) responseClass, serializedObject);
+    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+        return (nativeRequestType)client.getHttpProvider().getHttpRequest(this, (Class<responseType>) responseClass, serializedObject);
     }
 
     private String addFunctionParameters() {
@@ -486,7 +476,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the client
      */
     @Nonnull
-    public IBaseClient getClient() {
+    public IBaseClient<?> getClient() {
         return client;
     }
 

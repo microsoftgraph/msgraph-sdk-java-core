@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import okhttp3.Request;
+
 /**
  * Test cases for {@see BaseRequestBuilder}
  */
@@ -16,7 +18,7 @@ public class BaseRequestBuilderTests {
 
     @BeforeEach
     public void setUp() throws Exception {
-        baseRequestBuilder = new BaseRequestBuilder<String>(expectedRequestUrl,null,null){};
+        baseRequestBuilder = new BaseRequestBuilder<>(expectedRequestUrl,null,null){};
     }
 
     @Test

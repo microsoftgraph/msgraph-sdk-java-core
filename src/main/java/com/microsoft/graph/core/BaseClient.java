@@ -40,11 +40,13 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * A client that communications with an OData service
+ * @param <nativeRequestType> type of a request for the native http client
  */
-public class BaseClient implements IBaseClient {
+public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestType> {
     /**
 	 * Restricted constructor
 	 */
@@ -86,7 +88,7 @@ public class BaseClient implements IBaseClient {
 	 */
 	@Nonnull
 	public <T> CustomRequestBuilder<T> customRequest(@Nonnull final String url, @Nonnull final Class<T> responseType) {
-		return new CustomRequestBuilder<T>(getServiceRoot() + url, this, null, responseType);
+		return new CustomRequestBuilder<>(getServiceRoot() + url, this, null, responseType);
 	}
 
 	/**
@@ -98,7 +100,7 @@ public class BaseClient implements IBaseClient {
 	 */
 	@Nonnull
 	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
-		return new CustomRequestBuilder<JsonElement>(getServiceRoot() + url, this, null,
+		return new CustomRequestBuilder<>(getServiceRoot() + url, this, null,
 				JsonElement.class);
     }
 
@@ -111,23 +113,38 @@ public class BaseClient implements IBaseClient {
         return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, null);
     }
 
-	/**
+    /**
 	 * Gets the builder to start configuring the client
 	 *
 	 * @return builder to start configuring the client
 	 */
 	@Nonnull
-	public static Builder<OkHttpClient> builder() {
+	public static Builder<OkHttpClient, Request> builder() {
+		return builder(OkHttpClient.class, Request.class);
+	}
+
+	/**
+	 * Gets the builder to start configuring the client
+	 *
+     * @param <nativeClient> the type of the native http client
+     * @param <nativeRequest> the type of the native http request
+     * @param nativeClientClass the class of the native http client
+     * @param nativeRequestClass the class of the native http request
+	 * @return builder to start configuring the client
+	 */
+	@Nonnull
+	public static <nativeClient, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
 		return new Builder<>();
 	}
 
 	/**
 	 * Builder to help configure the Graph service client
      * @param <httpClientType> type of the native http library client
+     * @param <nativeRequestType> type of a request for the native http client
 	 */
-	public static class Builder<httpClientType> {
+	public static class Builder<httpClientType, nativeRequestType> {
 		private ISerializer serializer;
-		private IHttpProvider httpProvider;
+		private IHttpProvider<nativeRequestType> httpProvider;
 		private ILogger logger;
 		private httpClientType httpClient;
 		private IAuthenticationProvider auth;
@@ -160,10 +177,11 @@ public class BaseClient implements IBaseClient {
 			} else {
 				return httpClient;
 			}
-		}
-		private IHttpProvider getHttpProvider() {
+        }
+        @SuppressWarnings("unchecked")
+		private IHttpProvider<nativeRequestType> getHttpProvider() {
 			if(httpProvider == null) {
-				return new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
+				return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
 			} else {
 				return httpProvider;
 			}
@@ -177,7 +195,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> serializer(@Nonnull final ISerializer serializer) {
+		public Builder<httpClientType, nativeRequestType> serializer(@Nonnull final ISerializer serializer) {
 			checkNotNull(serializer, "serializer");
 			this.serializer = serializer;
 			return this;
@@ -191,7 +209,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> httpProvider(@Nonnull final IHttpProvider httpProvider) {
+		public Builder<httpClientType, nativeRequestType> httpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
 			checkNotNull(httpProvider, "httpProvider");
 			this.httpProvider = httpProvider;
 			return this;
@@ -205,7 +223,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> logger(@Nonnull final ILogger logger) {
+		public Builder<httpClientType, nativeRequestType> logger(@Nonnull final ILogger logger) {
 			checkNotNull(logger, "logger");
 			this.logger = logger;
 			return this;
@@ -219,7 +237,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> httpClient(@Nonnull final httpClientType client) {
+		public Builder<httpClientType, nativeRequestType> httpClient(@Nonnull final httpClientType client) {
 			checkNotNull(client, "client");
 			this.httpClient = client;
 			return this;
@@ -232,7 +250,7 @@ public class BaseClient implements IBaseClient {
 		 * @return the instance of this builder
 		 */
 		@Nonnull
-		public Builder<httpClientType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
+		public Builder<httpClientType, nativeRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
 			checkNotNull(auth, "auth");
 			this.auth = auth;
 			return this;
@@ -248,7 +266,7 @@ public class BaseClient implements IBaseClient {
 		 *			 if there was an exception creating the client
 		 */
 		@Nonnull
-		protected <ClientType extends BaseClient> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
+		protected <ClientType extends BaseClient<nativeRequestType>> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
             Objects.requireNonNull(instance, "The instance cannot be null");
 			instance.setHttpProvider(this.getHttpProvider());
 			instance.setLogger(this.getLogger());
@@ -264,8 +282,8 @@ public class BaseClient implements IBaseClient {
 		 *			 if there was an exception creating the client
 		 */
 		@Nonnull
-		public IBaseClient buildClient() throws ClientException {
-			return buildClient(new BaseClient());
+		public IBaseClient<nativeRequestType> buildClient() throws ClientException {
+			return buildClient(new BaseClient<>());
 		}
 	}
 
@@ -284,7 +302,7 @@ public class BaseClient implements IBaseClient {
     /**
      * The HTTP provider instance
      */
-    private IHttpProvider httpProvider;
+    private IHttpProvider<nativeRequestType> httpProvider;
 
     /**
      * The logger
@@ -303,7 +321,7 @@ public class BaseClient implements IBaseClient {
      */
     @Override
     @Nullable
-    public IHttpProvider getHttpProvider() {
+    public IHttpProvider<nativeRequestType> getHttpProvider() {
         return httpProvider;
     }
 
@@ -343,7 +361,7 @@ public class BaseClient implements IBaseClient {
      *
      * @param httpProvider The HTTP provider
      */
-    protected void setHttpProvider(@Nonnull final IHttpProvider httpProvider) {
+    protected void setHttpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
         checkNotNull(httpProvider, "httpProvider");
         this.httpProvider = httpProvider;
     }

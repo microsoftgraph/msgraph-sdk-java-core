@@ -35,7 +35,7 @@ public class GraphServiceClientTest {
     @Test
     public void testClientMethodsReturnStuff() {
         ILogger logger = createLogger();
-        IBaseClient client = BaseClient.builder()
+        IBaseClient<?> client = BaseClient.builder()
                 .logger(logger)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -47,7 +47,7 @@ public class GraphServiceClientTest {
     @Test
     public void testOverrideOfDefaultLogger() {
         ILogger logger = createLogger();
-        IBaseClient client = BaseClient.builder()
+        IBaseClient<?> client = BaseClient.builder()
                 .logger(logger)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -61,7 +61,7 @@ public class GraphServiceClientTest {
 
     @Test
     public void testOverrideOfDefaultAuthenticationProvider() {
-        IBaseClient client = BaseClient.builder()
+        IBaseClient<?> client = BaseClient.builder()
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
         assertNotNull(client.getHttpProvider());
@@ -98,7 +98,7 @@ public class GraphServiceClientTest {
                 return null;
             }
         };
-        IBaseClient client = BaseClient.builder()
+        final IBaseClient<?> client = BaseClient.builder()
                 .serializer(serializer)
                 .authenticationProvider(getAuthProvider())
                 .buildClient();
@@ -110,7 +110,7 @@ public class GraphServiceClientTest {
 
     @Test
     public void testOverrideOfHttpSerializer() {
-        IHttpProvider hp = new IHttpProvider() {
+        IHttpProvider<Request> hp = new IHttpProvider<Request>() {
 
             @Override
             public ISerializer getSerializer() {
@@ -147,7 +147,7 @@ public class GraphServiceClientTest {
 				return null;
             }
         };
-        IBaseClient client = BaseClient
+        final IBaseClient<?> client = BaseClient
                 .builder()
                 .httpProvider(hp)
                 .buildClient();

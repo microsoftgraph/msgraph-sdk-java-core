@@ -22,14 +22,9 @@
 
 package com.microsoft.graph.http;
 
-import com.microsoft.graph.http.IRequestBuilder;
-import com.microsoft.graph.core.ClientException;
-import java.util.Arrays;
-import java.util.EnumSet;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.http.BaseRequestBuilder;
 
 /**
  * The class for the Primitive Request Builder.
@@ -46,7 +41,7 @@ public class PrimitiveRequestBuilder<T> extends BaseRequestBuilder<T> {
      * @param requestOptions the options for this request
      * @param primitiveTypeClass the return type class for the request
      */
-    public PrimitiveRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> primitiveTypeClass) {
+    public PrimitiveRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> primitiveTypeClass) {
         super(requestUrl, client, requestOptions);
         this._returnTypeClass = primitiveTypeClass;
     }
@@ -70,6 +65,6 @@ public class PrimitiveRequestBuilder<T> extends BaseRequestBuilder<T> {
      */
     @Nonnull
     public PrimitiveRequest<T> buildRequest(@Nonnull final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions) {
-        return new PrimitiveRequest<T>(getRequestUrl(), getClient(), requestOptions, this._returnTypeClass);
+        return new PrimitiveRequest<>(getRequestUrl(), getClient(), requestOptions, this._returnTypeClass);
     }
 }

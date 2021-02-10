@@ -22,10 +22,6 @@
 
 package com.microsoft.graph.concurrency;
 
-import com.microsoft.graph.concurrency.ChunkedUploadResponseHandler;
-import com.microsoft.graph.concurrency.ChunkedUploadRequest;
-import com.microsoft.graph.concurrency.ChunkedUploadResult;
-import com.microsoft.graph.concurrency.IUploadSession;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.Option;
@@ -66,7 +62,7 @@ public class ChunkedUploadProvider<UploadType> {
     /**
      * The client
      */
-    private final IBaseClient client;
+    private final IBaseClient<?> client;
 
     /**
      * The input stream
@@ -103,7 +99,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @param uploadTypeClass the upload type class
      */
     public ChunkedUploadProvider(@Nonnull final IUploadSession uploadSession,
-                                 @Nonnull final IBaseClient client,
+                                 @Nonnull final IBaseClient<?> client,
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
                                  @Nonnull final Class<UploadType> uploadTypeClass) {
@@ -173,7 +169,7 @@ public class ChunkedUploadProvider<UploadType> {
             }
 
             final ChunkedUploadRequest<UploadType> request =
-                    new ChunkedUploadRequest<UploadType>(this.uploadUrl, this.client, options, buffer, buffRead,
+                    new ChunkedUploadRequest<>(this.uploadUrl, this.client, options, buffer, buffRead,
                             this.readSoFar, this.streamSize);
             final ChunkedUploadResult<UploadType> result = request.upload(this.responseHandler);
             // TODO: upload should return a future, use sendfuture instead and the futures should be chained with completableFuture.then apply

@@ -342,7 +342,7 @@ public class GraphServiceException extends ClientException {
         for (final HeaderOption option : request.getHeaders()) {
             requestHeaders.add(option.getName() + " : " + option.getValue());
         }
-        boolean isVerbose = logger.getLoggingLevel() == LoggerLevel.DEBUG;
+        final boolean isVerbose = logger.getLoggingLevel() == LoggerLevel.DEBUG;
         final String requestBody;
         if (serializable instanceof byte[]) {
             final byte[] bytes = (byte[]) serializable;

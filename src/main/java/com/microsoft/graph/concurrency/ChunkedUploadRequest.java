@@ -10,7 +10,6 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.concurrency.ChunkedUploadResponseHandler;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.BaseRequest;
 import com.microsoft.graph.http.HttpMethod;
@@ -56,7 +55,7 @@ public class ChunkedUploadRequest<UploadType> {
      */
     @SuppressWarnings("unchecked")
     protected ChunkedUploadRequest(@Nonnull final String requestUrl,
-                                @Nonnull final IBaseClient client,
+                                @Nonnull final IBaseClient<?> client,
                                 @Nullable final List<? extends Option> options,
                                 @Nonnull final byte[] chunk,
                                 final int chunkSize,
