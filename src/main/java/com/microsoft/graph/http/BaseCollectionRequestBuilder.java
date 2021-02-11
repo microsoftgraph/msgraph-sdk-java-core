@@ -1,5 +1,6 @@
 package com.microsoft.graph.http;
 
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 
 import java.lang.reflect.InvocationTargetException;
@@ -61,7 +62,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
             return collRequestClass.getConstructor(String.class, IBaseClient.class, java.util.List.class)
                                     .newInstance(getRequestUrl(), getClient(), requestOptions);
         } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            return null;
+            throw new ClientException("Could not find the required class", ex);
 		}
     }
 
@@ -77,7 +78,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
             return reqBuilderClass.getConstructor(String.class, IBaseClient.class, java.util.List.class)
                                 .newInstance(getRequestUrlWithAdditionalSegment(id), getClient(), getOptions());
         } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            return null;
+            throw new ClientException("Could not find the required class", ex);
 		}
     }
 }

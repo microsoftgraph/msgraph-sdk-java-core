@@ -22,6 +22,7 @@
 
 package com.microsoft.graph.http;
 
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 
 import java.lang.reflect.InvocationTargetException;
@@ -70,7 +71,7 @@ public abstract class BaseCollectionWithReferencesRequestBuilder<T, T2 extends B
                     .getConstructor(String.class, IBaseClient.class, java.util.List.class)
                     .newInstance(getRequestUrl() + "/$ref", getClient(), getOptions());
         } catch(IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            return null;
+            throw new ClientException("Could not find the required class", ex);
         }
     }
 }
