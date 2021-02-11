@@ -6,12 +6,12 @@
 pr: 
   branches:
     include:
-      - master
-      - main
       - dev
+      - main
+      - master
+      - feature/v2
   paths:
     exclude:
-      - .azure-pipelines
       - .gradle/wrapper
       - .gitignore
       - CONTRIBUTING.md
@@ -26,56 +26,11 @@ pr:
 
 trigger: none # disable triggers based on commits.
 
-variables:
-  PACKAGE_NAME: 'microsoft-graph-core'
-  PROPERTIES_PATH: '.\gradle.properties'
-
-pool: 
+pool:
   vmImage: windows-latest
 
 steps:
-- checkout: self
-  clean: true
-  fetchDepth: 1
-
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-  displayName: 'Run CredScan'
-  inputs:
-    debugMode: false
-
-- pwsh: 'Invoke-WebRequest -Uri https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_windows_hotspot_15.0.2_7.zip -OutFile OpenJDK.zip'
-  displayName: 'Download JDK'
-
-- task: JavaToolInstaller@0
-  inputs:
-    versionSpec: '15'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'LocalDirectory'
-    jdkFile: 'OpenJDK.zip'
-    jdkDestinationDirectory: 'binaries'
-
-- task: Gradle@2
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    tasks: 'build'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    sonarQubeRunAnalysis: false
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: $(System.DefaultWorkingDirectory)/build/reports/jacoco/test/jacocoTestReport.xml
-    pathToSources: $(System.DefaultWorkingDirectory)/src/main/java
-    failIfCoverageEmpty: true
-
-- task: YodLabs.O365PostMessage.O365PostMessageBuild.O365PostMessageBuild@0
-  displayName: 'Graph Client Tooling pipeline fail notification'
-  inputs:
-    addressType: serviceEndpoint
-    serviceEndpointName: 'microsoftgraph pipeline status'
-    title: '$(Build.DefinitionName) failure notification'
-    text: 'This pipeline has failed. View the build details for further information. This is a blocking failure. '
-  condition: and(failed(), ne(variables['Build.Reason'], 'Manual'))
-  enabled: true
+- template: templates/checkout-and-credscan.yml
+- template: templates/install-java.yml
+- template: templates/build-and-coverage.yml
+- template: templates/alert-failure.yml

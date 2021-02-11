@@ -1,0 +1,18 @@
+steps:
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'local.properties'
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'secring.gpg'
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'secring.gpg.lock'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.TempDirectory)'
+    Contents: '**'
+    TargetFolder: '$(System.DefaultWorkingDirectory)'
