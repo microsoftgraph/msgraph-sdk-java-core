@@ -185,7 +185,7 @@ public class RedirectHandlerTest {
     @Test
     public void testGetRedirectForPostMethod() {
         RedirectHandler redirectHandler = new RedirectHandler();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"),"");
+        RequestBody body = RequestBody.create("", MediaType.parse("application/json"));
         Request httppost = new Request.Builder().url(testurl).post(body).build();
         Response response = new Response.Builder()
                 .protocol(Protocol.HTTP_1_1)

@@ -99,7 +99,7 @@ public class RetryHandlerTest {
     @Test
     public void testRetryRequestWithTransferEncoding() {
         RetryHandler retryhandler = new RetryHandler();
-        Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
+        Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create("TEST", MediaType.parse("application/json"))).build();
         Response response = new Response.Builder()
                 .protocol(Protocol.HTTP_1_1)
                 .code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
@@ -113,7 +113,7 @@ public class RetryHandlerTest {
     @Test
     public void testRetryRequestWithExponentialBackOff() {
         RetryHandler retryhandler = new RetryHandler();
-        Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
+        Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create("TEST", MediaType.parse("application/json"))).build();
         Response response = new Response.Builder()
                 .protocol(Protocol.HTTP_1_1)
                 .code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
