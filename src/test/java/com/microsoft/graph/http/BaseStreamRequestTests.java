@@ -35,9 +35,10 @@ import com.microsoft.graph.serializer.ISerializer;
  */
 public class BaseStreamRequestTests {
 
-    private BaseClient mBaseClient;
+    private BaseClient<Request> mBaseClient;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         mBaseClient = mock(BaseClient.class);
     }

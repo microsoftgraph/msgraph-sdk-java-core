@@ -1,11 +1,9 @@
 package com.microsoft.graph.content;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,11 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.core.IBaseClient;
@@ -33,8 +28,6 @@ import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -154,7 +147,7 @@ public class BatchRequestContentTest {
 
         final CoreHttpProvider mHttpProvider = new CoreHttpProvider(new DefaultSerializer(mock(ILogger.class)),
                 mock(ILogger.class), mHttpClient);
-        final IBaseClient mClient = BaseClient.builder().authenticationProvider(mock(IAuthenticationProvider.class))
+        final IBaseClient<?> mClient = BaseClient.builder().authenticationProvider(mock(IAuthenticationProvider.class))
                 .httpProvider(mHttpProvider).buildClient();
         final Response mResponse = new Response.Builder()
                 .request(new Request.Builder().url("https://graph.microsoft.com/v1.0/$batch").build()).code(200)

@@ -65,7 +65,7 @@ public class ChaosHttpHandler implements Interceptor {
                         .code(MSClientErrorCodeTooManyRequests)
                         .message("Too Many Requests")
                         .addHeader(RETRY_AFTER, retryAfterValue)
-                        .body(ResponseBody.create(MediaType.get("application/json"), responseBody))
+                        .body(ResponseBody.create(responseBody, MediaType.get("application/json")))
                         .build();
         } else {
             return chain.proceed(request);
