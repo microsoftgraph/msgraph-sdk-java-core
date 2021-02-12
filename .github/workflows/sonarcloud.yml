@@ -5,6 +5,7 @@ on:
       - master
       - dev
       - feature/v2
+      - temp/*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
