@@ -91,6 +91,7 @@ def pomConfig = {
 
 checkstyle {
     toolVersion "8.40"
+    configFile = file("config/checkstyle/checkstyle.xml") //required for samples to build as this project is not root project when building samples
 }
 tasks.withType(Checkstyle) {
     reports {
