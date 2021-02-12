@@ -39,7 +39,7 @@ public class BatchRequestBuilder extends BaseRequestBuilder<BatchResponseContent
      * @param client the client to use to execute the request
      * @param options the request options
      */
-    public BatchRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nonnull final List<? extends Option> options) {
+    public BatchRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nonnull final List<? extends Option> options) {
         super(requestUrl, client, options);
     }
     /**

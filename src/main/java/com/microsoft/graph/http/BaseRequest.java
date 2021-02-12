@@ -177,8 +177,12 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     @Override
     @Nullable
     public URL getRequestUrl() {
-        String requestUrl = addFunctionParameters();
-        final Builder uriBuilder = HttpUrl.parse(requestUrl).newBuilder();
+        final String requestUrl = addFunctionParameters();
+        final HttpUrl parsedUrl = HttpUrl.parse(requestUrl);
+        if (parsedUrl == null) {
+            throw new ClientException("Invalid URL " + requestUrl, null);
+        }
+        final Builder uriBuilder = parsedUrl.newBuilder();
 
         for (final QueryOption option : queryOptions) {
         	uriBuilder.addQueryParameter(option.getName(), option.getValue().toString());

@@ -25,6 +25,7 @@ package com.microsoft.graph.options;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An option that is settable for a request
@@ -47,7 +48,7 @@ public class Option {
      * @param name  the name of the option
      * @param value the value of the option
      */
-    protected Option(@Nonnull final String name, @Nonnull final Object value) {
+    protected Option(@Nonnull final String name, @Nullable final Object value) {
         Objects.requireNonNull(name, "name should not be null");
         if(name.isEmpty()) {
             throw new IllegalArgumentException("name should not empty");
@@ -71,7 +72,7 @@ public class Option {
      *
      * @return the value of the option
      */
-    @Nonnull
+    @Nullable
     public Object getValue() {
         return value;
     }

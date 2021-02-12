@@ -52,7 +52,7 @@ public class GraphFatalServiceException extends GraphServiceException {
                                          @Nonnull final List<String> requestHeaders,
                                          @Nullable final String requestBody,
                                          final int responseCode,
-                                         @Nullable final String responseMessage,
+                                         @Nonnull final String responseMessage,
                                          @Nonnull final List<String> responseHeaders,
                                          @Nullable final GraphErrorResponse error,
                                          final boolean verbose) {

@@ -4,13 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,6 +21,7 @@ import okhttp3.ResponseBody;
 
 import com.microsoft.graph.core.GraphErrorCodes;
 import com.microsoft.graph.logger.DefaultLogger;
+import com.microsoft.graph.serializer.ISerializer;
 
 public class GraphServiceExceptionTests {
 
@@ -57,11 +54,9 @@ public class GraphServiceExceptionTests {
 	}
 
 	@Test
-    public void testcreateFromResponse() {
+    public void testcreateFromResponse() throws IOException {
 		DefaultLogger logger = new DefaultLogger();
         GraphServiceException exception = null;
-        Boolean success = false;
-        Boolean failure = false;
         final Response response = new Response.Builder()
                 .request(new Request.Builder().url("https://a.b.c").build())
                 .protocol(Protocol.HTTP_1_1)
@@ -71,20 +66,12 @@ public class GraphServiceExceptionTests {
                         MediaType.parse("application/json")
                 ))
                 .build();
-        try{
-            IHttpRequest mRequest = mock(IHttpRequest.class);
-            when(mRequest.getRequestUrl()).thenReturn(new URL("http://localhost"));
-            exception = GraphServiceException.createFromResponse(mRequest ,null,null,response,logger);
-            success = true;
-        }catch (IOException ex){
-            failure = true;
-        }
 
-        assertTrue(success);
-        assertFalse(failure);
+        IHttpRequest mRequest = mock(IHttpRequest.class);
+        when(mRequest.getRequestUrl()).thenReturn(new URL("http://localhost"));
+        exception = GraphServiceException.createFromResponse(mRequest ,null, mock(ISerializer.class),response,logger);
 
         String message = exception.getMessage();
-        assertTrue(message.indexOf("Error code: Unable to parse error response message") == 0);
         assertTrue(message.indexOf("http://localhost") > 0);
     }
 }

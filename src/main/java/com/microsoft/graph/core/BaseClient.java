@@ -35,6 +35,7 @@ import com.microsoft.graph.serializer.ISerializer;
 
 import javax.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -110,7 +111,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      */
     @Nonnull
     public BatchRequestBuilder batch() {
-        return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, null);
+        return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, Collections.emptyList());
     }
 
     /**

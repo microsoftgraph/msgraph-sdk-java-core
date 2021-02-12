@@ -181,7 +181,7 @@ public interface IHttpRequest {
      */
     @Nullable
     default <nativeRequestType> nativeRequestType getHttpRequest() throws ClientException {
-        return getHttpRequest(null); //TODO do something for the nonnull annotation
+        return getHttpRequest(null);
     }
 
     /**
@@ -193,6 +193,6 @@ public interface IHttpRequest {
      * @return the Request object to be executed
      */
     @Nullable
-    <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException;
+    <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nullable final requestBodyType serializedObject) throws ClientException;
 }
 

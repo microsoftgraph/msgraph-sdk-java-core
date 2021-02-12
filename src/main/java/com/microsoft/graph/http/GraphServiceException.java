@@ -35,18 +35,22 @@ import com.microsoft.graph.serializer.ISerializer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import okhttp3.Headers;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -144,7 +148,7 @@ public class GraphServiceException extends ClientException {
                                     @Nonnull final List<String> requestHeaders,
                                     @Nullable final String requestBody,
                                     final int responseCode,
-                                    @Nullable final String responseMessage,
+                                    @Nonnull final String responseMessage,
                                     @Nonnull final List<String> responseHeaders,
                                     @Nullable final GraphErrorResponse error,
                                     final boolean verbose) {
@@ -333,9 +337,10 @@ public class GraphServiceException extends ClientException {
     public static <T> GraphServiceException createFromResponse(@Nonnull final IHttpRequest request,
                                                                  @Nullable final T serializable,
                                                                  @Nonnull final ISerializer serializer,
-                                                                 @Nullable final Response response,
+                                                                 @Nonnull final Response response,
                                                                  @Nonnull final ILogger logger)
             throws IOException {
+        Objects.requireNonNull(response, "reponse parameter cannot be null");
         final String method = response.request().method();
         final String url = request.getRequestUrl().toString();
         final List<String> requestHeaders = new LinkedList<>();
@@ -351,7 +356,7 @@ public class GraphServiceException extends ClientException {
 
             sb.append(" {");
             if (isVerbose) {
-            	sb.append(bytes);
+            	sb.append(Arrays.toString(bytes));
             } else {
 	            for (int i = 0; i < MAX_BYTE_COUNT_BEFORE_TRUNCATION && i < bytes.length; i++) {
 	                sb.append(bytes[i]).append(", ");
@@ -394,21 +399,14 @@ public class GraphServiceException extends ClientException {
         @Nonnull final Map<String,String> headers, @Nonnull final String responseMessage, final int responseCode,
         @Nonnull final GraphErrorResponse error, final boolean isVerbose) {
         final List<String> responseHeaders = new LinkedList<>();
-        for (final String key : headers.keySet()) {
-            final String fieldPrefix;
-            if (key == null) {
-                fieldPrefix = "";
-            } else {
-                fieldPrefix = key + " : ";
-            }
-            responseHeaders.add(fieldPrefix + headers.get(key));
+        for (final Entry<String, String> entry : headers.entrySet()) {
+            responseHeaders.add(entry.getKey() + (entry.getKey() == null ? "" : " : " ) + entry.getValue());
         }
 
 
-
         if (responseCode >= INTERNAL_SERVER_ERROR) {
-            return new GraphFatalServiceException(method,
-                    url,
+            return new GraphFatalServiceException(method == null ? "" : method,
+                    url == null ? "" : url,
                     requestHeaders,
                     requestBody,
                     responseCode,
@@ -418,8 +416,8 @@ public class GraphServiceException extends ClientException {
                     isVerbose);
         }
 
-        return new GraphServiceException(method,
-                url,
+        return new GraphServiceException(method == null ? "" : method,
+                url == null ? "" : url,
                 requestHeaders,
                 requestBody,
                 responseCode,
@@ -432,10 +430,17 @@ public class GraphServiceException extends ClientException {
     private static GraphErrorResponse parseErrorResponse(@Nonnull ISerializer serializer,
                                                          @Nonnull Response response)
             throws IOException {
-
+        Objects.requireNonNull(serializer, "serializer is required.");
+        Objects.requireNonNull(response, "response is required.");
         byte[] responseBytes;
-        try(final InputStream is = response.body().byteStream()) {
-            responseBytes = ByteStreams.toByteArray(is);
+        try(final ResponseBody body = response.body()) {
+            if(body == null) {
+                responseBytes = new byte[]{};
+            } else {
+                try(final InputStream is = body.byteStream()) {
+                    responseBytes = ByteStreams.toByteArray(is);
+                }
+            }
         }
         GraphErrorResponse error;
         try {

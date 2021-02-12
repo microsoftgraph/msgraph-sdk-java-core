@@ -83,7 +83,7 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
      * @param nextRequestBuilder the request builder for the next page
      * @param responseAdditionalData the additional data returned by the response
      */
-    public BaseCollectionPage(@Nonnull final List<T> pageContents, @Nonnull final T2 nextRequestBuilder, @Nonnull final AdditionalDataManager responseAdditionalData) {
+    public BaseCollectionPage(@Nonnull final List<T> pageContents, @Nullable final T2 nextRequestBuilder, @Nonnull final AdditionalDataManager responseAdditionalData) {
         this(pageContents, nextRequestBuilder);
         this.additionalDataManager().putAll(responseAdditionalData);
     }
