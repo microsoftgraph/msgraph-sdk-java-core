@@ -14,6 +14,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
+    id "org.sonarqube" version "3.1.1"
 }
 
 java {
@@ -63,6 +64,14 @@ def pomConfig = {
             distribution "repo"
         }
     }
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "msgraph-sdk-java-core"
+    property "sonar.organization", "microsoftgraph"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 //Publishing tasks-
