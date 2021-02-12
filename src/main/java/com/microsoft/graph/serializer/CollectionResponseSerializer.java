@@ -56,7 +56,7 @@ public class CollectionResponseSerializer {
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T1> BaseCollectionResponse<T1> deserialize(@Nonnull final JsonElement json, @Nonnull final Type typeOfT, @Nonnull final ILogger logger) throws JsonParseException {
-        if (json == null || !json.isJsonObject()| !typeOfT.getClass().equals(Class.class)) {
+        if (json == null || !json.isJsonObject() || !typeOfT.getClass().equals(Class.class)) {
             return null;
         }
         serializer = new DefaultSerializer(logger);
@@ -86,8 +86,13 @@ public class CollectionResponseSerializer {
                 if(sourceElement.isJsonObject()) {
                     final JsonObject sourceObject = sourceElement.getAsJsonObject();
                     Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
-                    if(entityClass == null && baseEntityClass != null)
-                        entityClass = baseEntityClass; // it is possible the odata type is absent or we can't find the derived type (not in SDK yet)
+                    if(entityClass == null) {
+                        if(baseEntityClass == null) {
+                            logger.logError("Could not find target class for object " + sourceObject.toString(), null);
+                            continue;
+                        } else
+                            entityClass = baseEntityClass; // it is possible the odata type is absent or we can't find the derived type (not in SDK yet)
+                    }
                     final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, entityClass);
                     ((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
                     list.add(targetObject);

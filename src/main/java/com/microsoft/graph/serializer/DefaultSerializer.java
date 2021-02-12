@@ -352,7 +352,7 @@ public class DefaultSerializer implements ISerializer {
 	 * @return			the derived class if found, or null if not applicable
 	 */
 	@Nullable
-	public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nonnull final Class<?> parentClass) {
+	public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nullable final Class<?> parentClass) {
 		//Identify the odata.type information if provided
 		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
