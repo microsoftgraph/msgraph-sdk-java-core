@@ -23,7 +23,7 @@ import com.microsoft.graph.serializer.ISerializer;
 public class BaseCollectionPageTests {
 
     private BaseRequestBuilder<String> mRequestBuilder;
-    private static ArrayList<String> list;
+    private ArrayList<String> list;
     private BaseCollectionPage<String, BaseRequestBuilder<String>> baseCollectionPage;
     private String requestUrl = "https://a.b.c/";
 

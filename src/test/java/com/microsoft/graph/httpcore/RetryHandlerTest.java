@@ -21,10 +21,8 @@ import okhttp3.Response;
 
 public class RetryHandlerTest {
 
-    int maxRetries = 2;
-    int retryInterval = 1000;
-    String testmeurl = "https://graph.microsoft.com/v1.0/me";
-    private final int HTTP_SERVER_ERROR = 500;
+    private static final String testmeurl = "https://graph.microsoft.com/v1.0/me";
+    private static final int HTTP_SERVER_ERROR = 500;
 
     @Test
     public void testRetryHandlerCreation() {

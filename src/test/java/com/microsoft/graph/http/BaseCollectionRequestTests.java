@@ -93,7 +93,7 @@ public class BaseCollectionRequestTests {
 
     @Test
     public void testPost() {
-        final ICollectionResponse<JsonObject> result = mRequest.post(null);
+        final ICollectionResponse<JsonObject> result = mRequest.post(new JsonObject());
         assertNotNull(result);
         assertEquals("zzz", result.values().get(0).get("id").getAsString());
     }
@@ -156,7 +156,7 @@ public class BaseCollectionRequestTests {
     @Test
     public void testPostMethod() {
         assertNull(mRequest.getHttpMethod());
-        mRequest.post(null);
+        mRequest.post(new JsonObject());
         assertEquals(HttpMethod.POST, mRequest.getHttpMethod());
     }
 

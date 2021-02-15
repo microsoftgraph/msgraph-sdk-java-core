@@ -60,7 +60,7 @@ public class BaseStreamRequestTests {
                 mock(ILogger.class),
                 mockClient);
         when(mBaseClient.getHttpProvider()).thenReturn(mProvider);
-        final BaseStreamRequest<String> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, null){};
+        final BaseStreamRequest<String> request = new BaseStreamRequest<>("https://a.b.c/", mBaseClient,null, String.class){};
         request.send();
     }
 

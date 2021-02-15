@@ -2,11 +2,12 @@ package com.microsoft.graph.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+
+import com.microsoft.graph.core.IBaseClient;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import okhttp3.Request;
 
 /**
  * Test cases for {@see BaseRequestBuilder}
@@ -18,7 +19,7 @@ public class BaseRequestBuilderTests {
 
     @BeforeEach
     public void setUp() throws Exception {
-        baseRequestBuilder = new BaseRequestBuilder<>(expectedRequestUrl,null,null){};
+        baseRequestBuilder = new BaseRequestBuilder<>(expectedRequestUrl, mock(IBaseClient.class), null){};
     }
 
     @Test

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okio.BufferedSink;
 import okio.Okio;
 
@@ -97,11 +98,15 @@ public class BaseClientTests {
     }
     private String getStringFromRequestBody(Request request) {
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final BufferedSink buffer = Okio.buffer(Okio.sink(out));
-            request.body().writeTo(buffer);
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            return CoreHttpProvider.streamToString(in);
+            try(final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                final BufferedSink buffer = Okio.buffer(Okio.sink(out));
+                final RequestBody body = request.body();
+                if(body != null)
+                    body.writeTo(buffer);
+                try(final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray())) {
+                    return CoreHttpProvider.streamToString(in);
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             return "";

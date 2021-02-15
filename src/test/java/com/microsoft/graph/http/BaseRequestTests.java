@@ -75,7 +75,7 @@ public class BaseRequestTests {
     public void testFunctionParameters() {
         final Option fo1 = new FunctionOption("1", "one");
         final Option fo2 = new FunctionOption("2", null);
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(fo1, fo2), null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(fo1, fo2), Void.class){};
         assertEquals("https://a.b.c/(1='one',2=null)", request.getRequestUrl().toString());
         request.addFunctionOption(new FunctionOption("3","two"));;
         assertEquals("https://a.b.c/(1='one',2=null,3='two')", request.getRequestUrl().toString());
@@ -86,7 +86,7 @@ public class BaseRequestTests {
     public void testQueryParameters() {
         final Option q1 = new QueryOption("q1","option1 ");
         final Option q2 = new QueryOption("q2","option2");
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(q1, q2), null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(q1, q2), Void.class){};
         assertEquals("https://a.b.c/?q1=option1%20&q2=option2", request.getRequestUrl().toString());
         request.addQueryOption(new QueryOption("q3","option3"));
         assertEquals("https://a.b.c/?q1=option1%20&q2=option2&q3=option3", request.getRequestUrl().toString());
@@ -99,14 +99,14 @@ public class BaseRequestTests {
         final Option f2 = new FunctionOption("f2", null);
         final Option q1 = new QueryOption("q1","option1 ");
         final Option q2 = new QueryOption("q2","option2");
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(f1, f2, q1, q2), null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(f1, f2, q1, q2), Void.class){};
         assertEquals("https://a.b.c/(f1='fun1',f2=null)?q1=option1%20&q2=option2", request.getRequestUrl().toString());
         assertEquals(4, request.getOptions().size());
     }
 
     @Test
     public void testHttpMethod() {
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), null, null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), null, Void.class){};
         assertNull(request.getHttpMethod());
         request.setHttpMethod(HttpMethod.GET);
         assertEquals(HttpMethod.GET, request.getHttpMethod());
@@ -116,7 +116,7 @@ public class BaseRequestTests {
     public void testHeader() {
         final String expectedHeader = "header key";
         final String expectedValue = "header value";
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), null, null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), null, Void.class){};
         assertEquals(0, request.getHeaders().size());
         request.addHeader(expectedHeader,expectedValue);
         assertEquals(1,request.getHeaders().size());
@@ -128,7 +128,7 @@ public class BaseRequestTests {
         assertEquals(0, mRequest.queryOptions.size());
         final Option q1 = new QueryOption("q1","option1 ");
         final Option f1 = new FunctionOption("f1","option2");
-        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(q1,f1), null){};
+        final BaseRequest<Void> request = new BaseRequest<Void>("https://a.b.c/", mock(IBaseClient.class), Arrays.asList(q1,f1), Void.class){};
         assertEquals(1, request.functionOptions.size());
         assertEquals(1, request.queryOptions.size());
         assertEquals("q1", request.queryOptions.get(0).getName());

@@ -31,7 +31,7 @@ public class GraphServiceExceptionTests {
         GraphError error = new GraphError();
         error.code = GraphErrorCodes.UNAUTHENTICATED.toString();
         errorResponse.error = error;
-        GraphServiceException exception = new GraphServiceException(null,null,new ArrayList<String>(),null,401,"Unauthorized",new ArrayList<String>(),errorResponse, false);
+        GraphServiceException exception = new GraphServiceException("GET","https://graph.microsoft.com/v1.0/me",new ArrayList<String>(),null,401,"Unauthorized",new ArrayList<String>(),errorResponse, false);
         String message = exception.getMessage();
         assertTrue(message.indexOf("Error code: UNAUTHENTICATED") == 0);
         assertTrue(message.indexOf("401 : Unauthorized") > 0);
@@ -45,7 +45,7 @@ public class GraphServiceExceptionTests {
         GraphError error = new GraphError();
         error.code = GraphErrorCodes.UNAUTHENTICATED.toString();
         errorResponse.error = error;
-        GraphServiceException exception = new GraphServiceException(null,null,new ArrayList<String>(),null,401,"Unauthorized",new ArrayList<String>(),errorResponse, true);
+        GraphServiceException exception = new GraphServiceException("GET","https://graph.microsoft.com/v1.0/me",new ArrayList<String>(),null,401,"Unauthorized",new ArrayList<String>(),errorResponse, true);
         String message = exception.getMessage();
         assertTrue(message.indexOf("Error code: UNAUTHENTICATED") == 0);
         assertTrue(message.indexOf("401 : Unauthorized") > 0);

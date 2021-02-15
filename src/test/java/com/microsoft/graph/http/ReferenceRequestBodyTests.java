@@ -11,7 +11,7 @@ public class ReferenceRequestBodyTests {
 
 	@Test
 	public void testRawObject() {
-        ReferenceRequestBody body = new ReferenceRequestBody(null);
+        ReferenceRequestBody body = new ReferenceRequestBody("");
         ISerializer serializer = mock(ISerializer.class);
         JsonObject jsonObject = new JsonObject();
         body.setRawObject(serializer,jsonObject);
