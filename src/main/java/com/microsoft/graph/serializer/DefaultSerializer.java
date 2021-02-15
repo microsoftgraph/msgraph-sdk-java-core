@@ -82,7 +82,7 @@ public class DefaultSerializer implements ISerializer {
 	@Nullable
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
         T result = null;
-        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream)) {
+        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream, "UTF-8")) {
 			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
 			result = deserializeObject(rawElement, clazz, responseHeaders);
         } catch (IOException ex) {
@@ -276,7 +276,7 @@ public class DefaultSerializer implements ISerializer {
 			try {
 				final Object fieldObject = field.get(serializableObject);
 				final JsonElement fieldJsonElement = outJson.get(field.getName());
-				if(fieldObject == null || field == null || fieldJsonElement == null)
+				if(fieldObject == null || fieldJsonElement == null)
 					continue;
 
 				// If the object is a HashMap, iterate through its children

@@ -59,7 +59,7 @@ public interface ISerializer {
      * @return                the deserialized item from the input string
      */
     @Nullable
-    <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
+    <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders);
 
     /**
      * Deserialize an object from the input stream
@@ -84,7 +84,7 @@ public interface ISerializer {
      * @return                the deserialized item from the input string
      */
     @Nullable
-    <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders);
+    <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders);
 
     /**
      * Deserialize an object from the input JsonElement
@@ -95,7 +95,7 @@ public interface ISerializer {
      * @return the deserialized item from the input string
      */
     @Nullable
-    default <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz) {
+    default <T> T deserializeObject(@Nonnull final JsonElement jsonElement, @Nonnull final Class<T> clazz) {
         return deserializeObject(jsonElement, clazz, null);
     }
 
@@ -109,7 +109,7 @@ public interface ISerializer {
      * @return                the deserialized item from the input string
      */
     @Nullable
-    <T> T deserializeObject(@Nonnull JsonElement jsonElement, @Nonnull Class<T> clazz, @Nonnull Map<String, List<String>> responseHeaders);
+    <T> T deserializeObject(@Nonnull final JsonElement jsonElement, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders);
 
     /**
      * Serializes an object into a string

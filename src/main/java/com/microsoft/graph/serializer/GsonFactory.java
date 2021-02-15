@@ -40,6 +40,7 @@ import com.microsoft.graph.core.TimeOfDay;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 
@@ -112,7 +113,7 @@ final class GsonFactory {
                 try {
                     return new JsonPrimitive(ByteArraySerializer.serialize(src));
                 } catch (final Exception e) {
-                    logger.logError(PARSING_MESSAGE + src, e);
+                    logger.logError(PARSING_MESSAGE + Arrays.toString(src), e);
                     return null;
                 }
             }
