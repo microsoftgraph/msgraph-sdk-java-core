@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutionException;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
@@ -40,18 +39,19 @@ public class AuthenticationHandler implements Interceptor {
     }
 
     @Override
-    @Nullable
+    @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request originalRequest = chain.request();
 
-        if(originalRequest.tag(TelemetryOptions.class) == null)
-            originalRequest = originalRequest.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-        originalRequest.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
+        TelemetryOptions telemetryOptions = originalRequest.tag(TelemetryOptions.class);
+        if(telemetryOptions == null) {
+            telemetryOptions = new TelemetryOptions();
+            originalRequest = originalRequest.newBuilder().tag(TelemetryOptions.class, telemetryOptions).build();
+        }
+        telemetryOptions.setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
 
         try {
             final CompletableFuture<String> future = authProvider.getAuthorizationTokenAsync(originalRequest.url().url());
-            if(future == null)
-                return chain.proceed(originalRequest);
             final String accessToken = future.get();
             if(accessToken == null)
                 return chain.proceed(originalRequest);

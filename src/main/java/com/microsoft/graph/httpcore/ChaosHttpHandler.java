@@ -28,32 +28,35 @@ public class ChaosHttpHandler implements Interceptor {
     /**
      * constant string being used
      */
-    private final String RETRY_AFTER = "Retry-After";
+    private static final String RETRY_AFTER = "Retry-After";
     /**
      * Denominator for the failure rate (i.e. 1/X)
      */
-    private final int failureRate = 3;
+    private static final int failureRate = 3;
     /**
      * default value to return on retry after
      */
-    private final String retryAfterValue = "10";
+    private static final String retryAfterValue = "10";
     /**
      * body to respond on failed requests
      */
-    private final String responseBody = "{\"error\": {\"code\": \"TooManyRequests\",\"innerError\": {\"code\": \"429\",\"date\": \"2020-08-18T12:51:51\",\"message\": \"Please retry after\",\"request-id\": \"94fb3b52-452a-4535-a601-69e0a90e3aa2\",\"status\": \"429\"},\"message\": \"Please retry again later.\"}}";
+    private static final String responseBody = "{\"error\": {\"code\": \"TooManyRequests\",\"innerError\": {\"code\": \"429\",\"date\": \"2020-08-18T12:51:51\",\"message\": \"Please retry after\",\"request-id\": \"94fb3b52-452a-4535-a601-69e0a90e3aa2\",\"status\": \"429\"},\"message\": \"Please retry again later.\"}}";
     /**
      * Too many requests status code
      */
     public static final int MSClientErrorCodeTooManyRequests = 429;
 
     @Override
-    @Nullable
+    @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request request = chain.request();
 
-        if(request.tag(TelemetryOptions.class) == null)
-            request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-        request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
+        TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
+        if(telemetryOptions == null) {
+            telemetryOptions = new TelemetryOptions();
+            request = request.newBuilder().tag(TelemetryOptions.class, telemetryOptions).build();
+        }
+        telemetryOptions.setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
 
         final int dice = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
 

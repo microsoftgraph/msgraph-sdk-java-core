@@ -45,7 +45,7 @@ public class TelemetryHandler implements Interceptor{
     private static final String DEFAULT_VERSION_VALUE = "0";
 
     @Override
-    @Nullable
+    @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
@@ -87,10 +87,14 @@ public class TelemetryHandler implements Interceptor{
                     break;
                 }
             }
-            final Field sdkVersionField = versionClass.getField("SDK_INT");
-            final Object value = sdkVersionField.get(null);
-            final String valueStr = String.valueOf(value);
-            return valueStr == null || valueStr == "" ? DEFAULT_VERSION_VALUE : valueStr;
+            if(versionClass == null)
+                return DEFAULT_VERSION_VALUE;
+            else {
+                final Field sdkVersionField = versionClass.getField("SDK_INT");
+                final Object value = sdkVersionField.get(null);
+                final String valueStr = String.valueOf(value);
+                return valueStr == null || valueStr.equals("") ? DEFAULT_VERSION_VALUE : valueStr;
+            }
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException ex) {
             // we're not on android and return "0" to align with java version which returns "0" when running on android
             return DEFAULT_VERSION_VALUE;
