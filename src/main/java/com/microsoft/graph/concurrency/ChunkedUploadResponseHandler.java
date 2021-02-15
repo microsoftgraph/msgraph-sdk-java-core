@@ -39,6 +39,7 @@ import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import okhttp3.MediaType;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -105,7 +106,9 @@ public class ChunkedUploadResponseHandler<UploadType>
 				&& response.code() < HttpResponseCode.HTTP_MULTIPLE_CHOICES) {
             try(final ResponseBody body = response.body()) {
                 final String location = response.headers().get("Location");
-                if (body.contentType() != null && body.contentType().subtype().contains("json")) {
+                final MediaType contentType = body.contentType();
+                final String subType = contentType == null ? null : contentType.subtype();
+                if (subType != null && subType.contains("json")) {
                     return parseJsonUploadResult(body, serializer, logger);
                 } else if (location != null) {
                     logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");

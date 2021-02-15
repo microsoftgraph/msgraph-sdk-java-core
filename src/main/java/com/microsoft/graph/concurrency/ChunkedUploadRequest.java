@@ -63,7 +63,7 @@ public class ChunkedUploadRequest<UploadType> {
                                 final long totalLength) {
         this.data = new byte[chunkSize];
         System.arraycopy(chunk, 0, this.data, 0, chunkSize);
-        this.baseRequest = new BaseRequest<ChunkedUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends ChunkedUploadResult<UploadType>>)(new ChunkedUploadResult<UploadType>((UploadType)null)).getClass()) {
+        this.baseRequest = new BaseRequest<ChunkedUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends ChunkedUploadResult<UploadType>>)(new ChunkedUploadResult<>((UploadType)null)).getClass()) {
         };
         this.baseRequest.setHttpMethod(HttpMethod.PUT);
         this.baseRequest.addHeader(CONTENT_RANGE_HEADER_NAME,
