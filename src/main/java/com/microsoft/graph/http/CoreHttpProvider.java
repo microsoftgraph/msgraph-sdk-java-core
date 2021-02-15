@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 import javax.annotation.Nonnull;
@@ -100,18 +101,13 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 */
 	public CoreHttpProvider(@Nonnull final ISerializer serializer,
 			@Nonnull final ILogger logger,
-			@Nullable final OkHttpClient httpClient) {
-		if (httpClient == null) {
-			throw new NullPointerException("httpClient");
-		} else if(serializer == null) {
-			throw new NullPointerException("serializer");
-		} else if(logger == null) {
-			throw new NullPointerException("logger");
-		} else {
-			this.serializer = serializer;
-			this.logger = logger;
-			this.corehttpClient = httpClient;
-        }
+			@Nonnull final OkHttpClient httpClient) {
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
+        Objects.requireNonNull(serializer, "parameter serializer cannot be null");
+        Objects.requireNonNull(httpClient, "parameter httpClient cannot be null");
+        this.serializer = serializer;
+        this.logger = logger;
+        this.corehttpClient = httpClient;
 	}
 
 	/**
@@ -135,7 +131,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 * @return a future with the result
 	 */
 	@Override
-	@Nullable
+	@Nonnull
 	public <Result, Body> java.util.concurrent.CompletableFuture<Result> sendAsync(@Nonnull final IHttpRequest request,
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable) {
@@ -157,13 +153,13 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
      * @return                  a future with the result
      * @throws ClientException  this exception occurs if the request was unable to complete for any reason
      */
-    @Nullable
+    @Nonnull
     public <Result, BodyType, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendAsync(@Nonnull final IHttpRequest request,
                                                     @Nonnull final Class<Result> resultClass,
                                                     @Nullable final BodyType serializable,
-                                                    @Nonnull final IStatefulResponseHandler<Result, DeserializeType> handler)
+                                                    @Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
             throws ClientException {
-        return sendFutureRequestInternal(request,
+        return sendRequestAsyncInternal(request,
                 resultClass,
                 serializable,
                 handler);
@@ -206,7 +202,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	public <Result, Body, DeserializeType> Result send(@Nonnull final IHttpRequest request,
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable,
-			@Nonnull final IStatefulResponseHandler<Result, DeserializeType> handler) throws ClientException {
+			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler) throws ClientException {
             return sendRequestInternal(request, resultClass, serializable, handler);
 	}
 	/**
@@ -344,8 +340,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 * @return                  the result from the request
 	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
 	 */
-	@Nullable
-	private <Result, Body, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendFutureRequestInternal(@Nonnull final IHttpRequest request,
+	@Nonnull
+	private <Result, Body, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendRequestAsyncInternal(@Nonnull final IHttpRequest request,
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable,
 			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
@@ -389,6 +385,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                                                                     final Class<Result> resultClass,
                                                                     final Body serializable,
                                                                     final IStatefulResponseHandler<Result, DeserializeType> handler) {
+        if (response == null) return null;
         final ResponseBody body = response.body();
         try {
             InputStream in = null;
@@ -412,7 +409,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                             request, response, this.serializer, this.logger);
                 }
 
-                if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
+                if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR && body != null) {
                     logger.logDebug("Handling error response");
                     in = body.byteStream();
                     handleErrorResponse(request, serializable, response);
@@ -431,12 +428,13 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                     return handleEmptyResponse(responseHeaders, resultClass);
                 }
 
-                in = new BufferedInputStream(body.byteStream());
-
                 if (body == null || body.contentLength() == 0)
                     return null;
 
-                if (body.contentType() != null && body.contentType().subtype().contains("json")
+                in = new BufferedInputStream(body.byteStream());
+
+                final MediaType contentType = body.contentType();
+                if (contentType != null && contentType.subtype().contains("json")
                     && resultClass != InputStream.class) {
                     logger.logDebug("Response json");
                     return handleJsonResponse(in, responseHeaders, resultClass);
@@ -444,9 +442,9 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                     logger.logDebug("Response binary");
                     isBinaryStreamInput = true;
                     return (Result) handleBinaryStream(in);
-                } else if (body.contentType() != null && resultClass != InputStream.class &&
-                    body.contentType().type().contains("text") &&
-                    body.contentType().subtype().contains("plain")) {
+                } else if (contentType != null && resultClass != InputStream.class &&
+                    contentType.type().contains("text") &&
+                    contentType.subtype().contains("plain")) {
                     return handleRawResponse(in, resultClass);
                 } else {
                     return null;
@@ -459,7 +457,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                     }catch(IOException e) {
                         logger.logError(e.getMessage(), e);
                     }
-                    if (response != null) response.close();
+                    response.close();
                 }
             }
         } catch (final GraphServiceException ex) {
