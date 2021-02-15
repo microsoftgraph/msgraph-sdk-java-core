@@ -28,6 +28,7 @@ import com.microsoft.graph.options.Option;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Arrays;
 
 import javax.annotation.Nullable;
@@ -65,8 +66,8 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
             @Nonnull final IBaseClient<?> client,
             @Nullable final List<? extends Option> options
     ) {
-        this.requestUrl = requestUrl;
-        this.client = client;
+        this.requestUrl = Objects.requireNonNull(requestUrl, "parameter requestUrl cannot be null");
+        this.client = Objects.requireNonNull(client, "parameter client cannot be null");
         if (options != null) {
             this.options.addAll(options);
         }
@@ -113,6 +114,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      */
     @Nonnull
     public String getRequestUrlWithAdditionalSegment(@Nonnull final String urlSegment) {
+        Objects.requireNonNull(urlSegment, "parameter urlSegment cannot be null");
         return requestUrl + "/" + urlSegment;
     }
 
@@ -124,6 +126,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      */
     @Nonnull
     public String getRequestUrlWithAdditionalParameter(@Nonnull final String parameter) {
+        Objects.requireNonNull(parameter, "parameter cannot be null");
         return requestUrl + "('" + parameter + "')";
     }
 

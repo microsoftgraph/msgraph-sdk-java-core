@@ -6,6 +6,7 @@ package com.microsoft.graph.concurrency;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -61,6 +62,9 @@ public class ChunkedUploadRequest<UploadType> {
                                 final int chunkSize,
                                 final long beginIndex,
                                 final long totalLength) {
+        Objects.requireNonNull(requestUrl, "parameter requestUrl cannot be null");
+        Objects.requireNonNull(client, "parameter client cannot be null");
+        Objects.requireNonNull(chunk, "parameter chunk cannot be null");
         this.data = new byte[chunkSize];
         System.arraycopy(chunk, 0, this.data, 0, chunkSize);
         this.baseRequest = new BaseRequest<ChunkedUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends ChunkedUploadResult<UploadType>>)(new ChunkedUploadResult<>((UploadType)null)).getClass()) {
@@ -84,6 +88,7 @@ public class ChunkedUploadRequest<UploadType> {
     @Nonnull
     public ChunkedUploadResult<UploadType> upload(
             @Nonnull final ChunkedUploadResponseHandler<UploadType> responseHandler) {
+        Objects.requireNonNull(responseHandler, "parameter responseHandler cannot be null");
         ChunkedUploadResult<UploadType> result = null;
 
         try {

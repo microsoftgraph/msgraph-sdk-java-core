@@ -26,6 +26,7 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -47,7 +48,7 @@ public abstract class BaseReferenceRequestBuilder<T, T2 extends BaseReferenceReq
      */
     public BaseReferenceRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T2> referenceRequestClass) {
         super(requestUrl, client, requestOptions);
-        this.refRequestClass = referenceRequestClass;
+        this.refRequestClass = Objects.requireNonNull(referenceRequestClass, "parameter referenceRequestClass cannot be null");
     }
 
     /**

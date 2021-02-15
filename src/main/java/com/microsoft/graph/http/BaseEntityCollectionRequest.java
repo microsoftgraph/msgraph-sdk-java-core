@@ -86,7 +86,7 @@ public abstract class BaseEntityCollectionRequest<T, T2 extends ICollectionRespo
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable
-    protected <BodyType> T2 post(@Nonnull final BodyType serializedObject) throws ClientException {
+    protected <BodyType> T2 post(@Nullable final BodyType serializedObject) throws ClientException {
         getBaseRequest().setHttpMethod(HttpMethod.POST);
         return getBaseRequest().getClient().getHttpProvider().send(this, responseCollectionClass, serializedObject);
     }

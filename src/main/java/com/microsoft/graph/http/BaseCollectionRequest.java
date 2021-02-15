@@ -26,6 +26,8 @@ import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
@@ -82,9 +84,9 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
                                  @Nonnull final Class<T2> responseCollectionClass,
                                  @Nonnull final Class<T3> collectionPageClass,
                                  @Nonnull final Class<? extends BaseCollectionRequestBuilder<T, ? extends BaseRequestBuilder<T>, T2, T3, ? extends BaseCollectionRequest<T, T2, T3>>> collectionRequestBuilderClass) {
-        this.responseCollectionClass = responseCollectionClass;
-        this.collectionPageClass = collectionPageClass;
-        this.collRequestBuilderClass = collectionRequestBuilderClass;
+        this.responseCollectionClass = Objects.requireNonNull(responseCollectionClass, "parameter responseCollectionClass cannot be null");
+        this.collectionPageClass = Objects.requireNonNull(collectionPageClass, "parameter collectionPageClass cannot be null");
+        this.collRequestBuilderClass = Objects.requireNonNull(collectionRequestBuilderClass, "parameter collectionRequestBuilderClass cannot be null");
         baseRequest = new BaseRequest<T2>(requestUrl, client, options, responseCollectionClass) {};
     }
 
@@ -119,6 +121,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     @Nullable
     public T3 buildFromResponse(@Nonnull final T2 response) {
+        Objects.requireNonNull(response, "parameter response cannot be null");
         try {
             final Object builder = response.nextLink() == null ? null : this.collRequestBuilderClass
                     .getConstructor(String.class, IBaseClient.class, java.util.List.class)
@@ -170,7 +173,8 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param value  the value of the header
      */
     @Override
-    public void addHeader(@Nonnull final String header, @Nonnull final String value) {
+    public void addHeader(@Nonnull final String header, @Nullable final String value) {
+        Objects.requireNonNull(header, "parameter header cannot be null");
         baseRequest.addHeader(header, value);
     }
 
@@ -210,6 +214,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param option the query option to add
      */
     public void addQueryOption(@Nonnull final QueryOption option) {
+        Objects.requireNonNull(option, "parameter option cannot be null");
         baseRequest.getQueryOptions().add(option);
     }
 
@@ -219,6 +224,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param value the expand clause
      */
     protected void addExpandOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$expand", value));
     }
 
@@ -228,6 +234,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param value the filter clause
      */
     protected void addFilterOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$filter", value));
     }
 
@@ -237,6 +244,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param value the order by clause
      */
     protected void addOrderByOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$orderby", value));
     }
 
@@ -246,6 +254,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param value the select clause
      */
     protected void addSelectOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$select", value));
     }
 
@@ -273,7 +282,8 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param skipToken - Token for pagination
      */
     protected void addSkipTokenOption(@Nonnull final String skipToken) {
-    	addQueryOption(new QueryOption("$skiptoken", skipToken));
+    	Objects.requireNonNull(skipToken, "parameter skipToken cannot be null");
+        addQueryOption(new QueryOption("$skiptoken", skipToken));
     }
 
     /**
@@ -290,6 +300,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param option the query option to add
      */
     public void addFunctionOption(@Nonnull final FunctionOption option) {
+        Objects.requireNonNull(option, "parameter option cannot be null");
         baseRequest.getFunctionOptions().add(option);
     }
 
@@ -337,7 +348,8 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param shouldRedirect Callback called before doing a redirect
      */
     public void setShouldRedirect(@Nonnull IShouldRedirect shouldRedirect) {
-    	baseRequest.setShouldRedirect(shouldRedirect);
+    	Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
+        baseRequest.setShouldRedirect(shouldRedirect);
     }
 
     /**
@@ -356,7 +368,8 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @param shouldretry The callback called before retry
      */
     public void setShouldRetry(@Nonnull IShouldRetry shouldretry) {
-    	baseRequest.setShouldRetry(shouldretry);
+    	Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
+        baseRequest.setShouldRetry(shouldretry);
     }
 
     /**
@@ -413,6 +426,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     @Nullable
     public IHttpRequest withHttpMethod(@Nonnull final HttpMethod httpMethod) {
+        Objects.requireNonNull(httpMethod, "parameter httpMethod cannot be null");
         baseRequest.setHttpMethod(httpMethod);
         return this;
     }
@@ -428,6 +442,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
     @Override
     @Nullable
     public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+        Objects.requireNonNull(serializedObject, "parameter serializedObject cannot be null");
         return baseRequest.getHttpRequest(serializedObject);
     }
 }

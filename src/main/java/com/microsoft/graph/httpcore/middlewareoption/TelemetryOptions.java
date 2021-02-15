@@ -1,5 +1,6 @@
 package com.microsoft.graph.httpcore.middlewareoption;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -67,7 +68,7 @@ public class TelemetryOptions {
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        this.clientRequestId = clientRequestId;
+        this.clientRequestId = Objects.requireNonNull(clientRequestId, "parameter clientRequestId cannot be null");
     }
     /**
      * Gets the client request id

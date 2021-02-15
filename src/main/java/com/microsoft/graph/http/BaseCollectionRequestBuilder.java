@@ -4,6 +4,7 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -35,8 +36,8 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
                                         @Nonnull final Class<T2> requestBuilderClass,
 										@Nonnull final Class<T5> collectionRequestClass) {
         super(requestUrl, client, requestOptions);
-		this.collRequestClass = collectionRequestClass;
-        this.reqBuilderClass = requestBuilderClass;
+		this.collRequestClass = Objects.requireNonNull(collectionRequestClass, "parameter collectionRequestClass cannot be null");
+        this.reqBuilderClass = Objects.requireNonNull(requestBuilderClass, "parameter requestBuilderClass cannot be null");
     }
 
     /**
@@ -74,6 +75,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
      */
     @Nullable
     public T2 byId(@Nonnull final String id) {
+        Objects.requireNonNull(id, "parameter id cannot be null");
         try {
             return reqBuilderClass.getConstructor(String.class, IBaseClient.class, java.util.List.class)
                                 .newInstance(getRequestUrlWithAdditionalSegment(id), getClient(), getOptions());

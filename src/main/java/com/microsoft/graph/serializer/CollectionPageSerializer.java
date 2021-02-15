@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -69,6 +70,7 @@ public class CollectionPageSerializer {
         if(src == null) {
             return null;
         }
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
         JsonArray jsonArray = new JsonArray();
         List<T1> items = src.getCurrentPage();
         serializer = new DefaultSerializer(logger);

@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,7 @@ package com.microsoft.graph.serializer;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
@@ -40,7 +41,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 /**
- * Handles serialization/deserialization for special types (especially of 
+ * Handles serialization/deserialization for special types (especially of
  * fields which are not caught by registering a type adapter).
  */
 public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
@@ -54,7 +55,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
      * The logger instance
      */
     private final ILogger logger;
-    
+
     /**
      * Serializes an instance of Void (which is always null).
      */
@@ -69,15 +70,16 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         public Void read(JsonReader in) throws IOException {
             return null;
         }
-        
+
     };
-    
+
     /**
      * Instanciates a new type adapter factory
-     * 
+     *
      * @param logger logger to use for the factory
      */
     public FallbackTypeAdapterFactory(@Nonnull final ILogger logger) {
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
         this.logger = logger;
     }
 
@@ -85,6 +87,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
     @Override
     @Nullable
     public <T> TypeAdapter<T> create(@Nonnull final Gson gson, @Nonnull final TypeToken<T> type) {
+        Objects.requireNonNull(type, "parameter type cannot be null");
         final Class<T> rawType = (Class<T>) type.getRawType();
         if (rawType.isEnum()) {
             return new EnumTypeAdapter<T>(rawType, logger);
@@ -95,9 +98,9 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
     }
-    
+
     private static final class EnumTypeAdapter<T> extends TypeAdapter<T> {
-        
+
         private final Map<String, T> enumValues;
         private final ILogger logger;
 
@@ -110,7 +113,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
             }
             this.enumValues = enumValues;
         }
-        
+
         @Override
         public void write(final JsonWriter out, final T value) throws IOException {
             if (value == null) {

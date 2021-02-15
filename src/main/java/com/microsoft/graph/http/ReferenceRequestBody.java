@@ -26,7 +26,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import javax.annotation.Nullable;
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.serializer.AdditionalDataManager;
@@ -49,7 +50,7 @@ public class ReferenceRequestBody implements IJsonBackedObject {
      * @param payload payload to instanciate the body from
      */
     public ReferenceRequestBody(@Nonnull final String payload) {
-        odataId = payload;
+        odataId = Objects.requireNonNull(payload, "parameter payload cannot be null");
     }
 
     /**

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -51,7 +52,7 @@ public class Multipart {
 	 * @param boundary The multipart boundary
 	 */
 	public void setBoundary(@Nonnull final String boundary) {
-		this.boundary = boundary;
+		this.boundary = Objects.requireNonNull(boundary, "parameter boundary cannot be null");
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class Multipart {
 	 * @param contentType The multipart Content-Type
 	 */
 	public void setContentType(@Nonnull final String contentType) {
-		this.contentType = contentType;
+		this.contentType = Objects.requireNonNull(contentType, "parameter contentType cannot be null");
 	}
 
 	/**

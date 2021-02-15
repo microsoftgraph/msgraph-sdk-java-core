@@ -1,6 +1,7 @@
 package com.microsoft.graph.core;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -28,7 +29,7 @@ public class CustomRequestBuilder<T> extends BaseRequestBuilder<T> {
 	 */
 	public CustomRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final List<? extends Option> requestOptions, @Nonnull final Class<T> responseType) {
 		super(requestUrl, client, requestOptions);
-		this.responseType = responseType;
+		this.responseType = Objects.requireNonNull(responseType, "parameter responseType cannot be null");
 	}
 
 	/**

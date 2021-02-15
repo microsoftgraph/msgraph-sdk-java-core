@@ -135,6 +135,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	public <Result, Body> java.util.concurrent.CompletableFuture<Result> sendAsync(@Nonnull final IHttpRequest request,
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable) {
+        Objects.requireNonNull(request, "parameter request cannot be null");
+        Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
 		return sendAsync(request,
 							resultClass,
 							serializable,
@@ -159,6 +161,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                                                     @Nullable final BodyType serializable,
                                                     @Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
             throws ClientException {
+        Objects.requireNonNull(request, "parameter request cannot be null");
+        Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
         return sendRequestAsyncInternal(request,
                 resultClass,
                 serializable,
@@ -182,6 +186,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable)
 					throws ClientException {
+        Objects.requireNonNull(request, "parameter request cannot be null");
+        Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
 		return send(request, resultClass, serializable, null);
 	}
 
@@ -203,6 +209,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable,
 			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler) throws ClientException {
+            Objects.requireNonNull(request, "parameter request cannot be null");
+            Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
             return sendRequestInternal(request, resultClass, serializable, handler);
 	}
 	/**
@@ -220,6 +228,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	public <Result, Body> Request getHttpRequest(@Nonnull final IHttpRequest request,
 			@Nonnull final Class<Result> resultClass,
 			@Nullable final Body serializable) throws ClientException {
+        Objects.requireNonNull(request, "parameter request cannot be null");
+        Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
 		final int defaultBufferSize = 4096;
 
 		final URL requestUrl = request.getRequestUrl();
@@ -575,6 +585,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 */
     @Nullable
 	public static String streamToString(@Nonnull final InputStream input) {
+        Objects.requireNonNull(input, "parameter input cannot be null");
 		final String httpStreamEncoding = "UTF-8";
 		final String endOfFile = "\\A";
 		try (final Scanner scanner = new Scanner(input, httpStreamEncoding)) {

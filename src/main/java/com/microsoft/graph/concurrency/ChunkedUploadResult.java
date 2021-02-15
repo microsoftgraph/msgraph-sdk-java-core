@@ -8,6 +8,9 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -68,7 +71,10 @@ public class ChunkedUploadResult<UploadType> {
      * @param exception The exception received from server.
      */
     protected ChunkedUploadResult(@Nonnull final GraphServiceException exception) {
-        this(new ClientException(exception.getMessage(/* verbose */ true), exception));
+        this(new ClientException(Objects
+                                .requireNonNull(exception, "parameter exception cannot be null")
+                                .getMessage(/* verbose */ true),
+                                exception));
     }
 
     /**

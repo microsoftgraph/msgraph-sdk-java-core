@@ -29,6 +29,9 @@ import com.google.common.base.CaseFormat;
 import com.google.gson.annotations.Expose;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -60,6 +63,7 @@ public class GraphError {
      * @return <b>true</b> if the error code matches, and <b>false</b> if there was no match
      */
     public boolean isError(@Nonnull final GraphErrorCodes expectedCode) {
+        Objects.requireNonNull(expectedCode, "parameter expectedCode cannot be null");
         if (transformErrorCodeCase(code).equalsIgnoreCase(expectedCode.toString())) {
             return true;
         }
@@ -79,6 +83,7 @@ public class GraphError {
      */
     @Nonnull
     protected String transformErrorCodeCase(@Nonnull final String original) {
+        Objects.requireNonNull(original, "parameter original cannot be null");
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, original);
     }
 }

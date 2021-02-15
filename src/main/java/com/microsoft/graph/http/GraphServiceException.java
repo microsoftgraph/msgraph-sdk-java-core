@@ -153,13 +153,13 @@ public class GraphServiceException extends ClientException {
                                     @Nullable final GraphErrorResponse error,
                                     final boolean verbose) {
         super(responseMessage, null);
-        this.method = method;
-        this.url = url;
-        this.requestHeaders = requestHeaders;
+        this.method = Objects.requireNonNull(method, "parameter method cannot be null");
+        this.url = Objects.requireNonNull(url, "parameter url cannot be null");
+        this.requestHeaders = Objects.requireNonNull(requestHeaders, "parameter requestHeaders cannot be null");
         this.requestBody = requestBody;
         this.responseCode = responseCode;
-        this.responseMessage = responseMessage;
-        this.responseHeaders = responseHeaders;
+        this.responseMessage = Objects.requireNonNull(responseMessage, "parameter responseMessage cannot be null");
+        this.responseHeaders = Objects.requireNonNull(responseHeaders, "parameter responseHeaders cannot be null");
         this.error = error;
         this.verbose = verbose;
         for(String requestHeader : requestHeaders) {
@@ -340,7 +340,10 @@ public class GraphServiceException extends ClientException {
                                                                  @Nonnull final Response response,
                                                                  @Nonnull final ILogger logger)
             throws IOException {
-        Objects.requireNonNull(response, "reponse parameter cannot be null");
+        Objects.requireNonNull(response, "response parameter cannot be null");
+        Objects.requireNonNull(request, "request parameter cannot be null");
+        Objects.requireNonNull(serializer, "serializer parameter cannot be null");
+        Objects.requireNonNull(logger, "logger parameter cannot be null");
         final String method = response.request().method();
         final String url = request.getRequestUrl().toString();
         final List<String> requestHeaders = new LinkedList<>();
@@ -398,6 +401,7 @@ public class GraphServiceException extends ClientException {
         @Nullable final String requestBody,
         @Nonnull final Map<String,String> headers, @Nonnull final String responseMessage, final int responseCode,
         @Nonnull final GraphErrorResponse error, final boolean isVerbose) {
+        Objects.requireNonNull(headers, "parameter headers cannot be null");
         final List<String> responseHeaders = new LinkedList<>();
         for (final Entry<String, String> entry : headers.entrySet()) {
             responseHeaders.add(entry.getKey() + (entry.getKey() == null ? "" : " : " ) + entry.getValue());

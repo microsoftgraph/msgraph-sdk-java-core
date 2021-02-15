@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -140,9 +141,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
                        @Nonnull final IBaseClient<?> client,
                        @Nullable final List<? extends Option> options,
                        @Nonnull final Class<? extends T> responseClass) {
-        this.requestUrl = requestUrl;
-        this.client = client;
-        this.responseClass = responseClass;
+        this.requestUrl = Objects.requireNonNull(requestUrl, "parameter requestUrl cannot be null");
+        this.client = Objects.requireNonNull(client, "parameter client cannot be null");
+        this.responseClass = Objects.requireNonNull(responseClass, "parameter responseClass cannot be null");
 
         headersOptions = new ArrayList<>();
         queryOptions = new ArrayList<>();
@@ -211,7 +212,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     @Override
     @Nullable
     @SuppressWarnings("unchecked")
-    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nullable final requestBodyType serializedObject) throws ClientException {
         return (nativeRequestType)client.getHttpProvider().getHttpRequest(this, (Class<responseType>) responseClass, serializedObject);
     }
 
@@ -274,7 +275,8 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param value  the value of the header
      */
     @Override
-    public void addHeader(@Nonnull final String header, @Nonnull final String value) {
+    public void addHeader(@Nonnull final String header, @Nullable final String value) {
+        Objects.requireNonNull(header, "parameter header cannot be null");
         headersOptions.add(new HeaderOption(header, value));
     }
 
@@ -310,7 +312,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     @SuppressWarnings("unchecked")
     protected <T1> java.util.concurrent.CompletableFuture<T> sendAsync(@Nonnull final HttpMethod method,
                                  @Nullable final T1 serializedObject) {
-        this.method = method;
+        this.method = Objects.requireNonNull(method, "parameter method cannot be null");
         return (java.util.concurrent.CompletableFuture<T>) client.getHttpProvider().sendAsync(this, responseClass, serializedObject);
     }
 
@@ -370,6 +372,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param option the query option to add
      */
     public void addQueryOption(@Nonnull final QueryOption option) {
+        Objects.requireNonNull(option, "parameter option cannot be null");
         getQueryOptions().add(option);
     }
 
@@ -379,6 +382,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param option the function option to add
      */
     public void addFunctionOption(@Nonnull final FunctionOption option) {
+        Objects.requireNonNull(option, "parameter option cannot be null");
         getFunctionOptions().add(option);
     }
 
@@ -388,6 +392,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param value the expand clause
      */
     protected void addExpandOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$expand", value));
     }
 
@@ -397,6 +402,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param value the filter clause
      */
     protected void addFilterOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$filter", value));
     }
 
@@ -406,6 +412,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param value the order by clause
      */
     protected void addOrderByOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$orderby", value));
     }
 
@@ -415,6 +422,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param value the select clause
      */
     protected void addSelectOption(@Nonnull final String value) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
         addQueryOption(new QueryOption("$select", value));
     }
 
@@ -442,7 +450,8 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param skipToken - Token for pagination
      */
     protected void addSkipTokenOption(@Nonnull final String skipToken) {
-    	addQueryOption(new QueryOption("$skiptoken", skipToken));
+    	Objects.requireNonNull(skipToken, "parameter skipToken cannot be null");
+        addQueryOption(new QueryOption("$skiptoken", skipToken));
     }
 
     /**
@@ -459,6 +468,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param httpMethod the HTTP method
      */
     public void setHttpMethod(@Nonnull final HttpMethod httpMethod) {
+        Objects.requireNonNull(httpMethod, "parameter httpMethod cannot be null");
         method = httpMethod;
     }
 
@@ -470,7 +480,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nullable
     public IHttpRequest withHttpMethod(@Nonnull final HttpMethod httpMethod) {
-        method = httpMethod;
+        setHttpMethod(httpMethod);
         return this;
     }
 
@@ -518,7 +528,8 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param shouldRedirect Callback called before doing a redirect
      */
     public void setShouldRedirect(@Nonnull IShouldRedirect shouldRedirect) {
-    	this.shouldRedirect = shouldRedirect;
+    	Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
+        this.shouldRedirect = shouldRedirect;
     }
 
     /**
@@ -537,7 +548,8 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param shouldretry The callback called before retry
      */
     public void setShouldRetry(@Nonnull IShouldRetry shouldretry) {
-    	this.shouldRetry = shouldretry;
+    	Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
+        this.shouldRetry = shouldretry;
     }
 
     /**

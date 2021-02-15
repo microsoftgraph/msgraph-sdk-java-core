@@ -32,6 +32,7 @@ import com.microsoft.graph.options.Option;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -96,6 +97,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
     @SuppressWarnings("unchecked")
     @Nonnull
     protected java.util.concurrent.CompletableFuture<T> sendAsync(@Nonnull final byte[] fileContents) {
+        Objects.requireNonNull(fileContents, "parameter fileContents cannot be null");
         baseRequest.setHttpMethod(HttpMethod.PUT);
         return baseRequest.getClient().getHttpProvider().sendAsync(this, (Class<T>) baseRequest.getResponseType(), fileContents);
     }
@@ -108,6 +110,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     @Nullable
     protected T send(@Nonnull final byte[] fileContents) {
+        Objects.requireNonNull(fileContents, "parameter fileContents cannot be null");
         baseRequest.setHttpMethod(HttpMethod.PUT);
         return (T) baseRequest.getClient().getHttpProvider().send(this, baseRequest.getResponseType(), fileContents);
     }
@@ -141,7 +144,8 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param value  the value of the header
      */
     @Override
-    public void addHeader(@Nonnull final String header, @Nonnull final String value) {
+    public void addHeader(@Nonnull final String header, @Nullable final String value) {
+        Objects.requireNonNull(header, "parameter header cannot be null");
         baseRequest.addHeader(header, value);
     }
 
@@ -211,6 +215,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param shouldRedirect Callback called before doing a redirect
      */
     public void setShouldRedirect(@Nonnull final IShouldRedirect shouldRedirect) {
+        Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
     	baseRequest.setShouldRedirect(shouldRedirect);
     }
 
@@ -230,6 +235,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param shouldretry The callback called before retry
      */
     public void setShouldRetry(@Nonnull final IShouldRetry shouldretry) {
+        Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
     	baseRequest.setShouldRetry(shouldretry);
     }
 
@@ -287,6 +293,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
     @Override
     @Nullable
     public IHttpRequest withHttpMethod(@Nonnull final HttpMethod httpMethod) {
+        Objects.requireNonNull(httpMethod, "parameter httpMethod cannot be null");
         baseRequest.setHttpMethod(httpMethod);
         return this;
     }
@@ -301,7 +308,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     @Override
     @Nullable
-    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
+    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nullable final requestBodyType serializedObject) throws ClientException {
         return baseRequest.getHttpRequest(serializedObject);
     }
 }

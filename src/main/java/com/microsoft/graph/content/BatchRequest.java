@@ -43,7 +43,7 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
      * @param client the client to use to execute the request
      * @param options the options to apply to the request
      */
-    public BatchRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient client, @Nonnull final List<? extends Option> options) {
+    public BatchRequest(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nonnull final List<? extends Option> options) {
         super(requestUrl, client, options, BatchResponseContent.class);
     }
 
@@ -55,7 +55,7 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable
-    public BatchResponseContent post(@Nonnull final BatchRequestContent content) throws ClientException {
+    public BatchResponseContent post(@Nullable final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
         final BatchResponseContent response = this.getClient().getHttpProvider().send(this, BatchResponseContent.class, content);
         setSerializerOnSteps(response);
@@ -69,7 +69,7 @@ public class BatchRequest extends BaseRequest<BatchResponseContent> {
      * @throws ClientException an exception occurs if there was an error while the request was sent
      */
     @Nullable
-    public java.util.concurrent.CompletableFuture<BatchResponseContent> postAsync(@Nonnull final BatchRequestContent content) throws ClientException {
+    public java.util.concurrent.CompletableFuture<BatchResponseContent> postAsync(@Nullable final BatchRequestContent content) throws ClientException {
         this.setHttpMethod(HttpMethod.POST);
         return this.getClient().getHttpProvider().sendAsync(this, BatchResponseContent.class, content).thenApply(response -> {
             setSerializerOnSteps(response);
