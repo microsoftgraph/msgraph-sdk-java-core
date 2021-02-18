@@ -29,6 +29,7 @@ import com.microsoft.graph.logger.ILogger;
 import java.lang.reflect.Type;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -47,7 +48,8 @@ public class EnumSetSerializer {
      * @param logger logger to use during serialization
      */
     public EnumSetSerializer(@Nonnull final ILogger logger) {
-         gson = new GsonBuilder().registerTypeAdapterFactory(new FallbackTypeAdapterFactory(logger)).create();
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
+        gson = new GsonBuilder().registerTypeAdapterFactory(new FallbackTypeAdapterFactory(logger)).create();
     }
 
     /**
@@ -59,8 +61,10 @@ public class EnumSetSerializer {
      */
     @Nullable
     public EnumSet<?> deserialize(@Nonnull final Type type, @Nonnull final String jsonStrToDeserialize) {
-            final String arrayString = "[" + jsonStrToDeserialize + "]";
-            return jsonStrToDeserialize == null ? null : (EnumSet<?>) gson.fromJson(arrayString, type);
+        Objects.requireNonNull(type, "parameter type cannot be null");
+        Objects.requireNonNull(jsonStrToDeserialize, "parameter jsonStrToDeserialize cannot be null");
+        final String arrayString = "[" + jsonStrToDeserialize + "]";
+        return jsonStrToDeserialize == null ? null : (EnumSet<?>) gson.fromJson(arrayString, type);
     }
 
     /**
@@ -71,6 +75,7 @@ public class EnumSetSerializer {
      */
     @Nullable
     public JsonPrimitive serialize(@Nonnull final EnumSet<?> src) {
+        Objects.requireNonNull(src, "parameter src cannot be null");
         final StringBuilder serializedStringBuilder = new StringBuilder();
 
         final Iterator<?> i = src.iterator();

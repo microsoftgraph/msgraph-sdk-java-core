@@ -23,6 +23,7 @@
 package com.microsoft.graph.options;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /** Represents an option to use with OData methods */
 public class FunctionOption extends Option {
@@ -33,7 +34,7 @@ public class FunctionOption extends Option {
      * @param name  the name of the option
      * @param value the value of the option
      */
-    public FunctionOption(@Nonnull final String name, @Nonnull final Object value) {
+    public FunctionOption(@Nonnull final String name, @Nullable final Object value) {
         super(name, value);
     }
 }

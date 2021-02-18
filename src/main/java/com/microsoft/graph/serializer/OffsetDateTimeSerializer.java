@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.time.OffsetDateTime;
@@ -58,6 +59,7 @@ public final class OffsetDateTimeSerializer {
      */
     @Nullable
     public static OffsetDateTime deserialize(@Nonnull final String strVal) throws ParseException {
+        Objects.requireNonNull(strVal, "parameter strVal cannot be null");
         final String[] sections = strVal.split("T");
         return OffsetDateTime.parse(missingColonPattern
                                         .matcher((sections.length == 2 &&
@@ -79,6 +81,7 @@ public final class OffsetDateTimeSerializer {
      */
     @Nonnull
     public static String serialize(@Nonnull final OffsetDateTime src) {
+        Objects.requireNonNull(src, "parameter src cannot be null");
         return src.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }

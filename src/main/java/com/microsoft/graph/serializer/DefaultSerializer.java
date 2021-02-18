@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
@@ -67,22 +68,24 @@ public class DefaultSerializer implements ISerializer {
 	 * @param logger the logger
 	 */
 	public DefaultSerializer(@Nonnull final ILogger logger) {
-		this.logger = logger;
+		this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
 		this.gson = GsonFactory.getGsonInstance(logger);
 	}
 
 	@Override
 	@Nullable
-	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
-		final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
+	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+		Objects.requireNonNull(inputString, "parameter inputString cannot be null");
+        final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
 		return deserializeObject(rawElement, clazz, responseHeaders);
 	}
 
 	@Override
 	@Nullable
-	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
+	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+		Objects.requireNonNull(inputStream, "parameter inputStream cannot be null");
         T result = null;
-        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream)) {
+        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream, "UTF-8")) {
 			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
 			result = deserializeObject(rawElement, clazz, responseHeaders);
         } catch (IOException ex) {
@@ -94,7 +97,9 @@ public class DefaultSerializer implements ISerializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
-	public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nonnull final Map<String, List<String>> responseHeaders) {
+	public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+		Objects.requireNonNull(rawElement, "parameter rawElement cannot be null");
+		Objects.requireNonNull(clazz, "parameter clazz cannot be null");
 		final T jsonObject = gson.fromJson(rawElement, clazz);
 
 		// Populate the JSON-backed fields for any annotations that are not in the object model
@@ -216,6 +221,7 @@ public class DefaultSerializer implements ISerializer {
 	@Override
 	@Nullable
 	public <T> String serializeObject(@Nonnull final T serializableObject) {
+        Objects.requireNonNull(serializableObject, "parameter serializableObject cannot be null");
         logger.logDebug("Serializing type " + serializableObject.getClass().getSimpleName());
 		JsonElement outJsonTree = gson.toJsonTree(serializableObject);
 
@@ -276,7 +282,7 @@ public class DefaultSerializer implements ISerializer {
 			try {
 				final Object fieldObject = field.get(serializableObject);
 				final JsonElement fieldJsonElement = outJson.get(field.getName());
-				if(fieldObject == null || field == null || fieldJsonElement == null)
+				if(fieldObject == null || fieldJsonElement == null)
 					continue;
 
 				// If the object is a HashMap, iterate through its children
@@ -352,7 +358,8 @@ public class DefaultSerializer implements ISerializer {
 	 * @return			the derived class if found, or null if not applicable
 	 */
 	@Nullable
-	public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nonnull final Class<?> parentClass) {
+	public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nullable final Class<?> parentClass) {
+        Objects.requireNonNull(jsonObject, "parameter jsonObject cannot be null");
 		//Identify the odata.type information if provided
 		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */

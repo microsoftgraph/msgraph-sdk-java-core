@@ -27,6 +27,9 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -58,6 +61,7 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      */
     @Nonnull
     public java.util.concurrent.CompletableFuture<T> postAsync(@Nullable final T newEntity, @Nonnull final IJsonBackedObject payload) {
+        Objects.requireNonNull(payload, "parameter payload cannot be null");
         return sendAsync(HttpMethod.POST, payload);
     }
 
@@ -69,7 +73,8 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      * @return the entity once request is executed
      */
     @Nullable
-    public T post(@Nonnull final T newEntity, @Nonnull final IJsonBackedObject payload) throws ClientException {
+    public T post(@Nullable final T newEntity, @Nonnull final IJsonBackedObject payload) throws ClientException {
+        Objects.requireNonNull(payload, "parameter payload cannot be null");
         final T response = send(HttpMethod.POST, payload);
         if (response != null){
             return newEntity;
@@ -119,6 +124,7 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      */
     @Nonnull
 	public java.util.concurrent.CompletableFuture<T> patchAsync(@Nonnull final T sourceObject) {
+        Objects.requireNonNull(sourceObject, "parameter sourceObject cannot be null");
 		return sendAsync(HttpMethod.PATCH, sourceObject);
 	}
 
@@ -130,6 +136,7 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      */
     @Nullable
 	public T patch(@Nonnull final T sourceObject) throws ClientException {
+        Objects.requireNonNull(sourceObject, "parameter sourceObject cannot be null");
 		return send(HttpMethod.PATCH, sourceObject);
 	}
 }

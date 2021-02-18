@@ -36,7 +36,7 @@ public class HeaderOption extends Option {
      * @param name  the name of the header
      * @param value the value of the header
      */
-    public HeaderOption(@Nonnull final String name, @Nonnull final String value) {
+    public HeaderOption(@Nonnull final String name, @Nullable final String value) {
         super(name, value);
     }
 }

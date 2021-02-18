@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -103,25 +104,15 @@ public class ChunkedUploadProvider<UploadType> {
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
                                  @Nonnull final Class<UploadType> uploadTypeClass) {
-        if (uploadSession == null) {
-            throw new InvalidParameterException("Upload session is null.");
-        }
-
-        if (client == null) {
-            throw new InvalidParameterException("OneDrive client is null.");
-        }
-
-        if (inputStream == null) {
-            throw new InvalidParameterException("Input stream is null.");
-        }
+        Objects.requireNonNull(uploadSession, "Upload session is null.");
 
         if (streamSize <= 0) {
             throw new InvalidParameterException("Stream size should larger than 0.");
         }
 
-        this.client = client;
+        this.client = Objects.requireNonNull(client, "Graph client is null.");
         this.readSoFar = 0;
-        this.inputStream = inputStream;
+        this.inputStream = Objects.requireNonNull(inputStream, "Input stream is null.");
         this.streamSize = streamSize;
         this.uploadUrl = uploadSession.getUploadUrl();
         this.responseHandler = new ChunkedUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());

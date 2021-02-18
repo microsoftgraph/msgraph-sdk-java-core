@@ -35,6 +35,7 @@ import com.microsoft.graph.serializer.ISerializer;
 
 import javax.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -74,7 +75,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 
     @Override
     public void setServiceRoot(@Nonnull final String value) {
-        endpoint = value;
+        endpoint = Objects.requireNonNull(value, "value parameter cannot be null");
     }
 
 	/**
@@ -88,7 +89,9 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 	 */
 	@Nonnull
 	public <T> CustomRequestBuilder<T> customRequest(@Nonnull final String url, @Nonnull final Class<T> responseType) {
-		return new CustomRequestBuilder<>(getServiceRoot() + url, this, null, responseType);
+		Objects.requireNonNull(url, "url parameter cannot be null");
+        Objects.requireNonNull(responseType, "responseType parameter cannot be null");
+        return new CustomRequestBuilder<>(getServiceRoot() + url, this, null, responseType);
 	}
 
 	/**
@@ -100,8 +103,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 	 */
 	@Nonnull
 	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
-		return new CustomRequestBuilder<>(getServiceRoot() + url, this, null,
-				JsonElement.class);
+		return this.customRequest(url, JsonElement.class);
     }
 
     /**
@@ -110,7 +112,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      */
     @Nonnull
     public BatchRequestBuilder batch() {
-        return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, null);
+        return new BatchRequestBuilder(getServiceRoot() + "/$batch", this, Collections.emptyList());
     }
 
     /**
@@ -196,7 +198,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 */
 		@Nonnull
 		public Builder<httpClientType, nativeRequestType> serializer(@Nonnull final ISerializer serializer) {
-			checkNotNull(serializer, "serializer");
+			Objects.requireNonNull(serializer, "parameter serializer cannot be null");
 			this.serializer = serializer;
 			return this;
 		}
@@ -210,7 +212,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 */
 		@Nonnull
 		public Builder<httpClientType, nativeRequestType> httpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
-			checkNotNull(httpProvider, "httpProvider");
+			Objects.requireNonNull(httpProvider, "parameter httpProvider cannot be null");
 			this.httpProvider = httpProvider;
 			return this;
 		}
@@ -224,7 +226,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 */
 		@Nonnull
 		public Builder<httpClientType, nativeRequestType> logger(@Nonnull final ILogger logger) {
-			checkNotNull(logger, "logger");
+			Objects.requireNonNull(logger, "parameter logger cannot be null");
 			this.logger = logger;
 			return this;
 		}
@@ -238,7 +240,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 */
 		@Nonnull
 		public Builder<httpClientType, nativeRequestType> httpClient(@Nonnull final httpClientType client) {
-			checkNotNull(client, "client");
+			Objects.requireNonNull(client, "parameter client cannot be null");
 			this.httpClient = client;
 			return this;
 		}
@@ -251,7 +253,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 */
 		@Nonnull
 		public Builder<httpClientType, nativeRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
-			checkNotNull(auth, "auth");
+			Objects.requireNonNull(auth, "parameter auth cannot be null");
 			this.auth = auth;
 			return this;
 		}
@@ -286,18 +288,6 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 			return buildClient(new BaseClient<>());
 		}
 	}
-
-	/**
-	 * Checks whether the provided object is null or not and throws an exception if it is
-	 *
-	 * @param o object to check
-	 * @param name name to use in the exception message
-	 */
-	protected static void checkNotNull(@Nullable final Object o, @Nonnull final String name) {
-		if (o==null) {
-			throw new NullPointerException(name + " cannot be null");
-		}
-    }
 
     /**
      * The HTTP provider instance
@@ -352,7 +342,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @param logger The logger
      */
     protected void setLogger(@Nonnull final ILogger logger) {
-        checkNotNull(logger, "logger");
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
         this.logger = logger;
     }
 
@@ -362,7 +352,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @param httpProvider The HTTP provider
      */
     protected void setHttpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
-        checkNotNull(httpProvider, "httpProvider");
+        Objects.requireNonNull(httpProvider, "parameter httpProvider cannot be null");
         this.httpProvider = httpProvider;
     }
 
@@ -372,7 +362,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @param serializer The serializer
      */
     public void setSerializer(@Nonnull final ISerializer serializer) {
-        checkNotNull(serializer, "serializer");
+        Objects.requireNonNull(serializer, "parameter serializer cannot be null");
         this.serializer = serializer;
     }
 

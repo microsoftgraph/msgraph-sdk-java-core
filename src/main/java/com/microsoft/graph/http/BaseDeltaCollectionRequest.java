@@ -23,6 +23,7 @@
 package com.microsoft.graph.http;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +70,8 @@ public abstract class BaseDeltaCollectionRequest<T, T2 extends ICollectionRespon
      * @param optionKey - the key to use for the query string parameter
      */
     protected void addDeltaTokenOption(@Nonnull final String value, @Nonnull final String optionKey) {
+        Objects.requireNonNull(value, "parameter value cannot be null");
+        Objects.requireNonNull(optionKey, "parameter optionKey cannot be null");
         addQueryOption(new QueryOption(optionKey, value));
     }
 
@@ -86,11 +89,10 @@ public abstract class BaseDeltaCollectionRequest<T, T2 extends ICollectionRespon
      */
     @Nonnull
     protected String getDeltaTokenFromLink(@Nonnull final String deltaLink) {
-        if(deltaLink != null) {
-            final Matcher matcher = pattern.matcher(deltaLink);
-            if(matcher.matches()) {
-                return matcher.group(1);
-            }
+        Objects.requireNonNull(deltaLink, "parameter deltaLink cannot be null");
+        final Matcher matcher = pattern.matcher(deltaLink);
+        if(matcher.matches()) {
+            return matcher.group(1);
         }
         return  "";
     }

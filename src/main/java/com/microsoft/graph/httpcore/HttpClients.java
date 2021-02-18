@@ -3,6 +3,7 @@ package com.microsoft.graph.httpcore;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -44,6 +45,7 @@ public class HttpClients {
      */
     @Nonnull
     public static OkHttpClient createDefault(@Nonnull final IAuthenticationProvider auth) {
+        Objects.requireNonNull(auth, "parameter auth cannot be null");
         return custom()
                 .addInterceptor(new AuthenticationHandler(auth))
                 .addInterceptor(new RetryHandler())

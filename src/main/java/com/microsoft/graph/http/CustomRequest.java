@@ -25,6 +25,9 @@ package com.microsoft.graph.http;
 import com.google.gson.JsonObject;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.core.ClientException;
@@ -122,6 +125,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nullable
     public T patch(@Nonnull final T sourceObject) throws ClientException {
+        Objects.requireNonNull(sourceObject, "parameter sourceObject cannot be null");
         return send(HttpMethod.PATCH, sourceObject);
     }
 
@@ -133,6 +137,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nonnull
     public java.util.concurrent.CompletableFuture<T> postAsync(@Nonnull final T newObject) {
+        Objects.requireNonNull(newObject, "parameter newObject cannot be null");
         return sendAsync(HttpMethod.POST, newObject);
     }
 
@@ -145,6 +150,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nullable
     public T post(@Nonnull final T newObject) throws ClientException {
+        Objects.requireNonNull(newObject, "parameter newObject cannot be null");
         return send(HttpMethod.POST, newObject);
     }
 
@@ -156,6 +162,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nonnull
     public java.util.concurrent.CompletableFuture<T> putAsync(@Nonnull final T putObject) {
+        Objects.requireNonNull(putObject, "parameter putObject cannot be null");
         return sendAsync(HttpMethod.PUT, putObject);
     }
 
@@ -168,6 +175,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nullable
     public T put(@Nonnull final T putObject) throws ClientException {
+        Objects.requireNonNull(putObject, "parameter putObject cannot be null");
         return send(HttpMethod.PUT, putObject);
     }
 
@@ -179,6 +187,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
      @Nonnull
      public CustomRequest<T> select(@Nonnull final String value) {
+         Objects.requireNonNull(value, "parameter value cannot be null");
          getQueryOptions().add(new QueryOption("$select", value));
          return this;
      }
@@ -191,6 +200,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
      @Nonnull
      public CustomRequest<T> expand(@Nonnull final String value) {
+         Objects.requireNonNull(value, "parameter value cannot be null");
          getQueryOptions().add(new QueryOption("$expand", value));
          return this;
      }

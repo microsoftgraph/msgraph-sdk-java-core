@@ -23,6 +23,9 @@
 package com.microsoft.graph.http;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import com.microsoft.graph.core.IBaseClient;
 
@@ -43,7 +46,7 @@ public class PrimitiveRequestBuilder<T> extends BaseRequestBuilder<T> {
      */
     public PrimitiveRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions, @Nonnull final Class<T> primitiveTypeClass) {
         super(requestUrl, client, requestOptions);
-        this._returnTypeClass = primitiveTypeClass;
+        this._returnTypeClass = Objects.requireNonNull(primitiveTypeClass, "paramter primitiveTypeClass cannot be null");
     }
 
     /**

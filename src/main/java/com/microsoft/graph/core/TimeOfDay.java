@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The time of day
@@ -37,6 +38,7 @@ public class TimeOfDay {
      */
     @Nullable
     public static TimeOfDay parse(@Nonnull final String timeStr) throws ParseException {
+        Objects.requireNonNull(timeStr, "parameter timeStr cannot be null");
         // break the date up into its constituent parts
         final String[] timeInfo = timeStr.split(":");
 

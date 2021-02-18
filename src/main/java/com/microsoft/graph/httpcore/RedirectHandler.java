@@ -115,13 +115,16 @@ public class RedirectHandler implements Interceptor{
 
     // Intercept request and response made to network
     @Override
-    @Nullable
+    @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request request = chain.request();
 
-        if(request.tag(TelemetryOptions.class) == null)
-            request = request.newBuilder().tag(TelemetryOptions.class, new TelemetryOptions()).build();
-        request.tag(TelemetryOptions.class).setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
+        TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
+        if(telemetryOptions == null) {
+            telemetryOptions = new TelemetryOptions();
+            request = request.newBuilder().tag(TelemetryOptions.class, telemetryOptions).build();
+        }
+        telemetryOptions.setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
 
         Response response = null;
         int requestsCount = 1;

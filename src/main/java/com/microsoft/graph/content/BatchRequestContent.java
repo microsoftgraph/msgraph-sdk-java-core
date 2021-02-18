@@ -138,10 +138,10 @@ public class BatchRequestContent {
 
         for(final String stepId : stepIds) {
             Objects.requireNonNull(stepId, "parameter stepIds cannot contain null values");
-            requests.removeIf(x -> x.id == stepId);
+            requests.removeIf(x -> stepId.equals(x.id));
             for(final BatchRequestStep<?> step : requests) {
                 if(step.dependsOn != null) {
-                    step.dependsOn.removeIf(x -> x == stepId);
+                    step.dependsOn.removeIf(x -> stepId.equals(x));
                     if(step.dependsOn.isEmpty())
                         step.dependsOn = null; // so we don't send dependsOn: [] over the wire
                 }

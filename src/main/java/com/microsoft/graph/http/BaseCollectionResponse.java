@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.annotations.Expose;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.serializer.IJsonBackedObject;
@@ -64,6 +67,8 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
      * @param json the JSON object to set this object to
      */
     public void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json) {
+        Objects.requireNonNull(serializer, "parameter serializer cannot be null");
+        Objects.requireNonNull(json, "parameter json cannot be null");
         if (json.has("value")) {
             final JsonArray array = json.getAsJsonArray("value");
             for (int i = 0; i < array.size(); i++) {

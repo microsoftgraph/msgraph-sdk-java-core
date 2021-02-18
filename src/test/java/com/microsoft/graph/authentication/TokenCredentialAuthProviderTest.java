@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class TokenCredentialAuthProviderTest {
 
-    public final String testToken = "CredentialTestToken";
+    private static final String testToken = "CredentialTestToken";
 
     @Test
     public void providerAddsTokenOnValidHostName() throws MalformedURLException, InterruptedException,

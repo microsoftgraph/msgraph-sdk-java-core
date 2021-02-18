@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
 
@@ -119,12 +120,12 @@ public class GraphServiceClientTest {
 
             @Override
             public <Result, BodyType> java.util.concurrent.CompletableFuture<Result> sendAsync(IHttpRequest request, Class<Result> resultClass, BodyType serializable) {
-                return null;
+                return CompletableFuture.completedFuture(null);
             }
 
             @Override
             public <Result, BodyType, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendAsync(IHttpRequest request, Class<Result> resultClass, BodyType serializable, final IStatefulResponseHandler<Result, DeserializeType> handler) {
-                return null;
+                return CompletableFuture.completedFuture(null);
             }
 
             @Override

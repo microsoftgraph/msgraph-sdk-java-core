@@ -3,6 +3,7 @@ package com.microsoft.graph.core;
 
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -36,6 +37,7 @@ public class DateOnly {
      */
     @Nullable
     public static DateOnly parse(@Nonnull final String dateStr) throws ParseException {
+        Objects.requireNonNull(dateStr, "parameter dateStr cannot be null");
         // break the date up into its constituent parts
         final String[] dateInfo = dateStr.split("-");
 

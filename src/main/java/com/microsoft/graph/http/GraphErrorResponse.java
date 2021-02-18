@@ -27,6 +27,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.serializer.AdditionalDataManager;
@@ -57,8 +60,8 @@ public class GraphErrorResponse implements IJsonBackedObject {
      * Sets the raw JSON object
      */
     @Override
-    public void setRawObject(@Nullable final ISerializer serializer, @Nonnull final JsonObject json) {
-        rawObject = json;
+    public void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json) {
+        rawObject = Objects.requireNonNull(json, "parameter json cannot be null");
     }
 
     @Override
