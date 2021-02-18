@@ -24,6 +24,7 @@ package com.microsoft.graph.http;
 
 import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -118,11 +119,10 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     @Nullable
     public T3 buildFromResponse(@Nonnull final T2 response) {
-        final List<com.microsoft.graph.options.Option> options = new java.util.ArrayList<com.microsoft.graph.options.Option>();
         try {
             final Object builder = response.nextLink() == null ? null : this.collRequestBuilderClass
                     .getConstructor(String.class, IBaseClient.class, java.util.List.class)
-                    .newInstance(response.nextLink(), getBaseRequest().getClient(), options);
+                    .newInstance(response.nextLink(), getBaseRequest().getClient(), Collections.emptyList());
             final T3 page = (T3)this.collectionPageClass.getConstructor(response.getClass(), this.collRequestBuilderClass).newInstance(response, builder);
             return page;
         } catch(IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {

@@ -95,6 +95,9 @@ public class CollectionResponseSerializer {
             }
             final BaseCollectionResponse<T1> response = (BaseCollectionResponse<T1>)responseClass.getConstructor().newInstance();
             response.value = list;
+            final JsonElement potentialNextLink = jsonAsObject.get("@odata.nextLink");
+            if(potentialNextLink != null)
+                response.nextLink = potentialNextLink.getAsString();
             response.setRawObject(serializer, jsonAsObject);
             return response;
         } catch(NoSuchMethodException | InstantiationException | InvocationTargetException ex) {
