@@ -104,6 +104,6 @@ public class ChunkedUploadRequest<UploadType> {
             return result;
         } else
             return new ChunkedUploadResult<UploadType>(
-                new ClientException("Upload session failed.", null));
+                new ClientException("Upload session failed.", result == null ? null : result.getError()));
     }
 }
