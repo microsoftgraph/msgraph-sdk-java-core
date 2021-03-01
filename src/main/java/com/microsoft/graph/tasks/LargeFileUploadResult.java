@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 /**
  * Wrapper class for different upload response from server.
  */
-public class ChunkedUploadResult<UploadType> {
+public class LargeFileUploadResult<UploadType> {
     /**
      * The uploaded item response.
      */
@@ -37,7 +37,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param uploaded The created item.
      */
-    protected ChunkedUploadResult(@Nullable final UploadType uploaded) {
+    protected LargeFileUploadResult(@Nullable final UploadType uploaded) {
         this.uploadedItem = uploaded;
         this.session = null;
         this.error = null;
@@ -48,7 +48,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param session The next session.
      */
-    protected ChunkedUploadResult(@Nullable final IUploadSession session) {
+    protected LargeFileUploadResult(@Nullable final IUploadSession session) {
         this.session = session;
         this.uploadedItem = null;
         this.error = null;
@@ -59,7 +59,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param error The error occurred during uploading.
      */
-    protected ChunkedUploadResult(@Nullable final ClientException error) {
+    protected LargeFileUploadResult(@Nullable final ClientException error) {
         this.error = error;
         this.uploadedItem = null;
         this.session = null;
@@ -70,7 +70,7 @@ public class ChunkedUploadResult<UploadType> {
      *
      * @param exception The exception received from server.
      */
-    protected ChunkedUploadResult(@Nonnull final GraphServiceException exception) {
+    protected LargeFileUploadResult(@Nonnull final GraphServiceException exception) {
         this(new ClientException(Objects
                                 .requireNonNull(exception, "parameter exception cannot be null")
                                 .getMessage(/* verbose */ true),

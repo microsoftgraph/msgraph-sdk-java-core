@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
@@ -42,7 +42,7 @@ import javax.annotation.Nonnull;
  *
  * @param <UploadType> the upload item type
  */
-public class ChunkedUploadProvider<UploadType> {
+public class LargeFileUploadTask<UploadType> {
 
     /**
      * The default chunk size for upload. Currently set to 5 MiB.
@@ -83,7 +83,7 @@ public class ChunkedUploadProvider<UploadType> {
     /**
      * The upload response handler
      */
-    private final ChunkedUploadResponseHandler<UploadType> responseHandler;
+    private final LargeFileUploadResponseHandler<UploadType> responseHandler;
 
     /**
      * The counter for how many bytes have been read from input stream
@@ -99,7 +99,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @param streamSize      the stream size
      * @param uploadTypeClass the upload type class
      */
-    public ChunkedUploadProvider(@Nonnull final IUploadSession uploadSession,
+    public LargeFileUploadTask(@Nonnull final IUploadSession uploadSession,
                                  @Nonnull final IBaseClient<?> client,
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
@@ -115,7 +115,7 @@ public class ChunkedUploadProvider<UploadType> {
         this.inputStream = Objects.requireNonNull(inputStream, "Input stream is null.");
         this.streamSize = streamSize;
         this.uploadUrl = uploadSession.getUploadUrl();
-        this.responseHandler = new ChunkedUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
+        this.responseHandler = new LargeFileUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
     }
 
     /**
@@ -159,10 +159,10 @@ public class ChunkedUploadProvider<UploadType> {
                 buffRead += read;
             }
 
-            final ChunkedUploadRequest<UploadType> request =
-                    new ChunkedUploadRequest<>(this.uploadUrl, this.client, options, buffer, buffRead,
+            final LargeFileUploadRequest<UploadType> request =
+                    new LargeFileUploadRequest<>(this.uploadUrl, this.client, options, buffer, buffRead,
                             this.readSoFar, this.streamSize);
-            final ChunkedUploadResult<UploadType> result = request.upload(this.responseHandler);
+            final LargeFileUploadResult<UploadType> result = request.upload(this.responseHandler);
             // TODO: upload should return a future, use sendfuture instead and the futures should be chained with completableFuture.then apply
 
             if (result.uploadCompleted()) {

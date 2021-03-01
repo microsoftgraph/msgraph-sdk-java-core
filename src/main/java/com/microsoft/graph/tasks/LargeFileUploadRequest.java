@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +21,7 @@ import com.microsoft.graph.options.Option;
  * The chunk upload request.
  * @param <UploadType>    The upload item type.
  */
-public class ChunkedUploadRequest<UploadType> {
+public class LargeFileUploadRequest<UploadType> {
 
     /**
      * Content Range header name.
@@ -41,7 +41,7 @@ public class ChunkedUploadRequest<UploadType> {
     /**
      * The base request.
      */
-    private final BaseRequest<ChunkedUploadResult<UploadType>> baseRequest;
+    private final BaseRequest<LargeFileUploadResult<UploadType>> baseRequest;
 
     /**
      * Construct the ChunkedUploadRequest
@@ -55,7 +55,7 @@ public class ChunkedUploadRequest<UploadType> {
      * @param totalLength The total length of the input stream.
      */
     @SuppressWarnings("unchecked")
-    protected ChunkedUploadRequest(@Nonnull final String requestUrl,
+    protected LargeFileUploadRequest(@Nonnull final String requestUrl,
                                 @Nonnull final IBaseClient<?> client,
                                 @Nullable final List<? extends Option> options,
                                 @Nonnull final byte[] chunk,
@@ -67,7 +67,7 @@ public class ChunkedUploadRequest<UploadType> {
         Objects.requireNonNull(chunk, "parameter chunk cannot be null");
         this.data = new byte[chunkSize];
         System.arraycopy(chunk, 0, this.data, 0, chunkSize);
-        this.baseRequest = new BaseRequest<ChunkedUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends ChunkedUploadResult<UploadType>>)(new ChunkedUploadResult<>((UploadType)null)).getClass()) {
+        this.baseRequest = new BaseRequest<LargeFileUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends LargeFileUploadResult<UploadType>>)(new LargeFileUploadResult<>((UploadType)null)).getClass()) {
         };
         this.baseRequest.setHttpMethod(HttpMethod.PUT);
         this.baseRequest.addHeader(CONTENT_RANGE_HEADER_NAME,
@@ -86,16 +86,16 @@ public class ChunkedUploadRequest<UploadType> {
      */
     @SuppressWarnings("unchecked")
     @Nonnull
-    public ChunkedUploadResult<UploadType> upload(
-            @Nonnull final ChunkedUploadResponseHandler<UploadType> responseHandler) {
+    public LargeFileUploadResult<UploadType> upload(
+            @Nonnull final LargeFileUploadResponseHandler<UploadType> responseHandler) {
         Objects.requireNonNull(responseHandler, "parameter responseHandler cannot be null");
-        ChunkedUploadResult<UploadType> result = null;
+        LargeFileUploadResult<UploadType> result = null;
 
         try {
             result = this.baseRequest
                     .getClient()
                     .getHttpProvider()
-                    .send(baseRequest, (Class<ChunkedUploadResult<UploadType>>)(Class<?>) ChunkedUploadResult.class, this.data, responseHandler);
+                    .send(baseRequest, (Class<LargeFileUploadResult<UploadType>>)(Class<?>) LargeFileUploadResult.class, this.data, responseHandler);
         } catch (final ClientException e) {
             throw new ClientException("Request failed with error, retry if necessary.", e);
         }
@@ -103,7 +103,7 @@ public class ChunkedUploadRequest<UploadType> {
         if (result != null && result.chunkCompleted()) {
             return result;
         } else
-            return new ChunkedUploadResult<UploadType>(
+            return new LargeFileUploadResult<UploadType>(
                 new ClientException("Upload session failed.", result == null ? null : result.getError()));
     }
 }
