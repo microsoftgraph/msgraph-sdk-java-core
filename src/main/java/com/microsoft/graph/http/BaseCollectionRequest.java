@@ -441,8 +441,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     @Override
     @Nullable
-    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nonnull final requestBodyType serializedObject) throws ClientException {
-        Objects.requireNonNull(serializedObject, "parameter serializedObject cannot be null");
+    public <requestBodyType, responseType, nativeRequestType> nativeRequestType getHttpRequest(@Nullable final requestBodyType serializedObject) throws ClientException {
         return baseRequest.getHttpRequest(serializedObject);
     }
 }
