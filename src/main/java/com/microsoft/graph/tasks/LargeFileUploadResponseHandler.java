@@ -51,8 +51,8 @@ import static com.microsoft.graph.http.HttpResponseCode.HTTP_OK;
  *
  * @param <UploadType> the expected uploaded item
  */
-public class LargeFileUploadResponseHandler<UploadType>
-		implements IStatefulResponseHandler<LargeFileUploadResult<UploadType>, UploadType> {
+class LargeFileUploadResponseHandler<UploadType>
+		implements IStatefulResponseHandler<LargeFileUploadResponse<UploadType>, UploadType> {
 	/**
 	 * The expected deserialized upload type
 	 */
@@ -70,64 +70,49 @@ public class LargeFileUploadResponseHandler<UploadType>
         this.uploadSessionClass = Objects.requireNonNull(uploadSessionType, "parameter uploadSessionType cannot be null");
 	}
 
-	/**
-	 * Do nothing before getting the response
-	 *
-	 * @param response The response
-	 */
-	@Override
-	public void configConnection(@Nonnull final Response response) {
-		return;
-	}
-
-	/**
-	 * Generate the chunked upload response result
-	 *
-	 * @param request	the HTTP request
-	 * @param response the HTTP response
-	 * @param serializer the serializer
-	 * @param logger	 the system logger
-	 * @return the chunked upload result, which could be either an uploaded item or error
-	 * @throws Exception an exception occurs if the request was unable to complete for any reason
-	 */
 	@Override
 	@Nullable
-	public LargeFileUploadResult<UploadType> generateResult(
+	public <ResponseType> LargeFileUploadResponse<UploadType> generateResult(
 			@Nonnull final IHttpRequest request,
-			@Nonnull final Response response,
+			@Nonnull final ResponseType response,
 			@Nonnull final ISerializer serializer,
 			@Nonnull final ILogger logger) throws Exception {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(response, "parameter response cannot be null");
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
         Objects.requireNonNull(logger, "parameter logger cannot be null");
-		if (response.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
+		if(!(response instanceof Response)) {
+            throw new ClientException("unsupported response type", null);
+        }
+        final Response nativeResponse = (Response)response;
+
+        if (nativeResponse.code() >= HttpResponseCode.HTTP_CLIENT_ERROR) {
 			logger.logDebug("Receiving error during upload, see detail on result error");
 
-			return new LargeFileUploadResult<>(
+			return new LargeFileUploadResponse<>(
 					GraphServiceException.createFromResponse(request, null, serializer,
-							response, logger));
-		} else if (response.code() >= HTTP_OK
-				&& response.code() < HttpResponseCode.HTTP_MULTIPLE_CHOICES) {
-            try(final ResponseBody body = response.body()) {
-                final String location = response.headers().get("Location");
+                    nativeResponse, logger));
+		} else if (nativeResponse.code() >= HTTP_OK
+				&& nativeResponse.code() < HttpResponseCode.HTTP_MULTIPLE_CHOICES) {
+            try(final ResponseBody body = nativeResponse.body()) {
+                final String location = nativeResponse.headers().get("Location");
                 final MediaType contentType = body.contentType();
                 final String subType = contentType == null ? null : contentType.subtype();
                 if (subType != null && subType.contains("json")) {
                     return parseJsonUploadResult(body, serializer, logger);
                 } else if (location != null) {
                     logger.logDebug("Upload session is completed (Outlook), uploaded item returned.");
-                    return new LargeFileUploadResult<>(this.deserializeTypeClass.getDeclaredConstructor().newInstance());
+                    return new LargeFileUploadResponse<>(location);
                 } else {
                     logger.logDebug("Upload session returned an unexpected response");
                 }
             }
 		}
-		return new LargeFileUploadResult<>(new ClientException("Received an unexpected response from the service, response code: " + response.code(), null));
+		return new LargeFileUploadResponse<>(new ClientException("Received an unexpected response from the service, response code: " + nativeResponse.code(), null));
 	}
 
 	@Nonnull
-	private LargeFileUploadResult<UploadType> parseJsonUploadResult(@Nonnull final ResponseBody responseBody, @Nonnull final ISerializer serializer, @Nonnull final ILogger logger) throws IOException {
+	private LargeFileUploadResponse<UploadType> parseJsonUploadResult(@Nonnull final ResponseBody responseBody, @Nonnull final ISerializer serializer, @Nonnull final ILogger logger) throws IOException {
 		try (final InputStream in = responseBody.byteStream()) {
 			final byte[] responseBytes = ByteStreams.toByteArray(in);
 			final IUploadSession session = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), uploadSessionClass);
@@ -135,10 +120,10 @@ public class LargeFileUploadResponseHandler<UploadType>
 			if (session == null || session.getNextExpectedRanges() == null) {
 				logger.logDebug("Upload session is completed (ODSP), uploaded item returned.");
 				final UploadType uploadedItem = serializer.deserializeObject(new ByteArrayInputStream(responseBytes), this.deserializeTypeClass);
-				return new LargeFileUploadResult<>(uploadedItem);
+				return new LargeFileUploadResponse<>(uploadedItem);
 			} else {
 				logger.logDebug("Chunk bytes has been accepted by the server.");
-				return new LargeFileUploadResult<>(session);
+				return new LargeFileUploadResponse<>(session);
 			}
 		}
 	}

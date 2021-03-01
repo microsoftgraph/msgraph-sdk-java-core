@@ -21,7 +21,7 @@ import com.microsoft.graph.options.Option;
  * The chunk upload request.
  * @param <UploadType>    The upload item type.
  */
-public class LargeFileUploadRequest<UploadType> {
+class LargeFileUploadRequest<UploadType> {
 
     /**
      * Content Range header name.
@@ -41,7 +41,7 @@ public class LargeFileUploadRequest<UploadType> {
     /**
      * The base request.
      */
-    private final BaseRequest<LargeFileUploadResult<UploadType>> baseRequest;
+    private final BaseRequest<LargeFileUploadResponse<UploadType>> baseRequest;
 
     /**
      * Construct the ChunkedUploadRequest
@@ -67,7 +67,7 @@ public class LargeFileUploadRequest<UploadType> {
         Objects.requireNonNull(chunk, "parameter chunk cannot be null");
         this.data = new byte[chunkSize];
         System.arraycopy(chunk, 0, this.data, 0, chunkSize);
-        this.baseRequest = new BaseRequest<LargeFileUploadResult<UploadType>>(requestUrl, client, options, (Class<? extends LargeFileUploadResult<UploadType>>)(new LargeFileUploadResult<>((UploadType)null)).getClass()) {
+        this.baseRequest = new BaseRequest<LargeFileUploadResponse<UploadType>>(requestUrl, client, options, (Class<? extends LargeFileUploadResponse<UploadType>>)(new LargeFileUploadResponse<>((UploadType)null)).getClass()) {
         };
         this.baseRequest.setHttpMethod(HttpMethod.PUT);
         this.baseRequest.addHeader(CONTENT_RANGE_HEADER_NAME,
@@ -86,16 +86,16 @@ public class LargeFileUploadRequest<UploadType> {
      */
     @SuppressWarnings("unchecked")
     @Nonnull
-    public LargeFileUploadResult<UploadType> upload(
+    public LargeFileUploadResponse<UploadType> upload(
             @Nonnull final LargeFileUploadResponseHandler<UploadType> responseHandler) {
         Objects.requireNonNull(responseHandler, "parameter responseHandler cannot be null");
-        LargeFileUploadResult<UploadType> result = null;
+        LargeFileUploadResponse<UploadType> result = null;
 
         try {
             result = this.baseRequest
                     .getClient()
                     .getHttpProvider()
-                    .send(baseRequest, (Class<LargeFileUploadResult<UploadType>>)(Class<?>) LargeFileUploadResult.class, this.data, responseHandler);
+                    .send(baseRequest, (Class<LargeFileUploadResponse<UploadType>>)(Class<?>) LargeFileUploadResponse.class, this.data, responseHandler);
         } catch (final ClientException e) {
             throw new ClientException("Request failed with error, retry if necessary.", e);
         }
@@ -103,7 +103,7 @@ public class LargeFileUploadRequest<UploadType> {
         if (result != null && result.chunkCompleted()) {
             return result;
         } else
-            return new LargeFileUploadResult<UploadType>(
+            return new LargeFileUploadResponse<UploadType>(
                 new ClientException("Upload session failed.", result == null ? null : result.getError()));
     }
 }
