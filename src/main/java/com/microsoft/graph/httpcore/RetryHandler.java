@@ -22,10 +22,8 @@ public class RetryHandler implements Interceptor{
      */
     private final String RETRY_ATTEMPT_HEADER = "Retry-Attempt";
     private final String RETRY_AFTER = "Retry-After";
-    private final String TRANSFER_ENCODING = "Transfer-Encoding";
-    private final String TRANSFER_ENCODING_CHUNKED = "chunked";
-    private final String APPLICATION_OCTET_STREAM = "application/octet-stream";
-    private final String CONTENT_TYPE = "Content-Type";
+    /** Content length request header value */
+    private final String CONTENT_LENGTH = "Content-Length";
 
     public static final int MSClientErrorCodeTooManyRequests = 429;
     public static final int MSClientErrorCodeServiceUnavailable  = 503;
@@ -66,7 +64,7 @@ public class RetryHandler implements Interceptor{
 		// without any retry attempt.
 		shouldRetry =
 				(executionCount <= retryOptions.maxRetries())
-				&& checkStatus(statusCode) && isBuffered(response, request)
+				&& checkStatus(statusCode) && isBuffered(request)
 				&& shouldRetryCallback != null
 				&& shouldRetryCallback.shouldRetry(retryOptions.delay(), executionCount, request, response);
 
@@ -106,27 +104,22 @@ public class RetryHandler implements Interceptor{
 	    		|| statusCode == MSClientErrorCodeGatewayTimeout);
 	}
 
-	boolean isBuffered(Response response, Request request) {
-		String methodName = request.method();
-		if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE") || methodName.equalsIgnoreCase("HEAD") || methodName.equalsIgnoreCase("OPTIONS"))
-			return true;
+	boolean isBuffered(Request request) {
+		final String methodName = request.method();
 
-		boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
+		final boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
 				methodName.equalsIgnoreCase("PUT") ||
 				methodName.equalsIgnoreCase("PATCH");
 
-		if(isHTTPMethodPutPatchOrPost) {
-			boolean isStream = response.header(CONTENT_TYPE)!=null && response.header(CONTENT_TYPE).equalsIgnoreCase(APPLICATION_OCTET_STREAM);
-			if(!isStream) {
-				String transferEncoding = response.header(TRANSFER_ENCODING);
-				boolean isTransferEncodingChunked = (transferEncoding != null) &&
-						transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
-
-				if(request.body() != null && isTransferEncodingChunked)
-					return true;
-			}
+		if(isHTTPMethodPutPatchOrPost && request.body() != null) {
+            try {
+                return request.body().contentLength() != -1L;
+            } catch (IOException ex) {
+                // expected
+                return false;
+            }
 		}
-		return false;
+		return true;
 	}
 
 	@Override

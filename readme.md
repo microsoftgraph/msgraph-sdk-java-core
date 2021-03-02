@@ -15,12 +15,12 @@ Add the repository and a compile dependency for `microsoft-graph-core` to your p
 
 ```gradle
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:1.0.8'
+    implementation 'com.microsoft.graph:microsoft-graph-core:1.0.9'
 }
 ```
 
@@ -32,7 +32,7 @@ Add the dependency in `dependencies` in pom.xml
 <dependency>
 	<groupId>com.microsoft.graph</groupId>
 	<artifactId>microsoft-graph-core</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 </dependency>
 ```
 
