@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import org.junit.Test;
@@ -16,6 +17,7 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 
 public class RetryHandlerTest {
 
@@ -76,7 +78,7 @@ public class RetryHandlerTest {
 		// Default retry options with Number of maxretries default to 3
 		RetryOptions retryOptions = new RetryOptions();
 		// Try to execute one more than allowed default max retries
-		int executionCount = RetryOptions.DEFAULT_MAX_RETRIES + 1; 
+		int executionCount = RetryOptions.DEFAULT_MAX_RETRIES + 1;
 		assertFalse(retryhandler.retryRequest(response, executionCount, httpget, retryOptions));
 	}
 
@@ -87,7 +89,7 @@ public class RetryHandlerTest {
 		Response response = new Response.Builder()
 				.protocol(Protocol.HTTP_1_1)
 				// For status code 500 which is not in (429 503 504), So NO retry
-				.code(HTTP_SERVER_ERROR)  
+				.code(HTTP_SERVER_ERROR)
 				.message( "Internal Server Error")
 				.request(httpget)
 				.build();
@@ -100,7 +102,7 @@ public class RetryHandlerTest {
 		Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
 		Response response = new Response.Builder()
 				.protocol(Protocol.HTTP_1_1)
-				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)  
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
 				.message( "gateway timeout")
 				.request(httppost)
 				.addHeader("Transfer-Encoding", "chunked")
@@ -114,15 +116,15 @@ public class RetryHandlerTest {
 		Request httppost = new Request.Builder().url(testmeurl).post(RequestBody.create(MediaType.parse("application/json"), "TEST")).build();
 		Response response = new Response.Builder()
 				.protocol(Protocol.HTTP_1_1)
-				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)  
+				.code(HttpURLConnection.HTTP_GATEWAY_TIMEOUT)
 				.message( "gateway timeout")
 				.request(httppost)
 				.addHeader("Transfer-Encoding", "chunked")
 				.build();
-		
+
 		assertTrue(retryhandler.retryRequest(response, 1, httppost, new RetryOptions()));
 	}
-	
+
 	@Test
 	public void testGetRetryAfterWithHeader() {
 		RetryHandler retryHandler = new RetryHandler();
@@ -131,7 +133,7 @@ public class RetryHandlerTest {
 		delay = retryHandler.getRetryAfter(TestResponse().newBuilder().addHeader("Retry-After", "1").build(), 2, 3);
 		assertTrue(delay == 1000);
 	}
-	
+
 	@Test
 	public void testGetRetryAfterOnFirstExecution() {
 		RetryHandler retryHandler = new RetryHandler();
@@ -140,14 +142,48 @@ public class RetryHandlerTest {
 		delay = retryHandler.getRetryAfter(TestResponse(), 3, 2);
 		assertTrue(delay > 3100);
 	}
-	
+
 	@Test
 	public void testGetRetryAfterMaxExceed() {
 		RetryHandler retryHandler = new RetryHandler();
 		long delay = retryHandler.getRetryAfter(TestResponse(), 190, 1);
 		assertTrue(delay == 180000);
 	}
-	
+    @Test
+    public void testIsBuffered() {
+		final RetryHandler retryHandler = new RetryHandler();
+        Request request = new Request.Builder().url("https://localhost").method("GET", null).build();
+        assertTrue("Get Request is buffered", retryHandler.isBuffered(request));
+
+        request = new Request.Builder().url("https://localhost").method("DELETE", null).build();
+        assertTrue("Delete Request is buffered", retryHandler.isBuffered(request));
+
+        request = new Request.Builder().url("https://localhost")
+                                        .method("POST",
+                                            RequestBody.create(MediaType.parse("application/json"),
+                                                                "{\"key\": 42 }"))
+                                        .build();
+        assertTrue("Post Request is buffered", retryHandler.isBuffered(request));
+
+        request = new Request.Builder().url("https://localhost")
+                                        .method("POST",
+                                            new RequestBody() {
+
+												@Override
+												public MediaType contentType() {
+													return MediaType.parse("application/octet-stream");
+												}
+
+												@Override
+												public void writeTo(BufferedSink sink) throws IOException {
+													// TODO Auto-generated method stub
+
+												}
+                                            })
+                                        .build();
+        assertFalse("Post Stream Request is not buffered", retryHandler.isBuffered(request));
+    }
+
 	Response TestResponse() {
 		return new Response.Builder()
 				.code(429)
