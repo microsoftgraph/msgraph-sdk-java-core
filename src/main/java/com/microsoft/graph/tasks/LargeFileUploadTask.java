@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
@@ -42,7 +42,7 @@ import javax.annotation.Nonnull;
  *
  * @param <UploadType> the upload item type
  */
-public class ChunkedUploadProvider<UploadType> {
+public class LargeFileUploadTask<UploadType> {
 
     /**
      * The default chunk size for upload. Currently set to 5 MiB.
@@ -83,7 +83,7 @@ public class ChunkedUploadProvider<UploadType> {
     /**
      * The upload response handler
      */
-    private final ChunkedUploadResponseHandler<UploadType> responseHandler;
+    private final LargeFileUploadResponseHandler<UploadType> responseHandler;
 
     /**
      * The counter for how many bytes have been read from input stream
@@ -99,7 +99,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @param streamSize      the stream size
      * @param uploadTypeClass the upload type class
      */
-    public ChunkedUploadProvider(@Nonnull final IUploadSession uploadSession,
+    public LargeFileUploadTask(@Nonnull final IUploadSession uploadSession,
                                  @Nonnull final IBaseClient<?> client,
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
@@ -115,7 +115,7 @@ public class ChunkedUploadProvider<UploadType> {
         this.inputStream = Objects.requireNonNull(inputStream, "Input stream is null.");
         this.streamSize = streamSize;
         this.uploadUrl = uploadSession.getUploadUrl();
-        this.responseHandler = new ChunkedUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
+        this.responseHandler = new LargeFileUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
     }
 
     /**
@@ -128,7 +128,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<UploadType> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
             throws IOException {
 
         int internalChunkSize = chunkSize;
@@ -159,36 +159,43 @@ public class ChunkedUploadProvider<UploadType> {
                 buffRead += read;
             }
 
-            final ChunkedUploadRequest<UploadType> request =
-                    new ChunkedUploadRequest<>(this.uploadUrl, this.client, options, buffer, buffRead,
+            final LargeFileUploadRequest<UploadType> request =
+                    new LargeFileUploadRequest<>(this.uploadUrl, this.client, options, buffer, buffRead,
                             this.readSoFar, this.streamSize);
-            final ChunkedUploadResult<UploadType> result = request.upload(this.responseHandler);
+            final LargeFileUploadResponse<UploadType> response = request.upload(this.responseHandler);
             // TODO: upload should return a future, use sendfuture instead and the futures should be chained with completableFuture.then apply
 
-            if (result.uploadCompleted()) {
+            if (response.uploadCompleted()) {
                 if(progressCallback != null) {
                     progressCallback.progress(this.streamSize, this.streamSize);
                 }
-                return completedFuture(result.getItem());
-            } else if (result.chunkCompleted()) {
+                final LargeFileUploadResult<UploadType> result = new LargeFileUploadResult<UploadType>();
+                if (response.getItem() != null) {
+                    result.responseBody = response.getItem();
+                }
+                if (response.getLocation() != null) {
+                    result.location = response.getLocation();
+                }
+                return completedFuture(result);
+            } else if (response.chunkCompleted()) {
                 if(progressCallback != null) {
                     progressCallback.progress(this.readSoFar, this.streamSize);
                 }
-            } else if (result.hasError()) {
-                return failedFuture(result.getError());
+            } else if (response.hasError()) {
+                return failedFuture(response.getError());
             }
 
             this.readSoFar += buffRead;
         }
         return failedFuture(new ClientException("Upload did not complete", null));
     }
-    private CompletableFuture<UploadType> completedFuture(final UploadType result) { // CompletableFuture.completedFuture(result.getItem()); missing on android
-        final CompletableFuture<UploadType> fut = new CompletableFuture<UploadType>();
+    private CompletableFuture<LargeFileUploadResult<UploadType>> completedFuture(final LargeFileUploadResult<UploadType> result) { // CompletableFuture.completedFuture(result.getItem()); missing on android
+        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
         fut.complete(result);
         return fut;
     }
-    private CompletableFuture<UploadType> failedFuture(ClientException ex) { // CompletableFuture.failedFuture not available on android
-        final CompletableFuture<UploadType> fut = new CompletableFuture<UploadType>();
+    private CompletableFuture<LargeFileUploadResult<UploadType>> failedFuture(ClientException ex) { // CompletableFuture.failedFuture not available on android
+        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
         fut.completeExceptionally(ex);
         return fut;
     }
@@ -200,7 +207,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<UploadType> uploadAsync()
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync()
     				throws IOException {
     	return uploadAsync(0);
     }
@@ -212,7 +219,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<UploadType> uploadAsync(@Nullable final int chunkSize)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize)
     				throws IOException {
     	return uploadAsync(chunkSize, null);
     }
@@ -225,7 +232,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<UploadType> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options)
     				throws IOException {
     	return uploadAsync(chunkSize, options, null);
     }
@@ -240,7 +247,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public UploadType upload(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
+    public LargeFileUploadResult<UploadType> upload(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
             throws IOException {
         try {
             return uploadAsync(chunkSize, options, progressCallback).get();
@@ -259,7 +266,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public UploadType upload(@Nullable final int chunkSize, @Nullable final List<Option> options)
+    public LargeFileUploadResult<UploadType> upload(@Nullable final int chunkSize, @Nullable final List<Option> options)
             throws IOException {
         return upload(chunkSize, options, null);
     }
@@ -271,7 +278,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public UploadType upload(@Nullable final int chunkSize)
+    public LargeFileUploadResult<UploadType> upload(@Nullable final int chunkSize)
             throws IOException {
         return upload(chunkSize, null);
     }
@@ -282,7 +289,7 @@ public class ChunkedUploadProvider<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public UploadType upload()
+    public LargeFileUploadResult<UploadType> upload()
             throws IOException {
         return upload(0);
     }

@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
@@ -16,7 +16,11 @@ import javax.annotation.Nonnull;
 /**
  * Wrapper class for different upload response from server.
  */
-public class ChunkedUploadResult<UploadType> {
+class LargeFileUploadResponse<UploadType> {
+    /**
+     * The location header from the response if provided
+     */
+    private final String location;
     /**
      * The uploaded item response.
      */
@@ -33,44 +37,59 @@ public class ChunkedUploadResult<UploadType> {
     private final ClientException error;
 
     /**
-     * Construct result with item created.
+     * Constructs response with the location header.
+     *
+     * @param location The location returned by the response
+     */
+    protected LargeFileUploadResponse(@Nullable final String location) {
+        this.location = location;
+        this.error = null;
+        this.session = null;
+        this.uploadedItem = null;
+    }
+
+    /**
+     * Construct response with item created.
      *
      * @param uploaded The created item.
      */
-    protected ChunkedUploadResult(@Nullable final UploadType uploaded) {
+    protected LargeFileUploadResponse(@Nullable final UploadType uploaded) {
         this.uploadedItem = uploaded;
         this.session = null;
         this.error = null;
+        this.location = null;
     }
 
     /**
-     * Construct result with next session.
+     * Construct response with next session.
      *
      * @param session The next session.
      */
-    protected ChunkedUploadResult(@Nullable final IUploadSession session) {
+    protected LargeFileUploadResponse(@Nullable final IUploadSession session) {
         this.session = session;
         this.uploadedItem = null;
         this.error = null;
+        this.location = null;
     }
 
     /**
-     * Construct result with error.
+     * Construct response with error.
      *
      * @param error The error occurred during uploading.
      */
-    protected ChunkedUploadResult(@Nullable final ClientException error) {
+    protected LargeFileUploadResponse(@Nullable final ClientException error) {
         this.error = error;
         this.uploadedItem = null;
         this.session = null;
+        this.location = null;
     }
 
     /**
-     * Construct result with server exception.
+     * Construct response with server exception.
      *
      * @param exception The exception received from server.
      */
-    protected ChunkedUploadResult(@Nonnull final GraphServiceException exception) {
+    protected LargeFileUploadResponse(@Nonnull final GraphServiceException exception) {
         this(new ClientException(Objects
                                 .requireNonNull(exception, "parameter exception cannot be null")
                                 .getMessage(/* verbose */ true),
@@ -78,9 +97,9 @@ public class ChunkedUploadResult<UploadType> {
     }
 
     /**
-     * Checks the chunk upload is completed.
+     * Checks the large upload range is completed.
      *
-     * @return true if current chunk upload is completed.
+     * @return true if current large upload range is completed.
      */
     public boolean chunkCompleted() {
         return this.uploadedItem != null || this.session != null;
@@ -92,7 +111,7 @@ public class ChunkedUploadResult<UploadType> {
      * @return true if the response is an item.
      */
     public boolean uploadCompleted() {
-        return this.uploadedItem != null;
+        return this.uploadedItem != null || this.location != null;
     }
 
     /**
@@ -132,5 +151,13 @@ public class ChunkedUploadResult<UploadType> {
     @Nullable
     public ClientException getError() {
         return this.error;
+    }
+    /**
+     * Get the location.
+     * @return The location.
+     */
+    @Nullable
+    public String getLocation () {
+        return this.location;
     }
 }

@@ -404,11 +404,6 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 
                 // Call being executed
 
-
-                if (handler != null) {
-                    handler.configConnection(response);
-                }
-
                 logger.logDebug(String.format(Locale.ROOT, "Response code %d, %s",
                         response.code(),
                         response.message()));

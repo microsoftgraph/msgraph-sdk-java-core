@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------------
-// Copyright (c) 2017 Microsoft Corporation
+// Copyright (c) 2021 Microsoft Corporation
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,29 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.concurrency;
+package com.microsoft.graph.tasks;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
- * A callback that describes how to deal with success, failure, and progress
+ * The interface for the Upload Session.
  */
-public interface IProgressCallback {
+public interface IUploadSession {
 
     /**
-     * How progress updates are handled for this callback
-     *
-     * @param current the current amount of progress
-     * @param max     the max amount of progress
+     * Gets the Upload Url.
+     * The URL endpoint that accepts PUT requests for byte ranges of the file.
+     * @return the upload Url
      */
-    void progress(final long current, final long max);
+    @Nullable
+    String getUploadUrl();
+    /**
+     * Gets the Next Expected Ranges.
+     * A collection of byte ranges that the server is missing for the file. These ranges are zero indexed and of the format 'start-end' (e.g. '0-26' to indicate the first 27 bytes of the file). When uploading files as Outlook attachments, instead of a collection of ranges, this property always indicates a single value '{start}', the location in the file where the next upload should begin.
+     * @return the Next Expected Ranges.
+     */
+    @Nullable
+    List<String> getNextExpectedRanges();
 }
