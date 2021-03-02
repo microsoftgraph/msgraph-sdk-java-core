@@ -128,7 +128,7 @@ public class LargeFileUploadTask<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options, @Nullable final IProgressCallback progressCallback)
             throws IOException {
 
         int internalChunkSize = chunkSize;
@@ -189,12 +189,12 @@ public class LargeFileUploadTask<UploadType> {
         }
         return failedFuture(new ClientException("Upload did not complete", null));
     }
-    private java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> completedFuture(final LargeFileUploadResult<UploadType> result) { // CompletableFuture.completedFuture(result.getItem()); missing on android
+    private CompletableFuture<LargeFileUploadResult<UploadType>> completedFuture(final LargeFileUploadResult<UploadType> result) { // CompletableFuture.completedFuture(result.getItem()); missing on android
         final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
         fut.complete(result);
         return fut;
     }
-    private java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> failedFuture(ClientException ex) { // CompletableFuture.failedFuture not available on android
+    private CompletableFuture<LargeFileUploadResult<UploadType>> failedFuture(ClientException ex) { // CompletableFuture.failedFuture not available on android
         final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
         fut.completeExceptionally(ex);
         return fut;
@@ -207,7 +207,7 @@ public class LargeFileUploadTask<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync()
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync()
     				throws IOException {
     	return uploadAsync(0);
     }
@@ -219,7 +219,7 @@ public class LargeFileUploadTask<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize)
     				throws IOException {
     	return uploadAsync(chunkSize, null);
     }
@@ -232,7 +232,7 @@ public class LargeFileUploadTask<UploadType> {
      * @throws IOException the IO exception that occurred during upload
      */
     @Nonnull
-    public java.util.concurrent.CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options)
+    public CompletableFuture<LargeFileUploadResult<UploadType>> uploadAsync(@Nullable final int chunkSize, @Nullable final List<Option> options)
     				throws IOException {
     	return uploadAsync(chunkSize, options, null);
     }
