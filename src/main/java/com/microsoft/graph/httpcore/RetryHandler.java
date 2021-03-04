@@ -15,6 +15,7 @@ import com.microsoft.graph.logger.ILogger;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -38,22 +39,6 @@ public class RetryHandler implements Interceptor{
      * Header name for the retry after information
      */
     private static final String RETRY_AFTER = "Retry-After";
-    /**
-     * Header name for the transfer information
-     */
-    private static final String TRANSFER_ENCODING = "Transfer-Encoding";
-    /**
-     * Chunked encoding header value
-     */
-    private static final String TRANSFER_ENCODING_CHUNKED = "chunked";
-    /**
-     * Binary content type header value
-     */
-    private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
-    /**
-     * Header name for the content type
-     */
-    private static final String CONTENT_TYPE = "Content-Type";
 
     /**
      * Too many requests status code
@@ -117,7 +102,7 @@ public class RetryHandler implements Interceptor{
         shouldRetry =
                 retryOptions != null
                 && executionCount <= retryOptions.maxRetries()
-                && checkStatus(statusCode) && isBuffered(response, request)
+                && checkStatus(statusCode) && isBuffered(request)
                 && shouldRetryCallback != null
                 && shouldRetryCallback.shouldRetry(retryOptions.delay(), executionCount, request, response);
 
@@ -157,28 +142,23 @@ public class RetryHandler implements Interceptor{
                 || statusCode == MSClientErrorCodeGatewayTimeout);
     }
 
-    boolean isBuffered(final Response response, final Request request) {
-        String methodName = request.method();
-        if(methodName.equalsIgnoreCase("GET") || methodName.equalsIgnoreCase("DELETE") || methodName.equalsIgnoreCase("HEAD") || methodName.equalsIgnoreCase("OPTIONS"))
-            return true;
+    boolean isBuffered(final Request request) {
+        final String methodName = request.method();
 
-        boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
+        final boolean isHTTPMethodPutPatchOrPost = methodName.equalsIgnoreCase("POST") ||
                 methodName.equalsIgnoreCase("PUT") ||
                 methodName.equalsIgnoreCase("PATCH");
 
-        if(isHTTPMethodPutPatchOrPost && response != null) {
-            final String contentTypeHeaderValue = response.header(CONTENT_TYPE);
-            final boolean isStream = contentTypeHeaderValue!=null && contentTypeHeaderValue.equalsIgnoreCase(APPLICATION_OCTET_STREAM);
-            if(!isStream) {
-                final String transferEncoding = response.header(TRANSFER_ENCODING);
-                final boolean isTransferEncodingChunked = (transferEncoding != null) &&
-                        transferEncoding.equalsIgnoreCase(TRANSFER_ENCODING_CHUNKED);
-
-                if(request.body() != null && isTransferEncodingChunked)
-                    return true;
+        final RequestBody requestBody = request.body();
+        if(isHTTPMethodPutPatchOrPost && requestBody != null) {
+            try {
+                return requestBody.contentLength() != -1L;
+            } catch (IOException ex) {
+                // expected
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     @Override

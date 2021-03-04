@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 
 public class RetryHandlerTest {
 
@@ -152,6 +154,40 @@ public class RetryHandlerTest {
         assertThrows(NullPointerException.class, () -> {
             new RetryHandler(null, mock(RetryOptions.class));
         }, "logger cannot be null");
+    }
+
+    @Test
+    public void testIsBuffered() {
+        final RetryHandler retryHandler = new RetryHandler();
+        Request request = new Request.Builder().url("https://localhost").method("GET", null).build();
+        assertTrue(retryHandler.isBuffered(request), "Get Request is buffered");
+
+        request = new Request.Builder().url("https://localhost").method("DELETE", null).build();
+        assertTrue(retryHandler.isBuffered(request), "Delete Request is buffered");
+
+        request = new Request.Builder().url("https://localhost")
+                                        .method("POST",
+                                            RequestBody.create("{\"key\": 42 }", MediaType.parse("application/json")))
+                                        .build();
+        assertTrue(retryHandler.isBuffered(request), "Post Request is buffered");
+
+        request = new Request.Builder().url("https://localhost")
+                                        .method("POST",
+                                            new RequestBody() {
+
+                                                @Override
+                                                public MediaType contentType() {
+                                                    return MediaType.parse("application/octet-stream");
+                                                }
+
+                                                @Override
+                                                public void writeTo(BufferedSink sink) throws IOException {
+                                                    // TODO Auto-generated method stub
+
+                                                }
+                                            })
+                                        .build();
+        assertFalse(retryHandler.isBuffered(request), "Post Stream Request is not buffered");
     }
 
     Response TestResponse() {
