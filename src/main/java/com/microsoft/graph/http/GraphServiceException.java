@@ -274,12 +274,7 @@ public class GraphServiceException extends ClientException {
             if (verbose) {
                 sb.append(requestBody);
             } else {
-                final int bodyLength = Math.min(MAX_BREVITY_LENGTH, requestBody.length());
-                final String truncatedBody = requestBody.substring(0, bodyLength);
-                sb.append(truncatedBody);
-                if (truncatedBody.length() == MAX_BREVITY_LENGTH) {
-                    sb.append(TRUNCATION_MARKER);
-                }
+                sb.append(TRUNCATION_MARKER);
             }
         }
         sb.append(NEW_LINE).append(NEW_LINE);
