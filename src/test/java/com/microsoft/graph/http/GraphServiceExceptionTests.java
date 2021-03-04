@@ -74,4 +74,24 @@ public class GraphServiceExceptionTests {
         String message = exception.getMessage();
         assertTrue(message.indexOf("http://localhost") > 0);
     }
+    @Test
+    public void requestPayloadShouldNotBePartOfMessageWhenNotVerbose(){
+        final GraphErrorResponse errorResponse = new GraphErrorResponse();
+        final GraphError error = new GraphError();
+        error.code = GraphErrorCodes.UNAUTHENTICATED.toString();
+        errorResponse.error = error;
+        final GraphServiceException exception = new GraphServiceException("GET","https://graph.microsoft.com/v1.0/me",new ArrayList<String>(),"requestPayload",401,"Unauthorized",new ArrayList<String>(),errorResponse, false);
+        final String message = exception.getMessage();
+        assertFalse(message.indexOf("requestPayload") > 0);
+    }
+    @Test
+    public void requestPayloadShouldBePartOfMessageWhenVerbose(){
+        final GraphErrorResponse errorResponse = new GraphErrorResponse();
+        final GraphError error = new GraphError();
+        error.code = GraphErrorCodes.UNAUTHENTICATED.toString();
+        errorResponse.error = error;
+        final GraphServiceException exception = new GraphServiceException("GET","https://graph.microsoft.com/v1.0/me",new ArrayList<String>(),"requestPayload",401,"Unauthorized",new ArrayList<String>(),errorResponse, true);
+        final String message = exception.getMessage();
+        assertTrue(message.indexOf("requestPayload") > 0);
+    }
 }
