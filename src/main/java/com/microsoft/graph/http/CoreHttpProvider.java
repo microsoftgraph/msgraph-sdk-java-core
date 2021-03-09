@@ -268,11 +268,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 			// This ensures that the Content-Length header is properly set
 			if (request.getHttpMethod() == HttpMethod.POST) {
 				bytesToWrite = new byte[0];
-				if(contenttype == null) {
-					contenttype = BINARY_CONTENT_TYPE;
-				}
-			}
-			else {
+			} else {
 				bytesToWrite = null;
 			}
 		} else if (serializable instanceof byte[]) {
@@ -329,7 +325,11 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 
 				@Override
 				public MediaType contentType() {
-					return MediaType.parse(mediaContentType);
+                    if(mediaContentType == null || mediaContentType.isEmpty()) {
+                        return null;
+                    } else {
+					    return MediaType.parse(mediaContentType);
+                    }
 				}
 			};
 		}
