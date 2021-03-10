@@ -24,10 +24,10 @@ public class EdmNativeTypeSerializer {
     @Nullable
     public static <T> T deserialize(@Nonnull final JsonElement json, @Nonnull final Class<T> type, @Nonnull final ILogger logger) {
         if (json == null || type == null) {
-			return null;
+            return null;
         } else if(json.isJsonPrimitive()) {
             return getPrimitiveValue(json, type);
-		} else if(json.isJsonObject()) {
+        } else if(json.isJsonObject()) {
             final JsonElement element = json.getAsJsonObject().get("@odata.null");
             if(element != null && element.isJsonPrimitive()) {
                 return getPrimitiveValue(element, type);
