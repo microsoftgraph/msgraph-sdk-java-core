@@ -8,9 +8,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import com.microsoft.graph.core.GraphErrorCodes;
+import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.options.Option;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
@@ -21,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -33,6 +37,7 @@ import okhttp3.ResponseBody;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,14 +68,14 @@ public class CoreHttpProviderTests {
             mProvider.send(mRequest, Object.class, null);
             fail("Expected exception in previous statement");
         } catch (final GraphServiceException e) {
-        	assertTrue(e.getMessage().indexOf("truncated") > 0);
+            assertTrue(e.getMessage().indexOf("truncated") > 0);
             assertEquals(expectedMessage, e.getServiceError().message);
         }
     }
 
     @Test
     public void testVerboseErrorResponse() throws Exception {
-    	final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
+        final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
         final String expectedMessage = "Test error!";
         final GraphErrorResponse toSerialize = new GraphErrorResponse();
         toSerialize.error = new GraphError();
@@ -97,8 +102,8 @@ public class CoreHttpProviderTests {
             mProvider.send(mRequest, Object.class, null);
             fail("Expected exception in previous statement");
         } catch (final GraphServiceException e) {
-        	assertFalse(e.getMessage().indexOf("truncated") > 0);
-        	assertTrue(e.getMessage().indexOf("The raw request was invalid") < 0);
+            assertFalse(e.getMessage().indexOf("truncated") > 0);
+            assertTrue(e.getMessage().indexOf("The raw request was invalid") < 0);
         }
     }
 
@@ -138,6 +143,36 @@ public class CoreHttpProviderTests {
 
         String convertedData = CoreHttpProvider.streamToString(inputStream);
         assertEquals("", convertedData);
+    }
+    @Test
+    public void emptyPostContentTypeIsNotReset() {
+        final String contentTypeValue = "application/json";
+        final HeaderOption ctype = new HeaderOption("Content-Type", contentTypeValue);
+        final ArrayList<Option> options = new ArrayList<>();
+        options.add(ctype);
+        final IHttpRequest absRequest = new BaseRequest<String>("https://localhost", mock(IBaseClient.class), options, String.class) {{
+            this.setHttpMethod(HttpMethod.POST);
+        }};
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
+        mProvider = new CoreHttpProvider(serializer,
+                logger,
+                new OkHttpClient.Builder().build());
+        final Request request = mProvider.getHttpRequest(absRequest, String.class, null);
+        assertEquals(contentTypeValue, request.body().contentType().toString());
+    }
+    @Test
+    public void emptyPostContentTypeIsNotSet() {
+        final IHttpRequest absRequest = new BaseRequest<String>("https://localhost", mock(IBaseClient.class), Collections.emptyList(), String.class) {{
+            this.setHttpMethod(HttpMethod.POST);
+        }};
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
+        mProvider = new CoreHttpProvider(serializer,
+                logger,
+                new OkHttpClient.Builder().build());
+        final Request request = mProvider.getHttpRequest(absRequest, String.class, null);
+        assertNull(request.body().contentType());
     }
 
 

@@ -38,11 +38,13 @@ import com.microsoft.graph.core.DateOnly;
 
 import com.microsoft.graph.core.TimeOfDay;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.UUID;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
@@ -254,8 +256,78 @@ final class GsonFactory {
             }
         };
 
+        final JsonDeserializer<Boolean> booleanJsonDeserializer = new JsonDeserializer<Boolean>() {
+            @Override
+            public Boolean deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, Boolean.class, logger);
+            }
+        };
+
+        final JsonDeserializer<String> stringJsonDeserializer = new JsonDeserializer<String>() {
+            @Override
+            public String deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, String.class, logger);
+            }
+        };
+
+        final JsonDeserializer<BigDecimal> bigDecimalJsonDeserializer = new JsonDeserializer<BigDecimal>() {
+            @Override
+            public BigDecimal deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, BigDecimal.class, logger);
+            }
+        };
+
+        final JsonDeserializer<Integer> integerJsonDeserializer = new JsonDeserializer<Integer>() {
+            @Override
+            public Integer deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, Integer.class, logger);
+            }
+        };
+
+        final JsonDeserializer<Long> longJsonDeserializer = new JsonDeserializer<Long>() {
+            @Override
+            public Long deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, Long.class, logger);
+            }
+        };
+
+        final JsonDeserializer<UUID> uuidJsonDeserializer = new JsonDeserializer<UUID>() {
+            @Override
+            public UUID deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, UUID.class, logger);
+            }
+        };
+
+        final JsonDeserializer<Float> floatJsonDeserializer = new JsonDeserializer<Float>() {
+            @Override
+            public Float deserialize(final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context) throws JsonParseException {
+                    return EdmNativeTypeSerializer.deserialize(json, Float.class, logger);
+            }
+        };
+
         return new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapter(Boolean.class, booleanJsonDeserializer)
+                .registerTypeAdapter(String.class, stringJsonDeserializer)
+                .registerTypeAdapter(Float.class, floatJsonDeserializer)
+                .registerTypeAdapter(Integer.class, integerJsonDeserializer)
+                .registerTypeAdapter(BigDecimal.class, bigDecimalJsonDeserializer)
+                .registerTypeAdapter(UUID.class, uuidJsonDeserializer)
+                .registerTypeAdapter(Long.class, longJsonDeserializer)
                 .registerTypeAdapter(OffsetDateTime.class, calendarJsonSerializer)
                 .registerTypeAdapter(OffsetDateTime.class, calendarJsonDeserializer)
                 .registerTypeAdapter(GregorianCalendar.class, calendarJsonSerializer)
