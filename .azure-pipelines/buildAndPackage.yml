@@ -9,7 +9,6 @@ trigger:
       - dev
       - main
       - master
-      - feature/v2
   paths:
     include:
       - src/*
