@@ -9,7 +9,6 @@ on:
     branches:
       - dev
       - master
-      - feature/v2
 
 jobs:
   lint-api-level:
