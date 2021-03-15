@@ -3,24 +3,50 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Middleware responsible for adding telemetry information on SDK usage
+ * Note: the telemetry only collects anonymous information on SDK version and usage. No personal information is collected.
+ */
 public class TelemetryHandler implements Interceptor{
 
+    /**
+     * Http request header to send the telemetry infromation with
+     */
     public static final String SDK_VERSION = "SdkVersion";
-    public static final String VERSION = "v1.0.9";
+    /**
+     * Current SDK version
+     */
+    public static final String VERSION = "v2.0.0";
+    /**
+     * Verion prefix
+     */
     public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
+    /**
+     * Java version prefix
+     */
     public static final String JAVA_VERSION_PREFIX = "java";
+    /**
+     * Android version prefix
+     */
     public static final String ANDROID_VERSION_PREFIX = "android";
+    /**
+     * The client request ID header
+     */
     public static final String CLIENT_REQUEST_ID = "client-request-id";
     private static final String DEFAULT_VERSION_VALUE = "0";
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    @Nonnull
+    public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 
@@ -61,10 +87,14 @@ public class TelemetryHandler implements Interceptor{
                     break;
                 }
             }
-            final Field sdkVersionField = versionClass.getField("SDK_INT");
-            final Object value = sdkVersionField.get(null);
-            final String valueStr = String.valueOf(value);
-            return valueStr == null || valueStr == "" ? DEFAULT_VERSION_VALUE : valueStr;
+            if(versionClass == null)
+                return DEFAULT_VERSION_VALUE;
+            else {
+                final Field sdkVersionField = versionClass.getField("SDK_INT");
+                final Object value = sdkVersionField.get(null);
+                final String valueStr = String.valueOf(value);
+                return valueStr == null || valueStr.equals("") ? DEFAULT_VERSION_VALUE : valueStr;
+            }
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException ex) {
             // we're not on android and return "0" to align with java version which returns "0" when running on android
             return DEFAULT_VERSION_VALUE;
