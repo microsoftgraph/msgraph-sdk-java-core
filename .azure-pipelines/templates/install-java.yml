@@ -1,0 +1,11 @@
+steps:
+- pwsh: 'Invoke-WebRequest -Uri https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_windows_hotspot_15.0.2_7.zip -OutFile OpenJDK.zip'
+  displayName: 'Download JDK'
+
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '15'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'LocalDirectory'
+    jdkFile: 'OpenJDK.zip'
+    jdkDestinationDirectory: 'binaries'

@@ -9,15 +9,16 @@ trigger:
       - dev
       - main
       - master
+      - feature/v2
   paths:
     include:
       - src/*
     exclude:
+      - .gradle/wrapper
       - .gitignore
       - CONTRIBUTING.md
       - LICENSE
       - THIRD PARTY NOTICES
-      - build.gradle
       - gradle.properties
       - gradlew
       - gradlew.bat
@@ -28,78 +29,12 @@ trigger:
 pr: none
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: windows-latest
 
 steps:
-- checkout: self
-  clean: true
-  fetchDepth: 1
-
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-  displayName: 'Run CredScan'
-  inputs:
-    debugMode: false
-
-- task: DownloadSecureFile@1
-  inputs:
-    secureFile: 'local.properties'
-
-- task: DownloadSecureFile@1
-  inputs:
-    secureFile: 'secring.gpg'
-
-- task: DownloadSecureFile@1
-  inputs:
-    secureFile: 'secring.gpg.lock'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(Agent.TempDirectory)'
-    Contents: '**'
-    TargetFolder: '$(System.DefaultWorkingDirectory)'
-
-- task: Gradle@2
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    tasks: 'build'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    sonarQubeRunAnalysis: false
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)'
-    Contents: |
-      **/libs/*
-      build/generated-pom.xml
-      build/generated-pom.xml.asc
-      build.gradle
-      gradlew
-      gradlew.bat
-      settings.gradle
-      gradle.properties
-      **/gradle/wrapper/*
-      Scripts/**
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-
-- task: YodLabs.O365PostMessage.O365PostMessageBuild.O365PostMessageBuild@0
-  displayName: 'Graph Client Tooling pipeline fail notification'
-  inputs:
-    addressType: serviceEndpoint
-    serviceEndpointName: 'microsoftgraph pipeline status'
-    title: '$(Build.DefinitionName) failure notification'
-    text: 'This pipeline has failed. View the build details for further information. This is a blocking failure.'
-  condition: and(failed(), ne(variables['Build.Reason'], 'Manual'))
-  enabled: true
+- template: templates/checkout-and-credscan.yml
+- template: templates/install-java.yml
+- template: templates/secure-files.yml
+- template: templates/build-and-coverage.yml
+- template: templates/publish-artefacts.yml
+- template: templates/alert-failure.yml

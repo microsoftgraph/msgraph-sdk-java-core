@@ -1,0 +1,35 @@
+name: "samples build check"
+
+on:
+  push:
+    paths:
+      - '**/*.java'
+      - '**/*.yml'
+
+jobs:
+  samples-build-check-device-code:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 15
+    - name: Add execution right to the script
+      run: chmod +x gradlew
+      working-directory: ./samples/deviceCodeSample
+    - name: Build and run type summary project
+      run: ./gradlew --no-daemon build
+      working-directory: ./samples/deviceCodeSample
+  samples-build-check-interactive:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 15
+    - name: Add execution right to the script
+      run: chmod +x gradlew
+      working-directory: ./samples/interactiveBrowserSample
+    - name: Build and run type summary project
+      run: ./gradlew --no-daemon build
+      working-directory: ./samples/interactiveBrowserSample

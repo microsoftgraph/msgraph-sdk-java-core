@@ -13,10 +13,52 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'signing'
+    id 'jacoco'
+    id 'com.github.spotbugs' version '4.6.0'
 }
 
 java {
     modularity.inferModulePath = true
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.7-SNAPSHOT" //https://github.com/gradle/gradle/issues/15038
+}
+
+spotbugsMain {
+    excludeFilter = file("spotBugsExcludeFilter.xml")
+    reports {
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+spotbugsTest {
+    excludeFilter = file("spotBugsExcludeFilter.xml")
+    reports {
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/test/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
 
 sourceSets {
@@ -31,16 +73,10 @@ sourceSets {
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for jacoco, until 0.8.7 gets released
 }
 
-dependencies {
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
-    
-    api 'com.squareup.okhttp3:okhttp:3.12.1'
-    
-    implementation 'com.google.code.gson:gson:2.8.6'
-}
+apply from: "gradle/dependencies.gradle"
 
 def pomConfig = {
     licenses {
@@ -167,8 +203,8 @@ def fixAscNames = { name ->
 }
 
 compileJava {
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
 }
 
 def getVersionCode() {
