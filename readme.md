@@ -4,8 +4,8 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 
 ## Samples and usage guide
 
-- [Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)
-- [Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
+- [Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-design/)
+- [Batching](https://docs.microsoft.com/en-us/graph/sdks/batch-requests?tabs=java)
 
 ## 1. Installation
 
