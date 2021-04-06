@@ -24,6 +24,7 @@ jobs:
 
     - uses: actions/setup-java@v2
       with:
+        distribution: 'adopt'
         java-version: 15
 
     # If this run was triggered by a pull request event, then checkout
