@@ -22,8 +22,9 @@ jobs:
         # a pull request then we can checkout the head.
         fetch-depth: 2
 
-    - uses: actions/setup-java@v1
+    - uses: actions/setup-java@v2
       with:
+        distribution: 'adopt'
         java-version: 16
 
     # If this run was triggered by a pull request event, then checkout
