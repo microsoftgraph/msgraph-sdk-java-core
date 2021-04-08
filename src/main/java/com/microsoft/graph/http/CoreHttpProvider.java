@@ -58,8 +58,10 @@ import okhttp3.ResponseBody;
 import okio.BufferedSink;
 
 import static com.microsoft.graph.httpcore.middlewareoption.RedirectOptions.DEFAULT_MAX_REDIRECTS;
+import static com.microsoft.graph.httpcore.middlewareoption.RedirectOptions.DEFAULT_SHOULD_REDIRECT;
 import static com.microsoft.graph.httpcore.middlewareoption.RetryOptions.DEFAULT_DELAY;
 import static com.microsoft.graph.httpcore.middlewareoption.RetryOptions.DEFAULT_MAX_RETRIES;
+import static com.microsoft.graph.httpcore.middlewareoption.RetryOptions.DEFAULT_SHOULD_RETRY;
 
 /**
  * HTTP provider based off of OkHttp and msgraph-sdk-java-core library
@@ -240,10 +242,14 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 		logger.logDebug("Starting to send request, URL " + requestUrl.toString());
 
 		// Request level middleware options
-		final RedirectOptions redirectOptions = request.getMaxRedirects() == DEFAULT_MAX_REDIRECTS ? null
-            : new RedirectOptions(request.getMaxRedirects(), request.getShouldRedirect());
-		final RetryOptions retryOptions = (request.getMaxRetries() == DEFAULT_MAX_RETRIES && request.getDelay() == DEFAULT_DELAY) ? null
-            : new RetryOptions(request.getShouldRetry(), request.getMaxRetries(), request.getDelay());
+		final RedirectOptions redirectOptions =
+            request.getMaxRedirects() == DEFAULT_MAX_REDIRECTS && request.getShouldRedirect().equals(DEFAULT_SHOULD_REDIRECT)
+                ? null
+                : new RedirectOptions(request.getMaxRedirects(), request.getShouldRedirect());
+		final RetryOptions retryOptions =
+            request.getMaxRetries() == DEFAULT_MAX_RETRIES && request.getDelay() == DEFAULT_DELAY && request.getShouldRetry().equals(DEFAULT_SHOULD_RETRY)
+                ? null
+                : new RetryOptions(request.getShouldRetry(), request.getMaxRetries(), request.getDelay());
 
 		final Request coreHttpRequest = convertIHttpRequestToOkHttpRequest(request);
 		Request.Builder corehttpRequestBuilder = coreHttpRequest
