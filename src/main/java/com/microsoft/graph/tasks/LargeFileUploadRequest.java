@@ -100,7 +100,7 @@ class LargeFileUploadRequest<UploadType> {
             throw new ClientException("Request failed with error, retry if necessary.", e);
         }
 
-        if (result != null && result.chunkCompleted()) {
+        if (result != null && (result.chunkCompleted() || result.uploadCompleted())) {
             return result;
         } else
             return new LargeFileUploadResponse<UploadType>(
