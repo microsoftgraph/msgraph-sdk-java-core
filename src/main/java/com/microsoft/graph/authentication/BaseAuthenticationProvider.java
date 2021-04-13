@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * Provides basic common methods for all authentication providers
  */
 public abstract class BaseAuthenticationProvider implements IAuthenticationProvider {
-    private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn"));
+    private static final HashSet<String> validGraphHostNames = new HashSet<>(Arrays.asList("graph.microsoft.com", "graph.microsoft.us", "dod-graph.microsoft.us", "graph.microsoft.de", "microsoftgraph.chinacloudapi.cn", "canary.graph.microsoft.com"));
     /**
      * Determines whether a request should be authenticated or not based on it's url.
      * If you're implementing a custom provider, call that method first before getting the token
