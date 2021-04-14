@@ -25,7 +25,7 @@ jobs:
     - uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
-        java-version: 15
+        java-version: 16
 
     # If this run was triggered by a pull request event, then checkout
     # the head of the pull request instead of the merge commit.
