@@ -1,5 +1,6 @@
 package com.microsoft.graph.httpcore;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -262,5 +263,20 @@ public class RedirectHandlerTest {
             String expected = "https://graph.microsoft.com/v1.0/me/testrelativeurl";
             assertTrue(request.url().toString().compareTo(expected) == 0);
     }
+    @Test
+    public void testIsRedirectedIsFalseIfExceedsMaxRedirects() throws ProtocolException, IOException {
+        RedirectOptions options = new RedirectOptions(0, null);
+        RedirectHandler redirectHandler = new RedirectHandler(options);
+        Request httppost = new Request.Builder().url(testmeurl).build();
 
+        Response response = new Response.Builder()
+                .protocol(Protocol.HTTP_1_1)
+                .code(HttpURLConnection.HTTP_SEE_OTHER)
+                .message("See Other")
+                .addHeader("location", "/testrelativeurl")
+                .request(httppost)
+                .build();
+        boolean isRedirected = redirectHandler.isRedirected(httppost, response, 1, options);
+        assertFalse(isRedirected);
+    }
 }
