@@ -4,8 +4,8 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 
 ## Samples and usage guide
 
-- [Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki)
-- [Batching](https://github.com/microsoftgraph/msgraph-sdk-java-core/wiki/Batching)
+- [Middleware usage](https://github.com/microsoftgraph/msgraph-sdk-design/)
+- [Batching](https://docs.microsoft.com/en-us/graph/sdks/batch-requests?tabs=java)
 
 ## 1. Installation
 
@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.0'
+    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.1'
 }
 ```
 
@@ -32,7 +32,7 @@ Add the dependency in `dependencies` in pom.xml
 <dependency>
 	<groupId>com.microsoft.graph</groupId>
 	<artifactId>microsoft-graph-core</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 </dependency>
 ```
 

@@ -224,7 +224,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      *
      * @return Callback which is called before redirect
      */
-    @Nullable
+    @Nonnull
     public IShouldRedirect getShouldRedirect() {
     	return baseRequest.getShouldRedirect();
     }
@@ -244,7 +244,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      *
      * @return Callback called before retry
      */
-    @Nullable
+    @Nonnull
     public IShouldRetry getShouldRetry() {
     	return baseRequest.getShouldRetry();
     }

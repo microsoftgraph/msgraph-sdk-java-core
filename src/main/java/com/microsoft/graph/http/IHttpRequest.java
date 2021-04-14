@@ -119,7 +119,7 @@ public interface IHttpRequest {
      *
      * @return Callback which is called before redirect
      */
-    @Nullable
+    @Nonnull
     IShouldRedirect getShouldRedirect();
 
     /**
@@ -134,7 +134,7 @@ public interface IHttpRequest {
      *
      * @return Callback called before retry
      */
-    @Nullable
+    @Nonnull
     IShouldRetry getShouldRetry();
 
     /**

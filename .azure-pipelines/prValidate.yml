@@ -9,7 +9,6 @@ pr:
       - dev
       - main
       - master
-      - feature/v2
   paths:
     exclude:
       - .gradle/wrapper

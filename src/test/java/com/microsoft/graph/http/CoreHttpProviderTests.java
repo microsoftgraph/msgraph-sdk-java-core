@@ -9,6 +9,10 @@ import com.google.gson.JsonPrimitive;
 
 import com.microsoft.graph.core.GraphErrorCodes;
 import com.microsoft.graph.core.IBaseClient;
+import com.microsoft.graph.httpcore.middlewareoption.IShouldRedirect;
+import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
+import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
+import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
@@ -21,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ import okhttp3.ResponseBody;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -198,5 +204,88 @@ public class CoreHttpProviderTests {
                 mock(ILogger.class),
                 mClient);
     }
+    @Test
+    public void getHttpRequestDoesntSetRetryOrRedirectOptionsOnDefaultValues() throws MalformedURLException {
+        final IHttpRequest absRequest = mock(IHttpRequest.class);
+        when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+        when(absRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
 
+        mProvider = new CoreHttpProvider(serializer,
+                logger,
+                new OkHttpClient.Builder().build());
+
+        when(absRequest.getMaxRedirects()).thenReturn(RedirectOptions.DEFAULT_MAX_REDIRECTS);
+        when(absRequest.getShouldRedirect()).thenReturn(RedirectOptions.DEFAULT_SHOULD_REDIRECT);
+        Request request = mProvider.getHttpRequest(absRequest, String.class, null);
+        RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
+
+        assertNull(redirectOptions);
+
+        when(absRequest.getShouldRetry()).thenReturn(RetryOptions.DEFAULT_SHOULD_RETRY);
+        when(absRequest.getMaxRetries()).thenReturn(RetryOptions.DEFAULT_MAX_RETRIES);
+        when(absRequest.getDelay()).thenReturn(RetryOptions.DEFAULT_DELAY);
+
+        request = mProvider.getHttpRequest(absRequest, String.class, null);
+        RetryOptions retryOptions = request.tag(RetryOptions.class);
+
+        assertNull(retryOptions);
+    }
+
+    @Test
+    public void getHttpRequestSetsRetryOrRedirectOptionsOnNonDefaultValues() throws MalformedURLException {
+        final IHttpRequest absRequest = mock(IHttpRequest.class);
+        when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+        when(absRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
+
+        mProvider = new CoreHttpProvider(serializer,
+                logger,
+                new OkHttpClient.Builder().build());
+
+        // testing all pairs to cover all branches
+        when(absRequest.getMaxRedirects()).thenReturn(RedirectOptions.DEFAULT_MAX_REDIRECTS -1);
+        when(absRequest.getShouldRedirect()).thenReturn(mock(IShouldRedirect.class));
+        Request request = mProvider.getHttpRequest(absRequest, String.class, null);
+        RedirectOptions redirectOptions = request.tag(RedirectOptions.class);
+
+        assertNotNull(redirectOptions);
+
+        when(absRequest.getMaxRedirects()).thenReturn(RedirectOptions.DEFAULT_MAX_REDIRECTS);
+        when(absRequest.getShouldRedirect()).thenReturn(mock(IShouldRedirect.class));
+        request = mProvider.getHttpRequest(absRequest, String.class, null);
+        redirectOptions = request.tag(RedirectOptions.class);
+
+        assertNotNull(redirectOptions);
+
+        // testing all pairs to cover all branches
+        when(absRequest.getShouldRetry()).thenReturn(mock(IShouldRetry.class));
+        when(absRequest.getMaxRetries()).thenReturn(RetryOptions.DEFAULT_MAX_RETRIES-1);
+        when(absRequest.getDelay()).thenReturn(RetryOptions.DEFAULT_DELAY-1);
+
+        request = mProvider.getHttpRequest(absRequest, String.class, null);
+        RetryOptions retryOptions = request.tag(RetryOptions.class);
+
+        assertNotNull(retryOptions);
+
+        when(absRequest.getShouldRetry()).thenReturn(mock(IShouldRetry.class));
+        when(absRequest.getMaxRetries()).thenReturn(RetryOptions.DEFAULT_MAX_RETRIES);
+        when(absRequest.getDelay()).thenReturn(RetryOptions.DEFAULT_DELAY-1);
+
+        request = mProvider.getHttpRequest(absRequest, String.class, null);
+        retryOptions = request.tag(RetryOptions.class);
+
+        assertNotNull(retryOptions);
+
+        when(absRequest.getShouldRetry()).thenReturn(mock(IShouldRetry.class));
+        when(absRequest.getMaxRetries()).thenReturn(RetryOptions.DEFAULT_MAX_RETRIES);
+        when(absRequest.getDelay()).thenReturn(RetryOptions.DEFAULT_DELAY);
+
+        request = mProvider.getHttpRequest(absRequest, String.class, null);
+        retryOptions = request.tag(RetryOptions.class);
+
+        assertNotNull(retryOptions);
+    }
 }

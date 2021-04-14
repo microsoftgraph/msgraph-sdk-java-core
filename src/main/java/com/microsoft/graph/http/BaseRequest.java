@@ -537,7 +537,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      *
      * @return Callback which is called before redirect
      */
-    @Nullable
+    @Nonnull
     public IShouldRedirect getShouldRedirect() {
     	return shouldRedirect;
     }
@@ -557,7 +557,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      *
      * @return Callback called before retry
      */
-    @Nullable
+    @Nonnull
     public IShouldRetry getShouldRetry() {
     	return shouldRetry;
     }

@@ -357,7 +357,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      *
      * @return Callback which is called before redirect
      */
-    @Nullable
+    @Nonnull
     public IShouldRedirect getShouldRedirect() {
     	return baseRequest.getShouldRedirect();
     }
@@ -377,7 +377,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      *
      * @return Callback called before retry
      */
-    @Nullable
+    @Nonnull
     public IShouldRetry getShouldRetry() {
     	return baseRequest.getShouldRetry();
     }
