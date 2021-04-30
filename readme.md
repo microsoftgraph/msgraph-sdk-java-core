@@ -13,7 +13,7 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 
 Add the repository and a compile dependency for `microsoft-graph-core` to your project's `build.gradle`:
 
-```gradle
+```groovy
 repositories {
     mavenCentral()
 }
