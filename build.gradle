@@ -14,7 +14,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
-    id 'com.github.spotbugs' version '4.7.0'
+    id 'com.github.spotbugs' version '4.7.1'
 }
 
 java {
@@ -30,7 +30,7 @@ jacocoTestReport {
 }
 
 jacoco {
-    toolVersion = "0.8.7-SNAPSHOT" //https://github.com/gradle/gradle/issues/15038
+    toolVersion = "0.8.7"
 }
 
 spotbugsMain {

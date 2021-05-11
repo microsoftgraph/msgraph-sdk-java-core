@@ -81,7 +81,7 @@ public abstract class BaseDeltaCollectionRequest<T, T2 extends ICollectionRespon
      * ?token=thetoken (onedrive)
      * delta(token='thetoken') (formal OData function usage)
      */
-    private static Pattern pattern = Pattern.compile("(?i)(?>\\$?delta)?token=['\"]?([\\w-\\.]+)");
+    private static Pattern pattern = Pattern.compile("(?>[$]?delta)?token=['\"]?([\\w\\-\\.]+)", Pattern.CASE_INSENSITIVE);
     /**
      * Gets the delta token from the delta link provided by the previous response
      * @param deltaLink the delta link provided by the previous request
@@ -91,9 +91,9 @@ public abstract class BaseDeltaCollectionRequest<T, T2 extends ICollectionRespon
     protected String getDeltaTokenFromLink(@Nonnull final String deltaLink) {
         Objects.requireNonNull(deltaLink, "parameter deltaLink cannot be null");
         final Matcher matcher = pattern.matcher(deltaLink);
-        if(matcher.matches()) {
+        if(matcher.find()) {
             return matcher.group(1);
         }
-        return  "";
+        return "";
     }
 }

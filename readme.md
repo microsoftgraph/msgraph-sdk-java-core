@@ -13,14 +13,16 @@ Get started with the Microsoft Graph Core SDK for Java by integrating the [Micro
 
 Add the repository and a compile dependency for `microsoft-graph-core` to your project's `build.gradle`:
 
-```gradle
+```groovy
 repositories {
     mavenCentral()
 }
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.1'
+    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.2'
+    // This dependency is only needed if you are using the TokenCrendentialAuthProvider
+    implementation 'com.azure:azure-identity:1.2.5'
 }
 ```
 
@@ -30,9 +32,14 @@ Add the dependency in `dependencies` in pom.xml
 
 ```xml
 <dependency>
-	<groupId>com.microsoft.graph</groupId>
-	<artifactId>microsoft-graph-core</artifactId>
-	<version>2.0.1</version>
+    <!-- Include the sdk as a dependency -->
+    <groupId>com.microsoft.graph</groupId>
+    <artifactId>microsoft-graph-core</artifactId>
+    <version>2.0.2</version>
+    <!-- This dependency is only needed if you are using the TokenCrendentialAuthProvider -->
+    <groupId>com.azure</groupId>
+    <artifactId>azure-identity</artifactId>
+    <version>1.2.5</version>
 </dependency>
 ```
 
