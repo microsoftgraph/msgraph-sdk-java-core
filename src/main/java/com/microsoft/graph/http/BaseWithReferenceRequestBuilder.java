@@ -63,7 +63,7 @@ public abstract class BaseWithReferenceRequestBuilder<T, T2 extends BaseWithRefe
      * @param requestOptions the options for this request
      * @return the ReferenceRequest instance
      */
-    @Nullable
+    @Nonnull
     public T2 buildRequest(@Nullable final com.microsoft.graph.options.Option... requestOptions) {
         return buildRequest(getOptions(requestOptions));
     }
@@ -74,7 +74,7 @@ public abstract class BaseWithReferenceRequestBuilder<T, T2 extends BaseWithRefe
      * @param requestOptions the options for this request
      * @return the ReferenceRequest instance
      */
-    @Nullable
+    @Nonnull
     public T2 buildRequest(@Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions) {
         try {
             return wReferenceRequestClass.getConstructor(String.class, IBaseClient.class, java.util.List.class)
