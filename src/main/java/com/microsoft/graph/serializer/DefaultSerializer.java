@@ -393,7 +393,6 @@ public class DefaultSerializer implements ISerializer {
 	 *
 	 * @return a logger
 	 */
-	@VisibleForTesting
 	@Nullable
 	public ILogger getLogger() {
 		return logger;
