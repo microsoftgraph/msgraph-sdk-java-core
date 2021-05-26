@@ -33,6 +33,9 @@ import com.google.gson.annotations.SerializedName;
 import com.microsoft.graph.http.GraphErrorResponse;
 import com.microsoft.graph.http.GraphFatalServiceException;
 import com.microsoft.graph.http.GraphServiceException;
+import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.logger.LoggerLevel;
+import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
 /** Response for the batch step */
@@ -61,7 +64,13 @@ public class BatchResponseStep<T> extends BatchStep<T> {
         final GraphErrorResponse error = serializer.deserializeObject((JsonElement)body, GraphErrorResponse.class);
         if(error == null || error.error == null) {
             return serializer.deserializeObject((JsonElement)body, resultClass);
-        } else
-            throw GraphServiceException.createFromResponse("", "", new ArrayList<>(), "", headers, "", status, error, false);
+        } else {
+            boolean verboseError = false;
+            if(serializer instanceof DefaultSerializer) {
+                final ILogger logger = ((DefaultSerializer)serializer).getLogger();
+                verboseError = logger != null && logger.getLoggingLevel() == LoggerLevel.DEBUG;
+            }
+            throw GraphServiceException.createFromResponse("", "", new ArrayList<>(), "", headers, "", status, error, verboseError);
+        }
     }
 }
