@@ -46,7 +46,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
      * @param requestOptions the options for this request
      * @return the IUserRequest instance
      */
-    @Nullable
+    @Nonnull
     public T5 buildRequest(@Nullable final com.microsoft.graph.options.Option... requestOptions) {
         return buildRequest(getOptions(requestOptions));
     }
@@ -57,7 +57,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
      * @param requestOptions the options for this request
      * @return the IUserRequest instance
      */
-    @Nullable
+    @Nonnull
     public T5 buildRequest(@Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions) {
         try {
             return collRequestClass.getConstructor(String.class, IBaseClient.class, java.util.List.class)
