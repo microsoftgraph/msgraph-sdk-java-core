@@ -1,10 +1,12 @@
 package com.microsoft.graph.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
 import com.microsoft.graph.core.TimeOfDay;
+import com.microsoft.graph.logger.ILogger;
 
 public class TimeOfDayTests {
 
@@ -43,5 +45,11 @@ public class TimeOfDayTests {
         assertEquals(30, time.getMinute());
         assertEquals(44, time.getSecond());
     }
-
+    @Test
+    public void testTimeOfDaySerialization() throws Exception {
+        final TimeOfDay time = new TimeOfDay(12, 30, 44);
+        final ILogger logger = mock(ILogger.class);
+        final ISerializer serializer = new DefaultSerializer(logger);
+        assertEquals("\"12:30:44\"", serializer.serializeObject(time));
+    }
 }
