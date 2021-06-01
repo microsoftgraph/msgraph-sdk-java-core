@@ -592,7 +592,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	public static String streamToString(@Nonnull final InputStream input) {
         Objects.requireNonNull(input, "parameter input cannot be null");
 		final String endOfFile = "\\A";
-		try (final Scanner scanner = new Scanner(input, JSON_ENCODING)) {
+		try (final Scanner scanner = new Scanner(input, JSON_ENCODING.name())) {
 			scanner.useDelimiter(endOfFile);
 			if (scanner.hasNext()) {
 				return scanner.next();
