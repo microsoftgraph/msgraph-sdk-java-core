@@ -1,5 +1,7 @@
 # Microsoft Graph Core SDK for Java
 
+[![Download](https://img.shields.io/maven-central/v/com.microsoft.graph/microsoft-graph-core.svg)](https://search.maven.org/artifact/com.microsoft.graph/microsoft-graph-core) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=microsoftgraph_msgraph-sdk-java-core&metric=coverage)](https://sonarcloud.io/dashboard?id=microsoftgraph_msgraph-sdk-java-core) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=microsoftgraph_msgraph-sdk-java-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=microsoftgraph_msgraph-sdk-java-core)
+
 Get started with the Microsoft Graph Core SDK for Java by integrating the [Microsoft Graph API](https://developer.microsoft.com/en-us/graph/get-started/java) into your Java and Android application! You can also have a look at the [Javadoc](https://docs.microsoft.com/en-us/java/api/com.microsoft.graph.httpcore?view=graph-core-java)
 
 ## Samples and usage guide
