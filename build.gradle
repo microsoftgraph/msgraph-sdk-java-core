@@ -91,8 +91,8 @@ def pomConfig = {
 
 sonarqube {
   properties {
-    property "sonar.projectKey", "msgraph-sdk-java-core"
-    property "sonar.organization", "microsoftgraph"
+    property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"
+    property "sonar.organization", "microsoftgraph2"
     property "sonar.host.url", "https://sonarcloud.io"
   }
 }
