@@ -40,6 +40,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,7 +76,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
     /**
      * The encoding type for getBytes
      */
-    private static final String JSON_ENCODING = "UTF-8";
+    private static final Charset JSON_ENCODING = StandardCharsets.UTF_8;
     /**
      * The content type for JSON responses
      */
@@ -295,14 +297,10 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 		} else {
 			logger.logDebug("Sending " + serializable.getClass().getName() + " as request body");
 			final String serializeObject = serializer.serializeObject(serializable);
-			try {
-				bytesToWrite = serializeObject.getBytes(JSON_ENCODING);
-			} catch (final UnsupportedEncodingException ex) {
-				final ClientException clientException = new ClientException("Unsupported encoding problem: ",
-						ex);
-				logger.logError("Unsupported encoding problem: " + ex.getMessage(), ex);
-				throw clientException;
-			}
+            if(serializeObject == null) {
+                throw new ClientException("Error during serialization of request body, the result was null", null);
+            }
+            bytesToWrite = serializeObject.getBytes(JSON_ENCODING);
 
 			// If the user hasn't specified a Content-Type for the request
 			if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
@@ -593,9 +591,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
     @Nullable
 	public static String streamToString(@Nonnull final InputStream input) {
         Objects.requireNonNull(input, "parameter input cannot be null");
-		final String httpStreamEncoding = "UTF-8";
 		final String endOfFile = "\\A";
-		try (final Scanner scanner = new Scanner(input, httpStreamEncoding)) {
+		try (final Scanner scanner = new Scanner(input, JSON_ENCODING.name())) {
 			scanner.useDelimiter(endOfFile);
 			if (scanner.hasNext()) {
 				return scanner.next();

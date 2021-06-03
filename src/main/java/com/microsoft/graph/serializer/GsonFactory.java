@@ -256,6 +256,15 @@ final class GsonFactory {
             }
         };
 
+        final JsonSerializer<TimeOfDay> timeOfDayJsonSerializer = new JsonSerializer<TimeOfDay>() {
+            @Override
+            public JsonElement serialize(final TimeOfDay src,
+                                         final Type typeOfSrc,
+                                         final JsonSerializationContext context) {
+                return new JsonPrimitive(src.toString());
+            }
+        };
+
         final JsonDeserializer<Boolean> booleanJsonDeserializer = new JsonDeserializer<Boolean>() {
             @Override
             public Boolean deserialize(final JsonElement json,
@@ -344,6 +353,7 @@ final class GsonFactory {
                 .registerTypeHierarchyAdapter(BaseCollectionPage.class, collectionPageDeserializer)
                 .registerTypeHierarchyAdapter(BaseCollectionResponse.class, collectionResponseDeserializer)
                 .registerTypeAdapter(TimeOfDay.class, timeOfDayJsonDeserializer)
+                .registerTypeAdapter(TimeOfDay.class, timeOfDayJsonSerializer)
                 .registerTypeAdapterFactory(new FallbackTypeAdapterFactory(logger))
                 .create();
     }
