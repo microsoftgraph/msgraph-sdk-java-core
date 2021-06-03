@@ -1,6 +1,7 @@
 name: "samples build check"
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '**/*.java'
