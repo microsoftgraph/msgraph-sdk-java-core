@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.core.IBaseClient;
@@ -234,5 +236,19 @@ public class BatchRequestContentTest {
         final BatchRequestStep<?> step4 = batchRequest.getStepById(stepId4);
         assertNotNull(step4.headers);
         assertEquals("application/octet-stream", step4.headers.get("content-type"));
+    }
+    @Test
+    public void serializesAdditionalData() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
+        final BatchRequestContent batchRequest = new BatchRequestContent();
+        final String bindValue = "https://somebindvalue";
+        final BatchRequestTestBody body = new BatchRequestTestBody(); // using a dynamic implementation doesn't work as "this" maps to the current test class
+        body.additionalDataManager().put("teamsApp@odata.bind", new JsonPrimitive(bindValue));
+        batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, body);
+        final ISerializer serializer = new DefaultSerializer(mock(ILogger.class));
+        final String result = serializer.serializeObject(batchRequest);
+        assertNotNull(result);
+        assertTrue(result.contains(bindValue));
     }
 }
