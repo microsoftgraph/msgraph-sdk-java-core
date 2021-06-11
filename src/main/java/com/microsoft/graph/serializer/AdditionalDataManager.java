@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,12 +38,12 @@ import javax.annotation.Nullable;
 public class AdditionalDataManager extends HashMap<String, JsonElement> {
 
     private static final long serialVersionUID = 8641634955796941429L;
-    
+
     private final transient IJsonBackedObject jsonBackedObject;
 
     /**
      * Instanciates a new additional data manager from the json backed object
-     * 
+     *
      * @param jsonBackedObject the object to read values from
      */
     public AdditionalDataManager(@Nullable final IJsonBackedObject jsonBackedObject) {
@@ -56,15 +56,15 @@ public class AdditionalDataManager extends HashMap<String, JsonElement> {
      *
      * @param json the raw JSON to set as additionalData
      */
-    final void setAdditionalData(JsonObject json) {
+    final void setAdditionalData(final JsonObject json) {
         // Get the names of all the fields on this object's hierarchy
-        Set<String> objectFields = getFields();
+        final Set<String> objectFields = getFields();
 
         // Get the keys on this JSON
-        Set<String> jsonKeys = getJsonKeys(json);
+        final Set<String> jsonKeys = getJsonKeys(json);
 
         // Get all keys present in JSON and *NOT* present in fields
-        Set<String> additionalDataKeys = new HashSet<>(jsonKeys);
+        final Set<String> additionalDataKeys = new HashSet<>(jsonKeys);
         additionalDataKeys.removeAll(objectFields);
 
         // set the additionalData
@@ -73,9 +73,9 @@ public class AdditionalDataManager extends HashMap<String, JsonElement> {
         }
     }
 
-    private Set<String> getJsonKeys(JsonObject json) {
-        Set<String> keys = new HashSet<>();
-        Set<Map.Entry<String, JsonElement>> entries = json.entrySet();
+    private Set<String> getJsonKeys(final JsonObject json) {
+        final Set<String> keys = new HashSet<>();
+        final Set<Map.Entry<String, JsonElement>> entries = json.entrySet();
         for (Map.Entry<String, JsonElement> entry : entries) {
             keys.add(entry.getKey());
         }
@@ -83,13 +83,15 @@ public class AdditionalDataManager extends HashMap<String, JsonElement> {
     }
 
     private Set<String> getFields() {
-        Field[] fields = jsonBackedObject.getClass().getFields();
-        Set<String> serializingFields = new HashSet<>();
-        for (Field field : fields) {
-            SerializedName serializedName;
-            if (null != (serializedName = field.getAnnotation(SerializedName.class))
-                    && null != field.getAnnotation(Expose.class)) {
-                serializingFields.add(serializedName.value());
+        final Set<String> serializingFields = new HashSet<>();
+        if(jsonBackedObject != null ) {
+            final Field[] fields = jsonBackedObject.getClass().getFields();
+            for (Field field : fields) {
+                final SerializedName serializedName = field.getAnnotation(SerializedName.class);
+                if (null != serializedName
+                        && null != field.getAnnotation(Expose.class)) {
+                    serializingFields.add(serializedName.value());
+                }
             }
         }
         return serializingFields;
