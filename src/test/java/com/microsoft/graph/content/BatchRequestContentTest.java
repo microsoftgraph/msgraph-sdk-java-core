@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.core.IBaseClient;
@@ -37,12 +39,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class BatchRequestContentTest {
+class BatchRequestContentTest {
 
     String testurl = "http://graph.microsoft.com/me";
 
     @Test
-    public void testBatchRequestContentCreation() throws MalformedURLException {
+    void testBatchRequestContentCreation() throws MalformedURLException {
         BatchRequestContent requestContent = new BatchRequestContent();
         for (int i = 0; i < 5; i++) {
             IHttpRequest requestStep = mock(IHttpRequest.class);
@@ -53,7 +55,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void testGetBatchRequestContent() throws MalformedURLException {
+    void testGetBatchRequestContent() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         BatchRequestContent requestContent = new BatchRequestContent();
@@ -65,7 +67,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void testGetBatchRequestContentWithHeader() throws MalformedURLException {
+    void testGetBatchRequestContentWithHeader() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         when(requestStep.getHeaders()).thenReturn(Arrays.asList(new HeaderOption("testkey", "testvalue")));
@@ -78,7 +80,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void testRemoveBatchRequesStepWithId() throws MalformedURLException {
+    void testRemoveBatchRequesStepWithId() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         BatchRequestContent requestContent = new BatchRequestContent();
@@ -90,7 +92,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void testRemoveBatchRequesStepWithIdByAddingMultipleBatchSteps() throws MalformedURLException {
+    void testRemoveBatchRequesStepWithIdByAddingMultipleBatchSteps() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         BatchRequestContent requestContent = new BatchRequestContent();
@@ -109,7 +111,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void defensiveProgrammingTests() {
+    void defensiveProgrammingTests() {
         assertThrows(NullPointerException.class, () -> {
             new BatchRequestContent().addBatchRequestStep(null);
         }, "should throw argument exception");
@@ -135,7 +137,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void executeBatchTest() throws Throwable {
+    void executeBatchTest() throws Throwable {
         final BatchRequestContent content = new BatchRequestContent();
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
@@ -164,7 +166,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void usesHttpMethodFromRequestIfAlreadySet() throws MalformedURLException {
+    void usesHttpMethodFromRequestIfAlreadySet() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         when(requestStep.getHttpMethod()).thenReturn(HttpMethod.DELETE);
@@ -174,13 +176,14 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void doesNotThrowWhenTryingToRemoveRequestFromNull() {
+    void doesNotThrowWhenTryingToRemoveRequestFromNull() {
         final BatchRequestContent batchRequest = new BatchRequestContent();
         batchRequest.removeBatchRequestStepWithId("id");
+        assertNull(batchRequest.requests);
     }
 
     @Test
-    public void doesNotRemoveDependsOnWhenNotEmpty() throws MalformedURLException {
+    void doesNotRemoveDependsOnWhenNotEmpty() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         final BatchRequestContent batchRequest = new BatchRequestContent();
@@ -194,7 +197,7 @@ public class BatchRequestContentTest {
     }
 
     @Test
-    public void addsContentTypeForBodies() throws MalformedURLException {
+    void addsContentTypeForBodies() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
         when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
         final BatchRequestContent batchRequest = new BatchRequestContent();
@@ -234,5 +237,19 @@ public class BatchRequestContentTest {
         final BatchRequestStep<?> step4 = batchRequest.getStepById(stepId4);
         assertNotNull(step4.headers);
         assertEquals("application/octet-stream", step4.headers.get("content-type"));
+    }
+    @Test
+    void serializesAdditionalData() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL(testurl));
+        final BatchRequestContent batchRequest = new BatchRequestContent();
+        final String bindValue = "https://somebindvalue";
+        final BatchRequestTestBody body = new BatchRequestTestBody(); // using a dynamic implementation doesn't work as "this" maps to the current test class
+        body.additionalDataManager().put("teamsApp@odata.bind", new JsonPrimitive(bindValue));
+        batchRequest.addBatchRequestStep(requestStep, HttpMethod.POST, body);
+        final ISerializer serializer = new DefaultSerializer(mock(ILogger.class));
+        final String result = serializer.serializeObject(batchRequest);
+        assertNotNull(result);
+        assertTrue(result.contains(bindValue));
     }
 }
