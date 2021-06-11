@@ -237,51 +237,51 @@ public class DefaultSerializer implements ISerializer {
 	 * @param outJson			the serialized output JSON to add to
 	 */
 	@SuppressWarnings("unchecked")
-	private void getChildAdditionalData(final Object serializableObject, final JsonElement outJson) {
-		if(outJson == null || serializableObject == null || !outJson.isJsonObject())
-			return;
+    private void getChildAdditionalData(final Object serializableObject, final JsonElement outJson) {
+        if(outJson == null || serializableObject == null || !outJson.isJsonObject())
+            return;
         final JsonObject outJsonObject = outJson.getAsJsonObject();
-		// Use reflection to iterate through fields for eligible Graph children
-		for (java.lang.reflect.Field field : serializableObject.getClass().getFields()) {
-			try {
-				final Object fieldObject = field.get(serializableObject);
-				final JsonElement fieldJsonElement = outJsonObject.get(field.getName());
-				if(fieldObject == null || fieldJsonElement == null)
-					continue;
+        // Use reflection to iterate through fields for eligible Graph children
+        for (java.lang.reflect.Field field : serializableObject.getClass().getFields()) {
+            try {
+                final Object fieldObject = field.get(serializableObject);
+                final JsonElement fieldJsonElement = outJsonObject.get(field.getName());
+                if(fieldObject == null || fieldJsonElement == null)
+                    continue;
 
-				// If the object is a HashMap, iterate through its children
-				if (fieldObject instanceof Map && fieldJsonElement.isJsonObject()) {
-					final Map<String, Object> serializableChildren = (Map<String, Object>) fieldObject;
-					final Iterator<Entry<String, Object>> it = serializableChildren.entrySet().iterator();
-					final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
+                // If the object is a HashMap, iterate through its children
+                if (fieldObject instanceof Map && fieldJsonElement.isJsonObject()) {
+                    final Map<String, Object> serializableChildren = (Map<String, Object>) fieldObject;
+                    final Iterator<Entry<String, Object>> it = serializableChildren.entrySet().iterator();
+                    final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
 
-					while (it.hasNext()) {
-						final Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
-						final Object child = pair.getValue();
-						final JsonElement childJsonElement = fieldJsonObject.get(pair.getKey().toString());
-						// If the item is a valid Graph object, add its additional data
-						getChildAdditionalData(child, childJsonElement);
-					}
-				}
-				// If the object is a list of Graph objects, iterate through elements
-				else if (fieldObject instanceof List && fieldJsonElement.isJsonArray()) {
-					final JsonArray fieldArrayValue = fieldJsonElement.getAsJsonArray();
-					final List<?> fieldObjectList = (List<?>) fieldObject;
-					for (int index = 0; index < fieldObjectList.size(); index++) {
-						final Object item = fieldObjectList.get(index);
-						final JsonElement itemJsonElement = fieldArrayValue.get(index);
-						getChildAdditionalData(item, itemJsonElement);
-					}
-				} else if(fieldJsonElement.isJsonObject()) {
-                    // If the object is a valid Graph object, add its additional data
-					final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
-                    addAdditionalDataFromJsonElementToJson(fieldObject, fieldJsonObject);
+                    while (it.hasNext()) {
+                        final Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
+                        final Object child = pair.getValue();
+                        final JsonElement childJsonElement = fieldJsonObject.get(pair.getKey().toString());
+                        // If the item is a valid Graph object, add its additional data
+                        getChildAdditionalData(child, childJsonElement);
+                    }
                 }
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				logger.logError("Unable to access child fields of " + serializableObject.getClass().getSimpleName(), e);
-			}
-		}
-	}
+                // If the object is a list of Graph objects, iterate through elements
+                else if (fieldObject instanceof List && fieldJsonElement.isJsonArray()) {
+                    final JsonArray fieldArrayValue = fieldJsonElement.getAsJsonArray();
+                    final List<?> fieldObjectList = (List<?>) fieldObject;
+                    for (int index = 0; index < fieldObjectList.size(); index++) {
+                        final Object item = fieldObjectList.get(index);
+                        final JsonElement itemJsonElement = fieldArrayValue.get(index);
+                        getChildAdditionalData(item, itemJsonElement);
+                    }
+                } else if(fieldJsonElement.isJsonObject()) {
+                    // If the object is a valid Graph object, add its additional data
+                    final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
+                    addAdditionalDataFromJsonObjectToJson(fieldObject, fieldJsonObject);
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                logger.logError("Unable to access child fields of " + serializableObject.getClass().getSimpleName(), e);
+            }
+        }
+    }
 
 	/**
 	 * Add each non-transient additional data property to the given JSON node
@@ -289,7 +289,7 @@ public class DefaultSerializer implements ISerializer {
 	 * @param item the object containing additional data
 	 * @param itemJsonObject	   the JSON node to add the additional data properties to
 	 */
-	private void addAdditionalDataFromJsonElementToJson (final Object item, final JsonObject itemJsonObject) {
+	private void addAdditionalDataFromJsonObjectToJson (final Object item, final JsonObject itemJsonObject) {
 		if (item instanceof IJsonBackedObject && itemJsonObject != null) {
 			final IJsonBackedObject serializableItem = (IJsonBackedObject) item;
 			final AdditionalDataManager itemAdditionalData = serializableItem.additionalDataManager();
