@@ -179,6 +179,7 @@ class BatchRequestContentTest {
     void doesNotThrowWhenTryingToRemoveRequestFromNull() {
         final BatchRequestContent batchRequest = new BatchRequestContent();
         batchRequest.removeBatchRequestStepWithId("id");
+        assertEquals(0, batchRequest.requests.size());
     }
 
     @Test
