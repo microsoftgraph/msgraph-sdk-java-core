@@ -3,7 +3,6 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
@@ -25,7 +24,7 @@ public class TelemetryHandler implements Interceptor{
     /**
      * Current SDK version
      */
-    public static final String VERSION = "v2.0.5";
+    public static final String VERSION = "v2.0.6";
     /**
      * Verion prefix
      */

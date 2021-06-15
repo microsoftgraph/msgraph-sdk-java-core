@@ -22,7 +22,6 @@
 
 package com.microsoft.graph.serializer;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -241,8 +239,9 @@ public class DefaultSerializer implements ISerializer {
         if(outJson == null || serializableObject == null || !outJson.isJsonObject())
             return;
         final JsonObject outJsonObject = outJson.getAsJsonObject();
+        addAdditionalDataFromJsonObjectToJson(serializableObject, outJsonObject);
         // Use reflection to iterate through fields for eligible Graph children
-        for (java.lang.reflect.Field field : serializableObject.getClass().getFields()) {
+        for (Field field : serializableObject.getClass().getFields()) {
             try {
                 final Object fieldObject = field.get(serializableObject);
                 final JsonElement fieldJsonElement = outJsonObject.get(field.getName());
@@ -275,7 +274,7 @@ public class DefaultSerializer implements ISerializer {
                 } else if(fieldJsonElement.isJsonObject()) {
                     // If the object is a valid Graph object, add its additional data
                     final JsonObject fieldJsonObject = fieldJsonElement.getAsJsonObject();
-                    addAdditionalDataFromJsonObjectToJson(fieldObject, fieldJsonObject);
+                    getChildAdditionalData(fieldObject, fieldJsonObject);
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 logger.logError("Unable to access child fields of " + serializableObject.getClass().getSimpleName(), e);
@@ -294,7 +293,6 @@ public class DefaultSerializer implements ISerializer {
 			final IJsonBackedObject serializableItem = (IJsonBackedObject) item;
 			final AdditionalDataManager itemAdditionalData = serializableItem.additionalDataManager();
 			addAdditionalDataFromManagerToJson(itemAdditionalData, itemJsonObject);
-			getChildAdditionalData(serializableItem, itemJsonObject);
 		}
 	}
 
