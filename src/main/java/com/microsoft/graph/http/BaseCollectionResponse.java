@@ -59,7 +59,7 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
     public final AdditionalDataManager additionalDataManager() {
         return additionalDataManager;
     }
-    private final static String valueJsonKey = "value";
+    private static final String VALUE_JSON_KEY = "value";
 	/**
      * Sets the raw JSON object
      *
@@ -69,8 +69,8 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
     public void setRawObject(@Nonnull final ISerializer serializer, @Nonnull final JsonObject json) {
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
         Objects.requireNonNull(json, "parameter json cannot be null");
-        if (json.has(valueJsonKey) && value != null && value.size() > 0) {
-            final JsonArray array = json.getAsJsonArray(valueJsonKey);
+        if (json.has(VALUE_JSON_KEY) && value != null && !value.isEmpty()) {
+            final JsonArray array = json.getAsJsonArray(VALUE_JSON_KEY);
             for (int i = 0; i < array.size() && i < value.size(); i++) {
 				final Object targetObject = value.get(i);
 				if(targetObject instanceof IJsonBackedObject && array.get(i).isJsonObject()) {

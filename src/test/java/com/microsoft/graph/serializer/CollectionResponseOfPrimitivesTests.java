@@ -8,7 +8,7 @@ import com.microsoft.graph.logger.ILogger;
 
 import org.junit.jupiter.api.Test;
 
-public class CollectionResponseOfPrimitivesTests {
+class CollectionResponseOfPrimitivesTests {
     @Test
     void DeserializesCollectionOfStrings() {
         final var serializer = new DefaultSerializer(mock(ILogger.class));
