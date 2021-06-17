@@ -33,6 +33,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 
@@ -96,6 +97,14 @@ public class CollectionResponseSerializer {
                     final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, entityClass);
                     ((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
                     list.add(targetObject);
+                } else if (sourceElement.isJsonPrimitive()) {
+                    final JsonPrimitive primitiveValue = sourceElement.getAsJsonPrimitive();
+                    if(primitiveValue.isString())
+                        list.add((T1)primitiveValue.getAsString());
+                    else if(primitiveValue.isBoolean())
+                        list.add((T1) Boolean.valueOf(primitiveValue.getAsBoolean()));
+                    else if(primitiveValue.isNumber())
+                        list.add((T1) Long.valueOf(primitiveValue.getAsLong()));
                 }
             }
             final BaseCollectionResponse<T1> response = (BaseCollectionResponse<T1>)responseClass.getConstructor().newInstance();
