@@ -86,7 +86,8 @@ public class CollectionResponseSerializer {
             for(JsonElement sourceElement : sourceArray) {
                 if(sourceElement.isJsonObject()) {
                     final JsonObject sourceObject = sourceElement.getAsJsonObject();
-                    Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
+                    final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
+                    Class<?> entityClass = derivedClassIdentifier.getDerivedClass(sourceObject, baseEntityClass);
                     if(entityClass == null) {
                         if(baseEntityClass == null) {
                             logger.logError("Could not find target class for object " + sourceObject.toString(), null);

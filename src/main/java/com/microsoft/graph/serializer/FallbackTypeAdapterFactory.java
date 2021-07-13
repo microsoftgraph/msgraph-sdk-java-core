@@ -22,23 +22,26 @@
 
 package com.microsoft.graph.serializer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
+import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.microsoft.graph.http.BaseCollectionPage;
+import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 
-import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Handles serialization/deserialization for special types (especially of
@@ -89,13 +92,67 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
     public <T> TypeAdapter<T> create(@Nonnull final Gson gson, @Nonnull final TypeToken<T> type) {
         Objects.requireNonNull(type, "parameter type cannot be null");
         final Class<T> rawType = (Class<T>) type.getRawType();
+
         if (rawType.isEnum()) {
             return new EnumTypeAdapter<T>(rawType, logger);
         } else if (rawType == Void.class) {
             return (TypeAdapter<T>) voidAdapter;
+        } else if (IJsonBackedObject.class.isAssignableFrom(type.getRawType())) {
+
+            // Avoid overriding custom IJsonBackedObject type adapters defined in GsonFactory
+            if (BaseCollectionResponse.class.isAssignableFrom(rawType) || BaseCollectionPage.class.isAssignableFrom(rawType)) {
+                return null;
+            }
+
+            final TypeAdapter<?> delegatedAdapter = gson.getDelegateAdapter(this, type);
+            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedObjectAdapter(gson, delegatedAdapter, type);
         }
         else {
             return null;
+        }
+    }
+
+    /**
+     * This adapter is responsible for deserialization of IJsonBackedObjects where service
+     * returns one of several derived types of a base object, which is defined using the
+     * odata.type parameter. If odata.type parameter is not found, the Gson default
+     * (delegated) type adapter is used.
+     */
+    private class ODataTypeParametrizedIJsonBackedObjectAdapter extends TypeAdapter<IJsonBackedObject> {
+
+        private final Gson gson;
+        private final TypeAdapter<?> delegatedAdapter;
+        private final TypeToken<?> type;
+
+        public ODataTypeParametrizedIJsonBackedObjectAdapter(@Nonnull Gson gson, @Nonnull TypeAdapter<?> delegatedAdapter, @Nonnull final TypeToken<?> type) {
+            super();
+            this.gson = gson;
+            this.delegatedAdapter = delegatedAdapter;
+            this.type = type;
+        }
+
+        @Override
+        public void write(JsonWriter out, IJsonBackedObject value)
+            throws IOException
+        {
+            ((TypeAdapter<IJsonBackedObject>)this.delegatedAdapter).write(out, value);
+        }
+
+        @Override
+        public IJsonBackedObject read(JsonReader in) {
+            JsonElement jsonElement = Streams.parse(in);
+
+            if (jsonElement.isJsonObject()) {
+                final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
+                final Class<?> derivedClass = derivedClassIdentifier.getDerivedClass(jsonElement.getAsJsonObject(), type.getRawType());
+
+                if (derivedClass != null) {
+                    final TypeAdapter<?> subTypeAdapter = gson.getDelegateAdapter(FallbackTypeAdapterFactory.this, TypeToken.get(derivedClass));
+                    return (IJsonBackedObject) subTypeAdapter.fromJsonTree(jsonElement);
+                }
+            }
+
+            return (IJsonBackedObject) delegatedAdapter.fromJsonTree(jsonElement);
         }
     }
 
