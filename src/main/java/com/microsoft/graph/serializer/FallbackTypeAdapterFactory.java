@@ -123,12 +123,14 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         private final Gson gson;
         private final TypeAdapter<?> delegatedAdapter;
         private final TypeToken<?> type;
+        private final DerivedClassIdentifier derivedClassIdentifier;
 
         public ODataTypeParametrizedIJsonBackedObjectAdapter(@Nonnull Gson gson, @Nonnull TypeAdapter<?> delegatedAdapter, @Nonnull final TypeToken<?> type) {
             super();
-            this.gson = gson;
-            this.delegatedAdapter = delegatedAdapter;
-            this.type = type;
+            this.gson = Objects.requireNonNull(gson, "parameter gson cannot be null");;
+            this.delegatedAdapter = Objects.requireNonNull(delegatedAdapter, "object delegated adapted cannot be null");
+            this.type = Objects.requireNonNull(type, "object type cannot be null");
+            this.derivedClassIdentifier = new DerivedClassIdentifier(logger);
         }
 
         @Override
@@ -143,8 +145,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
             JsonElement jsonElement = Streams.parse(in);
 
             if (jsonElement.isJsonObject()) {
-                final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
-                final Class<?> derivedClass = derivedClassIdentifier.getDerivedClass(jsonElement.getAsJsonObject(), type.getRawType());
+                final Class<?> derivedClass = derivedClassIdentifier.identify(jsonElement.getAsJsonObject(), type.getRawType());
 
                 if (derivedClass != null) {
                     final TypeAdapter<?> subTypeAdapter = gson.getDelegateAdapter(FallbackTypeAdapterFactory.this, TypeToken.get(derivedClass));

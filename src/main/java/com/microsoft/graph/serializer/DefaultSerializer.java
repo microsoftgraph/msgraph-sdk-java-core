@@ -45,17 +45,23 @@ import javax.annotation.Nullable;
  * The default serializer implementation for the SDK
  */
 public class DefaultSerializer implements ISerializer {
-	private static final String graphResponseHeadersKey = "graphResponseHeaders";
+
+	private static final String GRAPH_RESPONSE_HEADERS_KEY = "graphResponseHeaders";
+
+    /**
+     * The logger
+     */
+    private final ILogger logger;
 
 	/**
 	 * The instance of the internal serializer
 	 */
 	private final Gson gson;
 
-	/**
-	 * The logger
-	 */
-	private final ILogger logger;
+    /**
+     * Derived class identifier
+     */
+    private final DerivedClassIdentifier derivedClassIdentifier;
 
 	/**
 	 * Creates a DefaultSerializer
@@ -65,6 +71,7 @@ public class DefaultSerializer implements ISerializer {
 	public DefaultSerializer(@Nonnull final ILogger logger) {
 		this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
 		this.gson = GsonFactory.getGsonInstance(logger);
+		this.derivedClassIdentifier = new DerivedClassIdentifier(logger);
 	}
 
 	@Override
@@ -105,8 +112,7 @@ public class DefaultSerializer implements ISerializer {
 			// If there is a derived class, try to get it and deserialize to it
 			T jo = jsonObject;
 			if (rawElement.isJsonObject()) {
-                final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
-				final Class<?> derivedClass = derivedClassIdentifier.getDerivedClass(rawObject, clazz);
+				final Class<?> derivedClass = derivedClassIdentifier.identify(rawObject, clazz);
 				if (derivedClass != null)
 					jo = (T) gson.fromJson(rawElement, derivedClass);
 			}
@@ -121,7 +127,7 @@ public class DefaultSerializer implements ISerializer {
 
 			if (responseHeaders != null) {
 				JsonElement convertedHeaders = gson.toJsonTree(responseHeaders);
-				jsonBackedObject.additionalDataManager().put(graphResponseHeadersKey, convertedHeaders);
+				jsonBackedObject.additionalDataManager().put(GRAPH_RESPONSE_HEADERS_KEY, convertedHeaders);
 			}
 			return jo;
 		} else {
@@ -302,7 +308,7 @@ public class DefaultSerializer implements ISerializer {
 	 */
 	private void addAdditionalDataFromManagerToJson(AdditionalDataManager additionalDataManager, JsonObject jsonNode) {
 		for (Map.Entry<String, JsonElement> entry : additionalDataManager.entrySet()) {
-			if(!entry.getKey().equals(graphResponseHeadersKey)) {
+			if(!entry.getKey().equals(GRAPH_RESPONSE_HEADERS_KEY)) {
 				jsonNode.add(entry.getKey(), entry.getValue());
 			}
 		}

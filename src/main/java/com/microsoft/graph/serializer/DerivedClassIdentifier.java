@@ -11,10 +11,11 @@ import javax.annotation.Nullable;
 public class DerivedClassIdentifier {
 
     private final static String ODATA_TYPE_KEY = "@odata.type";
+
     private final ILogger logger;
 
-    public DerivedClassIdentifier(ILogger logger) {
-        this.logger = logger;
+    public DerivedClassIdentifier(@Nonnull ILogger logger) {
+        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");;
     }
 
     /**
@@ -27,7 +28,7 @@ public class DerivedClassIdentifier {
      * @return			the derived class if found, or null if not applicable
      */
     @Nullable
-    public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nullable final Class<?> parentClass) {
+    public Class<?> identify(@Nonnull final JsonObject jsonObject, @Nullable final Class<?> parentClass) {
         Objects.requireNonNull(jsonObject, "parameter jsonObject cannot be null");
         //Identify the odata.type information if provided
         if (jsonObject.get(ODATA_TYPE_KEY) != null) {

@@ -83,11 +83,11 @@ public class CollectionResponseSerializer {
             logger.logDebug("could not find class" + baseEntityClassCanonicalName);
         }
         try {
+            final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
             for(JsonElement sourceElement : sourceArray) {
                 if(sourceElement.isJsonObject()) {
                     final JsonObject sourceObject = sourceElement.getAsJsonObject();
-                    final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
-                    Class<?> entityClass = derivedClassIdentifier.getDerivedClass(sourceObject, baseEntityClass);
+                    Class<?> entityClass = derivedClassIdentifier.identify(sourceObject, baseEntityClass);
                     if(entityClass == null) {
                         if(baseEntityClass == null) {
                             logger.logError("Could not find target class for object " + sourceObject.toString(), null);
