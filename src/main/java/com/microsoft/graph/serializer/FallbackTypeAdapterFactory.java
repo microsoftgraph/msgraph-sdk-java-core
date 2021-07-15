@@ -70,14 +70,14 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Void read(JsonReader in) throws IOException {
+        public Void read(JsonReader in) {
             return null;
         }
 
     };
 
     /**
-     * Instanciates a new type adapter factory
+     * Instantiates a new type adapter factory
      *
      * @param logger logger to use for the factory
      */
@@ -94,7 +94,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         final Class<T> rawType = (Class<T>) type.getRawType();
 
         if (rawType.isEnum()) {
-            return new EnumTypeAdapter<T>(rawType, logger);
+            return new EnumTypeAdapter<>(rawType, logger);
         } else if (rawType == Void.class) {
             return (TypeAdapter<T>) voidAdapter;
         } else if (IJsonBackedObject.class.isAssignableFrom(type.getRawType())) {
@@ -104,8 +104,8 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
                 return null;
             }
 
-            final TypeAdapter<?> delegatedAdapter = gson.getDelegateAdapter(this, type);
-            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedObjectAdapter(gson, delegatedAdapter, type);
+            final TypeAdapter<IJsonBackedObject> delegatedAdapter = (TypeAdapter<IJsonBackedObject>) gson.getDelegateAdapter(this, type);
+            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedObjectAdapter(gson, delegatedAdapter, (TypeToken<IJsonBackedObject>) type, logger);
         }
         else {
             return null;
@@ -121,13 +121,13 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
     private class ODataTypeParametrizedIJsonBackedObjectAdapter extends TypeAdapter<IJsonBackedObject> {
 
         private final Gson gson;
-        private final TypeAdapter<?> delegatedAdapter;
-        private final TypeToken<?> type;
+        private final TypeAdapter<IJsonBackedObject> delegatedAdapter;
+        private final TypeToken<IJsonBackedObject> type;
         private final DerivedClassIdentifier derivedClassIdentifier;
 
-        public ODataTypeParametrizedIJsonBackedObjectAdapter(@Nonnull Gson gson, @Nonnull TypeAdapter<?> delegatedAdapter, @Nonnull final TypeToken<?> type) {
+        public ODataTypeParametrizedIJsonBackedObjectAdapter(@Nonnull Gson gson, @Nonnull TypeAdapter<IJsonBackedObject> delegatedAdapter, @Nonnull final TypeToken<IJsonBackedObject> type, @Nonnull final ILogger logger) {
             super();
-            this.gson = Objects.requireNonNull(gson, "parameter gson cannot be null");;
+            this.gson = Objects.requireNonNull(gson, "parameter gson cannot be null");
             this.delegatedAdapter = Objects.requireNonNull(delegatedAdapter, "object delegated adapted cannot be null");
             this.type = Objects.requireNonNull(type, "object type cannot be null");
             this.derivedClassIdentifier = new DerivedClassIdentifier(logger);
@@ -137,7 +137,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         public void write(JsonWriter out, IJsonBackedObject value)
             throws IOException
         {
-            ((TypeAdapter<IJsonBackedObject>)this.delegatedAdapter).write(out, value);
+            this.delegatedAdapter.write(out, value);
         }
 
         @Override
@@ -153,7 +153,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
                 }
             }
 
-            return (IJsonBackedObject) delegatedAdapter.fromJsonTree(jsonElement);
+            return delegatedAdapter.fromJsonTree(jsonElement);
         }
     }
 
