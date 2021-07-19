@@ -28,12 +28,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.Streams;
+import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.microsoft.graph.http.BaseCollectionPage;
-import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 
 import java.io.IOException;
@@ -99,12 +98,13 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
             return (TypeAdapter<T>) voidAdapter;
         } else if (IJsonBackedObject.class.isAssignableFrom(type.getRawType())) {
 
+            final TypeAdapter<IJsonBackedObject> delegatedAdapter = (TypeAdapter<IJsonBackedObject>) gson.getDelegateAdapter(this, type);
+
             // Avoid overriding custom IJsonBackedObject type adapters defined in GsonFactory
-            if (BaseCollectionResponse.class.isAssignableFrom(rawType) || BaseCollectionPage.class.isAssignableFrom(rawType)) {
+            if (!(delegatedAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {
                 return null;
             }
 
-            final TypeAdapter<IJsonBackedObject> delegatedAdapter = (TypeAdapter<IJsonBackedObject>) gson.getDelegateAdapter(this, type);
             return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedObjectAdapter(gson, delegatedAdapter, (TypeToken<IJsonBackedObject>) type, logger);
         }
         else {
