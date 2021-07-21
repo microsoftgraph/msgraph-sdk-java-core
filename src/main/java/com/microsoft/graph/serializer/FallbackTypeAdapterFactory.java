@@ -24,10 +24,8 @@ package com.microsoft.graph.serializer;
 
 import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.Streams;
 import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -105,55 +103,10 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
                 return null;
             }
 
-            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedObjectAdapter(gson, delegatedAdapter, (TypeToken<IJsonBackedObject>) type, logger);
+            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedTypedAdapter(this, gson, delegatedAdapter, (TypeToken<IJsonBackedObject>) type, logger);
         }
         else {
             return null;
-        }
-    }
-
-    /**
-     * This adapter is responsible for deserialization of IJsonBackedObjects where service
-     * returns one of several derived types of a base object, which is defined using the
-     * odata.type parameter. If odata.type parameter is not found, the Gson default
-     * (delegated) type adapter is used.
-     */
-    private class ODataTypeParametrizedIJsonBackedObjectAdapter extends TypeAdapter<IJsonBackedObject> {
-
-        private final Gson gson;
-        private final TypeAdapter<IJsonBackedObject> delegatedAdapter;
-        private final TypeToken<IJsonBackedObject> type;
-        private final DerivedClassIdentifier derivedClassIdentifier;
-
-        public ODataTypeParametrizedIJsonBackedObjectAdapter(@Nonnull Gson gson, @Nonnull TypeAdapter<IJsonBackedObject> delegatedAdapter, @Nonnull final TypeToken<IJsonBackedObject> type, @Nonnull final ILogger logger) {
-            super();
-            this.gson = Objects.requireNonNull(gson, "parameter gson cannot be null");
-            this.delegatedAdapter = Objects.requireNonNull(delegatedAdapter, "object delegated adapted cannot be null");
-            this.type = Objects.requireNonNull(type, "object type cannot be null");
-            this.derivedClassIdentifier = new DerivedClassIdentifier(logger);
-        }
-
-        @Override
-        public void write(JsonWriter out, IJsonBackedObject value)
-            throws IOException
-        {
-            this.delegatedAdapter.write(out, value);
-        }
-
-        @Override
-        public IJsonBackedObject read(JsonReader in) {
-            JsonElement jsonElement = Streams.parse(in);
-
-            if (jsonElement.isJsonObject()) {
-                final Class<?> derivedClass = derivedClassIdentifier.identify(jsonElement.getAsJsonObject(), type.getRawType());
-
-                if (derivedClass != null) {
-                    final TypeAdapter<?> subTypeAdapter = gson.getDelegateAdapter(FallbackTypeAdapterFactory.this, TypeToken.get(derivedClass));
-                    return (IJsonBackedObject) subTypeAdapter.fromJsonTree(jsonElement);
-                }
-            }
-
-            return delegatedAdapter.fromJsonTree(jsonElement);
         }
     }
 
