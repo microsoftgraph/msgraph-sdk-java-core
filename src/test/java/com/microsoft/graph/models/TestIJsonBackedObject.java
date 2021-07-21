@@ -11,14 +11,22 @@ import static org.mockito.Mockito.mock;
 
 public abstract class TestIJsonBackedObject implements IJsonBackedObject {
 
+    AdditionalDataManager additionalDataManager = mock(AdditionalDataManager.class);
+
+    String rawObject;
+
     @Override
     public void setRawObject(@NotNull ISerializer serializer, @NotNull JsonObject json) {
-        // Do nothing
+        this.rawObject = json.toString();
     }
 
     @Nullable
     @Override
     public AdditionalDataManager additionalDataManager() {
-        return mock(AdditionalDataManager.class);
+        return additionalDataManager;
+    }
+
+    public String getRawObject() {
+        return rawObject;
     }
 }

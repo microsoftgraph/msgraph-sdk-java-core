@@ -37,13 +37,13 @@ import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 
-/** Specialized serializer to handle collection responses */
-public class CollectionResponseSerializer {
+/** Specialized de-serializer to handle collection responses */
+public class CollectionResponseDeserializer {
     private static DefaultSerializer serializer;
     /**
      * Not available for instantiation
      */
-    private CollectionResponseSerializer() {}
+    private CollectionResponseDeserializer() {}
     /**
      * Deserializes the JsonElement
      *
@@ -83,19 +83,10 @@ public class CollectionResponseSerializer {
             logger.logDebug("could not find class" + baseEntityClassCanonicalName);
         }
         try {
-            final DerivedClassIdentifier derivedClassIdentifier = new DerivedClassIdentifier(logger);
             for(JsonElement sourceElement : sourceArray) {
                 if(sourceElement.isJsonObject()) {
                     final JsonObject sourceObject = sourceElement.getAsJsonObject();
-                    Class<?> entityClass = derivedClassIdentifier.identify(sourceObject, baseEntityClass);
-                    if(entityClass == null) {
-                        if(baseEntityClass == null) {
-                            logger.logError("Could not find target class for object " + sourceObject.toString(), null);
-                            continue;
-                        } else
-                            entityClass = baseEntityClass; // it is possible the odata type is absent or we can't find the derived type (not in SDK yet)
-                    }
-                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, entityClass);
+                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, baseEntityClass);
                     ((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
                     list.add(targetObject);
                 } else if (sourceElement.isJsonPrimitive()) {
