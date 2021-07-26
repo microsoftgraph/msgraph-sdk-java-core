@@ -239,7 +239,7 @@ final class GsonFactory {
             public BaseCollectionResponse<?> deserialize(final JsonElement json,
                                         final Type typeOfT,
                                         final JsonDeserializationContext context) throws JsonParseException {
-                return CollectionResponseSerializer.deserialize(json, typeOfT, logger);
+                return CollectionResponseDeserializer.deserialize(json, typeOfT, logger);
             }
         };
 

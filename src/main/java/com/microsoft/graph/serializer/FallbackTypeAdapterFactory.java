@@ -22,23 +22,23 @@
 
 package com.microsoft.graph.serializer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
+import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.microsoft.graph.logger.ILogger;
 
-import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Handles serialization/deserialization for special types (especially of
@@ -67,14 +67,14 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         @Override
-        public Void read(JsonReader in) throws IOException {
+        public Void read(JsonReader in) {
             return null;
         }
 
     };
 
     /**
-     * Instanciates a new type adapter factory
+     * Instantiates a new type adapter factory
      *
      * @param logger logger to use for the factory
      */
@@ -89,10 +89,21 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
     public <T> TypeAdapter<T> create(@Nonnull final Gson gson, @Nonnull final TypeToken<T> type) {
         Objects.requireNonNull(type, "parameter type cannot be null");
         final Class<T> rawType = (Class<T>) type.getRawType();
+
         if (rawType.isEnum()) {
-            return new EnumTypeAdapter<T>(rawType, logger);
+            return new EnumTypeAdapter<>(rawType, logger);
         } else if (rawType == Void.class) {
             return (TypeAdapter<T>) voidAdapter;
+        } else if (IJsonBackedObject.class.isAssignableFrom(type.getRawType())) {
+
+            final TypeAdapter<IJsonBackedObject> delegatedAdapter = (TypeAdapter<IJsonBackedObject>) gson.getDelegateAdapter(this, type);
+
+            // Avoid overriding custom IJsonBackedObject type adapters defined in GsonFactory
+            if (!(delegatedAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {
+                return null;
+            }
+
+            return (TypeAdapter<T>) new ODataTypeParametrizedIJsonBackedTypedAdapter(this, gson, delegatedAdapter, (TypeToken<IJsonBackedObject>) type, logger);
         }
         else {
             return null;
