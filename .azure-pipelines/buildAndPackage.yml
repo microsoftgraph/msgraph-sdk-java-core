@@ -41,14 +41,14 @@ stages:
     - template: templates/build-stage/build-and-coverage.yml
     - template: templates/build-stage/publish-artefacts.yml
     - template: templates/alert-failure.yml
-- stage: Maven-Preview-Stage
+- stage: Maven-Preview
   jobs: 
   - job: Maven-Preview
     steps: 
     - template: templates/maven-preview-stage/secure-files.yml
     - template: templates/maven-preview-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
-- stage: Maven-Release-Stage
+- stage: Maven-Release
   dependsOn: []
   jobs:
   - job: Maven-Release
@@ -56,9 +56,9 @@ stages:
     - template: templates/maven-release-stage/secure-files.yml
     - template: templates/maven-release-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
-- stage: Github-Release-Stage
+- stage: Github-Release
   dependsOn: 
-  - Maven-Release-Stage
+  - Maven-Release
   jobs:
   - job: Github-Release
     steps:
