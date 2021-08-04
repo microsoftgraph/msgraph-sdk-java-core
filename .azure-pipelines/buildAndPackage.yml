@@ -41,21 +41,26 @@ stages:
     - template: templates/build-stage/build-and-coverage.yml
     - template: templates/build-stage/publish-artefacts.yml
     - template: templates/alert-failure.yml
+
 - stage: Maven-Preview
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs: 
   - job: Maven-Preview
     steps: 
     - template: templates/maven-preview-stage/secure-files.yml
     - template: templates/maven-preview-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
+
 - stage: Maven-Release
   dependsOn: []
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - job: Maven-Release
     steps: 
     - template: templates/maven-release-stage/secure-files.yml
     - template: templates/maven-release-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
+
 - stage: Github-Release
   dependsOn: 
   - Maven-Release
