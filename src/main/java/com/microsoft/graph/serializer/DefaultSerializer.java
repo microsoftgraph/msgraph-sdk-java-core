@@ -65,9 +65,20 @@ public class DefaultSerializer implements ISerializer {
 	 * @param logger the logger
 	 */
 	public DefaultSerializer(@Nonnull final ILogger logger) {
-		this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
-		this.gson = GsonFactory.getGsonInstance(logger);
+		this(false, logger);
 	}
+
+
+    /**
+     * Creates a DefaultSerializer with an option to enable serializing of the null values.
+     *
+     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
+     * @param logger         the logger
+     */
+    public DefaultSerializer(@Nonnull final boolean serializeNulls, @Nonnull final ILogger logger) {
+        this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
+        this.gson = GsonFactory.getGsonInstance(serializeNulls, logger);
+    }
 
 	@Override
 	@Nullable

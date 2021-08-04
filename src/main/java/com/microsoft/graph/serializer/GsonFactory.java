@@ -69,6 +69,17 @@ final class GsonFactory {
      * @return the new instance
      */
     public static Gson getGsonInstance(final ILogger logger) {
+        return getGsonInstance(false, logger);
+    }
+
+    /**
+     * Creates an instance of GSON
+     *
+     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
+     * @param logger         the logger
+     * @return the new instance
+     */
+    public static Gson getGsonInstance(final boolean serializeNulls, final ILogger logger) {
 
         final JsonSerializer<OffsetDateTime> calendarJsonSerializer = new JsonSerializer<OffsetDateTime>() {
             @Override
@@ -328,7 +339,11 @@ final class GsonFactory {
             }
         };
 
-        return new GsonBuilder()
+        GsonBuilder builder = new GsonBuilder();
+        if(serializeNulls) {
+            builder.serializeNulls();
+        }
+        return builder
                 .excludeFieldsWithoutExposeAnnotation()
                 .registerTypeAdapter(Boolean.class, booleanJsonDeserializer)
                 .registerTypeAdapter(String.class, stringJsonDeserializer)
