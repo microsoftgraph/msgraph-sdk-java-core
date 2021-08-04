@@ -49,6 +49,7 @@ stages:
     - template: templates/maven-preview-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
 - stage: Maven-Release-Stage
+  dependsOn: []
   jobs:
   - job: Maven-Release
     steps: 
@@ -56,6 +57,8 @@ stages:
     - template: templates/maven-release-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
 - stage: Github-Release-Stage
+  dependsOn: 
+  - Maven-Release-Stage
   jobs:
   - job: Github-Release
     steps:
