@@ -30,10 +30,34 @@ pr: none
 pool:
   vmImage: windows-latest
 
-steps:
-- template: templates/checkout-and-credscan.yml
-- template: templates/install-java.yml
-- template: templates/secure-files.yml
-- template: templates/build-and-coverage.yml
-- template: templates/publish-artefacts.yml
-- template: templates/alert-failure.yml
+stages:
+- stage: Build-Stage
+  jobs:
+  - job: Build
+    steps:
+    - template: templates/build-stage/checkout-and-credscan.yml
+    - template: templates/build-stage/install-java.yml
+    - template: templates/build-stage/secure-files.yml
+    - template: templates/build-stage/build-and-coverage.yml
+    - template: templates/build-stage/publish-artefacts.yml
+    - template: templates/alert-failure.yml
+- stage: Maven-Preview-Stage
+  jobs: 
+  - job: Maven-Preview
+    steps: 
+    - template: templates/maven-preview-stage/secure-files.yml
+    - template: templates/maven-preview-stage/copy-and-build.yml
+    - template: templates/alert-failure.yml
+- stage: Maven-Release-Stage
+  jobs:
+  - job: Maven-Release
+    steps: 
+    - template: templates/maven-release-stage/secure-files.yml
+    - template: templates/maven-release-stage/copy-and-build.yml
+    - template: templates/alert-failure.yml
+- stage: Github-Release-Stage
+  jobs:
+  - job: Github-Release
+    steps:
+    - template: templates/github-release-stage/version-and-release.yml
+    - template: templates/alert-failure.yml
