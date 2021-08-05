@@ -47,6 +47,7 @@ stages:
   jobs: 
   - job: Maven-Preview
     steps: 
+    - template: templates/download-artifacts.yml
     - template: templates/maven-preview-stage/secure-files.yml
     - template: templates/maven-preview-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
@@ -57,6 +58,7 @@ stages:
   jobs:
   - job: Maven-Release
     steps: 
+    - template: templates/download-artifacts.yml
     - template: templates/maven-release-stage/secure-files.yml
     - template: templates/maven-release-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
@@ -67,5 +69,6 @@ stages:
   jobs:
   - job: Github-Release
     steps:
+    - template: templates/download-artifacts.yml
     - template: templates/github-release-stage/version-and-release.yml
     - template: templates/alert-failure.yml
