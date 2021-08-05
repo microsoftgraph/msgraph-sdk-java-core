@@ -8,12 +8,16 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/** This class provides methods to get the derived class corresponding to the OData type when deserializing payloads. */
 public class DerivedClassIdentifier {
 
     private final static String ODATA_TYPE_KEY = "@odata.type";
 
     private final ILogger logger;
-
+    /**
+     * Creates a new instance of the dereived class identifier.
+     * @param logger The logger to use.
+     */
     public DerivedClassIdentifier(@Nonnull ILogger logger) {
         this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");;
     }
