@@ -44,8 +44,10 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
@@ -68,19 +70,21 @@ final class GsonFactory {
      * @param logger the logger
      * @return the new instance
      */
-    public static Gson getGsonInstance(final ILogger logger) {
-        return getGsonInstance(false, logger);
+    @Nonnull
+    public static Gson getGsonInstance(@Nonnull final ILogger logger) {
+        return getGsonInstance(logger, false);
     }
 
     /**
      * Creates an instance of GSON
      *
-     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
      * @param logger         the logger
+     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
      * @return the new instance
      */
-    public static Gson getGsonInstance(final boolean serializeNulls, final ILogger logger) {
-
+    @Nonnull
+    public static Gson getGsonInstance(@Nonnull final ILogger logger, final boolean serializeNulls) {
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
         final JsonSerializer<OffsetDateTime> calendarJsonSerializer = new JsonSerializer<OffsetDateTime>() {
             @Override
             public JsonElement serialize(final OffsetDateTime src,
@@ -340,7 +344,7 @@ final class GsonFactory {
         };
 
         GsonBuilder builder = new GsonBuilder();
-        if(serializeNulls) {
+        if (serializeNulls) {
             builder.serializeNulls();
         }
         return builder

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -18,7 +19,6 @@ public class DefaultSerializerTest {
     final ILogger logger = mock(ILogger.class);
     Gson gson = GsonFactory.getGsonInstance(logger);
     DefaultSerializer defaultSerializer = new DefaultSerializer(logger);
-    DefaultSerializer defaultNullSerializer = new DefaultSerializer(true, logger);
 
     @Test
     public void testDeserializationOfObjectWithODataTypeProperty() {
@@ -42,11 +42,11 @@ public class DefaultSerializerTest {
             "{\"@odata.type\": \"#microsoft.graph.messageStub\", \"body\": null}";
 
         // When
-        DefaultSerializer nonNullSerializer = new DefaultSerializer(logger);
-        MessageStub message = nonNullSerializer.deserializeObject(testJsonResponse, MessageStub.class);
+        final MessageStub message = defaultSerializer.deserializeObject(testJsonResponse, MessageStub.class);
 
         // Then
-        assertEquals("{}", nonNullSerializer.serializeObject(message));
+        assertNotNull(message);
+        assertEquals("{}", defaultSerializer.serializeObject(message));
     }
 
     @Test
@@ -56,10 +56,11 @@ public class DefaultSerializerTest {
             "{\"@odata.type\": \"#microsoft.graph.messageStub\",\"body\":null}";
 
         // When
-        DefaultSerializer nullSerializer = new DefaultSerializer(true, logger);
-        MessageStub message = nullSerializer.deserializeObject(testJsonResponse, MessageStub.class);
+        final DefaultSerializer nullSerializer = new DefaultSerializer(logger, true);
+        final MessageStub message = nullSerializer.deserializeObject(testJsonResponse, MessageStub.class);
 
         // Then
+        assertNotNull(message);
         assertEquals("{\"body\":null,\"reaction\":null}", nullSerializer.serializeObject(message));
     }
 
