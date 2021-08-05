@@ -20,6 +20,7 @@ import com.microsoft.graph.options.Option;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
+import okio.Buffer;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -39,6 +40,7 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,6 +51,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CoreHttpProviderTests {
@@ -287,5 +291,35 @@ public class CoreHttpProviderTests {
         retryOptions = request.tag(RetryOptions.class);
 
         assertNotNull(retryOptions);
+    }
+
+    @Test
+    public void getHttpRequestWithTextPlainBodyDoesNotSerializeAsJson() throws IOException {
+        final IHttpRequest absRequest = mock(IHttpRequest.class);
+        when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+        when(absRequest.getHttpMethod()).thenReturn(HttpMethod.POST);
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
+
+        mProvider = new CoreHttpProvider(serializer,
+            logger,
+            new OkHttpClient.Builder().build());
+
+        // GIVEN: A "text/plain" request body
+        HeaderOption option = new HeaderOption("Content-Type", "text/plain");
+        when(absRequest.getHeaders()).thenReturn(Arrays.asList(option));
+        String expectedBody = "Plain String Body";
+
+        //WHEN: getHttpRequest is called
+        Request request = mProvider.getHttpRequest(absRequest, String.class, expectedBody);
+
+        // THEN: The serializer must not be called
+        verify(serializer, never()).serializeObject(Mockito.any());
+
+        // AND: We expect the request body to contain the plain String, not serialized as Json
+        Buffer buffer = new Buffer();
+        request.body().writeTo(buffer);
+        String actualRequestBody = buffer.readUtf8();
+        assertEquals(expectedBody, actualRequestBody);
     }
 }
