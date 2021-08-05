@@ -40,6 +40,7 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.RequestBody;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -306,20 +307,22 @@ public class CoreHttpProviderTests {
             new OkHttpClient.Builder().build());
 
         // GIVEN: A "text/plain" request body
-        HeaderOption option = new HeaderOption("Content-Type", "text/plain");
+        final HeaderOption option = new HeaderOption("Content-Type", "text/plain");
         when(absRequest.getHeaders()).thenReturn(Arrays.asList(option));
-        String expectedBody = "Plain String Body";
+        final String expectedBody = "Plain String Body";
 
         //WHEN: getHttpRequest is called
-        Request request = mProvider.getHttpRequest(absRequest, String.class, expectedBody);
+        final Request request = mProvider.getHttpRequest(absRequest, String.class, expectedBody);
 
         // THEN: The serializer must not be called
         verify(serializer, never()).serializeObject(Mockito.any());
 
         // AND: We expect the request body to contain the plain String, not serialized as Json
-        Buffer buffer = new Buffer();
-        request.body().writeTo(buffer);
-        String actualRequestBody = buffer.readUtf8();
+        final Buffer buffer = new Buffer();
+        final RequestBody requestBody = request.body();
+        assertNotNull(requestBody);
+        requestBody.writeTo(buffer);
+        final String actualRequestBody = buffer.readUtf8();
         assertEquals(expectedBody, actualRequestBody);
     }
 }
