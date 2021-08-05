@@ -58,6 +58,7 @@ stages:
   jobs:
   - job: Maven-Release
     steps: 
+    - template: templates/validation-request.yml
     - template: templates/download-artifacts.yml
     - template: templates/maven-release-stage/secure-files.yml
     - template: templates/maven-release-stage/copy-and-build.yml

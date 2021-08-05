@@ -1,0 +1,10 @@
+steps:
+- task: ManualValidation@0
+  inputs:
+    notifyUsers: |
+      mmainer@microsoft.com
+      vibiret@microsoft.com
+      ramsess@microsoft.com
+    instructions: |
+      By validating you agree to continue the Maven Release stage of the 
+      microsoftgraph.msgraph-sdk-java-core pipeline.
