@@ -31,7 +31,7 @@ pool:
   vmImage: windows-latest
 
 stages:
-- stage: Build-Stage
+- stage: Build
   jobs:
   - job: Build
     steps:
