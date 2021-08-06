@@ -296,7 +296,15 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 			}
 		} else {
 			logger.logDebug("Sending " + serializable.getClass().getName() + " as request body");
-			final String serializeObject = serializer.serializeObject(serializable);
+
+			String serializeObject = null;
+
+			if ("text/plain".equals(contenttype) && serializable instanceof String) {
+				serializeObject = (String)serializable;
+			} else {
+				serializeObject = serializer.serializeObject(serializable);
+			}
+
             if(serializeObject == null) {
                 throw new ClientException("Error during serialization of request body, the result was null", null);
             }

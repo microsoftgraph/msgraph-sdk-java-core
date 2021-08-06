@@ -20,6 +20,7 @@ import com.microsoft.graph.options.Option;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
+import okio.Buffer;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -39,6 +40,8 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.RequestBody;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,15 +52,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CoreHttpProviderTests {
+class CoreHttpProviderTests {
 
     private CoreHttpProvider mProvider;
     private Gson GSON = new GsonBuilder().create();
 
     @Test
-    public void testErrorResponse() throws Exception {
+    void testErrorResponse() throws Exception {
         final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
         final String expectedMessage = "Test error!";
         final GraphErrorResponse toSerialize = new GraphErrorResponse();
@@ -80,7 +85,7 @@ public class CoreHttpProviderTests {
     }
 
     @Test
-    public void testVerboseErrorResponse() throws Exception {
+    void testVerboseErrorResponse() throws Exception {
         final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
         final String expectedMessage = "Test error!";
         final GraphErrorResponse toSerialize = new GraphErrorResponse();
@@ -114,25 +119,25 @@ public class CoreHttpProviderTests {
     }
 
     @Test
-    public void testHasHeaderReturnsTrue() {
+    void testHasHeaderReturnsTrue() {
         HeaderOption h = new HeaderOption("name", "value");
         assertTrue(CoreHttpProvider.hasHeader(Arrays.asList(h), "name"));
     }
 
     @Test
-    public void testHasHeaderReturnsTrueWhenDifferentCase() {
+    void testHasHeaderReturnsTrueWhenDifferentCase() {
         HeaderOption h = new HeaderOption("name", "value");
         assertTrue(CoreHttpProvider.hasHeader(Arrays.asList(h), "NAME"));
     }
 
     @Test
-    public void testHasHeaderReturnsFalse() {
+    void testHasHeaderReturnsFalse() {
         HeaderOption h = new HeaderOption("name", "value");
         assertFalse(CoreHttpProvider.hasHeader(Arrays.asList(h), "blah"));
     }
 
     @Test
-    public void testStreamToStringReturnsData() {
+    void testStreamToStringReturnsData() {
         String data = GSON.toJson(Maps.newHashMap(
                 ImmutableMap.<String, String>builder()
                         .put("key", "value")
@@ -144,14 +149,14 @@ public class CoreHttpProviderTests {
     }
 
     @Test
-    public void testStreamToStringReturnsEmpty() {
+    void testStreamToStringReturnsEmpty() {
         final InputStream inputStream = new ByteArrayInputStream(new byte[0]);
 
         String convertedData = CoreHttpProvider.streamToString(inputStream);
         assertEquals("", convertedData);
     }
     @Test
-    public void emptyPostContentTypeIsNotReset() {
+    void emptyPostContentTypeIsNotReset() {
         final String contentTypeValue = "application/json";
         final HeaderOption ctype = new HeaderOption("Content-Type", contentTypeValue);
         final ArrayList<Option> options = new ArrayList<>();
@@ -168,7 +173,7 @@ public class CoreHttpProviderTests {
         assertEquals(contentTypeValue, request.body().contentType().toString());
     }
     @Test
-    public void emptyPostContentTypeIsNotSet() {
+    void emptyPostContentTypeIsNotSet() {
         final IHttpRequest absRequest = new BaseRequest<String>("https://localhost", mock(IBaseClient.class), Collections.emptyList(), String.class) {{
             this.setHttpMethod(HttpMethod.POST);
         }};
@@ -205,7 +210,7 @@ public class CoreHttpProviderTests {
                 mClient);
     }
     @Test
-    public void getHttpRequestDoesntSetRetryOrRedirectOptionsOnDefaultValues() throws MalformedURLException {
+    void getHttpRequestDoesntSetRetryOrRedirectOptionsOnDefaultValues() throws MalformedURLException {
         final IHttpRequest absRequest = mock(IHttpRequest.class);
         when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
         when(absRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
@@ -234,7 +239,7 @@ public class CoreHttpProviderTests {
     }
 
     @Test
-    public void getHttpRequestSetsRetryOrRedirectOptionsOnNonDefaultValues() throws MalformedURLException {
+    void getHttpRequestSetsRetryOrRedirectOptionsOnNonDefaultValues() throws MalformedURLException {
         final IHttpRequest absRequest = mock(IHttpRequest.class);
         when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
         when(absRequest.getHttpMethod()).thenReturn(HttpMethod.GET);
@@ -287,5 +292,37 @@ public class CoreHttpProviderTests {
         retryOptions = request.tag(RetryOptions.class);
 
         assertNotNull(retryOptions);
+    }
+
+    @Test
+    void getHttpRequestWithTextPlainBodyDoesNotSerializeAsJson() throws IOException {
+        final IHttpRequest absRequest = mock(IHttpRequest.class);
+        when(absRequest.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.com/v1.0/me"));
+        when(absRequest.getHttpMethod()).thenReturn(HttpMethod.POST);
+        final ISerializer serializer = mock(ISerializer.class);
+        final ILogger logger = mock(ILogger.class);
+
+        mProvider = new CoreHttpProvider(serializer,
+            logger,
+            new OkHttpClient.Builder().build());
+
+        // GIVEN: A "text/plain" request body
+        final HeaderOption option = new HeaderOption("Content-Type", "text/plain");
+        when(absRequest.getHeaders()).thenReturn(Arrays.asList(option));
+        final String expectedBody = "Plain String Body";
+
+        //WHEN: getHttpRequest is called
+        final Request request = mProvider.getHttpRequest(absRequest, String.class, expectedBody);
+
+        // THEN: The serializer must not be called
+        verify(serializer, never()).serializeObject(Mockito.any());
+
+        // AND: We expect the request body to contain the plain String, not serialized as Json
+        final Buffer buffer = new Buffer();
+        final RequestBody requestBody = request.body();
+        assertNotNull(requestBody);
+        requestBody.writeTo(buffer);
+        final String actualRequestBody = buffer.readUtf8();
+        assertEquals(expectedBody, actualRequestBody);
     }
 }

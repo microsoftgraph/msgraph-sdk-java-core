@@ -22,12 +22,10 @@
 
 package com.microsoft.graph.serializer;
 
-import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.microsoft.graph.logger.ILogger;
 
 import java.io.IOException;
@@ -38,9 +36,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
-
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -48,17 +45,19 @@ import javax.annotation.Nullable;
  * The default serializer implementation for the SDK
  */
 public class DefaultSerializer implements ISerializer {
-	private static final String graphResponseHeadersKey = "graphResponseHeaders";
+
+	private static final String GRAPH_RESPONSE_HEADERS_KEY = "graphResponseHeaders";
+
+    /**
+     * The logger
+     */
+    private final ILogger logger;
 
 	/**
 	 * The instance of the internal serializer
 	 */
 	private final Gson gson;
 
-	/**
-	 * The logger
-	 */
-	private final ILogger logger;
 
 	/**
 	 * Creates a DefaultSerializer
@@ -66,9 +65,25 @@ public class DefaultSerializer implements ISerializer {
 	 * @param logger the logger
 	 */
 	public DefaultSerializer(@Nonnull final ILogger logger) {
-		this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
-		this.gson = GsonFactory.getGsonInstance(logger);
+		this(logger, false);
 	}
+
+
+    /**
+     * Creates a DefaultSerializer with an option to enable serializing of the null values.
+     *
+     * Serializing of null values can have side effects on the service behavior.
+     * Sending null values in a PATCH request might reset existing values on the service side.
+     * Sending null values in a POST request might prevent the service from assigning default values to the properties.
+     * It is not recommended to send null values to the service in general and this setting should only be used when serializing information for a local store.
+     *
+     * @param logger         the logger
+     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
+     */
+    public DefaultSerializer(@Nonnull final ILogger logger, @Nonnull final boolean serializeNulls) {
+        this.logger = Objects.requireNonNull(logger, "parameter logger cannot be null");
+        this.gson = GsonFactory.getGsonInstance(logger, serializeNulls);
+    }
 
 	@Override
 	@Nullable
@@ -104,16 +119,7 @@ public class DefaultSerializer implements ISerializer {
 		if (jsonObject instanceof IJsonBackedObject) {
 			logger.logDebug("Deserializing type " + clazz.getSimpleName());
 			final JsonObject rawObject = rawElement.isJsonObject() ? rawElement.getAsJsonObject() : null;
-
-			// If there is a derived class, try to get it and deserialize to it
-			T jo = jsonObject;
-			if (rawElement.isJsonObject()) {
-				final Class<?> derivedClass = this.getDerivedClass(rawObject, clazz);
-				if (derivedClass != null)
-					jo = (T) gson.fromJson(rawElement, derivedClass);
-			}
-
-			final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jo;
+			final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jsonObject;
 
 			if(rawElement.isJsonObject()) {
 				jsonBackedObject.setRawObject(this, rawObject);
@@ -123,9 +129,9 @@ public class DefaultSerializer implements ISerializer {
 
 			if (responseHeaders != null) {
 				JsonElement convertedHeaders = gson.toJsonTree(responseHeaders);
-				jsonBackedObject.additionalDataManager().put(graphResponseHeadersKey, convertedHeaders);
+				jsonBackedObject.additionalDataManager().put(GRAPH_RESPONSE_HEADERS_KEY, convertedHeaders);
 			}
-			return jo;
+			return jsonObject;
 		} else {
 			logger.logDebug("Deserializing a non-IJsonBackedObject type " + clazz.getSimpleName());
 			return jsonObject;
@@ -304,52 +310,12 @@ public class DefaultSerializer implements ISerializer {
 	 */
 	private void addAdditionalDataFromManagerToJson(AdditionalDataManager additionalDataManager, JsonObject jsonNode) {
 		for (Map.Entry<String, JsonElement> entry : additionalDataManager.entrySet()) {
-			if(!entry.getKey().equals(graphResponseHeadersKey)) {
+			if(!entry.getKey().equals(GRAPH_RESPONSE_HEADERS_KEY)) {
 				jsonNode.add(entry.getKey(), entry.getValue());
 			}
 		}
 	}
 
-	private final static String ODATA_TYPE_KEY = "@odata.type";
-	/**
-	 * Get the derived class for the given JSON object
-	 * This covers scenarios in which the service may return one of several derived types
-	 * of a base object, which it defines using the odata.type parameter
-	 *
-	 * @param jsonObject  the raw JSON object of the response
-	 * @param parentClass the parent class the derived class should inherit from
-	 * @return			the derived class if found, or null if not applicable
-	 */
-	@Nullable
-	public Class<?> getDerivedClass(@Nonnull final JsonObject jsonObject, @Nullable final Class<?> parentClass) {
-        Objects.requireNonNull(jsonObject, "parameter jsonObject cannot be null");
-		//Identify the odata.type information if provided
-		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
-			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
-			final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
-			final int lastDotIndex = odataType.lastIndexOf(".");
-			final String derivedType = (odataType.substring(0, lastDotIndex) +
-											".models." +
-											CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
-																		odataType.substring(lastDotIndex + 1)))
-										.replace("#", "com.");
-			try {
-				Class<?> derivedClass = Class.forName(derivedType);
-				//Check that the derived class inherits from the given parent class
-				if (parentClass == null || parentClass.isAssignableFrom(derivedClass)) {
-					return derivedClass;
-				}
-				return null;
-			} catch (ClassNotFoundException e) {
-				logger.logDebug("Unable to find a corresponding class for derived type " + derivedType + ". Falling back to parent class.");
-				//If we cannot determine the derived type to cast to, return null
-				//This may happen if the API and the SDK are out of sync
-				return null;
-			}
-		}
-		//If there is no defined OData type, return null
-		return null;
-	}
 
 	/**
 	 * Gets the logger in use

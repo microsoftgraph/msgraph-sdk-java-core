@@ -24,7 +24,6 @@ package com.microsoft.graph.serializer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -112,7 +111,7 @@ public class CollectionPageSerializer {
             final Class<?> responseClass = Class.forName(responseClassCanonicalName);
             final JsonObject responseJson = new JsonObject();
             responseJson.add("value", json);
-            final BaseCollectionResponse<T1> response = CollectionResponseSerializer.deserialize(responseJson, responseClass, logger);
+            final BaseCollectionResponse<T1> response = CollectionResponseDeserializer.deserialize(responseJson, responseClass, logger);
             /** eg: com.microsoft.graph.requests.AttachmentCollectionRequestBuilder */
             final String responseBuilderCanonicalName = responseClassCanonicalName
                         .substring(0, responseClassCanonicalName.length() - responseLength) + "RequestBuilder";
