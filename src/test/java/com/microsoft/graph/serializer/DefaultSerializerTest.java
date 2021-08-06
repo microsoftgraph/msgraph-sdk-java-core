@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class DefaultSerializerTest {
+class DefaultSerializerTest {
 
     final ILogger logger = mock(ILogger.class);
     Gson gson = GsonFactory.getGsonInstance(logger);
     DefaultSerializer defaultSerializer = new DefaultSerializer(logger);
 
     @Test
-    public void testDeserializationOfObjectWithODataTypeProperty() {
+    void testDeserializationOfObjectWithODataTypeProperty() {
         // Given
         final String testJsonResponse =
             "{\"@odata.type\": \"#microsoft.graph.subReactionStub1\"}";
@@ -36,7 +36,7 @@ public class DefaultSerializerTest {
     }
 
     @Test
-    public void testDefaultSerializerDoesNotIncludeNullValuesByDefault() {
+    void testDefaultSerializerDoesNotIncludeNullValuesByDefault() {
         // Given
         final String testJsonResponse =
             "{\"@odata.type\": \"#microsoft.graph.messageStub\", \"body\": null}";
@@ -50,7 +50,7 @@ public class DefaultSerializerTest {
     }
 
     @Test
-    public void testDefaultNullSerializerDoesIncludeNullValues() {
+    void testDefaultNullSerializerDoesIncludeNullValues() {
         // Given
         final String testJsonResponse =
             "{\"@odata.type\": \"#microsoft.graph.messageStub\",\"body\":null}";

@@ -72,6 +72,11 @@ public class DefaultSerializer implements ISerializer {
     /**
      * Creates a DefaultSerializer with an option to enable serializing of the null values.
      *
+     * Serializing of null values can have side effects on the service behavior.
+     * Sending null values in a PATCH request might reset existing values on the service side.
+     * Sending null values in a POST request might prevent the service from assigning default values to the properties.
+     * It is not recommended to send null values to the service in general and this setting should only be used when serializing information for a local store.
+     *
      * @param logger         the logger
      * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
      */
