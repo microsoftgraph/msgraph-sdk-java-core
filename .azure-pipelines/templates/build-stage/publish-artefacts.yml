@@ -15,8 +15,6 @@ steps:
       Scripts/**
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'Drop'
-    publishLocation: 'pipeline'
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: Drop
+  displayName: Publish Build Artifact  
