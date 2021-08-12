@@ -76,7 +76,7 @@ stages:
     strategy: 
      runOnce:
       deploy:
-      steps: 
+        steps: 
         - template: templates/github-release-stage/version-and-release.yml
         - template: templates/alert-failure.yml
 
