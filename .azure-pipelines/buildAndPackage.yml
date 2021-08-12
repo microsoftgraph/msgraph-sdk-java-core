@@ -52,7 +52,7 @@ stages:
     - template: templates/maven-preview-stage/copy-and-build.yml
     - template: templates/alert-failure.yml
 
-- stage: Maven-Release-And-Git-Release
+- stage: Maven-Release-And-Github-Release
   dependsOn: []
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
