@@ -35,11 +35,11 @@ stages:
   jobs:
   - job: Build
     steps:
-    - template: templates/build-stage/checkout-and-credscan.yml
-    - template: templates/build-stage/install-java.yml
-    - template: templates/build-stage/secure-files.yml
-    - template: templates/build-stage/build-and-coverage.yml
-    - template: templates/build-stage/publish-artefacts.yml
+    - template: templates/build/checkout-and-credscan.yml
+    - template: templates/build/install-java.yml
+    - template: templates/build/secure-files.yml
+    - template: templates/build/build-and-coverage.yml
+    - template: templates/build/publish-artefacts.yml
     - template: templates/alert-failure.yml
 
 - stage: Maven-Preview
@@ -48,8 +48,8 @@ stages:
   - job: Maven-Preview
     steps: 
     - template: templates/download-artifacts.yml
-    - template: templates/maven-preview-stage/secure-files.yml
-    - template: templates/maven-preview-stage/copy-and-build.yml
+    - template: templates/meven-preview/secure-files.yml
+    - template: templates/meven-preview/copy-and-build.yml
     - template: templates/alert-failure.yml
 
 - stage: Maven-Release-And-Github-Release
@@ -64,8 +64,8 @@ stages:
      runOnce:
       deploy:
         steps:
-        - template: templates/maven-release-stage/secure-files.yml
-        - template: templates/maven-release-stage/copy-and-build.yml
+        - template: templates/meven-release/secure-files.yml
+        - template: templates/meven-release/copy-and-build.yml
         - template: templates/alert-failure.yml
 
   - deployment: Github-Release
@@ -77,5 +77,5 @@ stages:
      runOnce:
       deploy:
         steps: 
-        - template: templates/github-release-stage/version-and-release.yml
+        - template: templates/github-release/version-and-release.yml
         - template: templates/alert-failure.yml
