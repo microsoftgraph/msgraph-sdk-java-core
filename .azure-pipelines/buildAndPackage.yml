@@ -51,7 +51,9 @@ stages:
     steps: 
     - template: templates/download-artifacts.yml
     - template: templates/secure-files.yml
-    - template: templates/meven-preview/copy-and-build.yml
+    - template: templates/copy-and-build.yml
+      parameters:
+        task: 'publishSnapshotPublicationToSonatypeSnapshotRepository'
     - template: templates/alert-failure.yml
 
 - stage: Maven-Release-And-Github-Release
@@ -69,7 +71,9 @@ stages:
         - template: templates/secure-files.yml
           parameters:
             stageID: 'release'
-        - template: templates/meven-release/copy-and-build.yml
+        - template: templates/copy-and-build.yml
+          parameters:
+            task: 'publishMavenCentralReleasePublicationToSonatypeRepository'
         - template: templates/alert-failure.yml
 
   - deployment: Github-Release
