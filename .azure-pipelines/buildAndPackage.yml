@@ -79,13 +79,3 @@ stages:
         steps: 
         - template: templates/github-release-stage/version-and-release.yml
         - template: templates/alert-failure.yml
-
-#- stage: Github-Release
-#  dependsOn: 
-#  - Maven-Release
-#  jobs:
-#  - job: Github-Release
-#    steps:
-#    - template: templates/download-artifacts.yml
-#    - template: templates/github-release-stage/version-and-release.yml
-#    - template: templates/alert-failure.yml
