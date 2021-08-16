@@ -15,7 +15,6 @@ steps:
       Scripts/**
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: Drop
+  displayName: Publish Build Artifact  
