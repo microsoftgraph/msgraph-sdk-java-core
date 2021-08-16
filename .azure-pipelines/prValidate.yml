@@ -29,7 +29,7 @@ pool:
   vmImage: windows-latest
 
 steps:
-- template: templates/checkout-and-credscan.yml
-- template: templates/install-java.yml
-- template: templates/build-and-coverage.yml
+- template: templates/build/checkout-and-credscan.yml
+- template: templates/build/install-java.yml
+- template: templates/build/build-and-coverage.yml
 - template: templates/alert-failure.yml
