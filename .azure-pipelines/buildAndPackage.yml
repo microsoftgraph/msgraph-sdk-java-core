@@ -94,5 +94,5 @@ stages:
         steps: 
         - template: templates/version-and-release.yml
           parameters:
-            gitConnection: 'ramsessanchez'
+            gitConnection: 'microsoftgraph'
         - template: templates/alert-failure.yml
