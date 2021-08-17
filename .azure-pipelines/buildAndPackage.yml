@@ -30,7 +30,7 @@ pr:
 - master
 
 pool:
-  vmImage: windows-latest
+  vmImage: ubuntu-latest
 
 stages:
 - stage: Build
@@ -51,7 +51,7 @@ stages:
   - deployment: Maven_Preview
     environment: 'MSGraph SDK Development - Java'
     pool:
-      vmImage: windows-latest
+      vmImage: ubuntu-latest
     strategy:
      runOnce:
       deploy:
@@ -68,7 +68,7 @@ stages:
   - deployment: Maven_Release
     environment: 'MSGraph SDK Development - Java'
     pool:
-      vmImage: windows-latest
+      vmImage: ubuntu-latest
     strategy:
      runOnce:
       deploy:
@@ -84,7 +84,7 @@ stages:
     dependsOn: Maven_Release
     environment: 'MSGraph SDK Development - Java'
     pool:
-      vmImage: windows-latest
+      vmImage: ubuntu-latest
     strategy: 
      runOnce:
       deploy:
