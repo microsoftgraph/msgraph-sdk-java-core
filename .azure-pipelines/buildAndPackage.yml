@@ -46,10 +46,10 @@ stages:
     - template: templates/build/publish-artefacts.yml
     - template: templates/alert-failure.yml
 
-- stage: Maven-Preview
+- stage: Maven_Preview
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs: 
-  - deployment: Maven-Preview
+  - deployment: Maven_Preview
     environment: 'MSGraph SDK Development - Java'
     pool:
       vmImage: windows-latest
@@ -63,11 +63,11 @@ stages:
             task: 'publishSnapshotPublicationToSonatypeSnapshotRepository'
         - template: templates/alert-failure.yml
 
-- stage: Maven-Release-And-Github-Release
+- stage: Maven_Release_And_Github_Release
   dependsOn: []
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
-  - deployment: Maven-Release
+  - deployment: Maven_Release
     environment: 'MSGraph SDK Development - Java'
     pool:
       vmImage: windows-latest
@@ -83,8 +83,8 @@ stages:
             task: 'publishMavenCentralReleasePublicationToSonatypeRepository'
         - template: templates/alert-failure.yml
 
-  - deployment: Github-Release
-    dependsOn: Maven-Release
+  - deployment: Github_Release
+    dependsOn: Maven_Release
     environment: 'MSGraph SDK Development - Java'
     pool:
       vmImage: windows-latest
