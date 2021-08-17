@@ -25,7 +25,9 @@ trigger:
       - settings.gradle
       - Scripts/*
 
-pr: none
+pr: 
+- dev
+- master
 
 pool:
   vmImage: windows-latest
