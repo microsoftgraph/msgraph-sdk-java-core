@@ -1,0 +1,3 @@
+steps:
+  - download: current
+    artifact: Drop
