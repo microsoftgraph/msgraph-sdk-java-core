@@ -38,7 +38,7 @@ stages:
   - job: Build
     steps:
     - template: templates/build/checkout-and-credscan.yml
-    - template: templates/build/install-java.yml
+    - template: templates/install-java.yml
     - template: templates/secure-files.yml
       parameters:
         stageID: 'build'
@@ -55,7 +55,8 @@ stages:
     strategy:
      runOnce:
       deploy:
-        steps: 
+        steps:
+        - template: templates/install-java.yml 
         - template: templates/secure-files.yml
         - template: templates/copy-and-build.yml
           parameters:
@@ -73,6 +74,7 @@ stages:
      runOnce:
       deploy:
         steps:
+        - template: templates/install-java.yml
         - template: templates/secure-files.yml
           parameters:
             stageID: 'release'
@@ -89,6 +91,7 @@ stages:
      runOnce:
       deploy:
         steps: 
+        - template: templates/install-java.yml
         - template: templates/version-and-release.yml
           parameters:
             gitConnection: 'microsoftgraphrelease'
