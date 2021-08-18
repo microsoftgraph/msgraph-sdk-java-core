@@ -46,7 +46,7 @@ stages:
     - template: templates/build/publish-artefacts.yml
 
 - stage: Maven_Preview
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs: 
   - deployment: Maven_Preview
     environment: 'MSGraph SDK Development - Java'

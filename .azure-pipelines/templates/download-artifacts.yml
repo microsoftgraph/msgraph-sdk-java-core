@@ -8,5 +8,3 @@ steps:
       patterns: |
         **
         *
-  - pwsh: Get-ChildItem -Recurse
-    workingDirectory: $(Agent.BuildDirectory)
