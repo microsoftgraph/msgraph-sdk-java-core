@@ -1,0 +1,10 @@
+steps:
+  - download: none
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      source: current
+      artifact: Drop
+      path: '$(Agent.BuildDirectory)/Drop/'
+      patterns: |
+        **
+        *

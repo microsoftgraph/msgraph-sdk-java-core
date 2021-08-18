@@ -38,36 +38,17 @@ stages:
   - job: Build
     steps:
     - template: templates/build/checkout-and-credscan.yml
-    - template: templates/build/install-java.yml
+    - template: templates/install-java.yml
     - template: templates/secure-files.yml
       parameters:
         stageID: 'build'
     - template: templates/build/build-and-coverage.yml
     - template: templates/build/publish-artefacts.yml
-    - template: templates/alert-failure.yml
 
-- stage: Maven-Preview
+- stage: Maven_Preview
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs: 
-  - deployment: Maven-Preview
-    environment: 'MSGraph SDK Development - Java'
-    pool:
-      vmImage: windows-latest
-    strategy:
-     runOnce:
-      deploy:
-        steps: 
-        - template: templates/secure-files.yml
-        - template: templates/copy-and-build.yml
-          parameters:
-            task: 'publishSnapshotPublicationToSonatypeSnapshotRepository'
-        - template: templates/alert-failure.yml
-
-- stage: Maven-Release-And-Github-Release
-  dependsOn: []
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  jobs:
-  - deployment: Maven-Release
+  - deployment: Maven_Preview
     environment: 'MSGraph SDK Development - Java'
     pool:
       vmImage: windows-latest
@@ -75,16 +56,36 @@ stages:
      runOnce:
       deploy:
         steps:
+        - template: templates/download-artifacts.yml
+        - template: templates/install-java.yml
+        - template: templates/secure-files.yml
+        - template: templates/copy-and-build.yml
+          parameters:
+            task: 'publishSnapshotPublicationToSonatypeSnapshotRepository'
+
+- stage: Maven_Release_And_Github_Release
+  dependsOn: []
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - deployment: Maven_Release
+    environment: 'MSGraph SDK Development - Java'
+    pool:
+      vmImage: windows-latest
+    strategy:
+     runOnce:
+      deploy:
+        steps:
+        - template: templates/download-artifacts.yml
+        - template: templates/install-java.yml
         - template: templates/secure-files.yml
           parameters:
             stageID: 'release'
         - template: templates/copy-and-build.yml
           parameters:
             task: 'publishMavenCentralReleasePublicationToSonatypeRepository'
-        - template: templates/alert-failure.yml
 
-  - deployment: Github-Release
-    dependsOn: Maven-Release
+  - deployment: Github_Release
+    dependsOn: Maven_Release
     environment: 'MSGraph SDK Development - Java'
     pool:
       vmImage: windows-latest
@@ -92,7 +93,7 @@ stages:
      runOnce:
       deploy:
         steps: 
+        - template: templates/download-artifacts.yml
         - template: templates/version-and-release.yml
           parameters:
-            gitConnection: 'ramsessanchez'
-        - template: templates/alert-failure.yml
+            gitConnection: 'microsoftgraphrelease'
