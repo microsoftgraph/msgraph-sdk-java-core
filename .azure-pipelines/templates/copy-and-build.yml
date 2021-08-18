@@ -12,7 +12,7 @@ steps:
 
 - task: Gradle@2
   inputs:
-    gradleWrapperFile: $(Agent.BuildDirectory)/Drop/gradlew'
+    gradleWrapperFile: $(Agent.BuildDirectory)/Drop/gradlew
     workingDirectory: '$(Agent.BuildDirectory)/Drop/'
     options: '-x jar -x javadoc -x javadocJar -x compileJava -x processResources -x classes -x sourceJar'
     tasks: ${{ parameters.task }}
