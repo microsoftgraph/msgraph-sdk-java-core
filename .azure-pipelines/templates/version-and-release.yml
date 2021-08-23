@@ -8,8 +8,8 @@ parameters:
 steps: 
 - task: PowerShell@2
   inputs:
-    filePath: '$${{ parameters.directoryPath }}/Scripts/getLatestVersion.ps1'
-    arguments: '-propertiesPath "$${{ parameters.directoryPath }}/gradle.properties"'
+    filePath: '${{ parameters.directoryPath }}/Scripts/getLatestVersion.ps1'
+    arguments: '-propertiesPath "${{ parameters.directoryPath }}/gradle.properties"'
     pwsh: true
 
 - task: GitHubRelease@1
