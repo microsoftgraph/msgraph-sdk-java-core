@@ -10,7 +10,7 @@ steps:
   inputs:
     SourceFolder: '$(Agent.TempDirectory)'
     Contents: '**'
-    TargetFolder: '$${{ parameters.directoryPath }}/'
+    TargetFolder: '${{ parameters.directoryPath }}/'
 
 - task: Gradle@2
   inputs:
