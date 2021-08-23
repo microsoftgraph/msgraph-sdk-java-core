@@ -4,7 +4,7 @@ steps:
     inputs:
       source: current
       artifact: Drop
-      path: '$(Agent.BuildDirectory)/Drop/'
+      path: '$(DROP_PATH)/'
       patterns: |
         **
         *
