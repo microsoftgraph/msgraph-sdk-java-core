@@ -14,8 +14,8 @@ steps:
 
 - task: Gradle@2
   inputs:
-    gradleWrapperFile: $${{ parameters.directoryPath }}/gradlew
-    workingDirectory: '$${{ parameters.directoryPath }}/'
+    gradleWrapperFile: ${{ parameters.directoryPath }}/gradlew
+    workingDirectory: '${{ parameters.directoryPath }}/'
     options: '-x jar -x javadoc -x javadocJar -x compileJava -x processResources -x classes -x sourceJar'
     tasks: ${{ parameters.task }}
     publishJUnitResults: true
