@@ -46,6 +46,9 @@ stages:
       parameters:
         stageID: 'build'
     - template: templates/build/build-and-coverage.yml
+  - job: Publish
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    steps: 
     - template: templates/build/publish-artefacts.yml
 
 - stage: Maven_Preview

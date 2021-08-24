@@ -16,6 +16,5 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - publish: $(Build.ArtifactStagingDirectory)
-  condition: ne(variables['Build.Reason'], 'PullRequest')
   artifact: Drop
   displayName: Publish Build Artifact  
