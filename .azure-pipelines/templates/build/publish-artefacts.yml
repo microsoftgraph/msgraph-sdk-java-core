@@ -1,6 +1,5 @@
 steps:
 - task: CopyFiles@2
-  condition: ne(variables['Build.Reason'], 'PullRequest')
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)'
     Contents: |
