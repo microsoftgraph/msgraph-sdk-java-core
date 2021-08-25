@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
 
+// Dummy change, do not accept
 public class BaseAuthenticationProviderTest {
     final BaseAuthenticationProvider authProvider = new BaseAuthenticationProvider() {
 
