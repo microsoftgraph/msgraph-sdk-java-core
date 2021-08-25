@@ -2,6 +2,7 @@
 #Licensed under the MIT License.
 #Building and packaging the artifacts of the Java-Core libraries using the build.gradle file.
 #Ready the package for deployment and release. 
+#TEST
 
 trigger:
   branches:
