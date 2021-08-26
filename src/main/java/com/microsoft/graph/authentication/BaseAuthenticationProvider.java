@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
-//CI TEST5, IGNORE
+//CI TEST6, IGNORE
 /**
  * Provides basic common methods for all authentication providers
  */
