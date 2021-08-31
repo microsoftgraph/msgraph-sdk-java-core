@@ -39,9 +39,11 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,6 +63,15 @@ public class DefaultSerializer implements ISerializer {
 	 * The logger
 	 */
 	private final ILogger logger;
+
+    static Function<String, String> oDataTypeToClassName = odataType -> {
+
+        final int lastDotIndex = odataType.lastIndexOf(".");
+        return  (odataType.substring(0, lastDotIndex).toLowerCase(Locale.ROOT) +
+            ".models." +
+            CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, odataType.substring(lastDotIndex + 1)))
+            .replace("#", "com.");
+    };
 
 	/**
 	 * Creates a DefaultSerializer
@@ -364,12 +375,7 @@ public class DefaultSerializer implements ISerializer {
 		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
 			final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
-			final int lastDotIndex = odataType.lastIndexOf(".");
-			final String derivedType = (odataType.substring(0, lastDotIndex) +
-											".models." +
-											CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
-																		odataType.substring(lastDotIndex + 1)))
-										.replace("#", "com.");
+			final String derivedType = oDataTypeToClassName.apply(odataType);
 			try {
 				Class<?> derivedClass = Class.forName(derivedType);
 				//Check that the derived class inherits from the given parent class
