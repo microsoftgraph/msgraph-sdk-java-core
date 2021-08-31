@@ -64,15 +64,6 @@ public class DefaultSerializer implements ISerializer {
 	 */
 	private final ILogger logger;
 
-    static Function<String, String> oDataTypeToClassName = odataType -> {
-
-        final int lastDotIndex = odataType.lastIndexOf(".");
-        return  (odataType.substring(0, lastDotIndex).toLowerCase(Locale.ROOT) +
-            ".models." +
-            CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, odataType.substring(lastDotIndex + 1)))
-            .replace("#", "com.");
-    };
-
 	/**
 	 * Creates a DefaultSerializer
 	 *
@@ -375,7 +366,7 @@ public class DefaultSerializer implements ISerializer {
 		if (jsonObject.get(ODATA_TYPE_KEY) != null) {
 			/** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
 			final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
-			final String derivedType = oDataTypeToClassName.apply(odataType);
+			final String derivedType = oDataTypeToClassName(odataType);
 			try {
 				Class<?> derivedClass = Class.forName(derivedType);
 				//Check that the derived class inherits from the given parent class
@@ -394,7 +385,22 @@ public class DefaultSerializer implements ISerializer {
 		return null;
 	}
 
-	/**
+    /**
+     * Convert {@code @odata.type} to proper java class name
+     * @param odataType to convert
+     * @return converted class name
+     */
+    @VisibleForTesting
+    static String oDataTypeToClassName(@Nonnull String odataType) {
+        Objects.requireNonNull(odataType);
+        final int lastDotIndex = odataType.lastIndexOf(".");
+        return (odataType.substring(0, lastDotIndex).toLowerCase(Locale.ROOT) +
+            ".models." +
+            CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, odataType.substring(lastDotIndex + 1)))
+            .replace("#", "com.");
+    }
+
+    /**
 	 * Gets the logger in use
 	 *
 	 * @return a logger

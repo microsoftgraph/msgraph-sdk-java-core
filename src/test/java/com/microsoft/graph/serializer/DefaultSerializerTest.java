@@ -11,6 +11,6 @@ class DefaultSerializerTest {
     @Test
     void oDataTypeToClassName() {
         Assertions.assertEquals("com.microsoft.graph.models.Message",
-            DefaultSerializer.oDataTypeToClassName.apply("#Microsoft.Graph.Message"));
+            DefaultSerializer.oDataTypeToClassName("#Microsoft.Graph.Message"));
     }
 }
