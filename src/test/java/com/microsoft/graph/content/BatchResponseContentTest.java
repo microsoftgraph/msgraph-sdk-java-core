@@ -14,7 +14,9 @@ import java.util.Iterator;
 import com.google.gson.JsonElement;
 import com.microsoft.graph.http.GraphErrorResponse;
 import com.microsoft.graph.http.GraphServiceException;
+import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
+import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
@@ -110,6 +112,54 @@ public class BatchResponseContentTest {
                 assertNotNull(response);
                 assertNotNull(response.error);
                 assertNotNull(response.error.message);
+            }
+        } else
+            fail("batch response was null");
+    }
+    @Test
+    public void includeVerboseInformation() {
+        String responsebody = "{\"responses\":[{\"id\":\"1\",\"status\":400,\"headers\":{\"Cache-Control\":\"no-cache\",\"x-ms-resource-unit\":\"1\",\"Content-Type\":\"application/json\"},\"body\":{\"error\":{\"code\":\"Request_BadRequest\",\"message\":\"Avalueisrequiredforproperty'displayName'ofresource'User'.\",\"innerError\":{\"date\":\"2021-02-02T19:19:38\",\"request-id\":\"408b8e64-4047-4c97-95b6-46e9f212ab48\",\"client-request-id\":\"102910da-260c-3028-0fb3-7d6903a02622\"}}}}]}";
+        ISerializer serializer = new DefaultSerializer(new DefaultLogger() {{
+            setLoggingLevel(LoggerLevel.DEBUG);
+        }});
+        BatchResponseContent batchresponse = serializer.deserializeObject(responsebody, BatchResponseContent.class);
+        if(batchresponse != null) {
+            if(batchresponse.responses != null)  // this is done by the batch request in the fluent API
+                for(final BatchResponseStep<?> step : batchresponse.responses) {
+                    step.serializer = serializer;
+                }
+            try {
+                batchresponse.getResponseById("1").getDeserializedBody(BatchRequestContent.class);
+            } catch(GraphServiceException ex) {
+                final GraphErrorResponse response = ex.getError();
+                assertNotNull(response);
+                assertNotNull(response.error);
+                assertNotNull(response.error.message);
+                assertEquals(ex.getMessage(true), ex.getMessage());
+            }
+        } else
+            fail("batch response was null");
+    }
+    @Test
+    public void doesNotIncludeVerboseInformation() {
+        String responsebody = "{\"responses\":[{\"id\":\"1\",\"status\":400,\"headers\":{\"Cache-Control\":\"no-cache\",\"x-ms-resource-unit\":\"1\",\"Content-Type\":\"application/json\"},\"body\":{\"error\":{\"code\":\"Request_BadRequest\",\"message\":\"Avalueisrequiredforproperty'displayName'ofresource'User'.\",\"innerError\":{\"date\":\"2021-02-02T19:19:38\",\"request-id\":\"408b8e64-4047-4c97-95b6-46e9f212ab48\",\"client-request-id\":\"102910da-260c-3028-0fb3-7d6903a02622\"}}}}]}";
+        ISerializer serializer = new DefaultSerializer(new DefaultLogger() {{
+            setLoggingLevel(LoggerLevel.ERROR);
+        }});
+        BatchResponseContent batchresponse = serializer.deserializeObject(responsebody, BatchResponseContent.class);
+        if(batchresponse != null) {
+            if(batchresponse.responses != null)  // this is done by the batch request in the fluent API
+                for(final BatchResponseStep<?> step : batchresponse.responses) {
+                    step.serializer = serializer;
+                }
+            try {
+                batchresponse.getResponseById("1").getDeserializedBody(BatchRequestContent.class);
+            } catch(GraphServiceException ex) {
+                final GraphErrorResponse response = ex.getError();
+                assertNotNull(response);
+                assertNotNull(response.error);
+                assertNotNull(response.error.message);
+                assertEquals(ex.getMessage(false), ex.getMessage());
             }
         } else
             fail("batch response was null");

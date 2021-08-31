@@ -44,8 +44,10 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
@@ -68,8 +70,26 @@ final class GsonFactory {
      * @param logger the logger
      * @return the new instance
      */
-    public static Gson getGsonInstance(final ILogger logger) {
+    @Nonnull
+    public static Gson getGsonInstance(@Nonnull final ILogger logger) {
+        return getGsonInstance(logger, false);
+    }
 
+    /**
+     * Creates an instance of GSON
+     *
+     * Serializing of null values can have side effects on the service behavior.
+     * Sending null values in a PATCH request might reset existing values on the service side.
+     * Sending null values in a POST request might prevent the service from assigning default values to the properties.
+     * It is not recommended to send null values to the service in general and this setting should only be used when serializing information for a local store.
+     *
+     * @param logger         the logger
+     * @param serializeNulls the setting of whether or not to serialize the null values in the JSON object
+     * @return the new instance
+     */
+    @Nonnull
+    public static Gson getGsonInstance(@Nonnull final ILogger logger, final boolean serializeNulls) {
+        Objects.requireNonNull(logger, "parameter logger cannot be null");
         final JsonSerializer<OffsetDateTime> calendarJsonSerializer = new JsonSerializer<OffsetDateTime>() {
             @Override
             public JsonElement serialize(final OffsetDateTime src,
@@ -239,7 +259,7 @@ final class GsonFactory {
             public BaseCollectionResponse<?> deserialize(final JsonElement json,
                                         final Type typeOfT,
                                         final JsonDeserializationContext context) throws JsonParseException {
-                return CollectionResponseSerializer.deserialize(json, typeOfT, logger);
+                return CollectionResponseDeserializer.deserialize(json, typeOfT, logger);
             }
         };
 
@@ -253,6 +273,15 @@ final class GsonFactory {
                 } catch (Exception e) {
                     return null;
                 }
+            }
+        };
+
+        final JsonSerializer<TimeOfDay> timeOfDayJsonSerializer = new JsonSerializer<TimeOfDay>() {
+            @Override
+            public JsonElement serialize(final TimeOfDay src,
+                                         final Type typeOfSrc,
+                                         final JsonSerializationContext context) {
+                return new JsonPrimitive(src.toString());
             }
         };
 
@@ -319,7 +348,11 @@ final class GsonFactory {
             }
         };
 
-        return new GsonBuilder()
+        GsonBuilder builder = new GsonBuilder();
+        if (serializeNulls) {
+            builder.serializeNulls();
+        }
+        return builder
                 .excludeFieldsWithoutExposeAnnotation()
                 .registerTypeAdapter(Boolean.class, booleanJsonDeserializer)
                 .registerTypeAdapter(String.class, stringJsonDeserializer)
@@ -344,6 +377,7 @@ final class GsonFactory {
                 .registerTypeHierarchyAdapter(BaseCollectionPage.class, collectionPageDeserializer)
                 .registerTypeHierarchyAdapter(BaseCollectionResponse.class, collectionResponseDeserializer)
                 .registerTypeAdapter(TimeOfDay.class, timeOfDayJsonDeserializer)
+                .registerTypeAdapter(TimeOfDay.class, timeOfDayJsonSerializer)
                 .registerTypeAdapterFactory(new FallbackTypeAdapterFactory(logger))
                 .create();
     }

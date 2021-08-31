@@ -68,7 +68,7 @@ public class RetryOptions implements IMiddlewareControl {
         if(maxRetries < 0)
             throw new IllegalArgumentException("Max retries cannot be negative");
 
-        this.mShouldretry = shouldRetry != null ? shouldRetry : DEFAULT_SHOULD_RETRY;
+        this.mShouldretry = shouldRetry == null ? DEFAULT_SHOULD_RETRY : shouldRetry;
         this.mMaxRetries = maxRetries;
         this.mDelay = delay;
     }

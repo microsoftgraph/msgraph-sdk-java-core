@@ -33,16 +33,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.microsoft.graph.http.BaseCollectionResponse;
 import com.microsoft.graph.logger.ILogger;
 
-/** Specialized serializer to handle collection responses */
-public class CollectionResponseSerializer {
+/** Specialized de-serializer to handle collection responses */
+public class CollectionResponseDeserializer {
     private static DefaultSerializer serializer;
     /**
      * Not available for instantiation
      */
-    private CollectionResponseSerializer() {}
+    private CollectionResponseDeserializer() {}
     /**
      * Deserializes the JsonElement
      *
@@ -85,17 +86,17 @@ public class CollectionResponseSerializer {
             for(JsonElement sourceElement : sourceArray) {
                 if(sourceElement.isJsonObject()) {
                     final JsonObject sourceObject = sourceElement.getAsJsonObject();
-                    Class<?> entityClass = serializer.getDerivedClass(sourceObject, baseEntityClass);
-                    if(entityClass == null) {
-                        if(baseEntityClass == null) {
-                            logger.logError("Could not find target class for object " + sourceObject.toString(), null);
-                            continue;
-                        } else
-                            entityClass = baseEntityClass; // it is possible the odata type is absent or we can't find the derived type (not in SDK yet)
-                    }
-                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, entityClass);
+                    final T1 targetObject = (T1)serializer.deserializeObject(sourceObject, baseEntityClass);
                     ((IJsonBackedObject)targetObject).setRawObject(serializer, sourceObject);
                     list.add(targetObject);
+                } else if (sourceElement.isJsonPrimitive()) {
+                    final JsonPrimitive primitiveValue = sourceElement.getAsJsonPrimitive();
+                    if(primitiveValue.isString())
+                        list.add((T1)primitiveValue.getAsString());
+                    else if(primitiveValue.isBoolean())
+                        list.add((T1) Boolean.valueOf(primitiveValue.getAsBoolean()));
+                    else if(primitiveValue.isNumber())
+                        list.add((T1) Long.valueOf(primitiveValue.getAsLong()));
                 }
             }
             final BaseCollectionResponse<T1> response = (BaseCollectionResponse<T1>)responseClass.getConstructor().newInstance();
