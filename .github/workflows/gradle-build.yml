@@ -31,15 +31,38 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+    
     - name: Easy detect-secrets
       uses: RobertFischer/detect-secrets-action@v2.0.0
+    
     - name: Set up JDK 16
       uses: actions/setup-java@v2
       with:
         java-version: '16'
         distribution: 'adopt'
         cache: gradle
+    
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    
     - name: Build with Gradle
       run: ./gradlew build
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: my-artifact
+        path: |
+          **/libs/*
+          build/generated-pom.xml
+          build/generated-pom.xml.asc
+          build.gradle
+          gradlew
+          gradlew.bat
+          settings.gradle
+          gradle.properties
+          **/gradle/**
+          Scripts/**
+
+
+
