@@ -4,20 +4,36 @@
 name: Java CI with Gradle
 
 on:
+  push:
+    branches: [ dev, master ]
+    paths:
+      - 'src/*'
+      - '!.gradle/wrapper'
+      - '!.gitignore'
+      - '!CONTRIBUTING.md'
+      - '!LICENSE'
+      - '!THIRD PARTY NOTICES'
+      - '!gradle.properties'
+      - '!gradlew'
+      - '!gradlew.bat'
+      - '!readme.md'
+      - '!settings.gradle'
+      - '!Scripts/*'
   pull_request:
     branches: [ dev, master ] 
-    paths-ignore:
-      - .gradle/wrapper
-      - .gitignore
-      - CONTRIBUTING.md
-      - LICENSE
-      - THIRD PARTY NOTICES
-      - gradle.properties
-      - gradlew
-      - gradlew.bat
-      - readme.md
-      - settings.gradle
-      - Scripts/*
+    paths:
+      - 'src/*'
+      - '!.gradle/wrapper'
+      - '!.gitignore'
+      - '!CONTRIBUTING.md'
+      - '!LICENSE'
+      - '!THIRD PARTY NOTICES'
+      - '!gradle.properties'
+      - '!gradlew'
+      - '!gradlew.bat'
+      - '!readme.md'
+      - '!settings.gradle'
+      - '!Scripts/*'  
   workflow_dispatch:
     inputs:
       purpose: 
