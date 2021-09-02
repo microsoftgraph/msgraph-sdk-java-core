@@ -4,16 +4,6 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ dev, master ]
-    paths:
-      - 'src/*'
-      - '!.gradle/wrapper'
-      - '!.gitignore'
-      - '!LICENSE'
-      - '!THIRD PARTY NOTICES'
-      - '!*.md'
-      - '*.gradle'
   pull_request:
     branches: [ dev, master ] 
     paths:
