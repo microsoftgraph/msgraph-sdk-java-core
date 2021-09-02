@@ -15,7 +15,6 @@ on:
       - '!*.md'
       - '*.gradle'  
 env: 
-  GRADLE_OPTIONS: -x jar -x javadoc -x javadocJar -x compileJava -x processResources -x classes -x sourceJar
   PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
   PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
       
@@ -27,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -83,6 +84,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
