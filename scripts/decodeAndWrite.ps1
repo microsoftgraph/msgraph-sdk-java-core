@@ -27,5 +27,5 @@ if($encodedValue -eq "" -or $null -eq $encodedValue) {
     Exit
 }
 
-$decodedValue = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($encodedValue))
-$decodedValue | Out-File -FilePath $outputPath
+$decodedValue = [System.Convert]::FromBase64String($encodedValue)
+Set-Content $outputPath -Value $decodedValue -Encoding Byte
