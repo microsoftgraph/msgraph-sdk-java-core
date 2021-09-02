@@ -34,48 +34,43 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Easy detect-secrets
-      uses: RobertFischer/detect-secrets-action@v2.0.0
-    
-    - name: Set up JDK 16
-      uses: actions/setup-java@v2
-      with:
-        java-version: '16'
-        distribution: 'adopt'
-        cache: gradle
-       
-    ##Copy the Step below for the other files with the appropriate values
-    - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH
-      shell: pwsh
-      env: 
-        ENCODED_VALUE: ""
-        OUPUT_PATH: ""   
-    
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    
-    - name: Build with Gradle
-      run: ./gradlew build
-    
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      with:
-        name: drop
-        path: |
-          **/libs/*
-          build/generated-pom.xml
-          build/generated-pom.xml.asc
-          build.gradle
-          gradlew
-          gradlew.bat
-          settings.gradle
-          gradle.properties
-          **/gradle/**
-          Scripts/**
+      - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle
+
+      ##Copy the Step below for the other files with the appropriate values
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH
+        shell: pwsh
+        env: 
+          ENCODED_VALUE: ""
+          OUPUT_PATH: ""   
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: drop
+          path: |
+            **/libs/*
+            build/generated-pom.xml
+            build/generated-pom.xml.asc
+            build.gradle
+            gradlew
+            gradlew.bat
+            settings.gradle
+            gradle.properties
+            **/gradle/**
+            Scripts/**
 
 
 
