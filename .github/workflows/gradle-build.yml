@@ -47,6 +47,13 @@ jobs:
         java-version: '16'
         distribution: 'adopt'
         cache: gradle
+       
+    ##Copy the Step below for the other files with the appropriate values
+    - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH
+      shell: pwsh
+      env: 
+        ENCODED_VALUE: ""
+        OUPUT_PATH: ""   
     
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
