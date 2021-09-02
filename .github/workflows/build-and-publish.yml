@@ -6,45 +6,98 @@ name: Build and Publish
 on:
   push:
     branches: [ dev , master ]
-    paths-ignore: 
-      - .gradle/wrapper
-      - .gitignore
-      - CONTRIBUTING.md
-      - LICENSE
-      - THIRD PARTY NOTICES
-      - gradle.properties
-      - gradlew
-      - gradlew.bat
-      - readme.md
-      - settings.gradle
-      - Scripts/*
+    paths:
+      - 'src/*'
+      - '!.gradle/wrapper'
+      - '!.gitignore'
+      - '!LICENSE'
+      - '!THIRD PARTY NOTICES'
+      - '!*.md'
+      - '*.gradle'  
+env: 
+  GRADLE_OPTIONS: -x jar -x javadoc -x javadocJar -x compileJava -x processResources -x classes -x sourceJar
+  PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
+  PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
       
 jobs:
-  build-and-publish:
-    env: 
-      GRADLE_OPTIONS: -x jar -x javadoc -x javadocJar -x compileJava -x processResources -x classes -x sourceJar
-      PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
-      PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
-
+  maven_Release:
+    if: ${{ github.ref == 'ref/head/master' }}
+    environment: 
+      name: maven_central_release
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    
-    
-    
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '16'
-        distribution: 'adopt'
-        cache: gradle
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle 
         
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Preview
-      if: ${{ github.ref == 'refs/head/dev' }}
-      run: ./gradlew $GRADLE_OPTIONS $PREVIEW_TASK
-    - name: Publish
-      if: ${{ github.ref === 'refs/head/master' }}
-      run: ./gradlew $GRADLE_OPTIONS $PUBLISH_TASK
+    ##Copy the Step below for the other files with the appropriate values    
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ""
+          OUTPUT_PATH: "" 
+        
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew $PUBLISH_TASK
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: drop
+          path: |
+            **/libs/*
+            build/generated-pom.xml
+            build/generated-pom.xml.asc
+            build.gradle
+            gradlew
+            gradlew.bat
+            settings.gradle
+            gradle.properties
+            **/gradle/**
+            Scripts/**
+  
+  githubRelease:
+    needs: maven_Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2.0.10
+        with: 
+          name: drop
+          path: drop        
+      - name: GitHub Releases
+        uses: fnkr/github-action-ghr@v1.3
+        env:
+          GHR_PATH: current/working/directory/drop/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  maven_Preview:
+    if: ${{ github.ref == 'refs/head/dev' }}
+    environment: 
+      name: maven_central_snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle   
+    
+    ##Copy the Step below for the other files with the appropriate values    
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ""
+          OUTPUT_PATH: "" 
+    
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew $PREVIEW_TASK
