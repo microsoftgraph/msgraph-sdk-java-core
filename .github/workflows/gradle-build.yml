@@ -36,7 +36,7 @@ jobs:
           cache: gradle
 
       ##Copy the Step below for the other files with the appropriate values
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env: 
           ENCODED_VALUE: ""
