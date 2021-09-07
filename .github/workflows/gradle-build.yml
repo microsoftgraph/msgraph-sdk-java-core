@@ -8,6 +8,7 @@ on:
     branches: [ dev, master ] 
     paths:
       - 'src/*'
+      - '.github/*'
       - '!.gradle/wrapper'
       - '!.gitignore'
       - '!LICENSE'
