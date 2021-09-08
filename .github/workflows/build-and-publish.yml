@@ -19,6 +19,31 @@ env:
   PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
       
 jobs:
+  maven_Preview:
+    if: ${{ github.ref == 'refs/head/dev' }}
+    environment: 
+      name: maven_central_snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle       
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
+          OUTPUT_PATH: .\local.properties 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew $PREVIEW_TASK
+        
   maven_Release:
     if: ${{ github.ref == 'ref/head/master' }}
     environment: 
@@ -33,15 +58,17 @@ jobs:
         with:
           java-version: '16'
           distribution: 'adopt'
-          cache: gradle 
-        
-    ##Copy the Step below for the other files with the appropriate values    
+          cache: gradle     
       - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
         shell: pwsh
         env:  
-          ENCODED_VALUE: ""
-          OUTPUT_PATH: "" 
-        
+          ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
+          OUTPUT_PATH: .\local.properties 
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
+          OUTPUT_PATH: .\secring.gpg
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish
@@ -76,31 +103,3 @@ jobs:
         env:
           GHR_PATH: current/working/directory/drop/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  maven_Preview:
-    if: ${{ github.ref == 'refs/head/dev' }}
-    environment: 
-      name: maven_central_snapshot
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Easy detect-secrets
-        uses: RobertFischer/detect-secrets-action@v2.0.0
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '16'
-          distribution: 'adopt'
-          cache: gradle   
-    
-    ##Copy the Step below for the other files with the appropriate values    
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $ENCODED_VALUE -outputPath $OUTPUT_PATH  
-        shell: pwsh
-        env:  
-          ENCODED_VALUE: ""
-          OUTPUT_PATH: "" 
-    
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Publish
-        run: ./gradlew $PREVIEW_TASK
