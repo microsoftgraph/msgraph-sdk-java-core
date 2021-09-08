@@ -7,7 +7,8 @@ on:
   push:
     branches: [ dev , master ]
     paths:
-      - 'src/*'
+      - 'src/**'
+      - '.github/**'
       - '!.gradle/wrapper'
       - '!.gitignore'
       - '!LICENSE'
