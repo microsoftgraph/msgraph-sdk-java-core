@@ -252,6 +252,7 @@ public class LargeFileUploadTask<UploadType> {
         try {
             return uploadAsync(chunkSize, options, progressCallback).get();
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             throw new ClientException("The request was interrupted", ex);
         } catch (ExecutionException ex) {
             throw new ClientException("Error while executing the request", ex);
