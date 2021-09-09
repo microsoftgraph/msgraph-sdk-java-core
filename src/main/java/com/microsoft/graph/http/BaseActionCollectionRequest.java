@@ -81,7 +81,7 @@ public abstract class BaseActionCollectionRequest<T, T2 extends ICollectionRespo
                             .sendAsync(this,
                                 responseCollectionClass,
                                 bodyToSend)
-                            .thenApply(r -> buildFromResponse(r));
+                            .thenApply(this::buildFromResponse);
     }
     /**
      * Invokes the method and returns the resulting collection of objects

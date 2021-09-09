@@ -1,15 +1,15 @@
 package com.microsoft.graph.authentication;
 
+import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 
+import javax.annotation.Nonnull;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-
-import javax.annotation.Nonnull;
 
 /**
  * An implementation of the Authentication Provider with Azure-identity
@@ -27,7 +27,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      */
     public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) {
-        this(Arrays.asList(DEFAULT_GRAPH_SCOPE), tokenCredential);
+        this(Collections.singletonList(DEFAULT_GRAPH_SCOPE), tokenCredential);
     }
 
     /**
@@ -56,7 +56,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
             return this.tokenCredential
                         .getToken(this.context)
                         .toFuture()
-                        .thenApply(resp -> resp.getToken());
+                        .thenApply(AccessToken::getToken);
         else
             return CompletableFuture.completedFuture((String)null);
     }

@@ -110,7 +110,7 @@ public class BatchRequestContent {
             url = protocolAndHostReplacementMatcher.replaceAll("");
             body = serializableBody;
             method = httpMethod.toString().toUpperCase(Locale.getDefault());
-            dependsOn = dependsOnRequestsIds != null && dependsOnRequestsIds.length > 0 ? new HashSet<String>(Arrays.asList(dependsOnRequestsIds)) : null;
+            dependsOn = dependsOnRequestsIds != null && dependsOnRequestsIds.length > 0 ? new HashSet<>(Arrays.asList(dependsOnRequestsIds)) : null;
             id = getNextRequestId();
         }};
 
@@ -141,7 +141,7 @@ public class BatchRequestContent {
             requests.removeIf(x -> stepId.equals(x.id));
             for(final BatchRequestStep<?> step : requests) {
                 if(step.dependsOn != null) {
-                    step.dependsOn.removeIf(x -> stepId.equals(x));
+                    step.dependsOn.removeIf(stepId::equals);
                     if(step.dependsOn.isEmpty())
                         step.dependsOn = null; // so we don't send dependsOn: [] over the wire
                 }

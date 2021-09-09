@@ -66,7 +66,7 @@ public abstract class BaseEntityCollectionRequest<T, T2 extends ICollectionRespo
      */
     @Nonnull
     public java.util.concurrent.CompletableFuture<T3> getAsync() {
-        return sendAsync().thenApply(r -> buildFromResponse(r));
+        return sendAsync().thenApply(this::buildFromResponse);
     }
     /**
      * Gets the collection of items

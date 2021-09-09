@@ -66,7 +66,7 @@ public abstract class BaseFunctionCollectionRequest<T, T2 extends ICollectionRes
      */
     @Nonnull
     public java.util.concurrent.CompletableFuture<T3> getAsync() {
-        return sendAsync().thenApply(r -> buildFromResponse(r));
+        return sendAsync().thenApply(this::buildFromResponse);
     }
 
     /**

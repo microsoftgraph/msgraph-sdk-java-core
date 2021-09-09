@@ -72,7 +72,7 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
     public BaseCollectionPage(@Nonnull final List<T> pageContents, @Nullable final T2 nextRequestBuilder) {
         // CollectionPages are never directly modifiable, either 'update'/'delete' the specific child or 'add' the new
         // object to the 'children' of the collection.
-        this.pageContents = Collections.unmodifiableList(pageContents == null ? new ArrayList<T>() : pageContents);
+        this.pageContents = Collections.unmodifiableList(pageContents == null ? new ArrayList<>() : pageContents);
         requestBuilder = nextRequestBuilder;
     }
 

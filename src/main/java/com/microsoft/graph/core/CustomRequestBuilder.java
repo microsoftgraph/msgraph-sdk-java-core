@@ -51,6 +51,6 @@ public class CustomRequestBuilder<T> extends BaseRequestBuilder<T> {
 	 */
 	@Nonnull
 	public CustomRequest<T> buildRequest(@Nullable final List<? extends Option> requestOptions) {
-		return new CustomRequest<T>(getRequestUrl(), getClient(), requestOptions, responseType);
+		return new CustomRequest<>(getRequestUrl(), getClient(), requestOptions, responseType);
 	}
 }

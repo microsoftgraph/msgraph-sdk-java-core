@@ -1,11 +1,9 @@
 package com.microsoft.graph.serializer;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.microsoft.graph.logger.ILogger;
 
 import javax.annotation.Nonnull;

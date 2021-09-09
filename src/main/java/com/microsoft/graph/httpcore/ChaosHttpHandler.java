@@ -3,7 +3,6 @@ package com.microsoft.graph.httpcore;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
