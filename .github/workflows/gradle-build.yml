@@ -30,16 +30,8 @@ jobs:
           java-version: '16'
           distribution: 'adopt'
           cache: gradle
-      - name: run credscan   
-        run: |
-          python -m pip install detect-secrets==1.0.3
-          cp .secrets.baseline .secrets.new
-          detect-secrets scan --baseline .secrets.new $(find . -type f ! -name '.secrets.*' ! -path '*/.git*')
-          list_secrets() { jq -r '.results | keys[] as $key | "\($key),\(.[$key] | .[] | .hashed_secret)"' "$1" | sort; }
-          if ! diff <(list_secrets .secrets.baseline) <(list_secrets .secrets.new) >&2; then
-          echo "Detected new secrets in the repo" >&2
-          exit 1
-          fi
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
       - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env: 
