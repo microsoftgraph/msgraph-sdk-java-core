@@ -62,6 +62,8 @@ public class AuthenticationHandler implements Interceptor {
                                         .build());
             }
         } catch (InterruptedException | ExecutionException ex) {
+            if (ex instanceof InterruptedException)
+                Thread.currentThread().interrupt();
             throw new IOException(ex);
         }
     }
