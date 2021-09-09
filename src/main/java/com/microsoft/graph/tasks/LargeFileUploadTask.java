@@ -115,7 +115,7 @@ public class LargeFileUploadTask<UploadType> {
         this.inputStream = Objects.requireNonNull(inputStream, "Input stream is null.");
         this.streamSize = streamSize;
         this.uploadUrl = uploadSession.getUploadUrl();
-        this.responseHandler = new LargeFileUploadResponseHandler<UploadType>(uploadTypeClass, uploadSession.getClass());
+        this.responseHandler = new LargeFileUploadResponseHandler<>(uploadTypeClass, uploadSession.getClass());
     }
 
     /**
@@ -169,7 +169,7 @@ public class LargeFileUploadTask<UploadType> {
                 if(progressCallback != null) {
                     progressCallback.progress(this.streamSize, this.streamSize);
                 }
-                final LargeFileUploadResult<UploadType> result = new LargeFileUploadResult<UploadType>();
+                final LargeFileUploadResult<UploadType> result = new LargeFileUploadResult<>();
                 if (response.getItem() != null) {
                     result.responseBody = response.getItem();
                 }
@@ -190,12 +190,12 @@ public class LargeFileUploadTask<UploadType> {
         return failedFuture(new ClientException("Upload did not complete", null));
     }
     private CompletableFuture<LargeFileUploadResult<UploadType>> completedFuture(final LargeFileUploadResult<UploadType> result) { // CompletableFuture.completedFuture(result.getItem()); missing on android
-        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
+        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<>();
         fut.complete(result);
         return fut;
     }
     private CompletableFuture<LargeFileUploadResult<UploadType>> failedFuture(ClientException ex) { // CompletableFuture.failedFuture not available on android
-        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<LargeFileUploadResult<UploadType>>();
+        final CompletableFuture<LargeFileUploadResult<UploadType>> fut = new CompletableFuture<>();
         fut.completeExceptionally(ex);
         return fut;
     }

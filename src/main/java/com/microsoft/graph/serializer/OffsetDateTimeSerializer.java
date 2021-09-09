@@ -23,17 +23,10 @@
 package com.microsoft.graph.serializer;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalField;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;

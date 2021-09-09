@@ -103,7 +103,7 @@ class LargeFileUploadRequest<UploadType> {
         if (result != null && (result.chunkCompleted() || result.uploadCompleted())) {
             return result;
         } else
-            return new LargeFileUploadResponse<UploadType>(
+            return new LargeFileUploadResponse<>(
                 new ClientException("Upload session failed.", result == null ? null : result.getError()));
     }
 }

@@ -14,12 +14,7 @@ public class RetryOptions implements IMiddlewareControl {
     /**
      * Default retry evaluation, always retry.
      */
-    public static final IShouldRetry DEFAULT_SHOULD_RETRY = new IShouldRetry() {
-        @Override
-        public boolean shouldRetry(long delay, int executionCount, Request request, Response response) {
-            return true;
-        }
-    };
+    public static final IShouldRetry DEFAULT_SHOULD_RETRY = (delay, executionCount, request, response) -> true;
 
     private int mMaxRetries;
     /**

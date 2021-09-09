@@ -193,9 +193,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
             return new URL(uriBuilder.build().toString());
         } catch (final MalformedURLException e) {
         	if (this instanceof CustomRequest) {
-        		this.getClient().getLogger().logError("Invalid custom URL: " + uriBuilder.toString(), e);
+        		this.getClient().getLogger().logError("Invalid custom URL: " + uriBuilder, e);
         	} else {
-        		throw new ClientException("Invalid URL: " + uriBuilder.toString(), e);
+        		throw new ClientException("Invalid URL: " + uriBuilder, e);
         	}
         }
 		return null;

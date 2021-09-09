@@ -64,7 +64,7 @@ public class CustomRequest<T> extends BaseRequest<T> {
      */
     @Nonnull
     public static CustomRequest<JsonObject> create(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends Option> requestOptions) {
-        return new CustomRequest<JsonObject>(requestUrl, client, requestOptions, JsonObject.class);
+        return new CustomRequest<>(requestUrl, client, requestOptions, JsonObject.class);
     }
 
     /**

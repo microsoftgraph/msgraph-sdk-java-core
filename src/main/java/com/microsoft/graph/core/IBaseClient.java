@@ -100,7 +100,7 @@ public interface IBaseClient<nativeRequestType> {
      * @return a request builder to execute a batch.
      */
     @Nonnull
-    public BatchRequestBuilder batch();
+    BatchRequestBuilder batch();
 
     /**
      * Gets the service SDK version if the service SDK is in use, null otherwise

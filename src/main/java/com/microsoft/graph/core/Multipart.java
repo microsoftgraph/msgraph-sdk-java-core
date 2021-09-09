@@ -35,7 +35,7 @@ public class Multipart {
 	 */
 	public Multipart() {
 		out = new ByteArrayOutputStream();
-		boundary = "part_" + new BigInteger(130, new SecureRandom()).toString();
+		boundary = "part_" + new BigInteger(130, new SecureRandom());
 	}
 
 	/**

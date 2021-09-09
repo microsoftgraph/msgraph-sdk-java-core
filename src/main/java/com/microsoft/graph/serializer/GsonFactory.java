@@ -90,263 +90,129 @@ final class GsonFactory {
     @Nonnull
     public static Gson getGsonInstance(@Nonnull final ILogger logger, final boolean serializeNulls) {
         Objects.requireNonNull(logger, "parameter logger cannot be null");
-        final JsonSerializer<OffsetDateTime> calendarJsonSerializer = new JsonSerializer<OffsetDateTime>() {
-            @Override
-            public JsonElement serialize(final OffsetDateTime src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                if (src == null) {
-                    return null;
-                }
-                try {
-                    return new JsonPrimitive(OffsetDateTimeSerializer.serialize(src));
-                } catch (final Exception e) {
-                    logger.logError(PARSING_MESSAGE + src, e);
-                    return null;
-                }
+        final JsonSerializer<OffsetDateTime> calendarJsonSerializer = (src, typeOfSrc, context) -> {
+            if (src == null) {
+                return null;
+            }
+            try {
+                return new JsonPrimitive(OffsetDateTimeSerializer.serialize(src));
+            } catch (final Exception e) {
+                logger.logError(PARSING_MESSAGE + src, e);
+                return null;
             }
         };
 
-        final JsonDeserializer<OffsetDateTime> calendarJsonDeserializer = new JsonDeserializer<OffsetDateTime>() {
-            @Override
-            public OffsetDateTime deserialize(final JsonElement json,
-                                        final Type typeOfT,
-                                        final JsonDeserializationContext context) throws JsonParseException {
-                if (json == null) {
-                    return null;
-                }
-                try {
-                    return OffsetDateTimeSerializer.deserialize(json.getAsString());
-                } catch (final ParseException e) {
-                    logger.logError(PARSING_MESSAGE + json.getAsString(), e);
-                    return null;
-                }
+        final JsonDeserializer<OffsetDateTime> calendarJsonDeserializer = (json, typeOfT, context) -> {
+            if (json == null) {
+                return null;
+            }
+            try {
+                return OffsetDateTimeSerializer.deserialize(json.getAsString());
+            } catch (final ParseException e) {
+                logger.logError(PARSING_MESSAGE + json.getAsString(), e);
+                return null;
             }
         };
 
-        final JsonSerializer<byte[]> byteArrayJsonSerializer = new JsonSerializer<byte[]>() {
-            @Override
-            public JsonElement serialize(final byte[] src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                if (src == null) {
-                    return null;
-                }
-                try {
-                    return new JsonPrimitive(ByteArraySerializer.serialize(src));
-                } catch (final Exception e) {
-                    logger.logError(PARSING_MESSAGE + Arrays.toString(src), e);
-                    return null;
-                }
+        final JsonSerializer<byte[]> byteArrayJsonSerializer = (src, typeOfSrc, context) -> {
+            if (src == null) {
+                return null;
+            }
+            try {
+                return new JsonPrimitive(ByteArraySerializer.serialize(src));
+            } catch (final Exception e) {
+                logger.logError(PARSING_MESSAGE + Arrays.toString(src), e);
+                return null;
             }
         };
 
-        final JsonDeserializer<byte[]> byteArrayJsonDeserializer = new JsonDeserializer<byte[]>() {
-            @Override
-            public byte[] deserialize(final JsonElement json,
-                                      final Type typeOfT,
-                                      final JsonDeserializationContext context) throws JsonParseException {
-                if (json == null) {
-                    return null;
-                }
-                try {
-                    return ByteArraySerializer.deserialize(json.getAsString());
-                } catch (final ParseException e) {
-                    logger.logError(PARSING_MESSAGE + json.getAsString(), e);
-                    return null;
-                }
+        final JsonDeserializer<byte[]> byteArrayJsonDeserializer = (json, typeOfT, context) -> {
+            if (json == null) {
+                return null;
+            }
+            try {
+                return ByteArraySerializer.deserialize(json.getAsString());
+            } catch (final ParseException e) {
+                logger.logError(PARSING_MESSAGE + json.getAsString(), e);
+                return null;
             }
         };
 
-        final JsonSerializer<DateOnly> dateJsonSerializer = new JsonSerializer<DateOnly>() {
-            @Override
-            public JsonElement serialize(final DateOnly src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                if (src == null) {
-                    return null;
-                }
-                return new JsonPrimitive(src.toString());
+        final JsonSerializer<DateOnly> dateJsonSerializer = (src, typeOfSrc, context) -> {
+            if (src == null) {
+                return null;
             }
+            return new JsonPrimitive(src.toString());
         };
 
-        final JsonDeserializer<DateOnly> dateJsonDeserializer = new JsonDeserializer<DateOnly>() {
-            @Override
-            public DateOnly deserialize(final JsonElement json,
-                                        final Type typeOfT,
-                                        final JsonDeserializationContext context) throws JsonParseException {
-                if (json == null) {
-                    return null;
-                }
+        final JsonDeserializer<DateOnly> dateJsonDeserializer = (json, typeOfT, context) -> {
+            if (json == null) {
+                return null;
+            }
 
-                try {
-                    return DateOnly.parse(json.getAsString());
-                } catch (final ParseException e) {
-                    logger.logError(PARSING_MESSAGE + json.getAsString(), e);
-                    return null;
-                }
+            try {
+                return DateOnly.parse(json.getAsString());
+            } catch (final ParseException e) {
+                logger.logError(PARSING_MESSAGE + json.getAsString(), e);
+                return null;
             }
         };
         final EnumSetSerializer eSetSerializer = new EnumSetSerializer(logger);
 
-        final JsonSerializer<EnumSet<?>> enumSetJsonSerializer = new JsonSerializer<EnumSet<?>>() {
-            @Override
-            public JsonElement serialize(final EnumSet<?> src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                if (src == null || src.isEmpty()) {
-                    return null;
-                }
+        final JsonSerializer<EnumSet<?>> enumSetJsonSerializer = (src, typeOfSrc, context) -> {
+            if (src == null || src.isEmpty()) {
+                return null;
+            }
 
-                return eSetSerializer.serialize(src);
+            return eSetSerializer.serialize(src);
+        };
+
+        final JsonDeserializer<EnumSet<?>> enumSetJsonDeserializer = (json, typeOfT, context) -> {
+            if (json == null) {
+                return null;
+            }
+
+            return eSetSerializer.deserialize(typeOfT, json.getAsString());
+        };
+
+        final JsonSerializer<Duration> durationJsonSerializer = (src, typeOfSrc, context) -> new JsonPrimitive(src.toString());
+
+        final JsonDeserializer<Duration> durationJsonDeserializer = (json, typeOfT, context) -> {
+            try {
+                return DatatypeFactory.newInstance().newDuration(json.getAsString());
+            } catch (Exception e) {
+                return null;
             }
         };
 
-        final JsonDeserializer<EnumSet<?>> enumSetJsonDeserializer = new JsonDeserializer<EnumSet<?>>() {
-            @Override
-            public EnumSet<?> deserialize(final JsonElement json,
-                                        final Type typeOfT,
-                                        final JsonDeserializationContext context) throws JsonParseException {
-                if (json == null) {
-                    return null;
-                }
+        final JsonSerializer<BaseCollectionPage<?, ?>> collectionPageSerializer = (src, typeOfSrc, context) -> CollectionPageSerializer.serialize(src, logger);
 
-                return eSetSerializer.deserialize(typeOfT, json.getAsString());
-            }
-        };
+        final JsonDeserializer<BaseCollectionPage<?, ?>> collectionPageDeserializer = (json, typeOfT, context) -> CollectionPageSerializer.deserialize(json, typeOfT, logger);
+        final JsonDeserializer<BaseCollectionResponse<?>> collectionResponseDeserializer = (json, typeOfT, context) -> CollectionResponseDeserializer.deserialize(json, typeOfT, logger);
 
-        final JsonSerializer<Duration> durationJsonSerializer = new JsonSerializer<Duration>() {
-            @Override
-            public JsonElement serialize(final Duration src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                return new JsonPrimitive(src.toString());
+        final JsonDeserializer<TimeOfDay> timeOfDayJsonDeserializer = (json, typeOfT, context) -> {
+            try {
+                return TimeOfDay.parse(json.getAsString());
+            } catch (Exception e) {
+                return null;
             }
         };
 
-        final JsonDeserializer<Duration> durationJsonDeserializer = new JsonDeserializer<Duration>() {
-            @Override
-            public Duration deserialize(final JsonElement json,
-                                       final Type typeOfT,
-                                       final JsonDeserializationContext context) throws JsonParseException {
-                try {
-                    return DatatypeFactory.newInstance().newDuration(json.getAsString());
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-        };
+        final JsonSerializer<TimeOfDay> timeOfDayJsonSerializer = (src, typeOfSrc, context) -> new JsonPrimitive(src.toString());
 
-        final JsonSerializer<BaseCollectionPage<?, ?>> collectionPageSerializer = new JsonSerializer<BaseCollectionPage<?, ?>>() {
-            @Override
-            public JsonElement serialize(final BaseCollectionPage<?, ?> src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-            	return CollectionPageSerializer.serialize(src, logger);
-            }
-        };
+        final JsonDeserializer<Boolean> booleanJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, Boolean.class, logger);
 
-        final JsonDeserializer<BaseCollectionPage<?, ?>> collectionPageDeserializer = new JsonDeserializer<BaseCollectionPage<?, ?>>() {
-            @Override
-            public BaseCollectionPage<?, ?> deserialize(final JsonElement json,
-                                        final Type typeOfT,
-                                        final JsonDeserializationContext context) throws JsonParseException {
-                return CollectionPageSerializer.deserialize(json, typeOfT, logger);
-            }
-        };
-        final JsonDeserializer<BaseCollectionResponse<?>> collectionResponseDeserializer = new JsonDeserializer<BaseCollectionResponse<?>>() {
-            @Override
-            public BaseCollectionResponse<?> deserialize(final JsonElement json,
-                                        final Type typeOfT,
-                                        final JsonDeserializationContext context) throws JsonParseException {
-                return CollectionResponseDeserializer.deserialize(json, typeOfT, logger);
-            }
-        };
+        final JsonDeserializer<String> stringJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, String.class, logger);
 
-        final JsonDeserializer<TimeOfDay> timeOfDayJsonDeserializer = new JsonDeserializer<TimeOfDay>() {
-            @Override
-            public TimeOfDay deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                try {
-                    return TimeOfDay.parse(json.getAsString());
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-        };
+        final JsonDeserializer<BigDecimal> bigDecimalJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, BigDecimal.class, logger);
 
-        final JsonSerializer<TimeOfDay> timeOfDayJsonSerializer = new JsonSerializer<TimeOfDay>() {
-            @Override
-            public JsonElement serialize(final TimeOfDay src,
-                                         final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
-                return new JsonPrimitive(src.toString());
-            }
-        };
+        final JsonDeserializer<Integer> integerJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, Integer.class, logger);
 
-        final JsonDeserializer<Boolean> booleanJsonDeserializer = new JsonDeserializer<Boolean>() {
-            @Override
-            public Boolean deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, Boolean.class, logger);
-            }
-        };
+        final JsonDeserializer<Long> longJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, Long.class, logger);
 
-        final JsonDeserializer<String> stringJsonDeserializer = new JsonDeserializer<String>() {
-            @Override
-            public String deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, String.class, logger);
-            }
-        };
+        final JsonDeserializer<UUID> uuidJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, UUID.class, logger);
 
-        final JsonDeserializer<BigDecimal> bigDecimalJsonDeserializer = new JsonDeserializer<BigDecimal>() {
-            @Override
-            public BigDecimal deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, BigDecimal.class, logger);
-            }
-        };
-
-        final JsonDeserializer<Integer> integerJsonDeserializer = new JsonDeserializer<Integer>() {
-            @Override
-            public Integer deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, Integer.class, logger);
-            }
-        };
-
-        final JsonDeserializer<Long> longJsonDeserializer = new JsonDeserializer<Long>() {
-            @Override
-            public Long deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, Long.class, logger);
-            }
-        };
-
-        final JsonDeserializer<UUID> uuidJsonDeserializer = new JsonDeserializer<UUID>() {
-            @Override
-            public UUID deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, UUID.class, logger);
-            }
-        };
-
-        final JsonDeserializer<Float> floatJsonDeserializer = new JsonDeserializer<Float>() {
-            @Override
-            public Float deserialize(final JsonElement json,
-                    final Type typeOfT,
-                    final JsonDeserializationContext context) throws JsonParseException {
-                    return EdmNativeTypeSerializer.deserialize(json, Float.class, logger);
-            }
-        };
+        final JsonDeserializer<Float> floatJsonDeserializer = (json, typeOfT, context) -> EdmNativeTypeSerializer.deserialize(json, Float.class, logger);
 
         GsonBuilder builder = new GsonBuilder();
         if (serializeNulls) {

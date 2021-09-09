@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -98,7 +99,7 @@ public class DefaultSerializer implements ISerializer {
 	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
 		Objects.requireNonNull(inputStream, "parameter inputStream cannot be null");
         T result = null;
-        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream, "UTF-8")) {
+        try (final InputStreamReader streamReader =  new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
 			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
 			result = deserializeObject(rawElement, clazz, responseHeaders);
         } catch (IOException ex) {
@@ -155,24 +156,22 @@ public class DefaultSerializer implements ISerializer {
 							// If the object is a HashMap, iterate through its children
 							@SuppressWarnings("unchecked")
 							final HashMap<String, Object> serializableChildren = (HashMap<String, Object>) fieldObject;
-							final Iterator<Entry<String, Object>> it = serializableChildren.entrySet().iterator();
 
-							while (it.hasNext()) {
-								final Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
-								final Object child = pair.getValue();
+                            for (Entry<String, Object> pair : serializableChildren.entrySet()) {
+                                final Object child = pair.getValue();
 
-								// If the item is a valid Graph object, set its additional data
-								if (child instanceof IJsonBackedObject) {
-									final AdditionalDataManager childAdditionalDataManager = ((IJsonBackedObject) child).additionalDataManager();
-									final JsonElement fieldElement = rawJson.get(field.getName());
-									if(fieldElement != null && fieldElement.isJsonObject()
-											&& fieldElement.getAsJsonObject().get(pair.getKey()) != null
-											&& fieldElement.getAsJsonObject().get(pair.getKey()).isJsonObject()) {
-										childAdditionalDataManager.setAdditionalData(fieldElement.getAsJsonObject().get(pair.getKey()).getAsJsonObject());
-										setChildAdditionalData((IJsonBackedObject) child,fieldElement.getAsJsonObject().get(pair.getKey()).getAsJsonObject());
-									}
-								}
-							}
+                                // If the item is a valid Graph object, set its additional data
+                                if (child instanceof IJsonBackedObject) {
+                                    final AdditionalDataManager childAdditionalDataManager = ((IJsonBackedObject) child).additionalDataManager();
+                                    final JsonElement fieldElement = rawJson.get(field.getName());
+                                    if (fieldElement != null && fieldElement.isJsonObject()
+                                        && fieldElement.getAsJsonObject().get(pair.getKey()) != null
+                                        && fieldElement.getAsJsonObject().get(pair.getKey()).isJsonObject()) {
+                                        childAdditionalDataManager.setAdditionalData(fieldElement.getAsJsonObject().get(pair.getKey()).getAsJsonObject());
+                                        setChildAdditionalData((IJsonBackedObject) child, fieldElement.getAsJsonObject().get(pair.getKey()).getAsJsonObject());
+                                    }
+                                }
+                            }
 						}
 						// If the object is a list of Graph objects, iterate through elements
 						else if (fieldObject instanceof List) {
