@@ -228,7 +228,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
                 requestUrl.append("=");
                 if (option.getValue() != null) {
                     if (option.getValue() instanceof String) {
-                        requestUrl.append("'" + option.getValue() + "'");
+                        requestUrl.append("'").append(option.getValue()).append("'");
                     } else {
                         requestUrl.append(option.getValue());
                     }

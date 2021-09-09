@@ -1,17 +1,15 @@
 package com.microsoft.graph.httpcore;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
-
-import java.util.Arrays;
-import java.util.Objects;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
-
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.OkHttpClient.Builder;
+import okhttp3.Protocol;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  * Builder to get a custom HttpClient to be used for requests against Microsoft Graph
@@ -33,7 +31,7 @@ public class HttpClients {
                     .addInterceptor(new TelemetryHandler())
                     .followRedirects(false)
                     .followSslRedirects(false)
-                    .protocols(Arrays.asList(Protocol.HTTP_1_1)); //https://stackoverflow.com/questions/62031298/sockettimeout-on-java-11-but-not-on-java-8
+                    .protocols(Collections.singletonList(Protocol.HTTP_1_1)); //https://stackoverflow.com/questions/62031298/sockettimeout-on-java-11-but-not-on-java-8
     }
 
     /**

@@ -125,7 +125,7 @@ public class Multipart {
 
 		if(contentDispParameter != null) {
 			for(Map.Entry<String,String> entry : contentDispParameter.entrySet())
-				builder.append(";" + entry.getKey() + "=\"" + entry.getValue() + "\"");
+				builder.append(";").append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"");
 		}
 		return builder.toString();
 	}
@@ -140,7 +140,7 @@ public class Multipart {
 
         if(headers != null) {
             for(Map.Entry<String,String> entry : headers.entrySet())
-                builder.append(entry.getKey() +": "+entry.getValue() + RETURN);
+                builder.append(entry.getKey()).append(": ").append(entry.getValue()).append(RETURN);
             builder.append(RETURN);
         } else
             builder.append(defaultPartContent);

@@ -5,6 +5,7 @@ import com.azure.core.credential.TokenRequestContext;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +28,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
      * @param tokenCredential Credential object inheriting the TokenCredential interface used to instantiate the Auth Provider
      */
     public TokenCredentialAuthProvider(@Nonnull final TokenCredential tokenCredential) {
-        this(Arrays.asList(DEFAULT_GRAPH_SCOPE), tokenCredential);
+        this(Collections.singletonList(DEFAULT_GRAPH_SCOPE), tokenCredential);
     }
 
     /**
