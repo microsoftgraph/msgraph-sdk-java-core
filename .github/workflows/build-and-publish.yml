@@ -99,8 +99,10 @@ jobs:
         with: 
           name: drop
           path: drop        
-      - name: GitHub Releases
-        uses: fnkr/github-action-ghr@v1.3
+      - name: Github Release
+        uses: elgohr/Github-Release-Action@v3.1
         env:
-          GHR_PATH: current/working/directory/drop/
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          args: MS-Graph-SDK-Java-Core Release
+
