@@ -2,6 +2,7 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -57,8 +58,8 @@ public class TelemetryHandler implements Interceptor{
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
         final String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage +
-                                                (javaVersion == DEFAULT_VERSION_VALUE ? "" : (", " + JAVA_VERSION_PREFIX + "/" + javaVersion)) +
-                                                (androidVersion == DEFAULT_VERSION_VALUE ? "" : (", " + ANDROID_VERSION_PREFIX + "/" + androidVersion));
+                                                (Objects.equals(javaVersion, DEFAULT_VERSION_VALUE) ? "" : (", " + JAVA_VERSION_PREFIX + "/" + javaVersion)) +
+                                                (Objects.equals(androidVersion, DEFAULT_VERSION_VALUE) ? "" : (", " + ANDROID_VERSION_PREFIX + "/" + androidVersion));
         telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
 
         if(request.header(CLIENT_REQUEST_ID) == null) {
