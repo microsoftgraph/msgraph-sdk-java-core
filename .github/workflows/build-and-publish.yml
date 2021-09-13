@@ -94,6 +94,7 @@ jobs:
     needs: maven_Release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Download Build Artifact
         uses: actions/download-artifact@v2.0.10
         with: 
