@@ -51,7 +51,7 @@ jobs:
         run: ./gradlew $PREVIEW_TASK
         
   maven_Release:
-    if: ${{ github.ref == 'ref/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     environment: 
       name: maven_central_release
     runs-on: ubuntu-latest
