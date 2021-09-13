@@ -109,4 +109,4 @@ jobs:
           ALLOW_EMPTY_CHANGELOG: "true"
         with:
           args: |
-              current/working/directory/drop/**
+              drop/**
