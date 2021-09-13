@@ -23,12 +23,7 @@ public class RedirectOptions implements IMiddlewareControl{
     /**
      * Default redirect evaluation, always follow redirect information.
      */
-    public static final IShouldRedirect DEFAULT_SHOULD_REDIRECT = new IShouldRedirect() {
-        @Override
-        public boolean shouldRedirect(Response response) {
-            return true;
-        }
-    };
+    public static final IShouldRedirect DEFAULT_SHOULD_REDIRECT = response -> true;
 
     /**
      * Create default instance of redirect options, with default values of max redirects and should redirect

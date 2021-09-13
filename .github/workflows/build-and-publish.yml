@@ -1,0 +1,118 @@
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Build and Publish 
+
+on:
+  push:
+    branches: [ dev , master ]
+    paths:
+      - 'src/**'
+      - '.github/**'
+      - '!.gradle/wrapper'
+      - '!.gitignore'
+      - '!LICENSE'
+      - '!THIRD PARTY NOTICES'
+      - '!*.md'
+      - '*.gradle'  
+env: 
+  PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
+  PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
+      
+jobs:
+  maven_Preview:
+    if: ${{ github.ref == 'refs/head/dev' }}
+    environment: 
+      name: maven_central_snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle       
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
+          OUTPUT_PATH: .\local.properties 
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
+        shell: pwsh
+        env: 
+          ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
+          OUPUT_PATH: .\secring.gpg
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew $PREVIEW_TASK
+        
+  maven_Release:
+    if: ${{ github.ref == 'ref/head/master' }}
+    environment: 
+      name: maven_central_release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Easy detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: gradle     
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
+          OUTPUT_PATH: .\local.properties 
+      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+        shell: pwsh
+        env:  
+          ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
+          OUTPUT_PATH: .\secring.gpg
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish
+        run: ./gradlew $PUBLISH_TASK
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: drop
+          path: |
+            **/libs/*
+            build/generated-pom.xml
+            build/generated-pom.xml.asc
+            build.gradle
+            gradlew
+            gradlew.bat
+            settings.gradle
+            gradle.properties
+            **/gradle/**
+            Scripts/**
+  
+  githubRelease:
+    needs: maven_Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2.0.10
+        with: 
+          name: drop
+          path: drop        
+      - name: Github Release
+        uses: anton-yurchenko/git-release@v4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          DRAFT_RELEASE: "false"
+          PRE_RELEASE: "false"
+          CHANGELOG_FILE: "CHANGELOG.md"
+          ALLOW_EMPTY_CHANGELOG: "true"
+        with:
+          args: |
+              drop/**

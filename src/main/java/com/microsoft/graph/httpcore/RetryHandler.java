@@ -111,6 +111,7 @@ public class RetryHandler implements Interceptor{
             try {
                 Thread.sleep(retryInterval);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 logger.logError("error retrying the request", e);
             }
         }

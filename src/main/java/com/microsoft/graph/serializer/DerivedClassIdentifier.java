@@ -1,9 +1,11 @@
 package com.microsoft.graph.serializer;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CaseFormat;
 import com.google.gson.JsonObject;
 import com.microsoft.graph.logger.ILogger;
 
+import java.util.Locale;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,12 +16,13 @@ public class DerivedClassIdentifier {
     private final static String ODATA_TYPE_KEY = "@odata.type";
 
     private final ILogger logger;
+
     /**
      * Creates a new instance of the dereived class identifier.
      * @param logger The logger to use.
      */
     public DerivedClassIdentifier(@Nonnull ILogger logger) {
-        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");;
+        this.logger = Objects.requireNonNull(logger, "logger parameter cannot be null");
     }
 
     /**
@@ -36,14 +39,9 @@ public class DerivedClassIdentifier {
         Objects.requireNonNull(jsonObject, "parameter jsonObject cannot be null");
         //Identify the odata.type information if provided
         if (jsonObject.get(ODATA_TYPE_KEY) != null) {
-            /** #microsoft.graph.user or #microsoft.graph.callrecords.callrecord */
+            // #microsoft.graph.user or #microsoft.graph.callrecords.callrecord
             final String odataType = jsonObject.get(ODATA_TYPE_KEY).getAsString();
-            final int lastDotIndex = odataType.lastIndexOf(".");
-            final String derivedType = (odataType.substring(0, lastDotIndex) +
-                ".models." +
-                CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
-                    odataType.substring(lastDotIndex + 1)))
-                .replace("#", "com.");
+            final String derivedType = oDataTypeToClassName(odataType);
             try {
                 Class<?> derivedClass = Class.forName(derivedType);
                 //Check that the derived class inherits from the given parent class
@@ -60,5 +58,21 @@ public class DerivedClassIdentifier {
         }
         //If there is no defined OData type, return null
         return null;
+    }
+
+    /**
+     * Convert {@code @odata.type} to proper java class name
+     *
+     * @param odataType to convert
+     * @return converted class name
+     */
+    @VisibleForTesting
+    static String oDataTypeToClassName(@Nonnull String odataType) {
+        Objects.requireNonNull(odataType);
+        final int lastDotIndex = odataType.lastIndexOf(".");
+        return (odataType.substring(0, lastDotIndex).toLowerCase(Locale.ROOT) +
+            ".models." +
+            CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, odataType.substring(lastDotIndex + 1)))
+            .replace("#", "com.");
     }
 }
