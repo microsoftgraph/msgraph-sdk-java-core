@@ -27,7 +27,7 @@ jobs:
         with:
           java-version: '16'
           distribution: 'adopt'
-          cache: gradle
+          cache: gradle     
       - name: Easy detect-secrets
         uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Grant execute permission for gradlew
