@@ -1,0 +1,15 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Git Release
+
+on:
+  push:
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+  
+jobs:
+  Git_Release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
