@@ -104,15 +104,4 @@ jobs:
         uses: actions/download-artifact@v2.0.10
         with: 
           name: drop
-          path: drop        
-      - name: Github Release
-        uses: anton-yurchenko/git-release@v4.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-          DRAFT_RELEASE: "false"
-          PRE_RELEASE: "false"
-          CHANGELOG_FILE: "CHANGELOG.md"
-          ALLOW_EMPTY_CHANGELOG: "true"
-        with:
-          args: |
-              drop/**
+          path: drop
