@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get version
-        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:ENCODED_VALUE
+        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:PROPERTIES_PATH
         shell: pwsh
         env:
           PROPERTIES_PATH: '.\gradle.properties'
