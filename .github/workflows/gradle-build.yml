@@ -50,5 +50,18 @@ jobs:
             **/gradle/**
             Scripts/**
 
+  tag_Test:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ""
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get version
+        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:ENCODED_VALUE
+        shell: pwsh
+        env:
+          PROPERTIES_PATH: '.\gradle.properties'
+      - name: Test Print
+        run: echo $RELEASE_TAG
 
 
