@@ -34,13 +34,15 @@ jobs:
         with:
           java-version: '16'
           distribution: 'adopt'
-          cache: gradle       
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+          cache: gradle
+      - name: Download file
+        run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env:  
           ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
           OUTPUT_PATH: '.\local.properties' 
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
+      - name: Download file
+        run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env: 
           ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
@@ -64,13 +66,15 @@ jobs:
         with:
           java-version: '16'
           distribution: 'adopt'
-          cache: gradle     
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+          cache: gradle
+      - name: Download file
+        run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env:  
           ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
-          OUTPUT_PATH: '.\local.properties' 
-      - run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH  
+          OUTPUT_PATH: '.\local.properties'
+      - name: Download file
+        run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
         env:  
           ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
@@ -95,13 +99,18 @@ jobs:
             **/gradle/**
             Scripts/**
   
-  githubRelease:
+  create_Tag:
     needs: maven_Release
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ""
     steps:
       - uses: actions/checkout@v2
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v2.0.10
-        with: 
-          name: drop
-          path: drop
+      - name: Get version
+        run: .\scripts\getLatestVersion.ps1
+        shell: pwsh
+      - name: Create tag
+        uses: rickstaa/action-create-tag@v1.2.0
+        with:
+          tag: $RELEASE_TAG
+
