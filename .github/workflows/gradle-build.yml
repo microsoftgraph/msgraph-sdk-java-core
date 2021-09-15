@@ -49,19 +49,15 @@ jobs:
             gradle.properties
             **/gradle/**
             Scripts/**
-
-  tag_Test:
+  getTag:
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG: ""
+      LOCATION: .\gradle.properties
     steps:
       - uses: actions/checkout@v2
-      - name: Get version
-        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:PROPERTIES_PATH
+      - name: Get Version
+        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:LOCATION
         shell: pwsh
-        env:
-          PROPERTIES_PATH: '.\gradle.properties'
       - name: Test Print
         run: echo $RELEASE_TAG
-
-
