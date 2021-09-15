@@ -56,18 +56,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get Version
-        run: |
-          $propertiesPath = ".\gradle.properties"
-          $file = get-item $propertiesPath
-          $findVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
-          $findVersions = $findVersions -split "`r`n"
-          $versionIndex = $findVersions[0].IndexOf("=")
-          $majorVersion = $findVersions[0].Substring($versionIndex+2)
-          $minorVersion = $findVersions[1].Substring($versionIndex+2)
-          $patchVersion = $findVersions[2].Substring($versionIndex+2)
-          $version = "$majorVersion.$minorVersion.$patchVersion"
-          echo $version
-          echo "RELEASE_TAG=HELLO" >> $GITHUB_ENV
+        run: .\scripts\getLatestVersion.ps1
         shell: pwsh
       - name: Test Print
         run: echo "${{ env.RELEASE_TAG }}"
+
