@@ -101,16 +101,15 @@ jobs:
   
   create_Tag:
     needs: maven_Release
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       RELEASE_TAG: ""
     steps:
       - uses: actions/checkout@v2
-      - name: Get version
+      - name: Get Version
         run: .\scripts\getLatestVersion.ps1
         shell: pwsh
       - name: Create tag
         uses: rickstaa/action-create-tag@v1.2.0
         with:
-          tag: $RELEASE_TAG
-
+          tag: ${{ env.RELEASE_TAG }}
