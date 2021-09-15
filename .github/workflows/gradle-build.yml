@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get Version
-        run: .\scripts\getLatestVersion.ps1 -propertiesPath $env:LOCATION
+        run: .\scripts\getLatestVersion.ps1
         shell: pwsh
       - name: Test Print
         run: echo $RELEASE_TAG

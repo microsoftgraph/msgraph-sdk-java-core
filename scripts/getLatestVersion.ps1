@@ -26,11 +26,12 @@ $findVersions = $findVersions -split "`r`n"
 $versionIndex = $findVersions[0].IndexOf("=")
 $majorVersion = $findVersions[0].Substring($versionIndex+2)
 $minorVersion = $findVersions[1].Substring($versionIndex+2)
-$patchVersion = $findVersions[2].Substring($versionIndex+2)
-$version = "$majorVersion.$minorVersion.$patchVersion"
-
-
-echo "RELEASE_TAG = $version" >> $GITHUB_ENV
+#$patchVersion = $findVersions[2].Substring($versionIndex+2)
+#$version = "$majorVersion.$minorVersion.$patchVersion"
+echo $findVersions
+echo $majorVersion
+echo $minorVersion
+echo "RELEASE_TAG = $versionIndex" >> $GITHUB_ENV
 #Update the VERSION_STRING env variable and inform the user
 #Write-Host "##vso[task.setVariable variable=VERSION_STRING]$($version)";
 #Write-Host "Updated the VERSION_STRING enviornment variable with the current Gradle.Properties, $version"
