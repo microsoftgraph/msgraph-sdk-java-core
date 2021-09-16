@@ -116,5 +116,6 @@ jobs:
         with:
           workflow: Git Release
           token: ${{ secrets.PERSONAL_TOKEN }}
+          ref: ${{ steps.GetVersion.outputs.tag }}
 
           
