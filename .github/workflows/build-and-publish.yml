@@ -3,15 +3,12 @@ name: Build and Publish
 on:
   push:
     branches: [ dev , master ]
-    paths:
-      - 'src/**'
-      - '.github/**'
-      - '!.gradle/wrapper'
-      - '!.gitignore'
-      - '!LICENSE'
-      - '!THIRD PARTY NOTICES'
-      - '!*.md'
-      - '*.gradle'  
+    paths-ignore:
+      - '.gradle/wrapper'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'THIRD PARTY NOTICES'
+      - '*.md'
 env: 
   PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
   PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
