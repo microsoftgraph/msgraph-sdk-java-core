@@ -22,6 +22,7 @@
 
 package com.microsoft.graph.http;
 
+import com.microsoft.graph.core.BaseClient;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
 
@@ -491,7 +492,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nonnull
     public IBaseClient<?> getClient() {
-        return client;
+        return this.client;
     }
 
     /**

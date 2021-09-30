@@ -105,7 +105,7 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
      */
     @Nonnull
     public List<T> getCurrentPage() {
-        return pageContents;
+        return new ArrayList<>(pageContents);
     }
 
     /**
@@ -120,7 +120,7 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
     @Override
     @Nullable
     public final AdditionalDataManager additionalDataManager() {
-        return additionalDataManager;
+        return (AdditionalDataManager) this.additionalDataManager.clone();
     }
 
     private final static String odataCountKey = "@odata.count";

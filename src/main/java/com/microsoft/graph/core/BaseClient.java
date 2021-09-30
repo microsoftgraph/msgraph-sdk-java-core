@@ -72,12 +72,12 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
         }
         return endpoint;
     }
-
+/**
     @Override
     public void setServiceRoot(@Nonnull final String value) {
         endpoint = Objects.requireNonNull(value, "value parameter cannot be null");
     }
-
+*/
 	/**
 	 * Send a custom request to Graph
 	 *
