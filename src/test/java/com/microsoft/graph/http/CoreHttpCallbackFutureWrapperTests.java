@@ -14,16 +14,16 @@ import org.junit.jupiter.api.Test;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class CoreHttpCallbackFutureWrapperTests {
+class CoreHttpCallbackFutureWrapperTests {
 
     @Test
-    public void throwsIfCallIsNull() {
+    void throwsIfCallIsNull() {
         assertThrows(NullPointerException.class, () -> new CoreHttpCallbackFutureWrapper(null));
     }
     boolean isCanceled = false;
 
     @Test
-    public void cancelsCall() {
+    void cancelsCall() {
         var call = mock(Call.class);
         doAnswer(i -> {
             isCanceled = true;
@@ -35,7 +35,7 @@ public class CoreHttpCallbackFutureWrapperTests {
     }
 
     @Test
-    public void returnsResponseWhenCompleted() throws IOException, InterruptedException, ExecutionException {
+    void returnsResponseWhenCompleted() throws IOException, InterruptedException, ExecutionException {
         var call = mock(Call.class);
         var response = mock(Response.class);
         var wrapper = new CoreHttpCallbackFutureWrapper(call);
