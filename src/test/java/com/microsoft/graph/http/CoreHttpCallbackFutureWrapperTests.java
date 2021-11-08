@@ -17,13 +17,13 @@ import okhttp3.Response;
 public class CoreHttpCallbackFutureWrapperTests {
 
     @Test
-    public void ThrowsIfCallIsNull() {
+    public void throwsIfCallIsNull() {
         assertThrows(NullPointerException.class, () -> new CoreHttpCallbackFutureWrapper(null));
     }
     boolean isCanceled = false;
 
     @Test
-    public void CancelsCall() {
+    public void cancelsCall() {
         var call = mock(Call.class);
         doAnswer(i -> {
             isCanceled = true;
@@ -35,7 +35,7 @@ public class CoreHttpCallbackFutureWrapperTests {
     }
 
     @Test
-    public void ReturnsResponseWhenCompleted() throws IOException, InterruptedException, ExecutionException {
+    public void returnsResponseWhenCompleted() throws IOException, InterruptedException, ExecutionException {
         var call = mock(Call.class);
         var response = mock(Response.class);
         var wrapper = new CoreHttpCallbackFutureWrapper(call);
