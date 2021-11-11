@@ -41,7 +41,7 @@ import okhttp3.ResponseBody;
 
 class BatchRequestContentTest {
 
-    String testurl = "http://graph.microsoft.com/me";
+    String testurl = "http://graph.microsoft.com/v1.0/me";
 
     @Test
     void testBatchRequestContentCreation() throws MalformedURLException {
@@ -61,11 +61,49 @@ class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + stepId + "\"}]}";
         assertEquals(expectedContent, content);
     }
 
+    @Test
+    void testItReplacesChinaHost() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL("https://microsoftgraph.chinacloudapi.cn/v1.0/me"));
+        BatchRequestContent requestContent = new BatchRequestContent();
+        requestContent.addBatchRequestStep(requestStep);
+        var step = requestContent.requests.get(0);
+        assertEquals("/me", step.url);
+    }
+
+    @Test
+    void testItReplacesGCCHost() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.us/v1.0/me"));
+        BatchRequestContent requestContent = new BatchRequestContent();
+        requestContent.addBatchRequestStep(requestStep);
+        var step = requestContent.requests.get(0);
+        assertEquals("/me", step.url);
+    }
+
+    @Test
+    void testItReplacesDODHost() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL("https://dod-graph.microsoft.us/v1.0/me"));
+        BatchRequestContent requestContent = new BatchRequestContent();
+        requestContent.addBatchRequestStep(requestStep);
+        var step = requestContent.requests.get(0);
+        assertEquals("/me", step.url);
+    }
+    @Test
+    void testItReplacesGermanHost() throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.de/v1.0/me"));
+        BatchRequestContent requestContent = new BatchRequestContent();
+        requestContent.addBatchRequestStep(requestStep);
+        var step = requestContent.requests.get(0);
+        assertEquals("/me", step.url);
+    }
     @Test
     void testGetBatchRequestContentWithHeader() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
@@ -74,7 +112,7 @@ class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + stepId + "\",\"headers\":{\"testkey\":\"testvalue\"}}]}";
         assertEquals(expectedContent, content);
     }
@@ -105,7 +143,7 @@ class BatchRequestContentTest {
 
         requestContent.removeBatchRequestStepWithId(stepId);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + step1Id + "\"}]}";
         assertEquals(expectedContent, content);
     }

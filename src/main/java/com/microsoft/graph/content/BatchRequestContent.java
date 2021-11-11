@@ -168,7 +168,9 @@ public class BatchRequestContent {
     }
     /** pattern to replace the protocol and host part of the request if specified */
     @Nonnull
-    protected static final Pattern protocolAndHostReplacementPattern = Pattern.compile("(?i)^http[s]?:\\/\\/graph\\.microsoft\\.com\\/(?>v1\\.0|beta)\\/?"); // (?i) case insensitive
+    protected static final Pattern protocolAndHostReplacementPattern =
+    Pattern.compile("(?i)^http[s]?:\\/\\/(?:graph|dod-graph|microsoftgraph)\\.(?:microsoft|chinacloudapi)\\.(?:com|cn|us|de)\\/(?:v1\\.0|beta)"); // (?i) case insensitive
+    //https://docs.microsoft.com/en-us/graph/deployments#microsoft-graph-and-graph-explorer-service-root-endpoints
     /**
      * Generates a randomly available request id
      * @return a random request id
