@@ -30,6 +30,8 @@ import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -66,39 +68,11 @@ class BatchRequestContentTest {
         assertEquals(expectedContent, content);
     }
 
-    @Test
-    void testItReplacesChinaHost() throws MalformedURLException {
+    @ParameterizedTest
+    @ValueSource(strings = { "https://microsoftgraph.chinacloudapi.cn/v1.0/me", "https://graph.microsoft.com/v1.0/me", "https://graph.microsoft.us/v1.0/me", "https://dod-graph.microsoft.us/v1.0/me", "https://graph.microsoft.de/v1.0/me"})
+    void testItReplacesNationalHost(final String url) throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
-        when(requestStep.getRequestUrl()).thenReturn(new URL("https://microsoftgraph.chinacloudapi.cn/v1.0/me"));
-        BatchRequestContent requestContent = new BatchRequestContent();
-        requestContent.addBatchRequestStep(requestStep);
-        var step = requestContent.requests.get(0);
-        assertEquals("/me", step.url);
-    }
-
-    @Test
-    void testItReplacesGCCHost() throws MalformedURLException {
-        IHttpRequest requestStep = mock(IHttpRequest.class);
-        when(requestStep.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.us/v1.0/me"));
-        BatchRequestContent requestContent = new BatchRequestContent();
-        requestContent.addBatchRequestStep(requestStep);
-        var step = requestContent.requests.get(0);
-        assertEquals("/me", step.url);
-    }
-
-    @Test
-    void testItReplacesDODHost() throws MalformedURLException {
-        IHttpRequest requestStep = mock(IHttpRequest.class);
-        when(requestStep.getRequestUrl()).thenReturn(new URL("https://dod-graph.microsoft.us/v1.0/me"));
-        BatchRequestContent requestContent = new BatchRequestContent();
-        requestContent.addBatchRequestStep(requestStep);
-        var step = requestContent.requests.get(0);
-        assertEquals("/me", step.url);
-    }
-    @Test
-    void testItReplacesGermanHost() throws MalformedURLException {
-        IHttpRequest requestStep = mock(IHttpRequest.class);
-        when(requestStep.getRequestUrl()).thenReturn(new URL("https://graph.microsoft.de/v1.0/me"));
+        when(requestStep.getRequestUrl()).thenReturn(new URL(url));
         BatchRequestContent requestContent = new BatchRequestContent();
         requestContent.addBatchRequestStep(requestStep);
         var step = requestContent.requests.get(0);
