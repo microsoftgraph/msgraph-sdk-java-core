@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fixed a bug where batching would fail for national clouds
+- Bumps Azure Core from 1.20.0 to 1.22.0 #359, #360, #341, #342
+- Bumps gson from 2.8.8 to 2.8.9 #356, #355
+- Bumps actions/checkout from 2.3.5 to 2.4.0 #358, #349
+- Upgrades CI pipeline to Java 17 #348, #330
+- Bumps mockito-inline from 3.12.4 to 4.0.0 #346, #345
+- Bumps action-download-artifact from 2.14.1 to 2.15.0 #344
+- Bumps okhttp from 4.9.1 to 4.9.2 #339, #340
+- Bumps guava from 30.1.1 to 31.0.1 #338, #337, #335, #336
+- Bumps junit-jupiter-api from 5.8.0 to 5.8.1 #332, #334
+- Bumps junit-jupiter-egine from 5.8.0 to 5.8.1 #333
 
 ## [2.0.9] - 2021-09-17
 
