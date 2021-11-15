@@ -15,6 +15,7 @@ import okhttp3.Response;
  * Wraps the HTTP execution in a future, not public by intention
  */
 class CoreHttpCallbackFutureWrapper implements Callback {
+    final CompletableFuture<Response> future = new CompletableFuture<>();
     public CoreHttpCallbackFutureWrapper(@Nonnull final Call call) {
         Objects.requireNonNull(call);
         future.whenComplete((r, ex) -> {
@@ -23,7 +24,6 @@ class CoreHttpCallbackFutureWrapper implements Callback {
             }
         });
     }
-    final CompletableFuture<Response> future = new CompletableFuture<>();
 	@Override
 	public void onFailure(Call arg0, IOException arg1) {
 		future.completeExceptionally(arg1);
