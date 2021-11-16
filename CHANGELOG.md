@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Fixed a bug where batching would fail for national clouds
 - Bumps Azure Core from 1.20.0 to 1.22.0 #359, #360, #341, #342
 - Bumps gson from 2.8.8 to 2.8.9 #356, #355
 - Bumps actions/checkout from 2.3.5 to 2.4.0 #358, #349
