@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.9'
+    implementation 'com.microsoft.graph:microsoft-graph-core:2.0.10'
     // This dependency is only needed if you are using the TokenCrendentialAuthProvider
     implementation 'com.azure:azure-identity:1.3.1'
 }
@@ -37,7 +37,7 @@ Add the dependency in `dependencies` in pom.xml
     <!-- Include the sdk as a dependency -->
     <groupId>com.microsoft.graph</groupId>
     <artifactId>microsoft-graph-core</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.10</version>
     <!-- This dependency is only needed if you are using the TokenCrendentialAuthProvider -->
     <groupId>com.azure</groupId>
     <artifactId>azure-identity</artifactId>
@@ -53,7 +53,7 @@ The nature of the Graph API is such that the SDK needs quite a large set of clas
 
 ### 2.1 Register your application
 
-Register your application by following the steps at [Register your app with the Azure AD v2.0 endpoint](https://developer.microsoft.com/en-us/graph/docs/concepts/auth_register_app_v2).
+Register your application by following the steps at [Register your app with the Microsoft Identity Platform](https://docs.microsoft.com/graph/auth-register-app-v2).
 
 ### 2.2 Create an IAuthenticationProvider object
 

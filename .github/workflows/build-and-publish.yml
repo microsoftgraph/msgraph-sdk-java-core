@@ -3,15 +3,12 @@ name: Build and Publish
 on:
   push:
     branches: [ dev , master ]
-    paths:
-      - 'src/**'
-      - '.github/**'
-      - '!.gradle/wrapper'
-      - '!.gitignore'
-      - '!LICENSE'
-      - '!THIRD PARTY NOTICES'
-      - '!*.md'
-      - '*.gradle'  
+    paths-ignore:
+      - '.gradle/wrapper'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'THIRD PARTY NOTICES'
+      - '*.md'
 env: 
   PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
   PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
@@ -23,13 +20,13 @@ jobs:
       name: maven_central_snapshot
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.4.0
       - name: Easy detect-secrets
         uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: 17
           distribution: 'adopt'
           cache: gradle
       - name: Download file
@@ -55,13 +52,13 @@ jobs:
       name: maven_central_release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.4.0
       - name: Easy detect-secrets
         uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: 17
           distribution: 'adopt'
           cache: gradle
       - name: Download file
@@ -102,7 +99,7 @@ jobs:
     env:
       RELEASE_TAG: ""
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.4.0
       - name: Get Version
         id: GetVersion
         run: .\scripts\getLatestVersion.ps1

@@ -30,6 +30,8 @@ import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -41,7 +43,7 @@ import okhttp3.ResponseBody;
 
 class BatchRequestContentTest {
 
-    String testurl = "http://graph.microsoft.com/me";
+    String testurl = "http://graph.microsoft.com/v1.0/me";
 
     @Test
     void testBatchRequestContentCreation() throws MalformedURLException {
@@ -61,11 +63,21 @@ class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + stepId + "\"}]}";
         assertEquals(expectedContent, content);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "https://microsoftgraph.chinacloudapi.cn/v1.0/me", "https://graph.microsoft.com/v1.0/me", "https://graph.microsoft.us/v1.0/me", "https://dod-graph.microsoft.us/v1.0/me", "https://graph.microsoft.de/v1.0/me"})
+    void testItReplacesNationalHost(final String url) throws MalformedURLException {
+        IHttpRequest requestStep = mock(IHttpRequest.class);
+        when(requestStep.getRequestUrl()).thenReturn(new URL(url));
+        BatchRequestContent requestContent = new BatchRequestContent();
+        requestContent.addBatchRequestStep(requestStep);
+        var step = requestContent.requests.get(0);
+        assertEquals("/me", step.url);
+    }
     @Test
     void testGetBatchRequestContentWithHeader() throws MalformedURLException {
         IHttpRequest requestStep = mock(IHttpRequest.class);
@@ -74,7 +86,7 @@ class BatchRequestContentTest {
         BatchRequestContent requestContent = new BatchRequestContent();
         String stepId = requestContent.addBatchRequestStep(requestStep);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + stepId + "\",\"headers\":{\"testkey\":\"testvalue\"}}]}";
         assertEquals(expectedContent, content);
     }
@@ -105,7 +117,7 @@ class BatchRequestContentTest {
 
         requestContent.removeBatchRequestStepWithId(stepId);
         String content = new DefaultSerializer(mock(ILogger.class)).serializeObject(requestContent);
-        String expectedContent = "{\"requests\":[{\"url\":\"http://graph.microsoft.com/me\",\"method\":\"GET\",\"id\":\""
+        String expectedContent = "{\"requests\":[{\"url\":\"/me\",\"method\":\"GET\",\"id\":\""
                 + step1Id + "\"}]}";
         assertEquals(expectedContent, content);
     }
