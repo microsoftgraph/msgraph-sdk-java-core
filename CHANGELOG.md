@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+## [2.0.10] - 2021-11-16
+
+### Added
+
 - Added support for cancelling requests #361
 
 ### Changed
