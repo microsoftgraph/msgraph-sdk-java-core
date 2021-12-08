@@ -51,6 +51,7 @@ import java.util.Scanner;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -107,6 +108,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 * @param logger                 the logger for diagnostic information
 	 * @param httpClient             the client to send http requests with
 	 */
+	@SuppressFBWarnings
 	public CoreHttpProvider(@Nonnull final ISerializer serializer,
 			@Nonnull final ILogger logger,
 			@Nonnull final OkHttpClient httpClient) {
@@ -633,6 +635,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 	 */
 	@VisibleForTesting
 	@Nullable
+    @SuppressFBWarnings
 	public ILogger getLogger() {
 		return logger;
     }
