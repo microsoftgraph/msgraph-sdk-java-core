@@ -506,7 +506,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     @SuppressFBWarnings
     public Class<? extends T> getResponseType() {
         return responseClass;
-    }//Suppress
+    }
 
 	   /**
      * Sets the max redirects
