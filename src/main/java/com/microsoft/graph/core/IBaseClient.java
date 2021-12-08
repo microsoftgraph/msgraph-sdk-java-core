@@ -49,7 +49,7 @@ public interface IBaseClient<nativeRequestType> {
      *
      * @param value the service root
      */
-    //void setServiceRoot(@Nonnull final String value);
+    void setServiceRoot(@Nonnull final String value);
 
     /**
      * Gets the HTTP provider
