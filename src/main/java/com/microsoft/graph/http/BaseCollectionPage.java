@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.ISerializer;
 import com.microsoft.graph.serializer.IJsonBackedObject;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,8 +120,9 @@ public class BaseCollectionPage<T, T2 extends BaseRequestBuilder<T>> implements 
 
     @Override
     @Nullable
+    @SuppressFBWarnings
     public final AdditionalDataManager additionalDataManager() {
-        return (AdditionalDataManager) this.additionalDataManager.clone();
+        return additionalDataManager;
     }
 
     private final static String odataCountKey = "@odata.count";
