@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 import com.microsoft.graph.serializer.AdditionalDataManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * The basic collection response implementation
@@ -56,6 +57,7 @@ public abstract class BaseCollectionResponse<T> implements ICollectionResponse<T
 
     @Override
     @Nonnull
+    @SuppressFBWarnings
     public final AdditionalDataManager additionalDataManager() {
         return additionalDataManager;
     }
