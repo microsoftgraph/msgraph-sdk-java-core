@@ -203,7 +203,7 @@ public class GraphServiceException extends ClientException {
      */
     @Nonnull
     public List<String> getResponseHeaders() {
-        return responseHeaders;
+        return Collections.unmodifiableList(responseHeaders);
     }
 
     /**
@@ -212,7 +212,7 @@ public class GraphServiceException extends ClientException {
      */
     @Nullable
     public GraphErrorResponse getError() {
-        return error;
+        return error; //Copy
     }
 
     /**
@@ -239,7 +239,7 @@ public class GraphServiceException extends ClientException {
      */
     @Nonnull
     public List<String> getRequestHeaders() {
-        return requestHeaders;
+        return Collections.unmodifiableList(requestHeaders);
     }
 
     /**
