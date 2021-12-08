@@ -23,6 +23,7 @@
 package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.BaseClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
 
@@ -266,7 +267,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     @Override
     @Nullable
     public List<HeaderOption> getHeaders() {
-        return headersOptions;
+        return Collections.unmodifiableList(headersOptions);
     }
 
     /**
@@ -340,7 +341,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nullable
     public List<QueryOption> getQueryOptions() {
-        return queryOptions;
+        return Collections.unmodifiableList(queryOptions);
     }
 
     /**
@@ -350,7 +351,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nullable
     public List<FunctionOption> getFunctionOptions() {
-        return functionOptions;
+        return Collections.unmodifiableList(functionOptions);
     }
 
     /**
@@ -491,6 +492,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the client
      */
     @Nonnull
+    @SuppressFBWarnings
     public IBaseClient<?> getClient() {
         return this.client;
     }
@@ -501,9 +503,10 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the response type
      */
     @Nullable
+    @SuppressFBWarnings
     public Class<? extends T> getResponseType() {
         return responseClass;
-    }
+    }//Suppress
 
 	   /**
      * Sets the max redirects
