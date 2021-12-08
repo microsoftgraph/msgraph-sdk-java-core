@@ -39,6 +39,7 @@ import com.microsoft.graph.options.FunctionOption;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.options.Option;
 import com.microsoft.graph.options.QueryOption;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A request against a collection
@@ -310,6 +311,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      * @return the base request for this collection request
      */
     @Nonnull
+    @SuppressFBWarnings
     public BaseRequest<T2> getBaseRequest() {
         return baseRequest;
     }
