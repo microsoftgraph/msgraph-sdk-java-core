@@ -71,4 +71,15 @@ public class GraphErrorResponse implements IJsonBackedObject {
     public final AdditionalDataManager additionalDataManager() {
         return additionalDataManager;
     }
+
+    public GraphErrorResponse getCopy()
+    {
+        //makeCopy of error
+        //make copy of additionalData manager
+        //make copy of raw object
+        return this;
+
+    }
+
+
 }
