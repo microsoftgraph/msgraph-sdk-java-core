@@ -60,4 +60,18 @@ public class GraphInnerError {
     @SerializedName("innererror")
     @Nullable
     public GraphInnerError innererror;
+
+    //TODO: Comments
+    public static final GraphInnerError graphInnerErrorCopy(GraphInnerError InnerError) {
+        GraphInnerError innerErrorCopy = new GraphInnerError();
+        innerErrorCopy.code = InnerError.code;
+        innerErrorCopy.errorType = InnerError.errorType;
+        innerErrorCopy.debugMessage = InnerError.debugMessage;
+        innerErrorCopy.stackTrace = InnerError.stackTrace;
+        innerErrorCopy.throwSite = InnerError.throwSite;
+        if (InnerError.innererror != null) {
+            innerErrorCopy.innererror = graphInnerErrorCopy(InnerError.innererror);
+        }
+        return innerErrorCopy;
+    }
 }
