@@ -87,7 +87,11 @@ public class GraphError {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, original);
     }
 
-    //TODO comments
+    /**
+     * Makes a deep copy of specified error
+     * @param error The error we wish to copy
+     * @return The copy of the specified error
+     */
     public static final GraphError graphErrorCopy(GraphError error) {
         GraphError errorCopy = new GraphError();
         errorCopy.message = error.message;
