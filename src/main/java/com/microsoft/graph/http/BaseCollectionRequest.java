@@ -216,7 +216,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     public void addQueryOption(@Nonnull final QueryOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        baseRequest.getQueryOptions().add(option);
+        baseRequest.addQueryOption(option);
     }
 
     /**
@@ -302,7 +302,7 @@ public abstract class BaseCollectionRequest<T, T2 extends ICollectionResponse<T>
      */
     public void addFunctionOption(@Nonnull final FunctionOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        baseRequest.getFunctionOptions().add(option);
+        baseRequest.addFunctionOption(option);
     }
 
     /**

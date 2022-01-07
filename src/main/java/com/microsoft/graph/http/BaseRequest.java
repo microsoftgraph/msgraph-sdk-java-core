@@ -375,7 +375,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     public void addQueryOption(@Nonnull final QueryOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        getQueryOptions().add(option);
+        queryOptions.add(option);
     }
 
     /**
@@ -385,7 +385,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     public void addFunctionOption(@Nonnull final FunctionOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        getFunctionOptions().add(option);
+        functionOptions.add(option);
     }
 
     /**
