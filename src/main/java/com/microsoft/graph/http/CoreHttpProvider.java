@@ -52,6 +52,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -377,8 +379,9 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
 					throws ClientException {
             final Request coreHttpRequest = getHttpRequest(request, resultClass, serializable);
-            final CoreHttpCallbackFutureWrapper wrapper = new CoreHttpCallbackFutureWrapper();
-            corehttpClient.newCall(coreHttpRequest).enqueue(wrapper);
+            final Call call = corehttpClient.newCall(coreHttpRequest);
+            final CoreHttpCallbackFutureWrapper wrapper = new CoreHttpCallbackFutureWrapper(call);
+            call.enqueue(wrapper);
             return wrapper.future.thenApply(r -> processResponse(r, request, resultClass, serializable, handler));
     }
     /**

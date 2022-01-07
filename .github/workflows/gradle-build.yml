@@ -15,11 +15,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 16
+      - uses: actions/checkout@v2.4.0
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: 17
           distribution: 'adopt'
           cache: gradle     
       - name: Easy detect-secrets
