@@ -212,7 +212,7 @@ public class GraphServiceException extends ClientException {
      */
     @Nullable
     public GraphErrorResponse getError() {
-        return GraphErrorResponse.getErrorCopy(error);
+        return GraphErrorResponse.getErrorResponseCopy(error);
     }
 
     /**
