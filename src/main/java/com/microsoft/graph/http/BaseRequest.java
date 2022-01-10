@@ -266,8 +266,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Override
     @Nullable
+    @SuppressFBWarnings
     public List<HeaderOption> getHeaders() {
-        return Collections.unmodifiableList(headersOptions);
+        return headersOptions;
     }
 
     /**
@@ -340,8 +341,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the query options for this request
      */
     @Nullable
+    @SuppressFBWarnings
     public List<QueryOption> getQueryOptions() {
-        return Collections.unmodifiableList(queryOptions);
+        return queryOptions;
     }
 
     /**
@@ -350,8 +352,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the function options for this request
      */
     @Nullable
+    @SuppressFBWarnings
     public List<FunctionOption> getFunctionOptions() {
-        return Collections.unmodifiableList(functionOptions);
+        return functionOptions;
     }
 
     /**
