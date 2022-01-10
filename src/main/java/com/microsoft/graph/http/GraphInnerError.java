@@ -25,6 +25,7 @@ package com.microsoft.graph.http;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * Represents an inner error returned by the service
