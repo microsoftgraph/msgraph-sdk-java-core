@@ -65,6 +65,7 @@ public class GraphInnerError {
      * Make a deep copy this GraphInnerError, this includes all it's subsequent InnerError's.
      * @return The copy of this InnerError
      */
+    @Nonnull
     public final GraphInnerError copy() {
         GraphInnerError innerErrorCopy = new GraphInnerError();
         innerErrorCopy.code = this.code;
