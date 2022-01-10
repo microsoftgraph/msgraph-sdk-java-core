@@ -62,19 +62,18 @@ public class GraphInnerError {
     public GraphInnerError innererror;
 
     /**
-     * Make a deep copy of the specified GraphInnerError, this includes all it's subsequent InnerError's.
-     * @param InnerError The InnerError we want to copy.
-     * @return The copy of the specified InnerError
+     * Make a deep copy this GraphInnerError, this includes all it's subsequent InnerError's.
+     * @return The copy of this InnerError
      */
-    public static final GraphInnerError graphInnerErrorCopy(GraphInnerError InnerError) {
+    public final GraphInnerError copy() {
         GraphInnerError innerErrorCopy = new GraphInnerError();
-        innerErrorCopy.code = InnerError.code;
-        innerErrorCopy.errorType = InnerError.errorType;
-        innerErrorCopy.debugMessage = InnerError.debugMessage;
-        innerErrorCopy.stackTrace = InnerError.stackTrace;
-        innerErrorCopy.throwSite = InnerError.throwSite;
-        if (InnerError.innererror != null) {
-            innerErrorCopy.innererror = graphInnerErrorCopy(InnerError.innererror);
+        innerErrorCopy.code = this.code;
+        innerErrorCopy.errorType = this.code;
+        innerErrorCopy.debugMessage = this.debugMessage;
+        innerErrorCopy.stackTrace = this.stackTrace;
+        innerErrorCopy.throwSite = this.throwSite;
+        if(this.innererror != null) {
+            innerErrorCopy.innererror = this.innererror.copy();
         }
         return innerErrorCopy;
     }

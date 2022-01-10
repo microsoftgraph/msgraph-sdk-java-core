@@ -88,16 +88,15 @@ public class GraphError {
     }
 
     /**
-     * Makes a deep copy of specified error
-     * @param error The error we wish to copy
-     * @return The copy of the specified error
+     * Makes a deep copy of this GraphError
+     * @return The copy of this GraphError
      */
-    public static final GraphError graphErrorCopy(GraphError error) {
+    public final GraphError copy() {
         GraphError errorCopy = new GraphError();
-        errorCopy.message = error.message;
-        errorCopy.code = error.code;
-        if(error.innererror!=null) {
-            errorCopy.innererror = GraphInnerError.graphInnerErrorCopy(error.innererror);
+        errorCopy.message = this.message;
+        errorCopy.code = this.code;
+        if(this.innererror != null) {
+            errorCopy.innererror = this.innererror.copy();
         }
         return errorCopy;
     }

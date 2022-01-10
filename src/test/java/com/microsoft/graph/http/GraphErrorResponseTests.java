@@ -50,7 +50,7 @@ public class GraphErrorResponseTests {
         errorResponse.error = error;
 
         //Copy the errorResponse and its subsequent innerErrors
-        GraphErrorResponse errorResponseCopy = GraphErrorResponse.getErrorResponseCopy(errorResponse);
+        GraphErrorResponse errorResponseCopy = errorResponse.copy();
         //Ensure subsequent innerErrors have the expected messages in the expected order.
         assertEquals(errorResponseCopy.error.message, expectedMessage0);
         assertEquals(errorResponseCopy.error.innererror.debugMessage, expectedMessage1);

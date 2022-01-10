@@ -73,16 +73,14 @@ public class GraphErrorResponse implements IJsonBackedObject {
     }
 
     /**
-     * Make a deep copy the specified GraphErrorResponse object.
-     * @param response The GraphErrorResponse we want to copy
-     * @return The copy of the specified GraphErrorResponse
+     * Make and return a deep copy of this GraphErrorResponse.
+     * @return The copy of this GraphErrorResponse.
      */
-    public static GraphErrorResponse getErrorResponseCopy(GraphErrorResponse response)
-    {
-        GraphErrorResponse copy = new GraphErrorResponse();
-        copy.additionalDataManager = response.additionalDataManager(); //We are okay with keeping the dataManager intact
-        copy.rawObject = response.rawObject.deepCopy();
-        copy.error = GraphError.graphErrorCopy(response.error);
-        return copy;
+    public GraphErrorResponse copy() {
+        GraphErrorResponse responseCopy = new GraphErrorResponse();
+        responseCopy.additionalDataManager = this.additionalDataManager;
+        responseCopy.rawObject = this.rawObject.deepCopy();
+        responseCopy.error = this.error.copy();
+        return responseCopy;
     }
 }
