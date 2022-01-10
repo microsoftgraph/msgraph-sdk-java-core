@@ -32,6 +32,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.microsoft.graph.logger.ILogger;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
      *
      * @param logger logger to use for the factory
      */
+    @SuppressFBWarnings
     public FallbackTypeAdapterFactory(@Nonnull final ILogger logger) {
         Objects.requireNonNull(logger, "parameter logger cannot be null");
         this.logger = logger;
@@ -86,6 +88,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
+    @SuppressFBWarnings
     public <T> TypeAdapter<T> create(@Nonnull final Gson gson, @Nonnull final TypeToken<T> type) {
         Objects.requireNonNull(type, "parameter type cannot be null");
         final Class<T> rawType = (Class<T>) type.getRawType();

@@ -1,10 +1,7 @@
 package com.microsoft.graph.http;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
@@ -48,13 +45,11 @@ public class BaseCollectionPageTests {
     public void testCurrentPage() {
         assertEquals(3,baseCollectionPage.getCurrentPage().size());
         assertEquals("Object2", baseCollectionPage.getCurrentPage().get(1));
-        Boolean success = false;
-        try{
-            baseCollectionPage.getCurrentPage().remove(1);
-        }catch (UnsupportedOperationException uEx){
-            success = true;
-        }
-        assertTrue(success);
+
+        //Test to ensure the returned list from getCurrentPage is a deep copy of baseCollectionPage contents.
+        ArrayList<String> baseCollectionContentsCopy = (ArrayList<String>) baseCollectionPage.getCurrentPage();
+        baseCollectionContentsCopy.remove(1);
+        assertNotEquals(baseCollectionPage.getCurrentPage().size(), baseCollectionContentsCopy.size());
     }
 
     @Test

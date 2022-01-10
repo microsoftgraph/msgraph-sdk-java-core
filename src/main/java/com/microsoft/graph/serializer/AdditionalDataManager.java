@@ -26,6 +26,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class AdditionalDataManager extends HashMap<String, JsonElement> {
      *
      * @param jsonBackedObject the object to read values from
      */
+    @SuppressFBWarnings
     public AdditionalDataManager(@Nullable final IJsonBackedObject jsonBackedObject) {
         this.jsonBackedObject = jsonBackedObject;
     }

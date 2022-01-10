@@ -86,4 +86,19 @@ public class GraphError {
         Objects.requireNonNull(original, "parameter original cannot be null");
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, original);
     }
+
+    /**
+     * Makes a deep copy of this GraphError
+     * @return The copy of this GraphError
+     */
+    @Nonnull
+    public final GraphError copy() {
+        GraphError errorCopy = new GraphError();
+        errorCopy.message = this.message;
+        errorCopy.code = this.code;
+        if(this.innererror != null) {
+            errorCopy.innererror = this.innererror.copy();
+        }
+        return errorCopy;
+    }
 }
