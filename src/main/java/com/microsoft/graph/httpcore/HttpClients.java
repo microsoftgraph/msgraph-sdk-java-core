@@ -4,11 +4,9 @@ import com.microsoft.graph.authentication.IAuthenticationProvider;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
-import okhttp3.Protocol;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
