@@ -22,6 +22,8 @@
 
 package com.microsoft.graph.http;
 
+import com.microsoft.graph.core.BaseClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
 
@@ -264,6 +266,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Override
     @Nullable
+    @SuppressFBWarnings
     public List<HeaderOption> getHeaders() {
         return headersOptions;
     }
@@ -338,6 +341,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the query options for this request
      */
     @Nullable
+    @SuppressFBWarnings
     public List<QueryOption> getQueryOptions() {
         return queryOptions;
     }
@@ -348,6 +352,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the function options for this request
      */
     @Nullable
+    @SuppressFBWarnings
     public List<FunctionOption> getFunctionOptions() {
         return functionOptions;
     }
@@ -373,7 +378,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     public void addQueryOption(@Nonnull final QueryOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        getQueryOptions().add(option);
+        queryOptions.add(option);
     }
 
     /**
@@ -383,7 +388,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     public void addFunctionOption(@Nonnull final FunctionOption option) {
         Objects.requireNonNull(option, "parameter option cannot be null");
-        getFunctionOptions().add(option);
+        functionOptions.add(option);
     }
 
     /**
@@ -490,8 +495,9 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the client
      */
     @Nonnull
+    @SuppressFBWarnings
     public IBaseClient<?> getClient() {
-        return client;
+        return this.client;
     }
 
     /**
@@ -500,6 +506,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return the response type
      */
     @Nullable
+    @SuppressFBWarnings
     public Class<? extends T> getResponseType() {
         return responseClass;
     }

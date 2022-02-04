@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class BatchRequestTestBody implements IJsonBackedObject {
     @Expose
@@ -23,6 +24,7 @@ public class BatchRequestTestBody implements IJsonBackedObject {
     final AdditionalDataManager manager = new AdditionalDataManager(this);
 
     @Override
+    @SuppressFBWarnings
     public AdditionalDataManager additionalDataManager() {
         return manager;
     }

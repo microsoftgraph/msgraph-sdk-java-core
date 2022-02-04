@@ -11,6 +11,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.11] - 2022-02-04
+
+### Added
+
+- Removing lock on Http protocol 1.1 in preparation for Graph service support of Http2 #429
+
+### Changed
+
+- Bumps Azure Core to 1.24.1 #408, #409, #410
+- Bumps mockito-inline to 4.3.1 #422, #423, #424
+- Bumps okhttp to 4.9.3 #371, #372
+- Bumps junit to 4.13.2 #391, #394
+- Bumps junit-jupiter-api to 5.8.2 #379, #382
+- Bumps junit-jupiter-egine to 5.8.2 #380
+- Bumps junit-jupiter-params to 5.8.2 #381, #383
+- Bumps gradle wrappers to 7.3.3 #426
+- Bumps gradle-versions-plugin to 0.42.0 in /android #428
+- Bumps gradle from 7.1.0 in /android #425
+- Bumps gradle-enterprise-gradle-plugin 3.8.1 in /android #413
+- Bumps dawidd6/action-download-artifact to 2.17.0 #427
+- Bumps com.github.spotbugs to 5.0.5 #416
+- Bumps spotbugs-annotations to 4.5.3 #407
+- Bumps azure-identity to 1.4.3 #411, #412
+- Bumps anton-yurchenko/git-release to 4.2 #378
+- Bumps actions/cache from to 2.1.7 #375
+
 ## [2.0.10] - 2021-11-16
 
 ### Added

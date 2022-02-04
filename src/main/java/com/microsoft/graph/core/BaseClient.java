@@ -40,6 +40,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -75,7 +76,8 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 
     @Override
     public void setServiceRoot(@Nonnull final String value) {
-        endpoint = Objects.requireNonNull(value, "value parameter cannot be null");
+        Objects.requireNonNull(value, "value parameter cannot be null");
+        endpoint = String.valueOf(value);
     }
 
 	/**
@@ -225,6 +227,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
 		 * @return the instance of this builder
 		 */
 		@Nonnull
+        @SuppressFBWarnings
 		public Builder<httpClientType, nativeRequestType> logger(@Nonnull final ILogger logger) {
 			Objects.requireNonNull(logger, "parameter logger cannot be null");
 			this.logger = logger;
@@ -321,6 +324,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @return The logger
      */
     @Nullable
+    @SuppressFBWarnings
     public ILogger getLogger() {
         return logger;
     }

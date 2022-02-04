@@ -24,6 +24,7 @@ package com.microsoft.graph.http;
 
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.Option;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,6 +80,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      * @return the client
      */
     @Nullable
+    @SuppressFBWarnings
     public IBaseClient<?> getClient() {
         return client;
     }

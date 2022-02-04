@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,7 @@ public abstract class TestIJsonBackedObject implements IJsonBackedObject {
 
     @Nullable
     @Override
+    @SuppressFBWarnings
     public AdditionalDataManager additionalDataManager() {
         return additionalDataManager;
     }

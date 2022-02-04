@@ -27,6 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.graph.logger.ILogger;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -322,6 +323,7 @@ public class DefaultSerializer implements ISerializer {
 	 * @return a logger
 	 */
 	@Nullable
+    @SuppressFBWarnings
 	public ILogger getLogger() {
 		return logger;
 	}

@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation project(':coreLibrary')
-    implementation 'com.azure:azure-identity:1.2.5'
+    implementation 'com.azure:azure-identity:1.4.3'
 }

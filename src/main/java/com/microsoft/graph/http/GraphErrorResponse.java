@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import com.microsoft.graph.serializer.AdditionalDataManager;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Represents the error response body returned by the service
@@ -66,7 +67,21 @@ public class GraphErrorResponse implements IJsonBackedObject {
 
     @Override
     @Nullable
+    @SuppressFBWarnings
     public final AdditionalDataManager additionalDataManager() {
         return additionalDataManager;
+    }
+
+    /**
+     * Make and return a deep copy of this GraphErrorResponse.
+     * @return The copy of this GraphErrorResponse.
+     */
+    @Nonnull
+    public GraphErrorResponse copy() {
+        GraphErrorResponse responseCopy = new GraphErrorResponse();
+        responseCopy.additionalDataManager = this.additionalDataManager;
+        responseCopy.rawObject = this.rawObject.deepCopy();
+        responseCopy.error = this.error.copy();
+        return responseCopy;
     }
 }
