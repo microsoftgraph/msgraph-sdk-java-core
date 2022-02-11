@@ -105,7 +105,7 @@ jobs:
         run: .\scripts\getLatestVersion.ps1
         shell: pwsh
       - name: Create tag
-        uses: rickstaa/action-create-tag@v1.2.0
+        uses: rickstaa/action-create-tag@v1.2.1
         with:
           tag: ${{ steps.GetVersion.outputs.tag }}
       - name: Queue Git Release
