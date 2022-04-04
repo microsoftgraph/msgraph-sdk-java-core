@@ -5,49 +5,49 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 
 public class TelemetryOptionsTest {
 
     @Test
     public void createTelemetryOptionsTest() {
-        TelemetryOptions telemetryOptions = new TelemetryOptions();
-        assertNotNull(telemetryOptions);
-        assertNotNull(telemetryOptions.getClientRequestId());
+        TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
+        assertNotNull(telemetryHandlerOption);
+        assertNotNull(telemetryHandlerOption.getClientRequestId());
     }
 
     @Test
     public void setFeatureUsageTest() {
-        TelemetryOptions telemetryOptions = new TelemetryOptions();
-        telemetryOptions.setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
-        telemetryOptions.setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
-        assertTrue(telemetryOptions.getSerializedFeatureUsage().compareTo("5")==0);
+        TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
+        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.AUTH_HANDLER_ENABLED_FLAG);
+        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.REDIRECT_HANDLER_ENABLED_FLAG);
+        assertTrue(telemetryHandlerOption.getSerializedFeatureUsage().compareTo("5")==0);
     }
 
     @Test
     public void getSerializedFeatureUsageTest() {
-        TelemetryOptions telemetryOptions = new TelemetryOptions();
-        telemetryOptions.setFeatureUsage(TelemetryOptions.AUTH_HANDLER_ENABLED_FLAG);
-        telemetryOptions.setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
-        telemetryOptions.setFeatureUsage(TelemetryOptions.RETRY_HANDLER_ENABLED_FLAG);
-        assertTrue(telemetryOptions.getSerializedFeatureUsage().compareTo("7")==0);
+        TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
+        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.AUTH_HANDLER_ENABLED_FLAG);
+        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.REDIRECT_HANDLER_ENABLED_FLAG);
+        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.RETRY_HANDLER_ENABLED_FLAG);
+        assertTrue(telemetryHandlerOption.getSerializedFeatureUsage().compareTo("7")==0);
     }
 
     @Test
     public void setClientRequestIdTest() {
-        TelemetryOptions telemetryOptions = new TelemetryOptions();
-        telemetryOptions.setClientRequestId("test id");
-        assertTrue(telemetryOptions.getClientRequestId().compareTo("test id")==0);
+        TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
+        telemetryHandlerOption.setClientRequestId("test id");
+        assertTrue(telemetryHandlerOption.getClientRequestId().compareTo("test id")==0);
     }
 
     @Test
     public void getClientRequestIdTest() {
-        TelemetryOptions telemetryOptions = new TelemetryOptions();
-        assertNotNull(telemetryOptions.getClientRequestId());
-        telemetryOptions.setClientRequestId("test id 1");
-        assertTrue(telemetryOptions.getClientRequestId().compareTo("test id 1")==0);
-        telemetryOptions.setClientRequestId("test id 2");
-        assertTrue(telemetryOptions.getClientRequestId().compareTo("test id 2")==0);
+        TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
+        assertNotNull(telemetryHandlerOption.getClientRequestId());
+        telemetryHandlerOption.setClientRequestId("test id 1");
+        assertTrue(telemetryHandlerOption.getClientRequestId().compareTo("test id 1")==0);
+        telemetryHandlerOption.setClientRequestId("test id 2");
+        assertTrue(telemetryHandlerOption.getClientRequestId().compareTo("test id 2")==0);
     }
 
 }

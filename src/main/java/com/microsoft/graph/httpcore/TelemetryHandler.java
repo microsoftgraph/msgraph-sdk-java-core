@@ -2,11 +2,10 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -50,11 +49,11 @@ public class TelemetryHandler implements Interceptor{
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 
-        TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
-        if(telemetryOptions == null)
-            telemetryOptions = new TelemetryOptions();
+        TelemetryHandlerOption telemetryHandlerOption = request.tag(TelemetryHandlerOption.class);
+        if(telemetryHandlerOption == null)
+            telemetryHandlerOption = new TelemetryHandlerOption();
 
-        final String featureUsage = "(featureUsage=" + telemetryOptions.getFeatureUsage() + ")";
+        final String featureUsage = "(featureUsage=" + telemetryHandlerOption.getFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
         final String sdkversion_value = GRAPH_VERSION_PREFIX + "/" + VERSION + " " + featureUsage +
@@ -63,7 +62,7 @@ public class TelemetryHandler implements Interceptor{
         telemetryAddedBuilder.addHeader(SDK_VERSION, sdkversion_value);
 
         if(request.header(CLIENT_REQUEST_ID) == null) {
-            telemetryAddedBuilder.addHeader(CLIENT_REQUEST_ID, telemetryOptions.getClientRequestId());
+            telemetryAddedBuilder.addHeader(CLIENT_REQUEST_ID, telemetryHandlerOption.getClientRequestId());
         }
 
         return chain.proceed(telemetryAddedBuilder.build());

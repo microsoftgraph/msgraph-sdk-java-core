@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryOptions;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -118,14 +117,6 @@ public class RedirectHandler implements Interceptor{
     @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request request = chain.request();
-
-        TelemetryOptions telemetryOptions = request.tag(TelemetryOptions.class);
-        if(telemetryOptions == null) {
-            telemetryOptions = new TelemetryOptions();
-            request = request.newBuilder().tag(TelemetryOptions.class, telemetryOptions).build();
-        }
-        telemetryOptions.setFeatureUsage(TelemetryOptions.REDIRECT_HANDLER_ENABLED_FLAG);
-
         Response response = null;
         int requestsCount = 1;
 

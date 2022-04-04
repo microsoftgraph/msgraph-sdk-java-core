@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 /**
  * Options to be passed to the telemetry middleware.
  */
-public class TelemetryOptions {
+public class TelemetryHandlerOption {
 
     /**
      * No SDK feature in use
