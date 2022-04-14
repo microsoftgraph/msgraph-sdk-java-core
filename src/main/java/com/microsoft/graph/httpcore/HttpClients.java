@@ -26,7 +26,7 @@ public class HttpClients {
     @Nonnull
     public static Builder custom() {
         return new OkHttpClient.Builder()
-                    .addInterceptor(new TelemetryHandler())
+                    .addInterceptor(new GraphTelemetryHandler())
                     .followRedirects(false)
                     .followSslRedirects(false);
     }
