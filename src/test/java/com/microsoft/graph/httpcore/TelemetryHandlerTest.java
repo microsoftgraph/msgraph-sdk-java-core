@@ -57,6 +57,18 @@ public class TelemetryHandlerTest {
     }
 
     @Test
+    public void arrayInterceptorsTest2() throws IOException{
+        Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
+        final Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler()};
+        OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
+        Response response = client.newCall(request).execute();
+        System.out.println(response.request().headers().toString());
+        System.out.println(response.request().headers().size());
+
+    }
+
+
+    @Test
     public void arrayInterceptorEmptyTest() throws IOException {
         final Interceptor[] interceptors = null;
         final OkHttpClient client = HttpClients.createFromInterceptors(interceptors);

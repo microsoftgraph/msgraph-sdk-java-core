@@ -23,7 +23,7 @@ public class GraphTelemetryHandler implements Interceptor{
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
-
+        //TODO: add a check to see if the url is using v1 or beta enpoint, add this as a value in the telemetryHandler options
         TelemetryHandlerOption telemetryHandlerOption = request.tag(TelemetryHandlerOption.class);
         if(telemetryHandlerOption == null)
             telemetryHandlerOption = new TelemetryHandlerOption();

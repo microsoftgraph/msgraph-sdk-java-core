@@ -19,17 +19,17 @@ public class TelemetryOptionsTest {
     @Test
     public void setFeatureUsageTest() {
         TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
-        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.AUTH_HANDLER_ENABLED_FLAG);
-        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.REDIRECT_HANDLER_ENABLED_FLAG);
+        telemetryHandlerOption.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
+        telemetryHandlerOption.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
         assertTrue(telemetryHandlerOption.getSerializedFeatureUsage().compareTo("5")==0);
     }
 
     @Test
     public void getSerializedFeatureUsageTest() {
         TelemetryHandlerOption telemetryHandlerOption = new TelemetryHandlerOption();
-        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.AUTH_HANDLER_ENABLED_FLAG);
-        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.REDIRECT_HANDLER_ENABLED_FLAG);
-        telemetryHandlerOption.setFeatureUsage(TelemetryHandlerOption.RETRY_HANDLER_ENABLED_FLAG);
+        telemetryHandlerOption.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
+        telemetryHandlerOption.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
+        telemetryHandlerOption.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
         assertTrue(telemetryHandlerOption.getSerializedFeatureUsage().compareTo("7")==0);
     }
 

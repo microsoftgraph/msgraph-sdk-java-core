@@ -5,37 +5,14 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import com.microsoft.graph.httpcore.FeatureFlag;
+
 /**
  * Options to be passed to the telemetry middleware.
  */
 public class TelemetryHandlerOption {
 
-    /**
-     * No SDK feature in use
-     */
-    public static final int NONE_FLAG = 0;
-    /**
-     * Redirect handler enabled
-     */
-    public static final int REDIRECT_HANDLER_ENABLED_FLAG = 1;
-    /**
-     * Retry handler enabled
-     */
-    public static final int RETRY_HANDLER_ENABLED_FLAG = 2;
-    /**
-     * Authentication handler enabled
-     */
-    public static final int AUTH_HANDLER_ENABLED_FLAG = 4;
-    /**
-     * Default http provider enabled
-     */
-    public static final int DEFAULT_HTTPROVIDER_ENABLED_FLAG = 8;
-    /**
-     * Logging handler enabled
-     */
-    public static final int LOGGING_HANDLER_ENABLED_FLAG = 16;
-
-    private int featureUsage = NONE_FLAG;
+    private int featureUsage = FeatureFlag.NONE_FLAG;
     private String clientRequestId;
 
     /**
