@@ -3,9 +3,11 @@ package com.microsoft.graph.authentication;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides basic common methods for all authentication providers
@@ -18,10 +20,10 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      * @param requestUrl request URL that is about to be executed
      * @return whether a token should be attached to this request
      */
-    protected boolean shouldAuthenticateRequestWithUrl(@Nonnull final URL requestUrl) {
+    protected boolean shouldAuthenticateRequestWithUrl(@Nonnull final URL requestUrl, @Nullable final List<String> customHosts) {
         if (requestUrl == null || !requestUrl.getProtocol().toLowerCase(Locale.ROOT).equals("https"))
             return false;
         final String hostName = requestUrl.getHost().toLowerCase(Locale.ROOT);
-        return validGraphHostNames.contains(hostName);
+        return customHosts == null ? (validGraphHostNames.contains(hostName)) : (customHosts.contains(hostName));
     }
 }

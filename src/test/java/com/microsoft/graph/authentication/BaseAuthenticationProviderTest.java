@@ -28,7 +28,7 @@ public class BaseAuthenticationProviderTest {
             // Arrange
             final URL url = new URL("https://"+ hostName);
             // Act
-            final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
+            final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
 
             // Assert
             assertTrue(result);
@@ -40,7 +40,7 @@ public class BaseAuthenticationProviderTest {
         final URL url = new URL("https://localhost");
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
 
         //Assert
         assertFalse(result);
@@ -51,7 +51,7 @@ public class BaseAuthenticationProviderTest {
         final URL url = new URL("http://graph.microsoft.com");
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
 
         //Assert
         assertFalse(result);
@@ -62,9 +62,20 @@ public class BaseAuthenticationProviderTest {
         final URL url = (URL)null;
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
 
         //Assert
         assertFalse(result);
+    }
+    @Test
+    public void providerAddsTokenToCustomHosts() throws MalformedURLException {
+        //Arrange
+        final URL url = new URL("https://localhost");
+
+        //Act
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, Arrays.asList("localhost"));
+
+        //Assert
+        assertTrue(result);
     }
 }
