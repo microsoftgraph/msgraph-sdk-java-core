@@ -23,11 +23,14 @@ public class GraphTelemetryHandler implements Interceptor{
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
-        //TODO: add a check to see if the url is using v1 or beta enpoint, add this as a value in the telemetryHandler options
+
         TelemetryHandlerOption telemetryHandlerOption = request.tag(TelemetryHandlerOption.class);
         if(telemetryHandlerOption == null)
             telemetryHandlerOption = new TelemetryHandlerOption();
 
+        //This assumes a call to graph will always include v1.0 or beta in the url, should this assumption be changed?
+        final String graphEndpoint = request.url().toString().contains("/v1.0/") ? "v1.0" : "beta";
+        System.out.println(graphEndpoint);
         final String featureUsage = "(featureUsage=" + telemetryHandlerOption.getFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
@@ -39,6 +42,8 @@ public class GraphTelemetryHandler implements Interceptor{
         if(request.header(CoreConstants.Headers.ClientRequestId) == null) {
             telemetryAddedBuilder.addHeader(CoreConstants.Headers.ClientRequestId, telemetryHandlerOption.getClientRequestId());
         }
+
+        //TODO: add the option to set sdk and core version on telemetryOptions. Set default graph version to latest major version most likely. Add this constants.
 
         return chain.proceed(telemetryAddedBuilder.build());
     }

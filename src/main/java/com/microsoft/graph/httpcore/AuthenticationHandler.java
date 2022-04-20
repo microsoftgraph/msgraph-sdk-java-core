@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,6 +42,13 @@ public class AuthenticationHandler implements Interceptor {
     @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request originalRequest = chain.request();
+
+        TelemetryHandlerOption telemetryOptions = originalRequest.tag(TelemetryHandlerOption.class);
+        if(telemetryOptions == null) {
+            telemetryOptions = new TelemetryHandlerOption();
+            originalRequest = originalRequest.newBuilder().tag(TelemetryHandlerOption.class, telemetryOptions).build();
+        }
+        telemetryOptions.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
 
         try {
             final CompletableFuture<String> future = authProvider.getAuthorizationTokenAsync(originalRequest.url().url());

@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
 import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
+import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
 
@@ -166,6 +167,13 @@ public class RetryHandler implements Interceptor{
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request request = chain.request();
         Response response = chain.proceed(request);
+
+        TelemetryHandlerOption telemetryOptions = request.tag(TelemetryHandlerOption.class);
+        if(telemetryOptions == null) {
+            telemetryOptions = new TelemetryHandlerOption();
+            request = request.newBuilder().tag(TelemetryHandlerOption.class, telemetryOptions).build();
+        }
+        telemetryOptions.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
 
         // Use should retry pass along with this request
         RetryOptions retryOption = request.tag(RetryOptions.class);
