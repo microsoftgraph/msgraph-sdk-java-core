@@ -28,7 +28,7 @@ public class BaseAuthenticationProviderTest {
             // Arrange
             final URL url = new URL("https://"+ hostName);
             // Act
-            final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
+            final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
 
             // Assert
             assertTrue(result);
@@ -40,7 +40,7 @@ public class BaseAuthenticationProviderTest {
         final URL url = new URL("https://localhost");
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
 
         //Assert
         assertFalse(result);
@@ -51,7 +51,7 @@ public class BaseAuthenticationProviderTest {
         final URL url = new URL("http://graph.microsoft.com");
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
 
         //Assert
         assertFalse(result);
@@ -62,7 +62,7 @@ public class BaseAuthenticationProviderTest {
         final URL url = (URL)null;
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, null);
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
 
         //Assert
         assertFalse(result);
@@ -70,10 +70,11 @@ public class BaseAuthenticationProviderTest {
     @Test
     public void providerAddsTokenToCustomHosts() throws MalformedURLException {
         //Arrange
-        final URL url = new URL("https://localhost");
+        final URL url = new URL("https://localhost.com");
+        authProvider.setCustomHosts(new String[]{"localHost.com"});
 
         //Act
-        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url, Arrays.asList("localhost"));
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
 
         //Assert
         assertTrue(result);
