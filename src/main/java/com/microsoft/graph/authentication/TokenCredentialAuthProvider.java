@@ -21,6 +21,7 @@ public class TokenCredentialAuthProvider extends BaseAuthenticationProvider {
     private final TokenRequestContext context;
     /** Default scope to use when no scopes are provided */
     private static final String DEFAULT_GRAPH_SCOPE = "https://graph.microsoft.com/.default";
+
     /**
      * Creates an Authentication provider using a passed in TokenCredential
      *
