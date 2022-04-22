@@ -25,6 +25,7 @@ package com.microsoft.graph.http;
 import com.google.common.annotations.VisibleForTesting;
 
 import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.httpcore.FeatureTracker;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.logger.ILogger;
@@ -266,6 +267,8 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
 		if(retryOptions != null) {
 			corehttpRequestBuilder = corehttpRequestBuilder.tag(RetryOptions.class, retryOptions);
 		}
+		//Add a feature tracker to the request, ability to track features here
+		corehttpRequestBuilder.tag(FeatureTracker.class, new FeatureTracker());
 
 		String contenttype = null;
 

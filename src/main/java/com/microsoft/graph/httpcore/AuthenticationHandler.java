@@ -8,9 +8,6 @@ import com.microsoft.graph.authentication.IAuthenticationProvider;
 
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
-
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -23,10 +20,6 @@ public class AuthenticationHandler implements Interceptor {
     protected static final String BEARER = "Bearer ";
     /** The authorization request header name */
     protected static final String AUTHORIZATION_HEADER = "Authorization";
-    /**
-     * The current middleware type
-     */
-    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.AUTHENTICATION;
 
     private IAuthenticationProvider authProvider;
 
@@ -43,12 +36,12 @@ public class AuthenticationHandler implements Interceptor {
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         Request originalRequest = chain.request();
 
-        TelemetryHandlerOption telemetryOptions = originalRequest.tag(TelemetryHandlerOption.class);
-        if(telemetryOptions == null) {
-            telemetryOptions = new TelemetryHandlerOption();
-            originalRequest = originalRequest.newBuilder().tag(TelemetryHandlerOption.class, telemetryOptions).build();
+        FeatureTracker featureTracker = originalRequest.tag(FeatureTracker.class);
+        if(featureTracker == null) {
+            featureTracker = new FeatureTracker();
+            originalRequest = originalRequest.newBuilder().tag(FeatureTracker.class, featureTracker).build();
         }
-        telemetryOptions.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
+        featureTracker.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
 
         try {
             final CompletableFuture<String> future = authProvider.getAuthorizationTokenAsync(originalRequest.url().url());

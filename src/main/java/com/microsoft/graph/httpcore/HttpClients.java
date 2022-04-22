@@ -1,12 +1,14 @@
 package com.microsoft.graph.httpcore;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOptions;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -26,7 +28,7 @@ public class HttpClients {
     @Nonnull
     public static Builder custom() {
         return new OkHttpClient.Builder()
-                    .addInterceptor(new GraphTelemetryHandler())
+                    //.addInterceptor(new GraphTelemetryHandler()) removing as default interceptor until we can determine when it is most safe to add clientOptions
                     .followRedirects(false)
                     .followSslRedirects(false);
     }
@@ -42,6 +44,7 @@ public class HttpClients {
     public static OkHttpClient createDefault(@Nonnull final IAuthenticationProvider auth) {
         Objects.requireNonNull(auth, "parameter auth cannot be null");
         return custom()
+                .addInterceptor(new GraphTelemetryHandler()) //as it is default it will build with default client options
                 .addInterceptor(new AuthenticationHandler(auth))
                 .addInterceptor(new RetryHandler())
                 .addInterceptor(new RedirectHandler())
@@ -56,7 +59,9 @@ public class HttpClients {
      */
     @Nonnull
     public static OkHttpClient createFromInterceptors(@Nullable final Interceptor[] interceptors) {
+        //TelemetryInterceptor must be included in interceptors list as it is not default in custom()
         OkHttpClient.Builder builder = custom();
+        System.out.println(builder.interceptors().toString());
         if(interceptors != null)
             for(Interceptor interceptor : interceptors) {
                 if(interceptor != null)

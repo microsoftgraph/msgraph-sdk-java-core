@@ -5,8 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
-
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -19,10 +17,6 @@ import okhttp3.ResponseBody;
  * interceptor that randomly fails the responses for unit testing purposes
  */
 public class ChaosHttpHandler implements Interceptor {
-    /**
-     * The current middleware type
-     */
-    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
     /**
      * constant string being used
      */

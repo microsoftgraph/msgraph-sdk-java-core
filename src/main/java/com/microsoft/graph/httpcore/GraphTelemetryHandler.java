@@ -6,8 +6,9 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOptions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,32 +19,44 @@ import okhttp3.Response;
  */
 public class GraphTelemetryHandler implements Interceptor{
 
+    private GraphClientOptions mGraphClientOptions;
+
+    public GraphTelemetryHandler(){
+        this.mGraphClientOptions = new GraphClientOptions();
+    }
+
+    @SuppressFBWarnings
+    //graphClientOptions exposes strings which are naturally immutable
+    public GraphTelemetryHandler(@Nonnull final GraphClientOptions graphClientOptions){
+        this.mGraphClientOptions = graphClientOptions;
+    }
+
     @Override
     @Nonnull
     public Response intercept(@Nonnull final Chain chain) throws IOException {
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 
-        TelemetryHandlerOption telemetryHandlerOption = request.tag(TelemetryHandlerOption.class);
-        if(telemetryHandlerOption == null)
-            telemetryHandlerOption = new TelemetryHandlerOption();
+        FeatureTracker featureTracker = request.tag(FeatureTracker.class);
+        if(featureTracker == null) {
+            featureTracker = new FeatureTracker();
+        }
 
-        //This assumes a call to graph will always include v1.0 or beta in the url, should this assumption be changed?
-        final String graphEndpoint = request.url().toString().contains("/v1.0/") ? "v1.0" : "beta";
-        System.out.println(graphEndpoint);
-        final String featureUsage = "(featureUsage=" + telemetryHandlerOption.getFeatureUsage() + ")";
+        //This assumes a call to graph will always include v1.0 or beta in the url
+        final String graphEndpoint = request.url().toString().contains("/v1.0/") ? "-v1.0" : "-beta";
+        final String featureUsage = "(featureUsage=" + featureTracker.getSerializedFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
-        final String sdkversion_value = CoreConstants.Headers.GraphVersionPrefix + "/" + CoreConstants.Headers.Version + " " + featureUsage +
-                                                (CoreConstants.Headers.DefaultVersionValue.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JavaVersionPrefix + "/" + javaVersion)) +
-                                                (CoreConstants.Headers.DefaultVersionValue.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.AndroidVersionPrefix + "/" + androidVersion));
+        final String sdkversion_value = "graph-" + CoreConstants.Headers.JavaVersionPrefix + graphEndpoint +
+            (mGraphClientOptions.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOptions.getClientLibraryVersion()) + ", " +
+            CoreConstants.Headers.GraphVersionPrefix + "/" + mGraphClientOptions.getCoreLibraryVersion() + " " + featureUsage +
+            (CoreConstants.Headers.DefaultVersionValue.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JavaVersionPrefix + "/" + javaVersion)) +
+            (CoreConstants.Headers.DefaultVersionValue.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.AndroidVersionPrefix + "/" + androidVersion));
         telemetryAddedBuilder.addHeader(CoreConstants.Headers.SdkVersionHeaderName, sdkversion_value);
 
         if(request.header(CoreConstants.Headers.ClientRequestId) == null) {
-            telemetryAddedBuilder.addHeader(CoreConstants.Headers.ClientRequestId, telemetryHandlerOption.getClientRequestId());
+            telemetryAddedBuilder.addHeader(CoreConstants.Headers.ClientRequestId, mGraphClientOptions.getClientRequestId());
         }
-
-        //TODO: add the option to set sdk and core version on telemetryOptions. Set default graph version to latest major version most likely. Add this constants.
 
         return chain.proceed(telemetryAddedBuilder.build());
     }

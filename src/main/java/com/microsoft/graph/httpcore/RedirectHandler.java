@@ -12,10 +12,8 @@ import java.net.ProtocolException;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -25,11 +23,6 @@ import okhttp3.Response;
  * Middleware that determines whether a redirect information should be followed or not, and follows it if necessary.
  */
 public class RedirectHandler implements Interceptor{
-
-    /**
-     * The current middleware type
-     */
-    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.REDIRECT;
 
     private RedirectOptions mRedirectOptions;
 
@@ -121,12 +114,12 @@ public class RedirectHandler implements Interceptor{
         Response response = null;
         int requestsCount = 1;
 
-        TelemetryHandlerOption telemetryOptions = request.tag(TelemetryHandlerOption.class);
-        if(telemetryOptions == null) {
-            telemetryOptions = new TelemetryHandlerOption();
-            request = request.newBuilder().tag(TelemetryHandlerOption.class, telemetryOptions).build();
+        FeatureTracker featureTracker = request.tag(FeatureTracker.class);
+        if(featureTracker == null) {
+            featureTracker = new FeatureTracker();
+            request = request.newBuilder().tag(FeatureTracker.class, featureTracker).build();
         }
-        telemetryOptions.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
+        featureTracker.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
 
         // Use should retry pass along with this request
         RedirectOptions redirectOptions = request.tag(RedirectOptions.class);

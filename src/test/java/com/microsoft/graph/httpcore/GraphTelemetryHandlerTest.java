@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOptions;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Interceptor;
@@ -19,7 +20,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class TelemetryHandlerTest {
+public class GraphTelemetryHandlerTest {
     @Test
     public void telemetryInitTest() {
         final GraphTelemetryHandler graphTelemetryHandler = new GraphTelemetryHandler();
@@ -46,31 +47,36 @@ public class TelemetryHandlerTest {
         final IAuthenticationProvider authProvider = mock(IAuthenticationProvider.class);
         when(authProvider.getAuthorizationTokenAsync(any(URL.class))).thenReturn(CompletableFuture.completedFuture(""));
         final AuthenticationHandler authenticationHandler = new AuthenticationHandler(authProvider);
-        final Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler(), authenticationHandler};
+        final Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(), new RedirectHandler(), authenticationHandler};
         final OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
         final String expectedHeader = CoreConstants.Headers.GraphVersionPrefix +"/"
                 + CoreConstants.Headers.Version;
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
         final Response response = client.newCall(request).execute();
         assertNotNull(response);
+        System.out.println(response.request().header(CoreConstants.Headers.SdkVersionHeaderName));
+        System.out.println(expectedHeader);
         assertTrue(response.request().header(CoreConstants.Headers.SdkVersionHeaderName).contains(expectedHeader));
     }
 
     @Test
     public void arrayInterceptorsTest2() throws IOException{
         Request request = new Request.Builder().url("https://graph.microsoft.com/beta/users/").build();
-        final Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler()};
+        GraphClientOptions graphClientOptions = new GraphClientOptions();
+        graphClientOptions.setClientLibraryVersion("5.9.0");
+        graphClientOptions.setCoreLibraryVersion("2.9.0");
+
+        final Interceptor[] interceptors = {new GraphTelemetryHandler(graphClientOptions), new RetryHandler(), new RedirectHandler()};
         OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
         Response response = client.newCall(request).execute();
         System.out.println(response.request().headers().toString());
-        System.out.println(response.request().headers().size());
 
     }
 
 
     @Test
     public void arrayInterceptorEmptyTest() throws IOException {
-        final Interceptor[] interceptors = null;
+        final Interceptor[] interceptors = new Interceptor[] {new GraphTelemetryHandler()};
         final OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
         final String expectedHeader = CoreConstants.Headers.GraphVersionPrefix +"/"
                 + CoreConstants.Headers.Version;

@@ -7,9 +7,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
-import com.microsoft.graph.httpcore.middlewareoption.MiddlewareType;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
-import com.microsoft.graph.httpcore.middlewareoption.TelemetryHandlerOption;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.logger.ILogger;
 
@@ -23,12 +21,6 @@ import okhttp3.ResponseBody;
  * The middleware responsible for retrying requests when they fail because of transient issues
  */
 public class RetryHandler implements Interceptor{
-
-    /**
-     * Type of the current middleware
-     */
-    public final MiddlewareType MIDDLEWARE_TYPE = MiddlewareType.RETRY;
-
     private RetryOptions mRetryOption;
 
     /**
@@ -168,12 +160,12 @@ public class RetryHandler implements Interceptor{
         Request request = chain.request();
         Response response = chain.proceed(request);
 
-        TelemetryHandlerOption telemetryOptions = request.tag(TelemetryHandlerOption.class);
-        if(telemetryOptions == null) {
-            telemetryOptions = new TelemetryHandlerOption();
-            request = request.newBuilder().tag(TelemetryHandlerOption.class, telemetryOptions).build();
+        FeatureTracker featureTracker = request.tag(FeatureTracker.class);
+        if(featureTracker == null) {
+            featureTracker = new FeatureTracker();
+            request = request.newBuilder().tag(FeatureTracker.class, featureTracker).build();
         }
-        telemetryOptions.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
+        featureTracker.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
 
         // Use should retry pass along with this request
         RetryOptions retryOption = request.tag(RetryOptions.class);

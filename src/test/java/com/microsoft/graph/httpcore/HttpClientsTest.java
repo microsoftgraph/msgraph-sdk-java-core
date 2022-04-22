@@ -22,7 +22,7 @@ public class HttpClientsTest {
     @SuppressWarnings("unchecked")
     public void arrayInterceptorsTest() {
         AuthenticationHandler authenticationHandler = new AuthenticationHandler(mock(IAuthenticationProvider.class));
-        Interceptor[] interceptors = {new RetryHandler(), new RedirectHandler(), authenticationHandler};
+        Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(), new RedirectHandler(), authenticationHandler};
         OkHttpClient client = HttpClients.createFromInterceptors(interceptors);
         assertTrue(client.interceptors().size()==4);
     }

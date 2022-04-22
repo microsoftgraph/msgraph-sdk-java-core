@@ -14,7 +14,7 @@ public class CoreConstants {
         public static final String GraphVersionPrefix = "graph-java-core";
         public static final String AndroidVersionPrefix = "android";
         public static final String JavaVersionPrefix = "java";
-        public static final String Version = String.format("v%d.%d.%d", VersionValues.Major, VersionValues.Minor, VersionValues.Patch);
+        public static final String Version = String.format("%d.%d.%d", VersionValues.Major, VersionValues.Minor, VersionValues.Patch);
         public static final String ClientRequestId = "client-request-id";
         public static final String FeatureFlag = "FeatureFlag";
         public static final String DefaultVersionValue = "0";
