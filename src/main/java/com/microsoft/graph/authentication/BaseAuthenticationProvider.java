@@ -32,8 +32,8 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      * @return the custom hosts set by user.
      */
     @Nullable
-    public HashSet<String> getCustomHosts(){
-        return (HashSet<String>) this.customHosts.clone();
+    public String[] getCustomHosts(){
+        return (String[]) this.customHosts.toArray();
     }
     /**
      * Determines whether a request should be authenticated or not based on it's url.
