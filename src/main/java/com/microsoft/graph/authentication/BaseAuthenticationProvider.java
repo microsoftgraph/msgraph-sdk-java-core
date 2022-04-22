@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides basic common methods for all authentication providers
@@ -30,6 +31,7 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      * Get the custom hosts set by user.
      * @return the custom hosts set by user.
      */
+    @Nullable
     public HashSet<String> getCustomHosts(){
         return (HashSet<String>) this.customHosts.clone();
     }
