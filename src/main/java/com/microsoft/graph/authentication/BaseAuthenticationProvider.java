@@ -33,7 +33,7 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      */
     @Nullable
     public String[] getCustomHosts(){
-        return (String[]) this.customHosts.toArray();
+        return customHosts.toArray(new String[customHosts.size()]);
     }
     /**
      * Determines whether a request should be authenticated or not based on it's url.
