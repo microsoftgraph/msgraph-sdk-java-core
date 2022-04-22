@@ -18,7 +18,7 @@ public abstract class BaseAuthenticationProvider implements IAuthenticationProvi
      * Allow the user to add custom hosts by passing in Array
      * @param customHosts custom hosts passed in by user.
      */
-    public void setCustomHosts(String[] customHosts) {
+    public void setCustomHosts(@Nonnull String[] customHosts) {
         if(this.customHosts == null){
             this.customHosts = new HashSet<String>();
         }
