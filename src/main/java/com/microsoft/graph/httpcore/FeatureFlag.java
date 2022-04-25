@@ -1,6 +1,6 @@
 package com.microsoft.graph.httpcore;
 
-public class FeatureFlag {
+public final class FeatureFlag {
     private FeatureFlag(){}
     public static final int NONE_FLAG = 0;
     public static final int REDIRECT_HANDLER_FLAG = 1;

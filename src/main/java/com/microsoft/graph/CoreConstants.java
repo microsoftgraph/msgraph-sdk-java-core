@@ -1,6 +1,7 @@
 package com.microsoft.graph;
 
 public final class CoreConstants {
+    private CoreConstants(){}
 
     private static class VersionValues {
         private static final int Major = 3;
