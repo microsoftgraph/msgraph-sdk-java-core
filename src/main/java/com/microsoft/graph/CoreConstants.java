@@ -1,6 +1,6 @@
 package com.microsoft.graph;
 
-public class CoreConstants {
+public final class CoreConstants {
 
     private static class VersionValues {
         private static final int Major = 3;
@@ -9,6 +9,7 @@ public class CoreConstants {
     }
 
     public static class Headers {
+        private Headers(){}
         public static final String BEARER = "Bearer";
         public static final String SDK_VERSION_HEADER_NAME = "SdkVersion";
         public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
