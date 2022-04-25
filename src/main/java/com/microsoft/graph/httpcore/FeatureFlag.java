@@ -1,6 +1,7 @@
 package com.microsoft.graph.httpcore;
 
-public class FeatureFlag {
+public final class FeatureFlag {
+    private FeatureFlag(){}
     public static final int NONE_FLAG = 0;
     public static final int REDIRECT_HANDLER_FLAG = 1;
     public static final int RETRY_HANDLER_FLAG = 2;
@@ -14,9 +15,4 @@ public class FeatureFlag {
     public static final int BATCH_REQUEST_FLAG = 512;
     public static final int PAGE_ITERATOR_FLAG = 1024;
     public static final int FILE_UPLOAD_FLAG = 2048;
-
-    public static String addFeatureToHeader(FeatureFlag flag){
-        return "This should be the header to add after calculating the change";
-    }
-
 }

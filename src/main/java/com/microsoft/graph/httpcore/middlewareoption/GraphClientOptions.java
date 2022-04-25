@@ -29,7 +29,7 @@ public class GraphClientOptions implements IMiddlewareControl{
      * @return core library version.
      */
     public String getCoreLibraryVersion() {
-        return this.coreLibraryVersion == null ? CoreConstants.Headers.Version : this.coreLibraryVersion;
+        return this.coreLibraryVersion == null ? CoreConstants.Headers.VERSION : this.coreLibraryVersion;
     }
     /**
      * Sets a string representation of the client library
