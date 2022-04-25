@@ -1,8 +1,5 @@
 package com.microsoft.graph.authentication;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -10,6 +7,8 @@ import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BaseAuthenticationProviderTest {
     final BaseAuthenticationProvider authProvider = new BaseAuthenticationProvider() {
@@ -66,5 +65,19 @@ public class BaseAuthenticationProviderTest {
 
         //Assert
         assertFalse(result);
+    }
+    @Test
+    public void providerAddsTokenToCustomHosts() throws MalformedURLException {
+        //Arrange
+        final URL url = new URL("https://localhost.com");
+        authProvider.setCustomHosts(new String[]{"localHost.com"});
+
+        //Act
+        final boolean result = authProvider.shouldAuthenticateRequestWithUrl(url);
+
+        //Assert
+        assertTrue(result);
+        assertEquals(authProvider.getCustomHosts().length, 1);
+        assertEquals(authProvider.getCustomHosts()[0], "localhost.com");
     }
 }

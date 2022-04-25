@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.12] - 2022-04-22
+
+### Added
+
+- Add ability to add custom hosts to BaseAuthenticationProvider #484
+
+### Changed
+
+- Bumps Azure Core to 1.27.0 #474, #473, #472
+- Bumps mockito-inline to 4.5.1 #494, #493, #491
+- Bumps gradle wrappers to 7.4.0 #454
+- Bumps gradle to 7.1.3 in /android #477
+- Bumps gradle-enterprise-gradle-plugin 3.10.0 in /android #488
+- Bumps dawidd6/action-download-artifact to 2.19.0 #482
+- Bumps com.github.spotbugs to 5.0.6 #442, #443, #444
+- Bumps spotbugs-annotations to 4.6.0 #460, #461
+- Bumps azure-identity to 1.5.0 #475, #476
+- Bumps actions/cache to 3.0.0 #469
+- Bumps actions/upload-artifact to 3.0.0 #479
+- Bumps actions/setup-java to 3.0.0 #478
+- Bumps rickstaa/action-create-tag to 1.2.2 #453
+- Bumps guava to 31.1-jre #451, #450, #449
+- Bumps gson to 2.9.0 #438, #439, #440
+
 ## [2.0.11] - 2022-02-04
 
 ### Added
