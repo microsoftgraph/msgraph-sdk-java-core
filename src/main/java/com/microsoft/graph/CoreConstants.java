@@ -4,9 +4,9 @@ public final class CoreConstants {
     private CoreConstants(){}
 
     private static class VersionValues {
-        private static final int Major = 3;
-        private static final int Minor = 0;
-        private static final int Patch = 0;
+        private static final int MAJOR = 3;
+        private static final int MINOR = 0;
+        private static final int PATCH = 0;
     }
 
     public static class Headers {
@@ -16,7 +16,7 @@ public final class CoreConstants {
         public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
         public static final String ANDROID_VERSION_PREFIX = "android";
         public static final String JAVA_VERSION_PREFIX = "java";
-        public static final String VERSION = String.format("%d.%d.%d", VersionValues.Major, VersionValues.Minor, VersionValues.Patch);
+        public static final String VERSION = String.format("%d.%d.%d", VersionValues.MAJOR, VersionValues.MINOR, VersionValues.PATCH);
         public static final String CLIENT_REQUEST_ID = "client-request-id";
         public static final String FEATURE_FLAG = "FeatureFlag";
         public static final String DEFAULT_VERSION_VALUE = "0";
