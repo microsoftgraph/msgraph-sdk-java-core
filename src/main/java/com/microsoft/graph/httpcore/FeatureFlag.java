@@ -14,9 +14,4 @@ public class FeatureFlag {
     public static final int BATCH_REQUEST_FLAG = 512;
     public static final int PAGE_ITERATOR_FLAG = 1024;
     public static final int FILE_UPLOAD_FLAG = 2048;
-
-    public static String addFeatureToHeader(FeatureFlag flag){
-        return "This should be the header to add after calculating the change";
-    }
-
 }

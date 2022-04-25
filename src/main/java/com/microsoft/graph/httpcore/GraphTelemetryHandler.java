@@ -47,15 +47,15 @@ public class GraphTelemetryHandler implements Interceptor{
         final String featureUsage = "(featureUsage=" + featureTracker.getSerializedFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
-        final String sdkversion_value = "graph-" + CoreConstants.Headers.JavaVersionPrefix + graphEndpoint +
+        final String sdkversion_value = "graph-" + CoreConstants.Headers.JAVA_VERSION_PREFIX + graphEndpoint +
             (mGraphClientOptions.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOptions.getClientLibraryVersion()) + ", " +
-            CoreConstants.Headers.GraphVersionPrefix + "/" + mGraphClientOptions.getCoreLibraryVersion() + " " + featureUsage +
-            (CoreConstants.Headers.DefaultVersionValue.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JavaVersionPrefix + "/" + javaVersion)) +
-            (CoreConstants.Headers.DefaultVersionValue.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.AndroidVersionPrefix + "/" + androidVersion));
-        telemetryAddedBuilder.addHeader(CoreConstants.Headers.SdkVersionHeaderName, sdkversion_value);
+            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOptions.getCoreLibraryVersion() + " " + featureUsage +
+            (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JAVA_VERSION_PREFIX + "/" + javaVersion)) +
+            (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.ANDROID_VERSION_PREFIX + "/" + androidVersion));
+        telemetryAddedBuilder.addHeader(CoreConstants.Headers.SDK_VERSION_HEADER_NAME, sdkversion_value);
 
-        if(request.header(CoreConstants.Headers.ClientRequestId) == null) {
-            telemetryAddedBuilder.addHeader(CoreConstants.Headers.ClientRequestId, mGraphClientOptions.getClientRequestId());
+        if(request.header(CoreConstants.Headers.CLIENT_REQUEST_ID) == null) {
+            telemetryAddedBuilder.addHeader(CoreConstants.Headers.CLIENT_REQUEST_ID, mGraphClientOptions.getClientRequestId());
         }
 
         return chain.proceed(telemetryAddedBuilder.build());
@@ -80,16 +80,16 @@ public class GraphTelemetryHandler implements Interceptor{
                 }
             }
             if(versionClass == null)
-                return CoreConstants.Headers.DefaultVersionValue;
+                return CoreConstants.Headers.DEFAULT_VERSION_VALUE;
             else {
                 final Field sdkVersionField = versionClass.getField("SDK_INT");
                 final Object value = sdkVersionField.get(null);
                 final String valueStr = String.valueOf(value);
-                return valueStr == null || valueStr.equals("") ? CoreConstants.Headers.DefaultVersionValue : valueStr;
+                return valueStr == null || valueStr.equals("") ? CoreConstants.Headers.DEFAULT_VERSION_VALUE : valueStr;
             }
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException ex) {
             // we're not on android and return "0" to align with java version which returns "0" when running on android
-            return CoreConstants.Headers.DefaultVersionValue;
+            return CoreConstants.Headers.DEFAULT_VERSION_VALUE;
         }
     }
 }

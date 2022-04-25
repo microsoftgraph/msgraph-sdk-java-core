@@ -28,4 +28,6 @@ public class FeatureTracker {
     public String getSerializedFeatureUsage() {
         return Integer.toHexString(featureUsage);
     }
+
+    // TODO: add a method to add a feature flag to the header, do this once implementation on how to address tasks and their flags is decided 
 }

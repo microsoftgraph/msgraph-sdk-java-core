@@ -1,14 +1,13 @@
 package com.microsoft.graph.httpcore;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
-import com.microsoft.graph.httpcore.middlewareoption.GraphClientOptions;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -61,7 +60,6 @@ public class HttpClients {
     public static OkHttpClient createFromInterceptors(@Nullable final Interceptor[] interceptors) {
         //TelemetryInterceptor must be included in interceptors list as it is not default in custom()
         OkHttpClient.Builder builder = custom();
-        System.out.println(builder.interceptors().toString());
         if(interceptors != null)
             for(Interceptor interceptor : interceptors) {
                 if(interceptor != null)

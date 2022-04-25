@@ -77,7 +77,7 @@ public class BaseAuthenticationProviderTest {
 
         //Assert
         assertTrue(result);
-        assertEquals(authProvider.getCustomHosts().length, 1);
-        assertEquals(authProvider.getCustomHosts()[0], "localhost.com");
+        assertEquals(1, authProvider.getCustomHosts().length);
+        assertEquals( "localhost.com", authProvider.getCustomHosts()[0]);
     }
 }

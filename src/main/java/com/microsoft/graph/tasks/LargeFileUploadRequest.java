@@ -11,12 +11,10 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
 
-import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.BaseRequest;
 import com.microsoft.graph.http.HttpMethod;
 import com.microsoft.graph.core.IBaseClient;
-import com.microsoft.graph.httpcore.FeatureFlag;
 import com.microsoft.graph.options.Option;
 
 /**
@@ -78,7 +76,8 @@ class LargeFileUploadRequest<UploadType> {
                         beginIndex,
                         beginIndex + chunkSize - 1,
                         totalLength));
-        //this.baseRequest.addHeader(CoreConstants.Headers.FeatureFlag, FeatureFlag.FILE_UPLOAD_FLAG);
+        //TODO: decide if we want this implementation: this.baseRequest.addHeader(CoreConstants.Headers.FeatureFlag, FeatureFlag.FILE_UPLOAD_FLAG);
+        //Decide how to best handle this implementation ^.
     }
 
     /**
