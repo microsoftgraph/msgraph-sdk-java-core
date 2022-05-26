@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Response;
 
+@SuppressFBWarnings
 public class RedirectOptionsTest {
     @Test
     public void constructorDefensiveProgramming() {

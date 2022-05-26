@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
@@ -33,13 +34,14 @@ import com.microsoft.graph.serializer.ISerializer;
 /**
  * Test cases for {@see BaseStreamRequest}
  */
+@SuppressFBWarnings
 public class BaseStreamRequestTests {
 
     private BaseClient<Request> mBaseClient;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
+    public void setUp() {
         mBaseClient = mock(BaseClient.class);
     }
 

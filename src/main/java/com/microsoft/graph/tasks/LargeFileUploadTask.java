@@ -25,6 +25,7 @@ package com.microsoft.graph.tasks;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
 import com.microsoft.graph.options.Option;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,6 +100,7 @@ public class LargeFileUploadTask<UploadType> {
      * @param streamSize      the stream size
      * @param uploadTypeClass the upload type class
      */
+    @SuppressFBWarnings
     public LargeFileUploadTask(@Nonnull final IUploadSession uploadSession,
                                  @Nonnull final IBaseClient<?> client,
                                  @Nonnull final InputStream inputStream,

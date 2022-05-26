@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.mock;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +38,7 @@ public class BaseRequestTests {
     private BaseRequest<JsonObject> mRequest;
 
     @BeforeEach
+    @SuppressFBWarnings
     public void setUp() throws Exception {
         final Response response = new Response.Builder()
                 .request(new Request.Builder().url("https://a.b.c").build())

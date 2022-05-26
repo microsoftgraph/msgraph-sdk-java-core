@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import com.microsoft.graph.httpcore.middlewareoption.IShouldRetry;
@@ -21,6 +22,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
 
+@SuppressFBWarnings
 public class RetryHandlerTest {
 
     private static final String testmeurl = "https://graph.microsoft.com/v1.0/me";

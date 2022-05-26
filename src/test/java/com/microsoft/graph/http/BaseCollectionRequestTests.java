@@ -10,6 +10,7 @@ import com.microsoft.graph.options.Option;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.serializer.ISerializer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +57,7 @@ public class BaseCollectionRequestTests {
     private BaseEntityCollectionRequest<JsonObject, ICollectionResponse<JsonObject>, BaseCollectionPage<JsonObject, BaseRequestBuilder<JsonObject>>> mRequest;
 
     @BeforeEach
+    @SuppressFBWarnings
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         mBaseClient = mock(IBaseClient.class);

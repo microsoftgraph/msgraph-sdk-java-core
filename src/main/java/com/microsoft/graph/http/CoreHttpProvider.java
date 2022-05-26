@@ -28,7 +28,6 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.httpcore.middlewareoption.RedirectOptions;
 import com.microsoft.graph.httpcore.middlewareoption.RetryOptions;
 import com.microsoft.graph.logger.ILogger;
-import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.options.HeaderOption;
 import com.microsoft.graph.serializer.ISerializer;
 
@@ -489,8 +488,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                 }
             }
         } catch (final GraphServiceException ex) {
-            final boolean shouldLogVerbosely = logger.getLoggingLevel() == LoggerLevel.DEBUG;
-            logger.logError("Graph service exception " + ex.getMessage(shouldLogVerbosely), ex);
+            logger.logError("Graph service exception", ex);
             throw ex;
         } catch (final Exception ex) {
             final ClientException clientException = new ClientException("Error during http request",

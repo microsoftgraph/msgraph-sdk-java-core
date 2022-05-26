@@ -20,6 +20,7 @@ import com.microsoft.graph.options.Option;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okio.Buffer;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +63,7 @@ class CoreHttpProviderTests {
     private Gson GSON = new GsonBuilder().create();
 
     @Test
+    @SuppressFBWarnings
     void testErrorResponse() throws Exception {
         final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
         final String expectedMessage = "Test error!";
@@ -85,6 +87,7 @@ class CoreHttpProviderTests {
     }
 
     @Test
+    @SuppressFBWarnings
     void testVerboseErrorResponse() throws Exception {
         final GraphErrorCodes expectedErrorCode = GraphErrorCodes.INVALID_REQUEST;
         final String expectedMessage = "Test error!";

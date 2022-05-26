@@ -18,7 +18,7 @@ public class BaseRequestBuilderTests {
     private BaseRequestBuilder<String> baseRequestBuilder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         baseRequestBuilder = new BaseRequestBuilder<>(expectedRequestUrl, mock(IBaseClient.class), null){};
     }
 

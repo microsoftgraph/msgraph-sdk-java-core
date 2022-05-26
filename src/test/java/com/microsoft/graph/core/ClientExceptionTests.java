@@ -12,7 +12,7 @@ public class ClientExceptionTests {
     private String expectMessage = "This is test exception message";
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
         clientException = new ClientException(expectMessage, null);
 	}
 
