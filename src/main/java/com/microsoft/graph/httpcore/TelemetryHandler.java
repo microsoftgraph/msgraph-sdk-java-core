@@ -25,7 +25,7 @@ public class TelemetryHandler implements Interceptor{
     /**
      * Current SDK version
      */
-    public static final String VERSION = "v2.0.12";
+    public static final String VERSION = "v2.0.13";
     /**
      * Verion prefix
      */
