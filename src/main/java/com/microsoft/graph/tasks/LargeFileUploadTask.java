@@ -24,6 +24,8 @@ package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.core.IBaseClient;
+import com.microsoft.graph.http.GraphFatalServiceException;
+import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.options.Option;
 
 import java.io.IOException;
@@ -98,12 +100,13 @@ public class LargeFileUploadTask<UploadType> {
      * @param inputStream     the input stream
      * @param streamSize      the stream size
      * @param uploadTypeClass the upload type class
+     * @throws GraphServiceException if there is an interruption in the service
      */
     public LargeFileUploadTask(@Nonnull final IUploadSession uploadSession,
                                  @Nonnull final IBaseClient<?> client,
                                  @Nonnull final InputStream inputStream,
                                  final long streamSize,
-                                 @Nonnull final Class<UploadType> uploadTypeClass) {
+                                 @Nonnull final Class<UploadType> uploadTypeClass) throws GraphServiceException {
         Objects.requireNonNull(uploadSession, "Upload session is null.");
 
         if (streamSize <= 0) {

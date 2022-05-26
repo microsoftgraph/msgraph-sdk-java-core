@@ -3,11 +3,14 @@ package com.microsoft.graph.httpcore.middlewareoption;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
+@SuppressFBWarnings
 public class RetryOptionsTest {
     @Test
-    public void constructorDefensiveProgramming() {
+    @SuppressFBWarnings
+    public void constructorDefensiveProgramming() throws IllegalArgumentException {
         assertThrows(IllegalArgumentException.class, () -> {
             new RetryOptions(null, RetryOptions.MAX_RETRIES +1, 0);
         });

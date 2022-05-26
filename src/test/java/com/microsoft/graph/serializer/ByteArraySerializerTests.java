@@ -3,12 +3,13 @@ package com.microsoft.graph.serializer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 public class ByteArraySerializerTests {
 
 	@Test
-	public void testByteSerialization() throws Exception {
+	public void testByteSerialization() {
         String expectedString = "abcd";
         String serializeString = ByteArraySerializer.serialize(new byte[]{105,-73,29});
         assertEquals(expectedString, serializeString);
@@ -16,6 +17,7 @@ public class ByteArraySerializerTests {
     }
 
 	@Test
+    @SuppressFBWarnings
     public void testStringDeserialization() throws Exception {
         byte[] deserializeBytes = ByteArraySerializer.deserialize("abcd");
         assertEquals(3, deserializeBytes.length);

@@ -2,10 +2,12 @@ package com.microsoft.graph.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import com.microsoft.graph.core.DateOnly;
 
+@SuppressFBWarnings
 public class DateOnlyTests {
 
 	@Test

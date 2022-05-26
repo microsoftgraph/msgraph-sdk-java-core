@@ -38,7 +38,7 @@ public class BaseClientTests {
     private ISerializer mSerializer;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
         baseClient = new BaseClient<>();
         mLogger = mock(ILogger.class);
         mSerializer = mock(ISerializer.class);

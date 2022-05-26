@@ -26,7 +26,7 @@ public class BaseCollectionPageTests {
 
     @BeforeEach
     @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
+    public void setUp() {
         list = new ArrayList<String>();
         list.add("Object1");
         list.add("Object2");

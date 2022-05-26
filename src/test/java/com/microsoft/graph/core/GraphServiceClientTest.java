@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Request;
@@ -28,6 +29,7 @@ import com.microsoft.graph.serializer.ISerializer;
 
 import javax.annotation.Nullable;
 
+@SuppressFBWarnings
 public class GraphServiceClientTest {
     private IAuthenticationProvider getAuthProvider() {
         return mock(IAuthenticationProvider.class);

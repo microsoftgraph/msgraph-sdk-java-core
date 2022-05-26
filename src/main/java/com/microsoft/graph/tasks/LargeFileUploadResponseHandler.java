@@ -76,7 +76,7 @@ class LargeFileUploadResponseHandler<UploadType>
 			@Nonnull final IHttpRequest request,
 			@Nonnull final ResponseType response,
 			@Nonnull final ISerializer serializer,
-			@Nonnull final ILogger logger) throws Exception {
+			@Nonnull final ILogger logger) throws IOException, GraphServiceException {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(response, "parameter response cannot be null");
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
