@@ -7,16 +7,16 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.TimeZone;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 public class ISO8601Test {
 
 	/**
      * Make sure that dates with and without millis can be converted properly into strings
-     * @throws Exception If there is an exception during the test
      */
 	@Test
-    public void testFromDate() throws Exception {
+    public void testFromDate() {
         TimeZone.setDefault(TimeZone.getTimeZone("PST"));
         final OffsetDateTime date = OffsetDateTime.of(5882, 3, 11, 00, 30, 12, 345000000, ZoneOffset.UTC);
         assertEquals("5882-03-11T00:30:12.345Z", OffsetDateTimeSerializer.serialize(date));
@@ -30,6 +30,7 @@ public class ISO8601Test {
      * @throws Exception If there is an exception during the test
      */
 	@Test
+    @SuppressFBWarnings
     public void testToDate() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("PST"));
         final long toTheSecondDate = 123456789012L;

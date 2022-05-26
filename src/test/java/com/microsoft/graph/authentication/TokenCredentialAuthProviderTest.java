@@ -3,6 +3,7 @@ package com.microsoft.graph.authentication;
 import com.azure.core.credential.TokenCredential;
 import com.microsoft.graph.mocks.MockTokenCredential;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+@SuppressFBWarnings
 public class TokenCredentialAuthProviderTest {
 
     private static final String testToken = "CredentialTestToken";

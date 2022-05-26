@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.TimeZone;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,14 +17,14 @@ import org.junit.jupiter.api.Test;
  * @author mobilal
  *
  */
+@SuppressFBWarnings
 public class OffsetDateTimeSerializerTests {
 
 	/**
 	 * Validate if a offsetDateTime date instance could be serialized
-	 * @throws Exception if offsetDateTime couldn't be serialized
-	 */
+     */
 	@Test
-	public void testDateSerialization() throws Exception {
+	public void testDateSerialization() {
         final OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(1561162355000L), ZoneOffset.UTC);
 		final String expected = "2019-06-22T00:12:35Z";
 		final String actual = OffsetDateTimeSerializer.serialize(offsetDateTime);

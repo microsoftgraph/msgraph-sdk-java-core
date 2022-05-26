@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 public class EdmNativeTypeSerializerTests {
     @Test
-    public void testBoolean() throws Exception {
+    public void testBoolean() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":true}";
@@ -20,7 +20,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals(Boolean.valueOf(true), result);
     }
     @Test
-    public void testInteger() throws Exception {
+    public void testInteger() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":12}";
@@ -29,7 +29,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals(Integer.valueOf(12), result);
     }
     @Test
-    public void testString() throws Exception {
+    public void testString() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":\"toto\"}";
@@ -38,7 +38,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals("toto", result);
     }
     @Test
-    public void testFloat() throws Exception {
+    public void testFloat() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":12.5}";
@@ -47,7 +47,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals(Float.valueOf("12.5"), result);
     }
     @Test
-    public void testLong() throws Exception {
+    public void testLong() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":12}";
@@ -56,7 +56,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals(Long.valueOf(12), result);
     }
     @Test
-    public void testBigDecimal() throws Exception {
+    public void testBigDecimal() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":12}";
@@ -65,7 +65,7 @@ public class EdmNativeTypeSerializerTests {
         assertEquals(BigDecimal.valueOf(12), result);
     }
     @Test
-    public void testUUID() throws Exception {
+    public void testUUID() {
         final DefaultSerializer serializer = new DefaultSerializer(new DefaultLogger());
 
         final String source = "{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#Edm.Null\",\"@odata.null\":\"0E6558C3-9640-4385-860A-2A894AC5C246\"}";

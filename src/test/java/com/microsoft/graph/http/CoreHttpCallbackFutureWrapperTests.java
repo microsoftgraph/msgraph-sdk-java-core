@@ -9,11 +9,13 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Call;
 import okhttp3.Response;
 
+@SuppressFBWarnings
 class CoreHttpCallbackFutureWrapperTests {
 
     @Test

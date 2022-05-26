@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
+@SuppressFBWarnings
 public class DurationTests {
 
 	@Test

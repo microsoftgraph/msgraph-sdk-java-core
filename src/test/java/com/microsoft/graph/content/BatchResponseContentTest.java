@@ -20,8 +20,10 @@ import com.microsoft.graph.logger.LoggerLevel;
 import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.ISerializer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
+@SuppressFBWarnings
 public class BatchResponseContentTest {
     @Test
     public void testValidBatchResponseContent() {

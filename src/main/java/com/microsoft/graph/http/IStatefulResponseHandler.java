@@ -22,9 +22,9 @@
 
 package com.microsoft.graph.http;
 
-
 import com.microsoft.graph.logger.ILogger;
 import com.microsoft.graph.serializer.ISerializer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nullable;
 import javax.annotation.Nonnull;
@@ -50,6 +50,7 @@ public interface IStatefulResponseHandler<ResultType, DeserializedType> {
      * @throws Exception an exception occurs if the request was unable to complete for any reason
      */
     @Nullable
+    @SuppressFBWarnings
     <ResponseType> ResultType generateResult(@Nonnull final IHttpRequest request,
                               @Nonnull final ResponseType response,
                               @Nonnull final ISerializer serializer,

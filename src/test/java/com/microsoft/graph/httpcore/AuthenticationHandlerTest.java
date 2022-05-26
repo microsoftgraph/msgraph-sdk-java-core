@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.OkHttpClient;
@@ -17,6 +18,7 @@ import okhttp3.Request;
 
 public class AuthenticationHandlerTest {
     @Test
+    @SuppressFBWarnings
     public void testAuthenticationHandler() throws Exception {
         IAuthenticationProvider authProvider = mock(IAuthenticationProvider.class);
         when(authProvider.getAuthorizationTokenAsync(any(URL.class))).thenReturn(CompletableFuture.completedFuture("a token"));

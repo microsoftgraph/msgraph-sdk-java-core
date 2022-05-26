@@ -29,6 +29,7 @@ import com.microsoft.graph.serializer.DefaultSerializer;
 import com.microsoft.graph.serializer.IJsonBackedObject;
 import com.microsoft.graph.serializer.ISerializer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -41,6 +42,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+@SuppressFBWarnings
 class BatchRequestContentTest {
 
     String testurl = "http://graph.microsoft.com/v1.0/me";
