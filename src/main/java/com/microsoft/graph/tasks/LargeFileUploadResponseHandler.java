@@ -40,6 +40,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.MediaType;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -72,11 +73,12 @@ class LargeFileUploadResponseHandler<UploadType>
 
 	@Override
 	@Nullable
+    @SuppressFBWarnings
 	public <ResponseType> LargeFileUploadResponse<UploadType> generateResult(
 			@Nonnull final IHttpRequest request,
 			@Nonnull final ResponseType response,
 			@Nonnull final ISerializer serializer,
-			@Nonnull final ILogger logger) throws IOException, GraphServiceException {
+			@Nonnull final ILogger logger) throws Exception {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(response, "parameter response cannot be null");
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
