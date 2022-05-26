@@ -11,7 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.13] - 2022-05-26
+
+### Added
+
+### Changed
+
 - Fixed an issue where the error message would be logged twice. #514
+- Bumps rickstaa/action-create-tag to 1.3.2 #513
+- Bumps Android tooling version to 7.2.1 #515
+- Bumps com.github.spotbugs to 5.0.7 #509
+- Bumps gradle-enterprise-gradle-plugin to 3.10.1 in /android #512
+- Bumps azure-core to 1.28.0 #503, #504, #506
+- Bumps azure-identity to 1.5.1 #505, #507
+- Bumps github/codeql-action to 2 #498   
 
 ## [2.0.12] - 2022-04-22
 
