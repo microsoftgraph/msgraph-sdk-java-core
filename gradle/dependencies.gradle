@@ -10,7 +10,7 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
 
     implementation 'com.google.code.gson:gson:2.9.0'
-    api 'com.azure:azure-core:1.28.0'
+    api 'com.azure:azure-core:1.29.1'
 
     compileOnly 'net.jcip:jcip-annotations:1.0'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.0'
