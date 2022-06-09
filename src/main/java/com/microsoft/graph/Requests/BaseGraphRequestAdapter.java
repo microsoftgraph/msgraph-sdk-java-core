@@ -16,6 +16,4 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
         super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOptions).build());
     }
-
-
 }
