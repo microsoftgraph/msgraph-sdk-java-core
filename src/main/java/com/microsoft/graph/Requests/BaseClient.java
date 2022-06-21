@@ -8,6 +8,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.net.URISyntaxException;
 
 @SuppressFBWarnings
 class BaseClient implements IBaseClient{
@@ -19,14 +21,12 @@ class BaseClient implements IBaseClient{
         this.requestAdapter = requestAdapter;
     }
 
-    BaseClient(@Nonnull String baseUrl, @Nonnull AuthenticationProvider authenticationProvider) {
-        this.requestAdapter = new BaseGraphRequestAdapter(authenticationProvider, null, null, null, null);
-        this.requestAdapter.setBaseUrl(baseUrl);
+    BaseClient(@Nullable String baseUrl, @Nonnull AuthenticationProvider authenticationProvider) {
+        this.requestAdapter = new BaseGraphRequestAdapter(authenticationProvider, null, null, null, null, baseUrl);
     }
 
-    BaseClient(@Nonnull String baseUrl, @Nonnull OkHttpClient client) {
-        this.requestAdapter = new BaseGraphRequestAdapter(new AnonymousAuthenticationProvider(), null, null, client, null);
-        this.requestAdapter.setBaseUrl(baseUrl);
+    BaseClient(@Nullable String baseUrl, @Nonnull OkHttpClient client) {
+        this.requestAdapter = new BaseGraphRequestAdapter(new AnonymousAuthenticationProvider(), null, null, client, null, baseUrl);
     }
 
     @Override

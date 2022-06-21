@@ -19,22 +19,6 @@ import java.util.*;
 public class GraphClientFactory {
     private GraphClientFactory() { }
 
-    //private static final ChronoUnit defaultTimeout = new ChroUn
-
-    private static final HashMap<String, String> cloudList = new HashMap<String, String>() {{
-        put( "Global_Cloud" , "https://graph.microsoft.com" );
-        put( "USGOV_Cloud", "https://graph.microsoft.us");
-        put( "China_Cloud", "https://microsoftgraph.chinacloudapi.cn");
-        put( "Germany_Cloud", "https://graph.microsoft.de");
-        put( "USGOV_DOD_Cloud", "https://dod-graph.microsoft.us");
-    }};
-
-    public final String Global_Cloud = "Global";
-    public final String USGOV_Cloud = "US_GOV";
-    public final String USGOV_DOD_Cloud = "US_GOV_DOD";
-    public final String China_Cloud = "China";
-    public final String Germany_Cloud = "Germany";
-
     public static OkHttpClient.Builder create() {
         return create((GraphClientOptions) null);
     }
@@ -61,15 +45,4 @@ public class GraphClientFactory {
         }
         return (Interceptor[]) handlers.toArray();
     }
-
-
-    //Cant set base address on client in OKhttp, Keeping this in case we need it but I don't believe this will belong here.
-    private static URI determineBaseAddress(String nationalCloud, String version) throws URISyntaxException, IllegalArgumentException {
-        String cloud = cloudList.get(nationalCloud);
-        if(cloud == null){
-            throw new IllegalArgumentException(String.format("%s is an unexpected national cloud.", nationalCloud));
-        }
-        return new URI(String.format("%s/%s/",nationalCloud,version));
-    }
-
 }
