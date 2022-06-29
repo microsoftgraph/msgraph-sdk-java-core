@@ -34,7 +34,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
 
     public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nullable String baseUrl) {
         super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOptions).build());
-        if (baseUrl == null) {
+        if (baseUrl != null && !baseUrl.isEmpty()) {
             setBaseUrl(baseUrl);
         } else {
             setBaseUrl(determineBaseAddress(null, null));
