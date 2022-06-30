@@ -39,7 +39,6 @@ public class GraphClientFactory {
     public static Interceptor[] createDefaultGraphInterceptors(@Nullable GraphClientOptions graphClientOptions) {
         List<Interceptor> handlers = new ArrayList<>();
         handlers.add(new GraphTelemetryHandler(graphClientOptions));
-        handlers.add(new CompressionHandler());
         for(final Interceptor interceptor: KiotaClientFactory.CreateDefaultInterceptors()) {
             handlers.add(interceptor);
         }
