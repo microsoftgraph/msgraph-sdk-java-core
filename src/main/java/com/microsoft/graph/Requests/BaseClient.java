@@ -27,7 +27,7 @@ class BaseClient implements IBaseClient{
         this(new BaseGraphRequestAdapter(authenticationProvider, baseUrl));
     }
 
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version){
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nullable BaseGraphRequestAdapter.Clouds nationalCloud, @Nullable String version){
         this(new BaseGraphRequestAdapter(authenticationProvider, nationalCloud, version));
     }
 
