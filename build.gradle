@@ -34,6 +34,15 @@ jacoco {
     toolVersion = "0.8.7"
 }
 
+//Prevent javadocs from failing build
+tasks.withType(Javadoc) {
+    failOnError false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+
 spotbugsMain {
     excludeFilter = file("spotBugsExcludeFilter.xml")
     reports {
@@ -74,7 +83,7 @@ sourceSets {
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for jacoco, until 0.8.7 gets released
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }// for jacoco, until 0.8.7 gets released
 }
 
 apply from: "gradle/dependencies.gradle"
@@ -212,8 +221,8 @@ def fixAscNames = { name ->
 }
 
 compileJava {
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  sourceCompatibility = '17'
+  targetCompatibility = '17'
 }
 
 def getVersionCode() {
