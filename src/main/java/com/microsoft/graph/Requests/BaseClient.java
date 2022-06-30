@@ -16,7 +16,7 @@ class BaseClient implements IBaseClient{
     public BatchRequestBuilder batchRequestBuilder;
 
     BaseClient(@Nonnull RequestAdapter requestAdapter) {
-        this.requestAdapter = requestAdapter;
+        setRequestAdapter(requestAdapter);
     }
 
     /**BaseClient Constructors for use with baseUrl */
