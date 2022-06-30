@@ -2,14 +2,12 @@ package com.microsoft.graph.Requests;
 
 import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
-import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.URISyntaxException;
 
 @SuppressFBWarnings
 class BaseClient implements IBaseClient{
@@ -21,12 +19,30 @@ class BaseClient implements IBaseClient{
         this.requestAdapter = requestAdapter;
     }
 
+    /**BaseClient Constructors for use with baseUrl */
     BaseClient(@Nullable String baseUrl, @Nonnull AuthenticationProvider authenticationProvider) {
-        this.requestAdapter = new BaseGraphRequestAdapter(authenticationProvider, null, null, null, null, baseUrl);
+        this(new BaseGraphRequestAdapter(authenticationProvider, baseUrl));
     }
 
     BaseClient(@Nullable String baseUrl, @Nonnull OkHttpClient client) {
-        this.requestAdapter = new BaseGraphRequestAdapter(new AnonymousAuthenticationProvider(), null, null, client, null, baseUrl);
+        this(baseUrl, client, null);
+    }
+
+    BaseClient(@Nullable String baseUrl, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
+        this(new BaseGraphRequestAdapter(client, graphClientOptions, baseUrl));
+    }
+
+    /**BaseClient constructors for use with specific national cloud and version */
+    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull AuthenticationProvider authenticationProvider){
+        this(new BaseGraphRequestAdapter(authenticationProvider, nationalCloud, version));
+    }
+
+    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull OkHttpClient client){
+        this(nationalCloud, version, client, null);
+    }
+
+    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
+        this(new BaseGraphRequestAdapter(client, graphClientOptions, nationalCloud, version));
     }
 
     @Override

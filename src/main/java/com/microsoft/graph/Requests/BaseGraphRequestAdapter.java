@@ -1,5 +1,6 @@
 package com.microsoft.graph.Requests;
 
+import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;
@@ -9,14 +10,13 @@ import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.HashMap;
 
 @SuppressFBWarnings
 public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
 
-    enum Clouds {
+    public enum Clouds {
         GLOBAL_CLOUD,
         USGOV_CLOUD,
         CHINA_CLOUD,
@@ -32,7 +32,9 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
         put( Clouds.USGOV_DOD_CLOUD, "https://dod-graph.microsoft.us");
     }};
 
-    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nullable String baseUrl) {
+
+    /** Base Constructor */
+    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable final GraphClientOptions graphClientOptions, @Nullable String baseUrl) {
         super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOptions).build());
         if (baseUrl != null && !baseUrl.isEmpty()) {
             setBaseUrl(baseUrl);
@@ -40,8 +42,21 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
             setBaseUrl(determineBaseAddress(null, null));
         }
     }
-    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nullable Clouds nationalCloud, @Nullable String version) {
-        this(authenticationProvider, parseNodeFactory, serializationWriterFactory, client, graphClientOptions, determineBaseAddress(nationalCloud, version));
+
+    public BaseGraphRequestAdapter(@Nonnull final  AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
+        this(authenticationProvider, null, null, null, null, baseUrl);
+    }
+
+    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nonnull Clouds nationalCloud, @Nonnull String version) {
+        this(authenticationProvider, determineBaseAddress(nationalCloud, version));
+    }
+
+    public BaseGraphRequestAdapter(@Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull String baseUrl) {
+        this(new AnonymousAuthenticationProvider(), null, null, client,graphClientOptions, baseUrl);
+    }
+
+    public BaseGraphRequestAdapter(@Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull Clouds nationalCloud, @Nonnull String version) {
+        this(client,graphClientOptions, determineBaseAddress(nationalCloud, version));
     }
 
     private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {
