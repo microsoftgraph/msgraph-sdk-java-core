@@ -19,30 +19,28 @@ class BaseClient implements IBaseClient{
         setRequestAdapter(requestAdapter);
     }
 
-    /**BaseClient Constructors for use with baseUrl */
-    BaseClient(@Nullable String baseUrl, @Nonnull AuthenticationProvider authenticationProvider) {
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider) {
+        this(new BaseGraphRequestAdapter(authenticationProvider));
+    }
+
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
         this(new BaseGraphRequestAdapter(authenticationProvider, baseUrl));
     }
 
-    BaseClient(@Nullable String baseUrl, @Nonnull OkHttpClient client) {
-        this(baseUrl, client, null);
-    }
-
-    BaseClient(@Nullable String baseUrl, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
-        this(new BaseGraphRequestAdapter(client, graphClientOptions, baseUrl));
-    }
-
-    /**BaseClient constructors for use with specific national cloud and version */
-    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull AuthenticationProvider authenticationProvider){
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version){
         this(new BaseGraphRequestAdapter(authenticationProvider, nationalCloud, version));
     }
 
-    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull OkHttpClient client){
-        this(nationalCloud, version, client, null);
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
+        this(new BaseGraphRequestAdapter(authenticationProvider,client, graphClientOptions));
     }
 
-    BaseClient(@Nonnull BaseGraphRequestAdapter.Clouds nationalCloud, @Nonnull String version, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
-        this(new BaseGraphRequestAdapter(client, graphClientOptions, nationalCloud, version));
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull String baseUrl) {
+        this(new BaseGraphRequestAdapter(authenticationProvider, client, graphClientOptions, baseUrl));
+    }
+
+    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nullable BaseGraphRequestAdapter.Clouds nationalCloud, @Nullable String version) {
+        this(new BaseGraphRequestAdapter(authenticationProvider,client, graphClientOptions, nationalCloud, version));
     }
 
     @Override

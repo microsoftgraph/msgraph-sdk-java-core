@@ -1,5 +1,6 @@
 package com.microsoft.graph.Requests;
 
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
@@ -43,20 +44,28 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
         }
     }
 
+    BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider){
+        this(authenticationProvider, null, null, null, null, null);
+    }
+
     public BaseGraphRequestAdapter(@Nonnull final  AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
         this(authenticationProvider, null, null, null, null, baseUrl);
     }
 
-    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nonnull Clouds nationalCloud, @Nonnull String version) {
+    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable Clouds nationalCloud, @Nullable String version) {
         this(authenticationProvider, determineBaseAddress(nationalCloud, version));
     }
 
-    public BaseGraphRequestAdapter(@Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull String baseUrl) {
-        this(new AnonymousAuthenticationProvider(), null, null, client,graphClientOptions, baseUrl);
+    BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
+        this(authenticationProvider, client, graphClientOptions, null, null);
     }
 
-    public BaseGraphRequestAdapter(@Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull Clouds nationalCloud, @Nonnull String version) {
-        this(client,graphClientOptions, determineBaseAddress(nationalCloud, version));
+    public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull String baseUrl) {
+        this(authenticationProvider, null, null, client,graphClientOptions, baseUrl);
+    }
+
+    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client,  @Nullable GraphClientOptions graphClientOptions, @Nullable Clouds nationalCloud, @Nullable String version) {
+        this(authenticationProvider, client, graphClientOptions , determineBaseAddress(nationalCloud, version));
     }
 
     private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {
