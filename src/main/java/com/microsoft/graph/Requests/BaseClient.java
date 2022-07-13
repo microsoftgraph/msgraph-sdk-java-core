@@ -9,38 +9,41 @@ import okhttp3.OkHttpClient;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@SuppressFBWarnings
-class BaseClient implements IBaseClient{
+/**
+ * Default client implementation.
+ */
+public class BaseClient implements IBaseClient{
 
     private RequestAdapter requestAdapter;
+    /** RequestBuilder for completing Batch Requests */
     public BatchRequestBuilder batchRequestBuilder;
 
-    BaseClient(@Nonnull RequestAdapter requestAdapter) {
+    /**
+     * Constructor requiring only a RequestAdapter.
+     *
+     * @param requestAdapter the specified RequestAdapter used to complete requests.
+     */
+    public BaseClient(@Nonnull RequestAdapter requestAdapter) {
         setRequestAdapter(requestAdapter);
     }
 
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider) {
+    /**
+     * Constructor requiring only an AuthenticationProvider.
+     *
+     * @param authenticationProvider the specified AuthenticationProvider for use in requests.
+     */
+    public BaseClient(@Nonnull AuthenticationProvider authenticationProvider) {
         this(new BaseGraphRequestAdapter(authenticationProvider));
     }
 
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
+    /**
+     * Constructor requiring an AuthenticationProvider and Base URL.
+     *
+     * @param authenticationProvider the specified AuthenticationProvider for use in requests.
+     * @param baseUrl the specified base URL for use in requests.
+     */
+    public BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
         this(new BaseGraphRequestAdapter(authenticationProvider, baseUrl));
-    }
-
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nullable BaseGraphRequestAdapter.Clouds nationalCloud, @Nullable String version){
-        this(new BaseGraphRequestAdapter(authenticationProvider, nationalCloud, version));
-    }
-
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions) {
-        this(new BaseGraphRequestAdapter(authenticationProvider,client, graphClientOptions));
-    }
-
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nonnull String baseUrl) {
-        this(new BaseGraphRequestAdapter(authenticationProvider, client, graphClientOptions, baseUrl));
-    }
-
-    BaseClient(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull OkHttpClient client, @Nullable GraphClientOptions graphClientOptions, @Nullable BaseGraphRequestAdapter.Clouds nationalCloud, @Nullable String version) {
-        this(new BaseGraphRequestAdapter(authenticationProvider,client, graphClientOptions, nationalCloud, version));
     }
 
     @Override
@@ -59,5 +62,4 @@ class BaseClient implements IBaseClient{
         //return this.batchRequestBuilder != null ? this.batchRequestBuilder : new BatchRequestBuilder(this.requestAdapter)
         return this.batchRequestBuilder;
     }
-
 }

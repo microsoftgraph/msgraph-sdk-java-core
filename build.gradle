@@ -34,21 +34,12 @@ jacoco {
     toolVersion = "0.8.7"
 }
 
-//Prevent javadocs from failing build
-tasks.withType(Javadoc) {
-    failOnError false
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.addStringOption('encoding', 'UTF-8')
-    options.addStringOption('charSet', 'UTF-8')
-}
-
-
 spotbugsMain {
     excludeFilter = file("spotBugsExcludeFilter.xml")
     reports {
         html {
-            enabled = true
-            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            required
+            outputLocation = new File("$buildDir/reports/spotbugs/main/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
@@ -58,16 +49,17 @@ spotbugsTest {
     excludeFilter = file("spotBugsExcludeFilter.xml")
     reports {
         html {
-            enabled = true
-            destination = file("$buildDir/reports/spotbugs/test/spotbugs.html")
+            required
+            outputLocation = new File('$buildDir/reports/spotbugs/test/spotbugs.html')
             stylesheet = 'fancy-hist.xsl'
+
         }
     }
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required
     }
 }
 
@@ -99,11 +91,11 @@ def pomConfig = {
 }
 
 sonarqube {
-  properties {
-    property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"
-    property "sonar.organization", "microsoftgraph2"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+    properties {
+        property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"
+        property "sonar.organization", "microsoftgraph2"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 //Publishing tasks-
@@ -137,7 +129,7 @@ publishing {
             version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenArtifactSuffix}"
             from components.java
             artifact sourceJar
-        	artifact javadocJar
+            artifact javadocJar
             pom.withXml {
                 def root = asNode()
                 root.appendNode('name', 'Microsoft Graph Core SDK for Java')
@@ -149,59 +141,59 @@ publishing {
 
         }
         Snapshot(MavenPublication) {
-        	customizePom(pom)
-        	groupId project.property('mavenGroupId')
-        	artifactId project.property('mavenArtifactId')
-        	version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenCentralSnapshotArtifactSuffix}"
-        	from components.java
-        	pom.withXml {
-        		def pomFile = file("${project.buildDir}/generated-pom.xml")
-        		writeTo(pomFile)
-        	}
-        	artifact sourceJar
-        	artifact javadocJar
-		}
-		
-		mavenCentralRelease(MavenPublication) {
-        	customizePom(pom)
-        	groupId project.property('mavenGroupId')
-        	artifactId project.property('mavenArtifactId')
-        	version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
-        	from components.java
-        	pom.withXml {
-        		def pomFile = file("${project.buildDir}/generated-pom.xml")
-        		writeTo(pomFile)
-        	}
-        	artifact sourceJar
-        	artifact javadocJar
-		}
+            customizePom(pom)
+            groupId project.property('mavenGroupId')
+            artifactId project.property('mavenArtifactId')
+            version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenCentralSnapshotArtifactSuffix}"
+            from components.java
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+            }
+            artifact sourceJar
+            artifact javadocJar
+        }
+
+        mavenCentralRelease(MavenPublication) {
+            customizePom(pom)
+            groupId project.property('mavenGroupId')
+            artifactId project.property('mavenArtifactId')
+            version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}"
+            from components.java
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+            }
+            artifact sourceJar
+            artifact javadocJar
+        }
     }
-	repositories {
+    repositories {
         maven {
             url = 'https://oss.sonatype.org/content/repositories/snapshots'
             name = 'sonatypeSnapshot'
-            
+
             credentials {
-    			if (project.rootProject.file('local.properties').exists()) {
-        			Properties properties = new Properties()
-        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        			username = properties.getProperty('sonatypeUsername')
-        			password = properties.getProperty('sonatypePassword')
-    			}
+                if (project.rootProject.file('local.properties').exists()) {
+                    Properties properties = new Properties()
+                    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+                    username = properties.getProperty('sonatypeUsername')
+                    password = properties.getProperty('sonatypePassword')
+                }
             }
         }
-        
+
         maven {
             url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             name = 'sonatype'
 
             credentials {
-    			if (project.rootProject.file('local.properties').exists()) {
-        			Properties properties = new Properties()
-        			properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        			username = properties.getProperty('sonatypeUsername')
-        			password = properties.getProperty('sonatypePassword')
-    			}
+                if (project.rootProject.file('local.properties').exists()) {
+                    Properties properties = new Properties()
+                    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+                    username = properties.getProperty('sonatypeUsername')
+                    password = properties.getProperty('sonatypePassword')
+                }
             }
         }
     }
@@ -212,7 +204,7 @@ signing {
 }
 tasks.withType(Sign)*.enabled = mavenCentralPublishingEnabled.toBoolean()
 
-def fixAscNames = { name -> 
+def fixAscNames = { name ->
     if(name.contains('pom')) {
         "${project.property('mavenArtifactId')}-${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}.pom.asc"
     } else {
@@ -221,8 +213,8 @@ def fixAscNames = { name ->
 }
 
 compileJava {
-  sourceCompatibility = '17'
-  targetCompatibility = '17'
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
 }
 
 def getVersionCode() {
@@ -234,9 +226,9 @@ def getVersionName() {
 }
 
 artifacts {
-	archives jar
-	archives sourceJar
-	archives javadocJar
+    archives jar
+    archives sourceJar
+    archives javadocJar
 }
 
 def customizePom(pom) {
@@ -264,14 +256,14 @@ def customizePom(pom) {
             licenses {
                 license {
                     name "MIT License"
-            		url "http://opensource.org/licenses/MIT"
-            		distribution "repo"
+                    url "http://opensource.org/licenses/MIT"
+                    distribution "repo"
                 }
             }
             scm {
                 url 'https://github.com/microsoftgraph/msgraph-sdk-java-core'
-            	connection 'scm:git:git://github.com/microsoftgraph/msgraph-sdk-java-core.git'
-            	developerConnection 'scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git'
+                connection 'scm:git:git://github.com/microsoftgraph/msgraph-sdk-java-core.git'
+                developerConnection 'scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git'
             }
             developers {
                 developer {
@@ -283,13 +275,13 @@ def customizePom(pom) {
 }
 
 gradle.taskGraph.whenReady { taskGraph ->
-	if (project.rootProject.file('local.properties').exists()) {
+    if (project.rootProject.file('local.properties').exists()) {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         tasks.withType(Sign)*.enabled = (properties.containsKey('enableSigning')) ? properties.getProperty('enableSigning').toBoolean() : false
         allprojects { ext."signing.keyId" = properties.getProperty('signing.keyId') }
         allprojects { ext."signing.secretKeyRingFile" = properties.getProperty('signing.secretKeyRingFile') }
-		allprojects { ext."signing.password" = properties.getProperty('signing.password') }
+        allprojects { ext."signing.password" = properties.getProperty('signing.password') }
     }
 }
 
