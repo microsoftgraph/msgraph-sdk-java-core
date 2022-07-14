@@ -32,14 +32,24 @@ public class GraphClientFactory {
     }
 
     /**
-     * OkHttpClient Builder for Graph with specified Interceptors and optional GraphClientOptions.
+     * OkHttpClient Builder for Graph with specified Interceptors.
+     *
+     * @param interceptors desired interceptors for use in requests.
+     * @return an OkHttpClient Builder instance.
+     */
+    public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors) {
+        return create(interceptors, new GraphClientOptions());
+    }
+
+    /**
+     * OkHttpClient Builder for Graph with specified Interceptors and GraphClientOptions.
      *
      * @param interceptors desired interceptors for use in requests.
      * @param graphClientOptions the GraphClientOptions for use in requests.
      * @return an OkHttpClient Builder instance.
      */
-    public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors, @Nullable GraphClientOptions graphClientOptions) {
-        OkHttpClient.Builder builder = graphClientOptions == null ? create() : create(graphClientOptions);
+    public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors, @Nonnull GraphClientOptions graphClientOptions) {
+        OkHttpClient.Builder builder = create(graphClientOptions);
         for(Interceptor interceptor : interceptors) {
             builder.addInterceptor(interceptor);
         }
