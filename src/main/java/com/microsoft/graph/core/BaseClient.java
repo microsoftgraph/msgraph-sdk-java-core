@@ -25,7 +25,6 @@ package com.microsoft.graph.core;
 import com.google.gson.JsonElement;
 import com.microsoft.graph.http.CoreHttpProvider;
 import com.microsoft.graph.http.IHttpProvider;
-import com.microsoft.graph.httpcore.HttpClients;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.graph.logger.DefaultLogger;

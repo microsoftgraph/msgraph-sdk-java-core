@@ -10,7 +10,7 @@ import com.microsoft.graph.CoreConstants;
 /**
  * Options to be passed to the telemetry middleware.
  */
-public class GraphClientOptions implements IMiddlewareControl{
+public class GraphClientOptions {
 
     private String clientRequestId;
     private String coreLibraryVersion;
