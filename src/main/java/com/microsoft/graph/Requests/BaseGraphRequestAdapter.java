@@ -1,19 +1,17 @@
 package com.microsoft.graph.Requests;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
-import com.microsoft.graph.core.ClientException;
-import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOption;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;
 import com.microsoft.kiota.serialization.SerializationWriterFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import okhttp3.OkHttpClient;
+
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.net.URL;
 import java.util.HashMap;
 
 /**
@@ -52,17 +50,17 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
 
     /**
      * The default BaseGraphRequestAdapter constructor, includes all configurable properties.
-     * Note: GraphClientOptions will be ignored if you also choose to include an OKHttpClient.
+     * Note: GraphClientOption will be ignored if you also choose to include an OKHttpClient.
      *
      * @param authenticationProvider the AuthenticationProvider for use in requests.
      * @param parseNodeFactory the ParseNodeFactory for use in requests.
      * @param serializationWriterFactory the SerializationWriterFactory for use in requests.
      * @param client the OkHttpClient for use in requests.
-     * @param graphClientOptions the GraphClientOptions for use in requests.
+     * @param graphClientOption the GraphClientOption for use in requests.
      * @param baseUrl the base URL for use in requests.
      */
-    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable final GraphClientOptions graphClientOptions, @Nullable String baseUrl) {
-        super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOptions).build());
+    public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable final GraphClientOption graphClientOption, @Nullable String baseUrl) {
+        super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOption).build());
         if (baseUrl != null && !baseUrl.isEmpty()) {
             setBaseUrl(baseUrl);
         } else {
@@ -86,7 +84,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param baseUrl the base URL for use in requests.
      */
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
-        this(authenticationProvider, baseUrl, new GraphClientOptions());
+        this(authenticationProvider, baseUrl, new GraphClientOption());
     }
 
     /**
@@ -101,14 +99,14 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     }
 
     /**
-     * Constructor requiring an AuthenticationProvider, base URL, and GraphClientOptions.
+     * Constructor requiring an AuthenticationProvider, base URL, and GraphClientOption.
      *
      * @param authenticationProvider the AuthenticationProvider for use in requests.
      * @param baseUrl the base URL for use in requests.
-     * @param graphClientOptions the GraphClientOptions for use in requests.
+     * @param graphClientOption the GraphClientOption for use in requests.
      */
-    public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl, @Nonnull GraphClientOptions graphClientOptions) {
-        this(authenticationProvider, null, null, null, graphClientOptions, baseUrl);
+    public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl, @Nonnull GraphClientOption graphClientOption) {
+        this(authenticationProvider, null, null, null, graphClientOption, baseUrl);
     }
 
     /**
@@ -135,15 +133,15 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     }
 
     /**
-     * Constructor requiring an AuthenticationProvider, optional National Cloud, optional Version, and required GraphClientOptions.
+     * Constructor requiring an AuthenticationProvider, optional National Cloud, optional Version, and required GraphClientOption.
      *
      * @param authenticationProvider the AuthenticationProvider for use in requests.
      * @param cloud the National Cloud for use in requests.
      * @param version the Graph version for use in requests.
-     * @param graphClientOptions the GraphClientOptions for use in requests.
+     * @param graphClientOption the GraphClientOption for use in requests.
      */
-    public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nullable Clouds cloud, @Nullable String version, @Nonnull GraphClientOptions graphClientOptions) {
-        this(authenticationProvider, determineBaseAddress(cloud, version), graphClientOptions);
+    public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nullable Clouds cloud, @Nullable String version, @Nonnull GraphClientOption graphClientOption) {
+        this(authenticationProvider, determineBaseAddress(cloud, version), graphClientOption);
     }
 
     private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {

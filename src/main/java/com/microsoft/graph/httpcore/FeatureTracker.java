@@ -2,6 +2,9 @@ package com.microsoft.graph.httpcore;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Manages and tracks the flags for tasks and handlers.
+ */
 public class FeatureTracker {
 
     private int featureUsage = FeatureFlag.NONE_FLAG;
@@ -29,5 +32,5 @@ public class FeatureTracker {
         return Integer.toHexString(featureUsage);
     }
 
-    // TODO: add a method to add a feature flag to the header, do this once implementation on how to address tasks and their flags is decided 
+    // TODO: add a method to add a feature flag to the header, do this once implementation on how to address tasks and their flags is decided
 }

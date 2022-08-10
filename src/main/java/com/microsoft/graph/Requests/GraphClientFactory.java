@@ -1,19 +1,13 @@
 package com.microsoft.graph.Requests;
 
-import com.microsoft.graph.httpcore.CompressionHandler;
 import com.microsoft.graph.httpcore.GraphTelemetryHandler;
-import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.http.KiotaClientFactory;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.Format;
-import java.time.temporal.ChronoUnit;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOption;
 import java.util.*;
 
 /**
@@ -28,7 +22,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     public static OkHttpClient.Builder create() {
-        return create(new GraphClientOptions());
+        return create(new GraphClientOption());
     }
 
     /**
@@ -38,18 +32,18 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors) {
-        return create(interceptors, new GraphClientOptions());
+        return create(interceptors, new GraphClientOption());
     }
 
     /**
-     * OkHttpClient Builder for Graph with specified Interceptors and GraphClientOptions.
+     * OkHttpClient Builder for Graph with specified Interceptors and GraphClientOption.
      *
      * @param interceptors desired interceptors for use in requests.
-     * @param graphClientOptions the GraphClientOptions for use in requests.
+     * @param graphClientOption the GraphClientOption for use in requests.
      * @return an OkHttpClient Builder instance.
      */
-    public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors, @Nonnull GraphClientOptions graphClientOptions) {
-        OkHttpClient.Builder builder = create(graphClientOptions);
+    public static OkHttpClient.Builder create(@Nonnull Interceptor[] interceptors, @Nonnull GraphClientOption graphClientOption) {
+        OkHttpClient.Builder builder = create(graphClientOption);
         for(Interceptor interceptor : interceptors) {
             builder.addInterceptor(interceptor);
         }
@@ -57,28 +51,28 @@ public class GraphClientFactory {
     }
 
     /**
-     * The OkHttpClient Builder with optional GraphClientOptions
+     * The OkHttpClient Builder with optional GraphClientOption
      *
-     * @param graphClientOptions the GraphClientOptions for use in requests.
+     * @param graphClientOption the GraphClientOption for use in requests.
      * @return an OkHttpClient Builder instance.
      */
-    public static OkHttpClient.Builder create(@Nullable GraphClientOptions graphClientOptions) {
-        GraphClientOptions options = graphClientOptions != null ? graphClientOptions : new GraphClientOptions();
+    public static OkHttpClient.Builder create(@Nullable GraphClientOption graphClientOption) {
+        GraphClientOption options = graphClientOption != null ? graphClientOption : new GraphClientOption();
         return KiotaClientFactory.Create(createDefaultGraphInterceptors(options));
     }
 
     /**
      * Creates the default Interceptors for use with Graph.
      *
-     * @param graphClientOptions the GraphClientOptions used to create the GraphTelemetryHandler with.
+     * @param graphClientOption the GraphClientOption used to create the GraphTelemetryHandler with.
      * @return an array of interceptors.
      */
-    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOptions graphClientOptions) {
+    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption) {
         List<Interceptor> handlers = new ArrayList<>();
-        handlers.add(new GraphTelemetryHandler(graphClientOptions));
+        handlers.add(new GraphTelemetryHandler(graphClientOption));
         for(final Interceptor interceptor: KiotaClientFactory.CreateDefaultInterceptors()) {
             handlers.add(interceptor);
         }
-        return (Interceptor[]) handlers.toArray();
+        return handlers.toArray(new Interceptor[handlers.size()]);
     }
 }

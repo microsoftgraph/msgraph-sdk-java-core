@@ -2,11 +2,12 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.httpcore.middlewareoption.GraphClientOptions;
+import com.microsoft.graph.httpcore.middlewareoption.GraphClientOption;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;
@@ -19,16 +20,21 @@ import okhttp3.Response;
  */
 public class GraphTelemetryHandler implements Interceptor{
 
-    private GraphClientOptions mGraphClientOptions;
+    private GraphClientOption mGraphClientOption;
 
+    /**
+     * Instantiate a GraphTelemetryHandler with default GraphClientOption.
+     */
     public GraphTelemetryHandler(){
-        this.mGraphClientOptions = new GraphClientOptions();
+        this(new GraphClientOption());
     }
-
+    /**
+     * Instantiate a GraphTelemetryHandler with specified GraphClientOption
+     * @param graphClientOption the specified GraphClientOption for the GraphTelemetryHandler.
+     */
     @SuppressFBWarnings
-    //graphClientOptions exposes strings which are naturally immutable
-    public GraphTelemetryHandler(@Nonnull final GraphClientOptions graphClientOptions){
-        this.mGraphClientOptions = graphClientOptions;
+    public GraphTelemetryHandler(@Nonnull final GraphClientOption graphClientOption){
+        this.mGraphClientOption = Objects.requireNonNull(graphClientOption);
     }
 
     @Override
@@ -42,20 +48,19 @@ public class GraphTelemetryHandler implements Interceptor{
             featureTracker = new FeatureTracker();
         }
 
-        //This assumes a call to graph will always include v1.0 or beta in the url
-        final String graphEndpoint = request.url().toString().contains("/v1.0/") ? "-v1.0" : "-beta";
+        final String graphEndpoint = mGraphClientOption.getGraphServiceTargetVersion();
         final String featureUsage = "(featureUsage=" + featureTracker.getSerializedFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
         final String sdkversion_value = "graph-" + CoreConstants.Headers.JAVA_VERSION_PREFIX + graphEndpoint +
-            (mGraphClientOptions.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOptions.getClientLibraryVersion()) + ", " +
-            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOptions.getCoreLibraryVersion() + " " + featureUsage +
+            (mGraphClientOption.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOption.getClientLibraryVersion()) + ", " +
+            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOption.getCoreLibraryVersion() + " " + featureUsage +
             (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JAVA_VERSION_PREFIX + "/" + javaVersion)) +
             (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.ANDROID_VERSION_PREFIX + "/" + androidVersion));
         telemetryAddedBuilder.addHeader(CoreConstants.Headers.SDK_VERSION_HEADER_NAME, sdkversion_value);
 
         if(request.header(CoreConstants.Headers.CLIENT_REQUEST_ID) == null) {
-            telemetryAddedBuilder.addHeader(CoreConstants.Headers.CLIENT_REQUEST_ID, mGraphClientOptions.getClientRequestId());
+            telemetryAddedBuilder.addHeader(CoreConstants.Headers.CLIENT_REQUEST_ID, mGraphClientOption.getClientRequestId());
         }
 
         return chain.proceed(telemetryAddedBuilder.build());
@@ -68,6 +73,7 @@ public class GraphTelemetryHandler implements Interceptor{
         }
         return androidAPILevel;
     }
+
     private String getAndroidAPILevelInternal() {
         try {
             final Class<?> buildClass = Class.forName("android.os.Build");

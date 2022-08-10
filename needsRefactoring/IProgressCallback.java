@@ -1,16 +1,16 @@
 // ------------------------------------------------------------------------------
 // Copyright (c) 2017 Microsoft Corporation
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,25 +20,18 @@
 // THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-package com.microsoft.graph.core;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
+package com.microsoft.graph.tasks;
 
 /**
- * An exception from the client.
+ * A callback that describes how to deal with success, failure, and progress
  */
-public class ClientException extends RuntimeException {
-
-    private static final long serialVersionUID = -1066560879567392559L;
+public interface IProgressCallback {
 
     /**
-     * Creates the client exception
-     * 
-     * @param message the message to display
-     * @param ex      the exception from
+     * How progress updates are handled for this callback
+     *
+     * @param current the current amount of progress
+     * @param max     the max amount of progress
      */
-    public ClientException(@Nonnull final String message, @Nullable final Throwable ex) {
-        super(message, ex);
-    }
+    void progress(final long current, final long max);
 }

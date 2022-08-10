@@ -1,6 +1,6 @@
 package com.microsoft.graph.Requests;
 
-import com.microsoft.graph.content.BatchRequestBuilder;
+//import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 
 /**
@@ -27,5 +27,5 @@ public interface IBaseClient {
      *
      * @return the BatchRequestBuilder instance
      */
-    public BatchRequestBuilder getBatchRequestBuilder();
+    //public BatchRequestBuilder getBatchRequestBuilder();
 }
