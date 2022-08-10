@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.13] - 2022-05-26
+
+### Added
+
+### Changed
+
+- Fixed an issue where the error message would be logged twice. #514
+- Bumps azure-core to 1.28.0 #503, #504, #506
+- Bumps azure-identity to 1.5.1 #505, #507
+
 ## [2.0.12] - 2022-04-22
 
 ### Added
