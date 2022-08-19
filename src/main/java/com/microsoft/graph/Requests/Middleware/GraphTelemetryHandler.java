@@ -1,4 +1,4 @@
-package com.microsoft.graph.httpcore;
+package com.microsoft.graph.Requests.Middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -7,7 +7,8 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.httpcore.middlewareoption.GraphClientOption;
+import com.microsoft.graph.Requests.FeatureTracker;
+import com.microsoft.graph.Requests.GraphClientOption;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;
@@ -43,16 +44,11 @@ public class GraphTelemetryHandler implements Interceptor{
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 
-        FeatureTracker featureTracker = request.tag(FeatureTracker.class);
-        if(featureTracker == null) {
-            featureTracker = new FeatureTracker();
-        }
-
         final String graphEndpoint = mGraphClientOption.getGraphServiceTargetVersion();
-        final String featureUsage = "(featureUsage=" + featureTracker.getSerializedFeatureUsage() + ")";
+        final String featureUsage = "(featureUsage=" + mGraphClientOption.featureTracker.getSerializedFeatureUsage() + ")";
         final String javaVersion = System.getProperty("java.version");
         final String androidVersion = getAndroidAPILevel();
-        final String sdkversion_value = "graph-" + CoreConstants.Headers.JAVA_VERSION_PREFIX + graphEndpoint +
+        final String sdkversion_value = "graph-" + CoreConstants.Headers.JAVA_VERSION_PREFIX +"/"+ graphEndpoint +
             (mGraphClientOption.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOption.getClientLibraryVersion()) + ", " +
             CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOption.getCoreLibraryVersion() + " " + featureUsage +
             (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JAVA_VERSION_PREFIX + "/" + javaVersion)) +

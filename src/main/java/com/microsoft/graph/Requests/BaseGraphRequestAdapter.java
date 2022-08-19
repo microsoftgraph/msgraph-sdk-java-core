@@ -1,6 +1,5 @@
 package com.microsoft.graph.Requests;
 
-import com.microsoft.graph.httpcore.middlewareoption.GraphClientOption;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;

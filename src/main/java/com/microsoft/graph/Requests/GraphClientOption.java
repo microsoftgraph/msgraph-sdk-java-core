@@ -1,4 +1,4 @@
-package com.microsoft.graph.httpcore.middlewareoption;
+package com.microsoft.graph.Requests;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -17,6 +17,10 @@ public class GraphClientOption implements RequestOption {
     private String clientLibraryVersion;
     private String coreLibraryVersion;
     private String graphServiceTargetVersion;
+    /**
+     * Feature Tracker instance
+     */
+    public FeatureTracker featureTracker = new FeatureTracker();
 
     /**
      * Sets the client request id
@@ -79,7 +83,7 @@ public class GraphClientOption implements RequestOption {
      * @return the version of the Api endpoint we are targeting.
      */
     public String getGraphServiceTargetVersion() {
-        return this.graphServiceTargetVersion == null ? "v1" : this.graphServiceTargetVersion;
+        return this.graphServiceTargetVersion == null ? "v1.0" : this.graphServiceTargetVersion;
     }
 
     @Override

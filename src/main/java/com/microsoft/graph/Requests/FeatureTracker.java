@@ -1,4 +1,6 @@
-package com.microsoft.graph.httpcore;
+package com.microsoft.graph.Requests;
+
+import com.microsoft.graph.Requests.FeatureFlag;
 
 import javax.annotation.Nonnull;
 
@@ -7,13 +9,20 @@ import javax.annotation.Nonnull;
  */
 public class FeatureTracker {
 
+    /**
+     * Instantiate a Feature Tracker
+     */
+    public FeatureTracker() {};
+
     private int featureUsage = FeatureFlag.NONE_FLAG;
     /**
      * Sets a numeric representation of the SDK feature usage
-     * @param flag a numeric representation of the SDK feature usage
+     * @param flags a numeric representation of the SDK feature usage
      */
-    public void setFeatureUsage(int flag) {
-        featureUsage = featureUsage | flag;
+    public void setFeatureUsage(int... flags) {
+        for(int flag : flags){
+            featureUsage = featureUsage | flag;
+        }
     }
     /**
      * Gets a numeric representation of the SDK feature usage

@@ -1,7 +1,7 @@
 import com.azure.identity.DeviceCodeCredential;
 import com.azure.identity.DeviceCodeCredentialBuilder;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
-import com.microsoft.graph.httpcore.HttpClients;
+import com.microsoft.graph.HttpCore.HttpClients;
 import okhttp3.*;
 
 import java.io.IOException;
