@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-public class GraphTelemetryHandlerTests {
+class GraphTelemetryHandlerTests {
 
     public GraphTelemetryHandlerTests() {
     }
 
     @Test
-    public void telemetryHandlerDefaultTests() throws IOException {
+    void telemetryHandlerDefaultTests() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
         final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
@@ -38,7 +38,7 @@ public class GraphTelemetryHandlerTests {
     }
 
     @Test
-    public void arrayInterceptorsTest() throws IOException {
+    void arrayInterceptorsTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
         final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
@@ -53,7 +53,7 @@ public class GraphTelemetryHandlerTests {
     }
 
     @Test
-    public void arrayInterceptorEmptyTest() throws IOException {
+    void arrayInterceptorEmptyTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
         final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
@@ -68,7 +68,7 @@ public class GraphTelemetryHandlerTests {
     }
 
     @Test
-    public void testClientOptions() throws IOException {
+    void testClientOptions() throws IOException {
         String requestId = "1234567890";
         String coreLibVer = "3.1.1";
         String clientLibVer = "6.1.1";

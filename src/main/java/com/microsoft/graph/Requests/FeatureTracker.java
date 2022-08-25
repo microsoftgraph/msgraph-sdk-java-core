@@ -1,6 +1,5 @@
 package com.microsoft.graph.Requests;
 
-import com.microsoft.graph.Requests.FeatureFlag;
 
 import javax.annotation.Nonnull;
 
@@ -9,10 +8,6 @@ import javax.annotation.Nonnull;
  */
 public class FeatureTracker {
 
-    /**
-     * Instantiate a Feature Tracker
-     */
-    public FeatureTracker() {};
 
     private int featureUsage = FeatureFlag.NONE_FLAG;
     /**
