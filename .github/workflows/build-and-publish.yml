@@ -2,7 +2,7 @@ name: Build and Publish
 
 on:
   push:
-    branches: [ dev , master ]
+    branches: [ dev , master, v3/longTermBranch ]
     paths-ignore:
       - '.gradle/wrapper'
       - '.gitignore'
@@ -15,7 +15,7 @@ env:
       
 jobs:
   maven_Preview:
-    if: ${{ github.ref == 'refs/heads/dev' }}
+    if: ${{ github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/v3/longTermBranch'}}
     environment: 
       name: maven_central_snapshot
     runs-on: ubuntu-latest
