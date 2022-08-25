@@ -20,7 +20,7 @@ public class GraphClientOption implements RequestOption {
     /**
      * Feature Tracker instance
      */
-    public FeatureTracker featureTracker = new FeatureTracker();
+    public final FeatureTracker featureTracker = new FeatureTracker();
 
     /**
      * Sets the client request id

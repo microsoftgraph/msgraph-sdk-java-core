@@ -39,9 +39,9 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull Interceptor... interceptors) {
-        OkHttpClient.Builder builder = create(graphClientOption);
+        final OkHttpClient.Builder builder = create(graphClientOption);
         //Skip adding interceptor if that class of interceptor already exist.
-        List<String> appliedInterceptors = new ArrayList<String>();
+        final List<String> appliedInterceptors = new ArrayList<>();
         for(Interceptor interceptor: builder.interceptors()) {
             appliedInterceptors.add(interceptor.getClass().toString());
         }
