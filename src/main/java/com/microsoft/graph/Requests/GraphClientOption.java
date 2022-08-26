@@ -27,7 +27,7 @@ public class GraphClientOption implements RequestOption {
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        this.clientRequestId = Objects.requireNonNull(clientRequestId, "parameter clientRequestId cannot be null");
+        this.clientRequestId = Objects.requireNonNull(clientRequestId, paramErrorMessage("clientRequestId"));
     }
     /**
      * Gets the client request id
@@ -45,7 +45,7 @@ public class GraphClientOption implements RequestOption {
      * @param version client library version specified by user.
      */
     public void setClientLibraryVersion(@Nonnull final String version) {
-        this.clientLibraryVersion = Objects.requireNonNull(version, "parameter version cannot be null");
+        this.clientLibraryVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
     }
     /**
      * Get the client library version as a string
@@ -60,7 +60,7 @@ public class GraphClientOption implements RequestOption {
      * @param version core library version specified by user.
      */
     public void setCoreLibraryVersion(@Nonnull final String version) {
-        this.coreLibraryVersion = Objects.requireNonNull(version, "parameter version cannot be null");
+        this.coreLibraryVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
     }
     /**
      * Get the core library version as a String, in this format 'x.x.x'
@@ -75,7 +75,7 @@ public class GraphClientOption implements RequestOption {
      * @param version the version of the Api endpoint we are targeting
      */
     public void setGraphServiceTargetVersion(@Nonnull final String version) {
-        this.graphServiceTargetVersion = Objects.requireNonNull(version, "parameter version cannot be null");
+        this.graphServiceTargetVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
     }
     /**
      * Get the target version of the api endpoint we are targeting (v1 or beta)
@@ -89,5 +89,9 @@ public class GraphClientOption implements RequestOption {
     @Override
     public <T extends RequestOption> Class<T> getType() {
         return (Class<T>) GraphClientOption.class;
+    }
+
+    private static String paramErrorMessage(String paramName){
+        return String.format("Parameter %s cannot be null.", paramName);
     }
 }
