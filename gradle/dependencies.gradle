@@ -21,5 +21,4 @@ dependencies {
     api 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.0.2-SNAPSHOT'
     api 'com.microsoft.kiota:microsoft-kiota-serialization-json:0.0.2-SNAPSHOT'
     api 'com.microsoft.kiota:microsoft-kiota-serialization-text:0.0.2-SNAPSHOT'
-
 }
