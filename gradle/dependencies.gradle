@@ -5,22 +5,20 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
     testImplementation 'org.mockito:mockito-inline:4.7.0'
     
-    api 'com.squareup.okhttp3:okhttp:4.10.0'
-
-    implementation 'com.google.guava:guava:31.1-jre'
-
-    implementation 'com.google.code.gson:gson:2.9.1'
-    api 'com.azure:azure-core:1.31.0'
-
     compileOnly 'net.jcip:jcip-annotations:1.0'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.1'
     testCompileOnly 'net.jcip:jcip-annotations:1.0'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.0'
 
-    implementation 'com.microsoft.kiota:microsoft-kiota-abstractions:0.0.1-SNAPSHOT'
-    implementation 'com.microsoft.kiota:microsoft-kiota-authentication-azure:0.0.1-SNAPSHOT'
-    implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.0.1-SNAPSHOT'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:0.0.1-SNAPSHOT'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-text:0.0.1-SNAPSHOT'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.google.code.gson:gson:2.9.1'
 
+    api 'com.squareup.okhttp3:okhttp:4.10.0'
+    api 'com.azure:azure-core:1.31.0'
+
+    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.0.3-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:0.0.1-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.0.2-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-serialization-json:0.0.2-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-serialization-text:0.0.2-SNAPSHOT'
 }
