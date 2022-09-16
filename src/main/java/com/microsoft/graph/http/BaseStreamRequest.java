@@ -197,7 +197,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param maxRedirects Max redirects that a request can take
      */
     public void setMaxRedirects(int maxRedirects) {
-    	baseRequest.setMaxRedirects(maxRedirects);
+        baseRequest.setMaxRedirects(maxRedirects);
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @return Max redirects that a request can take
      */
     public int getMaxRedirects() {
-    	return baseRequest.getMaxRedirects();
+        return baseRequest.getMaxRedirects();
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     public void setShouldRedirect(@Nonnull final IShouldRedirect shouldRedirect) {
         Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
-    	baseRequest.setShouldRedirect(shouldRedirect);
+        baseRequest.setShouldRedirect(shouldRedirect);
     }
 
     /**
@@ -226,7 +226,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     @Nonnull
     public IShouldRedirect getShouldRedirect() {
-    	return baseRequest.getShouldRedirect();
+        return baseRequest.getShouldRedirect();
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     public void setShouldRetry(@Nonnull final IShouldRetry shouldretry) {
         Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
-    	baseRequest.setShouldRetry(shouldretry);
+        baseRequest.setShouldRetry(shouldretry);
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      */
     @Nonnull
     public IShouldRetry getShouldRetry() {
-    	return baseRequest.getShouldRetry();
+        return baseRequest.getShouldRetry();
     }
 
     /**
@@ -255,7 +255,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param maxRetries Max retries for a request
      */
     public void setMaxRetries(int maxRetries) {
-    	baseRequest.setMaxRetries(maxRetries);
+        baseRequest.setMaxRetries(maxRetries);
     }
 
     /**
@@ -264,7 +264,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @return Max retries for a request
      */
     public int getMaxRetries() {
-    	return baseRequest.getMaxRetries();
+        return baseRequest.getMaxRetries();
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @param delay Delay in seconds between retries
      */
     public void setDelay(long delay) {
-    	baseRequest.setDelay(delay);
+        baseRequest.setDelay(delay);
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class BaseStreamRequest<T> implements IHttpStreamRequest {
      * @return Delay between retries in seconds
      */
     public long getDelay() {
-    	return baseRequest.getDelay();
+        return baseRequest.getDelay();
     }
     /**
      * Sets the HTTP method and returns the current request

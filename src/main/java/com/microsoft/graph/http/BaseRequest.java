@@ -188,19 +188,19 @@ public abstract class BaseRequest<T> implements IHttpRequest {
         final Builder uriBuilder = parsedUrl.newBuilder();
 
         for (final QueryOption option : queryOptions) {
-        	uriBuilder.addQueryParameter(option.getName(), option.getValue().toString());
+            uriBuilder.addQueryParameter(option.getName(), option.getValue().toString());
         }
 
         try {
             return new URL(uriBuilder.build().toString());
         } catch (final MalformedURLException e) {
-        	if (this instanceof CustomRequest) {
-        		this.getClient().getLogger().logError("Invalid custom URL: " + uriBuilder, e);
-        	} else {
-        		throw new ClientException("Invalid URL: " + uriBuilder, e);
-        	}
+            if (this instanceof CustomRequest) {
+                this.getClient().getLogger().logError("Invalid custom URL: " + uriBuilder, e);
+            } else {
+                throw new ClientException("Invalid URL: " + uriBuilder, e);
+            }
         }
-		return null;
+        return null;
     }
 
     /**
@@ -455,7 +455,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param skipToken - Token for pagination
      */
     protected void addSkipTokenOption(@Nonnull final String skipToken) {
-    	Objects.requireNonNull(skipToken, "parameter skipToken cannot be null");
+        Objects.requireNonNull(skipToken, "parameter skipToken cannot be null");
         addQueryOption(new QueryOption("$skiptoken", skipToken));
     }
 
@@ -511,13 +511,13 @@ public abstract class BaseRequest<T> implements IHttpRequest {
         return responseClass;
     }
 
-	   /**
+       /**
      * Sets the max redirects
      *
      * @param maxRedirects Max redirects that a request can take
      */
     public void setMaxRedirects(int maxRedirects) {
-    	this.maxRedirects = maxRedirects;
+        this.maxRedirects = maxRedirects;
     }
 
     /**
@@ -526,7 +526,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return Max redirects that a request can take
      */
     public int getMaxRedirects() {
-    	return maxRedirects;
+        return maxRedirects;
     }
 
     /**
@@ -535,7 +535,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param shouldRedirect Callback called before doing a redirect
      */
     public void setShouldRedirect(@Nonnull IShouldRedirect shouldRedirect) {
-    	Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
+        Objects.requireNonNull(shouldRedirect, "parameter shouldRedirect cannot be null");
         this.shouldRedirect = shouldRedirect;
     }
 
@@ -546,7 +546,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nonnull
     public IShouldRedirect getShouldRedirect() {
-    	return shouldRedirect;
+        return shouldRedirect;
     }
 
     /**
@@ -555,7 +555,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param shouldretry The callback called before retry
      */
     public void setShouldRetry(@Nonnull IShouldRetry shouldretry) {
-    	Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
+        Objects.requireNonNull(shouldretry, "parameter shouldretry cannot be null");
         this.shouldRetry = shouldretry;
     }
 
@@ -566,7 +566,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      */
     @Nonnull
     public IShouldRetry getShouldRetry() {
-    	return shouldRetry;
+        return shouldRetry;
     }
 
     /**
@@ -575,7 +575,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param maxRetries Max retries for a request
      */
     public void setMaxRetries(int maxRetries) {
-    	this.maxRetries = maxRetries;
+        this.maxRetries = maxRetries;
     }
 
     /**
@@ -584,7 +584,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return Max retries for a request
      */
     public int getMaxRetries() {
-    	return maxRetries;
+        return maxRetries;
     }
 
     /**
@@ -593,7 +593,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @param delay Delay in seconds between retries
      */
     public void setDelay(long delay) {
-    	this.delay = delay;
+        this.delay = delay;
     }
 
     /**
@@ -602,6 +602,6 @@ public abstract class BaseRequest<T> implements IHttpRequest {
      * @return Delay between retries in seconds
      */
     public long getDelay() {
-    	return delay;
+        return delay;
     }
 }
