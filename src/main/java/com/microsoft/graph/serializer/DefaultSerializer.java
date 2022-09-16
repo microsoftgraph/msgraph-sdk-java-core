@@ -48,27 +48,27 @@ import javax.annotation.Nullable;
  */
 public class DefaultSerializer implements ISerializer {
 
-	private static final String GRAPH_RESPONSE_HEADERS_KEY = "graphResponseHeaders";
+    private static final String GRAPH_RESPONSE_HEADERS_KEY = "graphResponseHeaders";
 
     /**
      * The logger
      */
     private final ILogger logger;
 
-	/**
-	 * The instance of the internal serializer
-	 */
-	private final Gson gson;
+    /**
+     * The instance of the internal serializer
+     */
+    private final Gson gson;
 
 
-	/**
-	 * Creates a DefaultSerializer
-	 *
-	 * @param logger the logger
-	 */
-	public DefaultSerializer(@Nonnull final ILogger logger) {
-		this(logger, false);
-	}
+    /**
+     * Creates a DefaultSerializer
+     *
+     * @param logger the logger
+     */
+    public DefaultSerializer(@Nonnull final ILogger logger) {
+        this(logger, false);
+    }
 
 
     /**
@@ -87,76 +87,76 @@ public class DefaultSerializer implements ISerializer {
         this.gson = GsonFactory.getGsonInstance(logger, serializeNulls);
     }
 
-	@Override
-	@Nullable
-	public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
-		Objects.requireNonNull(inputString, "parameter inputString cannot be null");
+    @Override
+    @Nullable
+    public <T> T deserializeObject(@Nonnull final String inputString, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+        Objects.requireNonNull(inputString, "parameter inputString cannot be null");
         final JsonElement rawElement = gson.fromJson(inputString, JsonElement.class);
-		return deserializeObject(rawElement, clazz, responseHeaders);
-	}
+        return deserializeObject(rawElement, clazz, responseHeaders);
+    }
 
-	@Override
-	@Nullable
-	public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
-		Objects.requireNonNull(inputStream, "parameter inputStream cannot be null");
+    @Override
+    @Nullable
+    public <T> T deserializeObject(@Nonnull final InputStream inputStream, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+        Objects.requireNonNull(inputStream, "parameter inputStream cannot be null");
         T result = null;
         try (final InputStreamReader streamReader =  new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-			final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
-			result = deserializeObject(rawElement, clazz, responseHeaders);
+            final JsonElement rawElement = gson.fromJson(streamReader, JsonElement.class);
+            result = deserializeObject(rawElement, clazz, responseHeaders);
         } catch (IOException ex) {
             //noop we couldn't close the stream reader we just opened and it's ok
         }
         return result;
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	@Nullable
-	public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
-		Objects.requireNonNull(rawElement, "parameter rawElement cannot be null");
-		Objects.requireNonNull(clazz, "parameter clazz cannot be null");
-		final T jsonObject = gson.fromJson(rawElement, clazz);
+    @SuppressWarnings("unchecked")
+    @Override
+    @Nullable
+    public <T> T deserializeObject(@Nonnull final JsonElement rawElement, @Nonnull final Class<T> clazz, @Nullable final Map<String, List<String>> responseHeaders) {
+        Objects.requireNonNull(rawElement, "parameter rawElement cannot be null");
+        Objects.requireNonNull(clazz, "parameter clazz cannot be null");
+        final T jsonObject = gson.fromJson(rawElement, clazz);
 
-		// Populate the JSON-backed fields for any annotations that are not in the object model
-		if (jsonObject instanceof IJsonBackedObject) {
-			logger.logDebug("Deserializing type " + clazz.getSimpleName());
-			final JsonObject rawObject = rawElement.isJsonObject() ? rawElement.getAsJsonObject() : null;
-			final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jsonObject;
+        // Populate the JSON-backed fields for any annotations that are not in the object model
+        if (jsonObject instanceof IJsonBackedObject) {
+            logger.logDebug("Deserializing type " + clazz.getSimpleName());
+            final JsonObject rawObject = rawElement.isJsonObject() ? rawElement.getAsJsonObject() : null;
+            final IJsonBackedObject jsonBackedObject = (IJsonBackedObject) jsonObject;
 
-			if(rawElement.isJsonObject()) {
-				jsonBackedObject.setRawObject(this, rawObject);
-				jsonBackedObject.additionalDataManager().setAdditionalData(rawObject);
-				setChildAdditionalData(jsonBackedObject,rawObject);
-			}
+            if(rawElement.isJsonObject()) {
+                jsonBackedObject.setRawObject(this, rawObject);
+                jsonBackedObject.additionalDataManager().setAdditionalData(rawObject);
+                setChildAdditionalData(jsonBackedObject,rawObject);
+            }
 
-			if (responseHeaders != null) {
-				JsonElement convertedHeaders = gson.toJsonTree(responseHeaders);
-				jsonBackedObject.additionalDataManager().put(GRAPH_RESPONSE_HEADERS_KEY, convertedHeaders);
-			}
-			return jsonObject;
-		} else {
-			logger.logDebug("Deserializing a non-IJsonBackedObject type " + clazz.getSimpleName());
-			return jsonObject;
-		}
-	}
+            if (responseHeaders != null) {
+                JsonElement convertedHeaders = gson.toJsonTree(responseHeaders);
+                jsonBackedObject.additionalDataManager().put(GRAPH_RESPONSE_HEADERS_KEY, convertedHeaders);
+            }
+            return jsonObject;
+        } else {
+            logger.logDebug("Deserializing a non-IJsonBackedObject type " + clazz.getSimpleName());
+            return jsonObject;
+        }
+    }
 
-	/**
-	 * Recursively sets additional data for each child object
-	 *
-	 * @param serializedObject   the parent object whose children will be iterated to set additional data
-	 * @param rawJson			the raw json
-	 */
-	private void setChildAdditionalData(final IJsonBackedObject serializedObject, final JsonObject rawJson) {
-		// Use reflection to iterate through fields for eligible Graph children
-		if(rawJson != null) {
-			for (java.lang.reflect.Field field : serializedObject.getClass().getFields()) {
-				try {
-					if(field != null) {
-						final Object fieldObject = field.get(serializedObject);
-						if (fieldObject instanceof HashMap) {
-							// If the object is a HashMap, iterate through its children
-							@SuppressWarnings("unchecked")
-							final HashMap<String, Object> serializableChildren = (HashMap<String, Object>) fieldObject;
+    /**
+     * Recursively sets additional data for each child object
+     *
+     * @param serializedObject   the parent object whose children will be iterated to set additional data
+     * @param rawJson            the raw json
+     */
+    private void setChildAdditionalData(final IJsonBackedObject serializedObject, final JsonObject rawJson) {
+        // Use reflection to iterate through fields for eligible Graph children
+        if(rawJson != null) {
+            for (java.lang.reflect.Field field : serializedObject.getClass().getFields()) {
+                try {
+                    if(field != null) {
+                        final Object fieldObject = field.get(serializedObject);
+                        if (fieldObject instanceof HashMap) {
+                            // If the object is a HashMap, iterate through its children
+                            @SuppressWarnings("unchecked")
+                            final HashMap<String, Object> serializableChildren = (HashMap<String, Object>) fieldObject;
 
                             for (Entry<String, Object> pair : serializableChildren.entrySet()) {
                                 final Object child = pair.getValue();
@@ -173,74 +173,74 @@ public class DefaultSerializer implements ISerializer {
                                     }
                                 }
                             }
-						}
-						// If the object is a list of Graph objects, iterate through elements
-						else if (fieldObject instanceof List) {
-							final JsonElement collectionJson = rawJson.get(field.getName());
-							final List<?> fieldObjectList = (List<?>) fieldObject;
-							if (collectionJson != null && collectionJson.isJsonArray()) {
-								final JsonArray rawJsonArray = (JsonArray) collectionJson;
-								final int fieldObjectListSize = fieldObjectList.size();
-								final int rawJsonArraySize = rawJsonArray.size();
-								for (int i = 0; i < fieldObjectListSize && i < rawJsonArraySize; i++) {
-									final Object element = fieldObjectList.get(i);
-									if (element instanceof IJsonBackedObject) {
-										final JsonElement elementRawJson = rawJsonArray.get(i);
-										if(elementRawJson != null) {
-											setChildAdditionalData((IJsonBackedObject) element, elementRawJson.getAsJsonObject());
-										}
-									}
-								}
-								if (rawJsonArraySize != fieldObjectListSize)
-									logger.logDebug("rawJsonArray has a size of " + rawJsonArraySize + " and fieldObjectList of " + fieldObjectListSize);
-							}
-						}
-						// If the object is a valid Graph object, set its additional data
-						else if (fieldObject instanceof IJsonBackedObject) {
-							final IJsonBackedObject serializedChild = (IJsonBackedObject) fieldObject;
-							final AdditionalDataManager childAdditionalDataManager = serializedChild.additionalDataManager();
-							final JsonElement fieldElement = rawJson.get(field.getName());
-							if(fieldElement != null && fieldElement.isJsonObject()) {
-								childAdditionalDataManager.setAdditionalData(fieldElement.getAsJsonObject());
-								setChildAdditionalData((IJsonBackedObject) fieldObject,fieldElement.getAsJsonObject());
-							}
-						}
-					}
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					//Not throwing the IllegalArgumentException as the Serialized Object would still be usable even if the additional data is not set.
-					logger.logError("Unable to set child fields of " + serializedObject.getClass().getSimpleName(), e);
-					logger.logDebug(rawJson.getAsString());
-				}
-			}
-		}
-	}
+                        }
+                        // If the object is a list of Graph objects, iterate through elements
+                        else if (fieldObject instanceof List) {
+                            final JsonElement collectionJson = rawJson.get(field.getName());
+                            final List<?> fieldObjectList = (List<?>) fieldObject;
+                            if (collectionJson != null && collectionJson.isJsonArray()) {
+                                final JsonArray rawJsonArray = (JsonArray) collectionJson;
+                                final int fieldObjectListSize = fieldObjectList.size();
+                                final int rawJsonArraySize = rawJsonArray.size();
+                                for (int i = 0; i < fieldObjectListSize && i < rawJsonArraySize; i++) {
+                                    final Object element = fieldObjectList.get(i);
+                                    if (element instanceof IJsonBackedObject) {
+                                        final JsonElement elementRawJson = rawJsonArray.get(i);
+                                        if(elementRawJson != null) {
+                                            setChildAdditionalData((IJsonBackedObject) element, elementRawJson.getAsJsonObject());
+                                        }
+                                    }
+                                }
+                                if (rawJsonArraySize != fieldObjectListSize)
+                                    logger.logDebug("rawJsonArray has a size of " + rawJsonArraySize + " and fieldObjectList of " + fieldObjectListSize);
+                            }
+                        }
+                        // If the object is a valid Graph object, set its additional data
+                        else if (fieldObject instanceof IJsonBackedObject) {
+                            final IJsonBackedObject serializedChild = (IJsonBackedObject) fieldObject;
+                            final AdditionalDataManager childAdditionalDataManager = serializedChild.additionalDataManager();
+                            final JsonElement fieldElement = rawJson.get(field.getName());
+                            if(fieldElement != null && fieldElement.isJsonObject()) {
+                                childAdditionalDataManager.setAdditionalData(fieldElement.getAsJsonObject());
+                                setChildAdditionalData((IJsonBackedObject) fieldObject,fieldElement.getAsJsonObject());
+                            }
+                        }
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    //Not throwing the IllegalArgumentException as the Serialized Object would still be usable even if the additional data is not set.
+                    logger.logError("Unable to set child fields of " + serializedObject.getClass().getSimpleName(), e);
+                    logger.logDebug(rawJson.getAsString());
+                }
+            }
+        }
+    }
 
-	/**
-	 * Serializes an object into a string
-	 *
-	 * @param serializableObject the object to convert into a string
-	 * @param <T>				the type of the item to be serialized
-	 * @return 					 the string representation of that item
-	 */
-	@Override
-	@Nullable
-	public <T> String serializeObject(@Nonnull final T serializableObject) {
+    /**
+     * Serializes an object into a string
+     *
+     * @param serializableObject the object to convert into a string
+     * @param <T>                the type of the item to be serialized
+     * @return                      the string representation of that item
+     */
+    @Override
+    @Nullable
+    public <T> String serializeObject(@Nonnull final T serializableObject) {
         Objects.requireNonNull(serializableObject, "parameter serializableObject cannot be null");
         logger.logDebug("Serializing type " + serializableObject.getClass().getSimpleName());
-		final JsonElement outJsonTree = gson.toJsonTree(serializableObject);
-		if(outJsonTree != null) {
+        final JsonElement outJsonTree = gson.toJsonTree(serializableObject);
+        if(outJsonTree != null) {
             getChildAdditionalData(serializableObject, outJsonTree);
-			return outJsonTree.toString();
-		}
+            return outJsonTree.toString();
+        }
         return "";
-	}
-	/**
-	 * Recursively populates additional data for each child object
-	 *
-	 * @param serializableObject the child to get additional data for
-	 * @param outJson			the serialized output JSON to add to
-	 */
-	@SuppressWarnings("unchecked")
+    }
+    /**
+     * Recursively populates additional data for each child object
+     *
+     * @param serializableObject the child to get additional data for
+     * @param outJson            the serialized output JSON to add to
+     */
+    @SuppressWarnings("unchecked")
     private void getChildAdditionalData(final Object serializableObject, final JsonElement outJson) {
         if(outJson == null || serializableObject == null || !outJson.isJsonObject())
             return;
@@ -288,43 +288,43 @@ public class DefaultSerializer implements ISerializer {
         }
     }
 
-	/**
-	 * Add each non-transient additional data property to the given JSON node
-	 *
-	 * @param item the object containing additional data
-	 * @param itemJsonObject	   the JSON node to add the additional data properties to
-	 */
-	private void addAdditionalDataFromJsonObjectToJson (final Object item, final JsonObject itemJsonObject) {
-		if (item instanceof IJsonBackedObject && itemJsonObject != null) {
-			final IJsonBackedObject serializableItem = (IJsonBackedObject) item;
-			final AdditionalDataManager itemAdditionalData = serializableItem.additionalDataManager();
-			addAdditionalDataFromManagerToJson(itemAdditionalData, itemJsonObject);
-		}
-	}
+    /**
+     * Add each non-transient additional data property to the given JSON node
+     *
+     * @param item the object containing additional data
+     * @param itemJsonObject       the JSON node to add the additional data properties to
+     */
+    private void addAdditionalDataFromJsonObjectToJson (final Object item, final JsonObject itemJsonObject) {
+        if (item instanceof IJsonBackedObject && itemJsonObject != null) {
+            final IJsonBackedObject serializableItem = (IJsonBackedObject) item;
+            final AdditionalDataManager itemAdditionalData = serializableItem.additionalDataManager();
+            addAdditionalDataFromManagerToJson(itemAdditionalData, itemJsonObject);
+        }
+    }
 
-	/**
-	 * Add each non-transient additional data property to the given JSON node
-	 *
-	 * @param additionalDataManager the additional data bag to iterate through
-	 * @param jsonNode			  the JSON node to add the additional data properties to
-	 */
-	private void addAdditionalDataFromManagerToJson(AdditionalDataManager additionalDataManager, JsonObject jsonNode) {
-		for (Map.Entry<String, JsonElement> entry : additionalDataManager.entrySet()) {
-			if(!entry.getKey().equals(GRAPH_RESPONSE_HEADERS_KEY)) {
-				jsonNode.add(entry.getKey(), entry.getValue());
-			}
-		}
-	}
+    /**
+     * Add each non-transient additional data property to the given JSON node
+     *
+     * @param additionalDataManager the additional data bag to iterate through
+     * @param jsonNode              the JSON node to add the additional data properties to
+     */
+    private void addAdditionalDataFromManagerToJson(AdditionalDataManager additionalDataManager, JsonObject jsonNode) {
+        for (Map.Entry<String, JsonElement> entry : additionalDataManager.entrySet()) {
+            if(!entry.getKey().equals(GRAPH_RESPONSE_HEADERS_KEY)) {
+                jsonNode.add(entry.getKey(), entry.getValue());
+            }
+        }
+    }
 
 
-	/**
-	 * Gets the logger in use
-	 *
-	 * @return a logger
-	 */
-	@Nullable
+    /**
+     * Gets the logger in use
+     *
+     * @return a logger
+     */
+    @Nullable
     @SuppressFBWarnings
-	public ILogger getLogger() {
-		return logger;
-	}
+    public ILogger getLogger() {
+        return logger;
+    }
 }

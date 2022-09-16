@@ -46,8 +46,8 @@ public class DefaultLogger implements ILogger {
      * @param level the level to log at
      */
     public void setLoggingLevel(@Nonnull final LoggerLevel level) {
-    	LOGGER.info("Setting logging level to " + level);
-    	this.level = Objects.requireNonNull(level, "parameter level cannot be null");
+        LOGGER.info("Setting logging level to " + level);
+        this.level = Objects.requireNonNull(level, "parameter level cannot be null");
     }
 
     /**
@@ -79,7 +79,7 @@ public class DefaultLogger implements ILogger {
             sb.append(Thread.currentThread().getStackTrace()[callerStackDepth].getLineNumber());
             return sb.toString();
         } catch (final Exception ex) {
-        	LOGGER.warning(ex.getMessage());
+            LOGGER.warning(ex.getMessage());
         }
         return null;
     }
@@ -92,9 +92,9 @@ public class DefaultLogger implements ILogger {
     @Override
     public void logDebug(@Nonnull final String message) {
         Objects.requireNonNull(message, "parameter message cannot be null");
-    	if(this.level == LoggerLevel.DEBUG)
+        if(this.level == LoggerLevel.DEBUG)
                 for (final String line : message.split("\n")) {
-                	LOGGER.info(line);
+                    LOGGER.info(line);
                 }
 
     }
@@ -114,7 +114,7 @@ public class DefaultLogger implements ILogger {
             case ERROR:
             default:
                 for (final String line : message.split("\n")) {
-                	LOGGER.severe(getTag() + line);
+                    LOGGER.severe(getTag() + line);
                 }
                 LOGGER.severe("Throwable detail: " + throwable);
         }

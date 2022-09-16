@@ -105,16 +105,16 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      * @return a future with the result
      */
     @Nonnull
-	public java.util.concurrent.CompletableFuture<T> deleteAsync() {
-		return sendAsync(HttpMethod.DELETE, null);
-	}
+    public java.util.concurrent.CompletableFuture<T> deleteAsync() {
+        return sendAsync(HttpMethod.DELETE, null);
+    }
 
     /**
      * Deletes the entity
      */
-	public void delete() throws ClientException {
-		send(HttpMethod.DELETE, null);
-	}
+    public void delete() throws ClientException {
+        send(HttpMethod.DELETE, null);
+    }
 
     /**
      * Updates the entity and invokes the callback
@@ -123,20 +123,20 @@ public abstract class BaseWithReferenceRequest<T> extends BaseRequest<T> {
      * @return a future with the result
      */
     @Nonnull
-	public java.util.concurrent.CompletableFuture<T> patchAsync(@Nonnull final T sourceObject) {
+    public java.util.concurrent.CompletableFuture<T> patchAsync(@Nonnull final T sourceObject) {
         Objects.requireNonNull(sourceObject, "parameter sourceObject cannot be null");
-		return sendAsync(HttpMethod.PATCH, sourceObject);
-	}
+        return sendAsync(HttpMethod.PATCH, sourceObject);
+    }
 
     /**
      * Updates the entity
      *
      * @param sourceObject object to update
-     * @return the udpated entity
+     * @return the updated entity
      */
     @Nullable
-	public T patch(@Nonnull final T sourceObject) throws ClientException {
+    public T patch(@Nonnull final T sourceObject) throws ClientException {
         Objects.requireNonNull(sourceObject, "parameter sourceObject cannot be null");
-		return send(HttpMethod.PATCH, sourceObject);
-	}
+        return send(HttpMethod.PATCH, sourceObject);
+    }
 }
