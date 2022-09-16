@@ -6,10 +6,12 @@ on:
     branches:
       - dev
       - master
+      - v3/longTermBranch
   pull_request:
     branches:
       - dev
       - master
+      - v3/longTermBranch
 
 jobs:
   lint-api-level:
