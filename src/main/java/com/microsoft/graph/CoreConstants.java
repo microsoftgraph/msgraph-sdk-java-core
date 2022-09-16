@@ -1,5 +1,7 @@
 package com.microsoft.graph;
 
+import java.util.Locale;
+
 /**
  * Core Constants for use in other classes.
  */
