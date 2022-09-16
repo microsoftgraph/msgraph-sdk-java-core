@@ -64,7 +64,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
     /**
      * The request stats header value format string
      */
-    public static final String REQUEST_STATS_HEADER_VALUE_FORMAT_STRING = "graph-java/v%s";
+    public static final String REQUEST_STATS_HEADER_VALUE_FORMAT_STRING = "graph-java/v";
 
     /**
      * The HTTP method for this request
@@ -168,7 +168,7 @@ public abstract class BaseRequest<T> implements IHttpRequest {
         final String sdkVersion = client == null ? null : client.getServiceSDKVersion();
         if(sdkVersion != null) {
             final HeaderOption requestStatsHeader = new HeaderOption(REQUEST_STATS_HEADER_NAME,
-                    String.format(REQUEST_STATS_HEADER_VALUE_FORMAT_STRING, sdkVersion));
+                    REQUEST_STATS_HEADER_VALUE_FORMAT_STRING + sdkVersion);
             headersOptions.add(requestStatsHeader);
         }
     }

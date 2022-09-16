@@ -146,11 +146,7 @@ public final class FallbackTypeAdapterFactory implements TypeAdapterFactory {
                 String value = reader.nextString();
                 T incoming = enumValues.get(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, value));
                 if (incoming == null) {
-                    logger.logDebug(
-                            String.format(
-                                    "The following value %s could not be recognized as a member of the enum",
-                                    value)
-                    );
+                    logger.logDebug("The following value "+value+" could not be recognized as a member of the enum");
                     return enumValues.get(NO_KNOWN_VALUE);
                 }
                 return incoming;
