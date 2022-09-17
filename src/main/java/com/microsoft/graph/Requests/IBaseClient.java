@@ -3,6 +3,8 @@ package com.microsoft.graph.Requests;
 //import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 
+import javax.annotation.Nonnull;
+
 /**
  * The default client interface
  */
@@ -13,13 +15,14 @@ public interface IBaseClient {
      *
      * @param requestAdapter specifies the desired RequestAdapter
      */
-    public void setRequestAdapter(RequestAdapter requestAdapter);
+    public void setRequestAdapter(@Nonnull RequestAdapter requestAdapter);
 
     /**
      * Returns the current RequestAdapter for sending requests
      *
      * @return the RequestAdapter currently in use
      */
+    @Nonnull
     public RequestAdapter getRequestAdapter();
 
     /**

@@ -12,12 +12,11 @@ public class FeatureTracker {
     private int featureUsage = FeatureFlag.NONE_FLAG;
     /**
      * Sets a numeric representation of the SDK feature usage
-     * @param flags a numeric representation of the SDK feature usage
+     * @param flag a numeric representation of the SDK feature usage
      */
-    public void setFeatureUsage(int... flags) {
-        for(int flag : flags){
-            featureUsage = featureUsage | flag;
-        }
+    public void setFeatureUsage(@Nonnull int flag) {
+
+        featureUsage = featureUsage | flag;
     }
     /**
      * Gets a numeric representation of the SDK feature usage

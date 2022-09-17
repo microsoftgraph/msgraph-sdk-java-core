@@ -19,6 +19,7 @@ public class GraphClientFactory {
      *
      * @return an OkHttpClient Builder instance.
      */
+    @Nonnull
     public static OkHttpClient.Builder create() {
         return create(new GraphClientOption());
     }
@@ -28,6 +29,7 @@ public class GraphClientFactory {
      * @param interceptors desired interceptors for use in requests.
      * @return an OkHttpClient Builder instance.
      */
+    @Nonnull
     public static OkHttpClient.Builder create(@Nonnull Interceptor... interceptors) {
         return create(new GraphClientOption(), interceptors);
     }
@@ -38,6 +40,7 @@ public class GraphClientFactory {
      * @param graphClientOption the GraphClientOption for use in requests.
      * @return an OkHttpClient Builder instance.
      */
+    @Nonnull
     public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull Interceptor... interceptors) {
         final OkHttpClient.Builder builder = create(graphClientOption);
         //Skip adding interceptor if that class of interceptor already exist.
@@ -59,6 +62,7 @@ public class GraphClientFactory {
      * @param graphClientOption the GraphClientOption for use in requests.
      * @return an OkHttpClient Builder instance.
      */
+    @Nonnull
     public static OkHttpClient.Builder create(@Nullable GraphClientOption graphClientOption) {
         GraphClientOption options = graphClientOption != null ? graphClientOption : new GraphClientOption();
         return KiotaClientFactory.Create(createDefaultGraphInterceptors(options));
@@ -69,6 +73,7 @@ public class GraphClientFactory {
      * @param graphClientOption the GraphClientOption used to create the GraphTelemetryHandler with.
      * @return an array of interceptors.
      */
+    @Nonnull
     public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption) {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
@@ -80,6 +85,7 @@ public class GraphClientFactory {
     }
     //These are the default features used by the Graph Client
     private static void addDefaultFeatureUsages(GraphClientOption graphClientOption) {
-        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG, FeatureFlag.REDIRECT_HANDLER_FLAG);
+        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
+        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
     }
 }
