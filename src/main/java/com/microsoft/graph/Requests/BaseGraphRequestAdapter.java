@@ -146,9 +146,9 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {
         String cloud = nationalCloud == null ? cloudList.get(Clouds.GLOBAL_CLOUD) : cloudList.get(nationalCloud);
         if(cloud == null) {
-            throw new IllegalArgumentException(String.format("%s is an unexpected national cloud.", nationalCloud));
+            throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }
-        String baseAddress = version == null ? String.format("%s/%s/",cloud,"v1.0") : String.format("%s/%s/",cloud,version);
+        String baseAddress = version == null ? (cloud+"/v1.0/") : (cloud+"/"+version+"/");
         return baseAddress;
     }
 }
