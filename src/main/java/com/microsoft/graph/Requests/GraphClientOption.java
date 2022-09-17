@@ -97,6 +97,6 @@ public class GraphClientOption implements RequestOption {
     }
 
     private static String paramErrorMessage(String paramName){
-        return String.format("Parameter %s cannot be null.", paramName);
+        return ("Parameter "+paramName+" cannot be null.");
     }
 }
