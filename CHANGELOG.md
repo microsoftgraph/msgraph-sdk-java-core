@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Uses Kiota-Java[https://github.com/microsoft/kiota-java] libraries as underlying framework. 
+- Uses [Kiota-Java](https://github.com/microsoft/kiota-java) libraries as underlying framework. 
 - BaseGraphRequestAdapter for use with v1 and beta service libraries. 
 
 ### Changed
