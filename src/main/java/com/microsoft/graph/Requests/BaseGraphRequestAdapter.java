@@ -5,6 +5,7 @@ import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;
 import com.microsoft.kiota.serialization.SerializationWriterFactory;
 
+import kotlin.Suppress;
 import okhttp3.OkHttpClient;
 
 
@@ -115,6 +116,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param cloud the National Cloud for use in requests.
      * @param version the Graph version for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nullable Clouds cloud, @Nullable String version) {
         this(authenticationProvider, determineBaseAddress(cloud, version));
     }
