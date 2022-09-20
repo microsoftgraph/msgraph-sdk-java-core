@@ -156,7 +156,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
         if(cloud == null) {
             throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }
-        String baseAddress = version == null ? (cloud+"/v1.0/") : (cloud+"/"+version+"/");
+        return version == null ? (cloud+"/v1.0/") : (cloud+"/"+version+"/");
         return baseAddress;
     }
 }
