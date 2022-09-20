@@ -157,6 +157,5 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
             throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }
         return version == null ? (cloud+"/v1.0/") : (cloud+"/"+version+"/");
-        return baseAddress;
     }
 }
