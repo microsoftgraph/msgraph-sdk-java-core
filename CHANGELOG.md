@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.1] - 2022-09-20
+
+### Added
+
+- Uses Kiota-Java libraries as underlying framework. 
+- BaseGraphRequestAdapter for use with v1 and beta service libraries. 
+
+### Changed
+
+- Removes Request Builders. 
+- GraphClientFactory to handle OkHttp client creation. 
+- BaseClient refactored to use Kiota framework. 
+
+## [2.0.12] - 2022-04-22
+
+### Added
+
+- Add ability to add custom hosts to BaseAuthenticationProvider #484
+
 ## [2.0.13] - 2022-05-26
 
 ### Added
