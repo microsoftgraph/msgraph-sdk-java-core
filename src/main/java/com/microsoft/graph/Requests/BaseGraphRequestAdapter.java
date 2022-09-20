@@ -59,6 +59,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param graphClientOption the GraphClientOption for use in requests.
      * @param baseUrl the base URL for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable final GraphClientOption graphClientOption, @Nullable String baseUrl) {
         super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOption).build());
         if (baseUrl != null && !baseUrl.isEmpty()) {
@@ -83,6 +84,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param authenticationProvider the AuthenticationProvider for use in requests.
      * @param baseUrl the base URL for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl) {
         this(authenticationProvider, baseUrl, new GraphClientOption());
     }
@@ -94,6 +96,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param baseUrl the base URL for use in requests.
      * @param client the OkHttpClient for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl, @Nonnull OkHttpClient client) {
         this(authenticationProvider, null, null, client, null, baseUrl);
     }
@@ -105,6 +108,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param baseUrl the base URL for use in requests.
      * @param graphClientOption the GraphClientOption for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nonnull String baseUrl, @Nonnull GraphClientOption graphClientOption) {
         this(authenticationProvider, null, null, null, graphClientOption, baseUrl);
     }
@@ -129,6 +133,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param version the Graph version for use in requests.
      * @param client the OkHttpClient for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nullable Clouds cloud, @Nullable String version, @Nonnull OkHttpClient client) {
         this(authenticationProvider, determineBaseAddress(cloud, version), client);
     }
@@ -141,6 +146,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * @param version the Graph version for use in requests.
      * @param graphClientOption the GraphClientOption for use in requests.
      */
+    @Suppress(names = "LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull AuthenticationProvider authenticationProvider, @Nullable Clouds cloud, @Nullable String version, @Nonnull GraphClientOption graphClientOption) {
         this(authenticationProvider, determineBaseAddress(cloud, version), graphClientOption);
     }
