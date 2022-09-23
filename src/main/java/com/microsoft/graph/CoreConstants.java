@@ -1,5 +1,7 @@
 package com.microsoft.graph;
 
+import java.util.Locale;
+
 /**
  * Core Constants for use in other classes.
  */
@@ -28,7 +30,7 @@ public final class CoreConstants {
         /** Java version prefix header constant. */
         public static final String JAVA_VERSION_PREFIX = "java";
         /** Version number header. */
-        public static final String VERSION = String.format("%d.%d.%d", VersionValues.MAJOR, VersionValues.MINOR, VersionValues.PATCH);
+        public static final String VERSION = String.format(Locale.US, "%d.%d.%d", VersionValues.MAJOR, VersionValues.MINOR, VersionValues.PATCH);
         /** Client Request ID header constant. */
         public static final String CLIENT_REQUEST_ID = "client-request-id";
         /** Feature flag header constant. */

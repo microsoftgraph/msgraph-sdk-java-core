@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.kiota.RequestOption;
@@ -52,6 +53,7 @@ public class GraphClientOption implements RequestOption {
      * If null return null;
      * @return client library version.
      */
+    @Nullable
     public String getClientLibraryVersion() {
         return this.clientLibraryVersion == null ? null : this.clientLibraryVersion;
     }
@@ -67,6 +69,7 @@ public class GraphClientOption implements RequestOption {
      * If null return the value in CoreConstants.
      * @return core library version.
      */
+    @Nonnull
     public String getCoreLibraryVersion() {
         return this.coreLibraryVersion == null ? CoreConstants.Headers.VERSION : this.coreLibraryVersion;
     }
@@ -82,16 +85,18 @@ public class GraphClientOption implements RequestOption {
      * return 'v1' if not specified.
      * @return the version of the Api endpoint we are targeting.
      */
+    @Nonnull
     public String getGraphServiceTargetVersion() {
         return this.graphServiceTargetVersion == null ? "v1.0" : this.graphServiceTargetVersion;
     }
 
     @Override
+    @Nonnull
     public <T extends RequestOption> Class<T> getType() {
         return (Class<T>) GraphClientOption.class;
     }
 
     private static String paramErrorMessage(String paramName){
-        return String.format("Parameter %s cannot be null.", paramName);
+        return ("Parameter "+paramName+" cannot be null.");
     }
 }
