@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 18
           distribution: 'adopt'
           cache: gradle   
       - name: Cache SonarCloud packages
