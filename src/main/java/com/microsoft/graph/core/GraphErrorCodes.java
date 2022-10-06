@@ -42,6 +42,8 @@ public enum GraphErrorCodes {
     AUTHENTICATION_FAILURE,
     /** An unspecified error has occurred. */
     GENERAL_EXCEPTION,
+    /** The resource could not be found, specific to the Exchange workload. */
+    ERROR_ITEM_NOT_FOUND,
     /**	The specified byte range is invalid or unavailable. */
     INVALID_RANGE,
     /** The request is malformed or incorrect. */
