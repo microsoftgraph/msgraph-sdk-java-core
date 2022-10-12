@@ -16,9 +16,9 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:4.10.0'
     api 'com.azure:azure-core:1.32.0'
 
-    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.0.7-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.0.8-SNAPSHOT'
     api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:0.0.4-SNAPSHOT'
-    api 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.0.7-SNAPSHOT'
+    api 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.0.8-SNAPSHOT'
     api 'com.microsoft.kiota:microsoft-kiota-serialization-json:0.0.4-SNAPSHOT'
     api 'com.microsoft.kiota:microsoft-kiota-serialization-text:0.0.4-SNAPSHOT'
 }
