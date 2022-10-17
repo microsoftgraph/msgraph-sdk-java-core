@@ -15,21 +15,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumps Kiota-Java abstractions, authentication, http, and serialization components. 
-
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components.
 
 ## [3.0.1] - 2022-09-20
 
 ### Added
 
-- Uses [Kiota-Java](https://github.com/microsoft/kiota-java) libraries as underlying framework. 
-- BaseGraphRequestAdapter for use with v1 and beta service libraries. 
+- Uses [Kiota-Java](https://github.com/microsoft/kiota-java) libraries as underlying framework.
+- BaseGraphRequestAdapter for use with v1 and beta service libraries.
 
 ### Changed
 
 - Removes Request Builders. 
-- GraphClientFactory to handle OkHttp client creation. 
-- BaseClient refactored to use Kiota framework. 
+- GraphClientFactory to handle OkHttp client creation.
+- BaseClient refactored to use Kiota framework.
+
+## [2.0.14] - 2022-10-06
+
+### Changed
+
+- Fixes an issue where the error code 'ErrorItemNotFound' is not accounted for. #606
+- Bumps azure-core to 1.32.0 #603, #604, #605
+- Bumps azure-identity to 1.6.0 #633, #635
 
 ## [2.0.13] - 2022-05-26
 
