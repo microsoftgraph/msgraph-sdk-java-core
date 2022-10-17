@@ -8,9 +8,9 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.10.1"
-        classpath "com.android.tools.build:gradle:7.2.1"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.42.0"
+        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.11.2"
+        classpath "com.android.tools.build:gradle:7.3.1"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.43.0"
     }
 }
 
@@ -23,13 +23,13 @@ apply plugin: "com.android.library"
 apply plugin: "com.github.ben-manes.versions"
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         versionCode 1
         versionName "1.0"
         minSdkVersion 26
-        targetSdkVersion 32
+        targetSdkVersion 33
     }
 
     buildTypes {

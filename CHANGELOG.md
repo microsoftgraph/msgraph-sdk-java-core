@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.14] - 2022-10-06
+
+### Added
+
+### Changed
+
+- Fixes an issue where the error code 'ErrorItemNotFound' is not accounted for. #606
+- Bumps azure-core to 1.32.0 #603, #604, #605
+- Bumps azure-identity to 1.6.0 #633, #635
+
 ## [2.0.13] - 2022-05-26
 
 ### Added

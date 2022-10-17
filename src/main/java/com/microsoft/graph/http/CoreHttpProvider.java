@@ -88,70 +88,70 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
      */
     private static final String BINARY_CONTENT_TYPE = "application/octet-stream";
     /**
-	 * The serializer
-	 */
-	private final ISerializer serializer;
+     * The serializer
+     */
+    private final ISerializer serializer;
 
-	/**
-	 * The logger
-	 */
-	private final ILogger logger;
+    /**
+     * The logger
+     */
+    private final ILogger logger;
 
-	/**
-	 * The OkHttpClient that handles all requests
-	 */
+    /**
+     * The OkHttpClient that handles all requests
+     */
     private OkHttpClient corehttpClient;
 
-	/**
-	 * Creates the CoreHttpProvider
-	 *
-	 * @param serializer             the serializer
-	 * @param logger                 the logger for diagnostic information
-	 * @param httpClient             the client to send http requests with
-	 */
-	@SuppressFBWarnings
-	public CoreHttpProvider(@Nonnull final ISerializer serializer,
-			@Nonnull final ILogger logger,
-			@Nonnull final OkHttpClient httpClient) {
+    /**
+     * Creates the CoreHttpProvider
+     *
+     * @param serializer             the serializer
+     * @param logger                 the logger for diagnostic information
+     * @param httpClient             the client to send http requests with
+     */
+    @SuppressFBWarnings
+    public CoreHttpProvider(@Nonnull final ISerializer serializer,
+            @Nonnull final ILogger logger,
+            @Nonnull final OkHttpClient httpClient) {
         Objects.requireNonNull(logger, "parameter logger cannot be null");
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
         Objects.requireNonNull(httpClient, "parameter httpClient cannot be null");
         this.serializer = serializer;
         this.logger = logger;
         this.corehttpClient = httpClient;
-	}
+    }
 
-	/**
-	 * Gets the serializer for this HTTP provider
-	 *
-	 * @return the serializer for this provider
-	 */
-	@Override
-	@Nullable
-	public ISerializer getSerializer() {
-		return serializer;
-	}
+    /**
+     * Gets the serializer for this HTTP provider
+     *
+     * @return the serializer for this provider
+     */
+    @Override
+    @Nullable
+    public ISerializer getSerializer() {
+        return serializer;
+    }
 
-	/**
-	 * Sends the HTTP request asynchronously
-	 *
-	 * @param request      the request description
-	 * @param serializable the object to send to the service in the body of the request
-	 * @param <Result>     the type of the response object
-	 * @param <Body>       the type of the object to send to the service in the body of the request
-	 * @return a future with the result
-	 */
-	@Override
-	@Nonnull
-	public <Result, Body> java.util.concurrent.CompletableFuture<Result> sendAsync(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable) {
+    /**
+     * Sends the HTTP request asynchronously
+     *
+     * @param request      the request description
+     * @param serializable the object to send to the service in the body of the request
+     * @param <Result>     the type of the response object
+     * @param <Body>       the type of the object to send to the service in the body of the request
+     * @return a future with the result
+     */
+    @Override
+    @Nonnull
+    public <Result, Body> java.util.concurrent.CompletableFuture<Result> sendAsync(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable) {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
-		return sendAsync(request,
-							resultClass,
-							serializable,
-							null);
+        return sendAsync(request,
+                            resultClass,
+                            serializable,
+                            null);
     }
     /**
      * Sends the HTTP request
@@ -180,203 +180,203 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                 handler);
     }
 
-	/**
-	 * Sends the HTTP request
-	 *
-	 * @param request      the request description
-	 * @param resultClass  the class of the response from the service
-	 * @param serializable the object to send to the service in the body of the request
-	 * @param <Result>     the type of the response object
-	 * @param <Body>       the type of the object to send to the service in the body of the request
-	 * @return             the result from the request
-	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
-	 */
-	@Override
-	@Nullable
-	public <Result, Body> Result send(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable)
-					throws ClientException {
+    /**
+     * Sends the HTTP request
+     *
+     * @param request      the request description
+     * @param resultClass  the class of the response from the service
+     * @param serializable the object to send to the service in the body of the request
+     * @param <Result>     the type of the response object
+     * @param <Body>       the type of the object to send to the service in the body of the request
+     * @return             the result from the request
+     * @throws ClientException an exception occurs if the request was unable to complete for any reason
+     */
+    @Override
+    @Nullable
+    public <Result, Body> Result send(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable)
+                    throws ClientException {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
-		return send(request, resultClass, serializable, null);
-	}
+        return send(request, resultClass, serializable, null);
+    }
 
-	/**
-	 * Sends the HTTP request
-	 *
-	 * @param request           the request description
-	 * @param resultClass       the class of the response from the service
-	 * @param serializable      the object to send to the service in the body of the request
-	 * @param handler           the handler for stateful response
-	 * @param <Result>          the type of the response object
-	 * @param <Body>            the type of the object to send to the service in the body of the request
-	 * @param <DeserializeType> the response handler for stateful response
-	 * @return                  the result from the request
-	 * @throws ClientException this exception occurs if the request was unable to complete for any reason
-	 */
+    /**
+     * Sends the HTTP request
+     *
+     * @param request           the request description
+     * @param resultClass       the class of the response from the service
+     * @param serializable      the object to send to the service in the body of the request
+     * @param handler           the handler for stateful response
+     * @param <Result>          the type of the response object
+     * @param <Body>            the type of the object to send to the service in the body of the request
+     * @param <DeserializeType> the response handler for stateful response
+     * @return                  the result from the request
+     * @throws ClientException this exception occurs if the request was unable to complete for any reason
+     */
     @Nullable
-	public <Result, Body, DeserializeType> Result send(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable,
-			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler) throws ClientException {
+    public <Result, Body, DeserializeType> Result send(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable,
+            @Nullable final IStatefulResponseHandler<Result, DeserializeType> handler) throws ClientException {
             Objects.requireNonNull(request, "parameter request cannot be null");
             Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
             return sendRequestInternal(request, resultClass, serializable, handler);
-	}
-	/**
-	 * Sends the HTTP request
-	 *
-	 * @param request           the request description
-	 * @param resultClass       the class of the response from the service
-	 * @param serializable      the object to send to the service in the body of the request
-	 * @param <Result>          the type of the response object
-	 * @param <Body>            the type of the object to send to the service in the body of the request
-	 * @return                  the result from the request
-	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
-	 */
-	@Nullable
-	public <Result, Body> Request getHttpRequest(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable) throws ClientException {
+    }
+    /**
+     * Sends the HTTP request
+     *
+     * @param request           the request description
+     * @param resultClass       the class of the response from the service
+     * @param serializable      the object to send to the service in the body of the request
+     * @param <Result>          the type of the response object
+     * @param <Body>            the type of the object to send to the service in the body of the request
+     * @return                  the result from the request
+     * @throws ClientException an exception occurs if the request was unable to complete for any reason
+     */
+    @Nullable
+    public <Result, Body> Request getHttpRequest(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable) throws ClientException {
         Objects.requireNonNull(request, "parameter request cannot be null");
         Objects.requireNonNull(resultClass, "parameter resultClass cannot be null");
-		final int defaultBufferSize = 4096;
+        final int defaultBufferSize = 4096;
 
-		final URL requestUrl = request.getRequestUrl();
-		logger.logDebug("Starting to send request, URL " + requestUrl.toString());
+        final URL requestUrl = request.getRequestUrl();
+        logger.logDebug("Starting to send request, URL " + requestUrl.toString());
 
-		// Request level middleware options
-		final RedirectOptions redirectOptions =
+        // Request level middleware options
+        final RedirectOptions redirectOptions =
             request.getMaxRedirects() == DEFAULT_MAX_REDIRECTS && request.getShouldRedirect().equals(DEFAULT_SHOULD_REDIRECT)
                 ? null
                 : new RedirectOptions(request.getMaxRedirects(), request.getShouldRedirect());
-		final RetryOptions retryOptions =
+        final RetryOptions retryOptions =
             request.getMaxRetries() == DEFAULT_MAX_RETRIES && request.getDelay() == DEFAULT_DELAY && request.getShouldRetry().equals(DEFAULT_SHOULD_RETRY)
                 ? null
                 : new RetryOptions(request.getShouldRetry(), request.getMaxRetries(), request.getDelay());
 
-		final Request coreHttpRequest = convertIHttpRequestToOkHttpRequest(request);
-		Request.Builder corehttpRequestBuilder = coreHttpRequest
-				.newBuilder();
-		if(redirectOptions != null) {
-			corehttpRequestBuilder = corehttpRequestBuilder.tag(RedirectOptions.class, redirectOptions);
-		}
-		if(retryOptions != null) {
-			corehttpRequestBuilder = corehttpRequestBuilder.tag(RetryOptions.class, retryOptions);
-		}
+        final Request coreHttpRequest = convertIHttpRequestToOkHttpRequest(request);
+        Request.Builder corehttpRequestBuilder = coreHttpRequest
+                .newBuilder();
+        if(redirectOptions != null) {
+            corehttpRequestBuilder = corehttpRequestBuilder.tag(RedirectOptions.class, redirectOptions);
+        }
+        if(retryOptions != null) {
+            corehttpRequestBuilder = corehttpRequestBuilder.tag(RetryOptions.class, retryOptions);
+        }
 
-		String contenttype = null;
+        String contenttype = null;
 
-		logger.logDebug("Request Method " + request.getHttpMethod().toString());
-		final List<HeaderOption> requestHeaders = request.getHeaders();
+        logger.logDebug("Request Method " + request.getHttpMethod().toString());
+        final List<HeaderOption> requestHeaders = request.getHeaders();
 
-		for(HeaderOption headerOption : requestHeaders) {
-			if(headerOption.getName().equalsIgnoreCase(CONTENT_TYPE_HEADER_NAME)) {
-				contenttype = headerOption.getValue().toString();
-				break;
-			}
-		}
+        for(HeaderOption headerOption : requestHeaders) {
+            if(headerOption.getName().equalsIgnoreCase(CONTENT_TYPE_HEADER_NAME)) {
+                contenttype = headerOption.getValue().toString();
+                break;
+            }
+        }
 
-		final byte[] bytesToWrite;
-		corehttpRequestBuilder.addHeader("Accept", "*/*");
-		if (serializable == null) {
-			// Send an empty body through with a POST request
-			// This ensures that the Content-Length header is properly set
-			if (request.getHttpMethod() == HttpMethod.POST) {
-				bytesToWrite = new byte[0];
-			} else {
-				bytesToWrite = null;
-			}
-		} else if (serializable instanceof byte[]) {
-			logger.logDebug("Sending byte[] as request body");
-			bytesToWrite = (byte[]) serializable;
+        final byte[] bytesToWrite;
+        corehttpRequestBuilder.addHeader("Accept", "*/*");
+        if (serializable == null) {
+            // Send an empty body through with a POST request
+            // This ensures that the Content-Length header is properly set
+            if (request.getHttpMethod() == HttpMethod.POST) {
+                bytesToWrite = new byte[0];
+            } else {
+                bytesToWrite = null;
+            }
+        } else if (serializable instanceof byte[]) {
+            logger.logDebug("Sending byte[] as request body");
+            bytesToWrite = (byte[]) serializable;
 
-			// If the user hasn't specified a Content-Type for the request
-			if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
-				corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, BINARY_CONTENT_TYPE);
-				contenttype = BINARY_CONTENT_TYPE;
-			}
-		} else {
-			logger.logDebug("Sending " + serializable.getClass().getName() + " as request body");
+            // If the user hasn't specified a Content-Type for the request
+            if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
+                corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, BINARY_CONTENT_TYPE);
+                contenttype = BINARY_CONTENT_TYPE;
+            }
+        } else {
+            logger.logDebug("Sending " + serializable.getClass().getName() + " as request body");
 
-			String serializeObject = null;
+            String serializeObject = null;
 
-			if ("text/plain".equals(contenttype) && serializable instanceof String) {
-				serializeObject = (String)serializable;
-			} else {
-				serializeObject = serializer.serializeObject(serializable);
-			}
+            if ("text/plain".equals(contenttype) && serializable instanceof String) {
+                serializeObject = (String)serializable;
+            } else {
+                serializeObject = serializer.serializeObject(serializable);
+            }
 
             if(serializeObject == null) {
                 throw new ClientException("Error during serialization of request body, the result was null", null);
             }
             bytesToWrite = serializeObject.getBytes(JSON_ENCODING);
 
-			// If the user hasn't specified a Content-Type for the request
-			if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
-				corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, JSON_CONTENT_TYPE);
-				contenttype = JSON_CONTENT_TYPE;
-			}
-		}
+            // If the user hasn't specified a Content-Type for the request
+            if (!hasHeader(requestHeaders, CONTENT_TYPE_HEADER_NAME)) {
+                corehttpRequestBuilder.addHeader(CONTENT_TYPE_HEADER_NAME, JSON_CONTENT_TYPE);
+                contenttype = JSON_CONTENT_TYPE;
+            }
+        }
 
-		RequestBody requestBody = null;
-		// Handle cases where we've got a body to process.
-		if (bytesToWrite != null) {
-			final String mediaContentType = contenttype;
-			requestBody = new RequestBody() {
-				@Override
-				public long contentLength() throws IOException {
-					return bytesToWrite.length;
-				}
-				@Override
-				public void writeTo(BufferedSink sink) throws IOException {
-					int writtenSoFar = 0;
-					try (final OutputStream out = sink.outputStream()) {
-						try (final BufferedOutputStream bos = new BufferedOutputStream(out)){
-							int toWrite;
-							do {
-								toWrite = Math.min(defaultBufferSize, bytesToWrite.length - writtenSoFar);
-								bos.write(bytesToWrite, writtenSoFar, toWrite);
-								writtenSoFar = writtenSoFar + toWrite;
-							} while (toWrite > 0);
-						}
-					}
-				}
+        RequestBody requestBody = null;
+        // Handle cases where we've got a body to process.
+        if (bytesToWrite != null) {
+            final String mediaContentType = contenttype;
+            requestBody = new RequestBody() {
+                @Override
+                public long contentLength() throws IOException {
+                    return bytesToWrite.length;
+                }
+                @Override
+                public void writeTo(BufferedSink sink) throws IOException {
+                    int writtenSoFar = 0;
+                    try (final OutputStream out = sink.outputStream()) {
+                        try (final BufferedOutputStream bos = new BufferedOutputStream(out)){
+                            int toWrite;
+                            do {
+                                toWrite = Math.min(defaultBufferSize, bytesToWrite.length - writtenSoFar);
+                                bos.write(bytesToWrite, writtenSoFar, toWrite);
+                                writtenSoFar = writtenSoFar + toWrite;
+                            } while (toWrite > 0);
+                        }
+                    }
+                }
 
-				@Override
-				public MediaType contentType() {
+                @Override
+                public MediaType contentType() {
                     if(mediaContentType == null || mediaContentType.isEmpty()) {
                         return null;
                     } else {
-					    return MediaType.parse(mediaContentType);
+                        return MediaType.parse(mediaContentType);
                     }
-				}
-			};
-		}
+                }
+            };
+        }
 
-		corehttpRequestBuilder.method(request.getHttpMethod().toString(), requestBody);
-		return corehttpRequestBuilder.build();
-	}
-	/**
-	 * Sends the HTTP request
-	 *
-	 * @param request           the request description
-	 * @param resultClass       the class of the response from the service
-	 * @param serializable      the object to send to the service in the body of the request
-	 * @param handler           the handler for stateful response
-	 * @param <Result>          the type of the response object
-	 * @param <Body>            the type of the object to send to the service in the body of the request
-	 * @param <DeserializeType> the response handler for stateful response
-	 * @return                  the result from the request
-	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
-	 */
-	@Nonnull
-	private <Result, Body, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendRequestAsyncInternal(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable,
-			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
-					throws ClientException {
+        corehttpRequestBuilder.method(request.getHttpMethod().toString(), requestBody);
+        return corehttpRequestBuilder.build();
+    }
+    /**
+     * Sends the HTTP request
+     *
+     * @param request           the request description
+     * @param resultClass       the class of the response from the service
+     * @param serializable      the object to send to the service in the body of the request
+     * @param handler           the handler for stateful response
+     * @param <Result>          the type of the response object
+     * @param <Body>            the type of the object to send to the service in the body of the request
+     * @param <DeserializeType> the response handler for stateful response
+     * @return                  the result from the request
+     * @throws ClientException an exception occurs if the request was unable to complete for any reason
+     */
+    @Nonnull
+    private <Result, Body, DeserializeType> java.util.concurrent.CompletableFuture<Result> sendRequestAsyncInternal(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable,
+            @Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
+                    throws ClientException {
             final Request coreHttpRequest = getHttpRequest(request, resultClass, serializable);
             final Call call = corehttpClient.newCall(coreHttpRequest);
             final CoreHttpCallbackFutureWrapper wrapper = new CoreHttpCallbackFutureWrapper(call);
@@ -384,24 +384,24 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
             return wrapper.future.thenApply(r -> processResponse(r, request, resultClass, serializable, handler));
     }
     /**
-	 * Sends the HTTP request
-	 *
-	 * @param request           the request description
-	 * @param resultClass       the class of the response from the service
-	 * @param serializable      the object to send to the service in the body of the request
-	 * @param handler           the handler for stateful response
-	 * @param <Result>          the type of the response object
-	 * @param <Body>            the type of the object to send to the service in the body of the request
-	 * @param <DeserializeType> the response handler for stateful response
-	 * @return                  the result from the request
-	 * @throws ClientException an exception occurs if the request was unable to complete for any reason
-	 */
-	@Nullable
-	private <Result, Body, DeserializeType> Result sendRequestInternal(@Nonnull final IHttpRequest request,
-			@Nonnull final Class<Result> resultClass,
-			@Nullable final Body serializable,
-			@Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
-					throws ClientException {
+     * Sends the HTTP request
+     *
+     * @param request           the request description
+     * @param resultClass       the class of the response from the service
+     * @param serializable      the object to send to the service in the body of the request
+     * @param handler           the handler for stateful response
+     * @param <Result>          the type of the response object
+     * @param <Body>            the type of the object to send to the service in the body of the request
+     * @param <DeserializeType> the response handler for stateful response
+     * @return                  the result from the request
+     * @throws ClientException an exception occurs if the request was unable to complete for any reason
+     */
+    @Nullable
+    private <Result, Body, DeserializeType> Result sendRequestInternal(@Nonnull final IHttpRequest request,
+            @Nonnull final Class<Result> resultClass,
+            @Nullable final Body serializable,
+            @Nullable final IStatefulResponseHandler<Result, DeserializeType> handler)
+                    throws ClientException {
             final Request coreHttpRequest = getHttpRequest(request, resultClass, serializable);
             try {
                 final Response response = corehttpClient.newCall(coreHttpRequest).execute();
@@ -498,14 +498,14 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
         }
     }
     /**
-	 * Handles the event of an error response
-	 *
-	 * @param request      the request that caused the failed response
-	 * @param serializable the body of the request
-	 * @param response     the original response object
-	 * @throws IOException an exception occurs if there were any problems interacting with the connection object
-	 */
-	private <Body> void handleErrorResponse(final IHttpRequest request,
+     * Handles the event of an error response
+     *
+     * @param request      the request that caused the failed response
+     * @param serializable the body of the request
+     * @param response     the original response object
+     * @throws IOException an exception occurs if there were any problems interacting with the connection object
+     */
+    private <Body> void handleErrorResponse(final IHttpRequest request,
                                     final Body serializable,
                                     final Response response)
                                             throws IOException {
@@ -513,43 +513,43 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
             response, logger);
     }
     /**
-	 * Handles the cause where the response is a binary stream
-	 *
-	 * @param in the input stream from the response
-	 * @return   the input stream to return to the caller
-	 */
-	private InputStream handleBinaryStream(final InputStream in) {
-		return in;
+     * Handles the cause where the response is a binary stream
+     *
+     * @param in the input stream from the response
+     * @return   the input stream to return to the caller
+     */
+    private InputStream handleBinaryStream(final InputStream in) {
+        return in;
     }
     /**
-	 * Handles the cause where the response is a JSON object
-	 *
-	 * @param in              the input stream from the response
-	 * @param responseHeaders the response header
-	 * @param clazz           the class of the response object
-	 * @param <Result>        the type of the response object
-	 * @return                the JSON object
-	 */
-	private <Result> Result handleJsonResponse(final InputStream in, Map<String, List<String>> responseHeaders, final Class<Result> clazz) {
-		if (clazz == null) {
-			return null;
-		}
+     * Handles the cause where the response is a JSON object
+     *
+     * @param in              the input stream from the response
+     * @param responseHeaders the response header
+     * @param clazz           the class of the response object
+     * @param <Result>        the type of the response object
+     * @return                the JSON object
+     */
+    private <Result> Result handleJsonResponse(final InputStream in, Map<String, List<String>> responseHeaders, final Class<Result> clazz) {
+        if (clazz == null) {
+            return null;
+        }
 
         return serializer.deserializeObject(in, clazz, responseHeaders);
     }
     /**
-	 * Handles the cause where the response is a Text object
-	 *
-	 * @param in              the input stream from the response
-	 * @param clazz           the class of the response object
-	 * @param <Result>        the type of the response object
-	 * @return                the Text object
-	 */
+     * Handles the cause where the response is a Text object
+     *
+     * @param in              the input stream from the response
+     * @param clazz           the class of the response object
+     * @param <Result>        the type of the response object
+     * @return                the Text object
+     */
     @SuppressWarnings("unchecked")
     private <Result> Result handleRawResponse(final InputStream in, final Class<Result> clazz) {
-		if (clazz == null) {
-			return null;
-		}
+        if (clazz == null) {
+            return null;
+        }
 
         final String rawText = CoreHttpProvider.streamToString(in);
         if(clazz == Long.class) {
@@ -563,13 +563,13 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
         }
     }
     /**
-	 * Handles the case where the response body is empty
-	 *
-	 * @param responseHeaders the response headers
-	 * @param clazz           the type of the response object
-	 * @return                the JSON object
-	 */
-	private <Result> Result handleEmptyResponse(Map<String, List<String>> responseHeaders, final Class<Result> clazz)
+     * Handles the case where the response body is empty
+     *
+     * @param responseHeaders the response headers
+     * @param clazz           the type of the response object
+     * @return                the JSON object
+     */
+    private <Result> Result handleEmptyResponse(Map<String, List<String>> responseHeaders, final Class<Result> clazz)
         throws UnsupportedEncodingException{
         //Create an empty object to attach the response headers to
         Result result = null;
@@ -581,63 +581,63 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
         return result;
     }
 
-	private Request convertIHttpRequestToOkHttpRequest(IHttpRequest request) {
-		if(request != null) {
-			Request.Builder requestBuilder = new Request.Builder();
-			requestBuilder.url(request.getRequestUrl());
-			for (final HeaderOption header : request.getHeaders()) {
-				requestBuilder.addHeader(header.getName(), header.getValue().toString());
-			}
-			return requestBuilder.build();
-		}
-		return null;
-	}
+    private Request convertIHttpRequestToOkHttpRequest(IHttpRequest request) {
+        if(request != null) {
+            Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.url(request.getRequestUrl());
+            for (final HeaderOption header : request.getHeaders()) {
+                requestBuilder.addHeader(header.getName(), header.getValue().toString());
+            }
+            return requestBuilder.build();
+        }
+        return null;
+    }
 
-	/**
-	 * Reads in a stream and converts it into a string
-	 *
-	 * @param input the response body stream
-	 * @return      the string result
-	 */
+    /**
+     * Reads in a stream and converts it into a string
+     *
+     * @param input the response body stream
+     * @return      the string result
+     */
     @Nullable
-	public static String streamToString(@Nonnull final InputStream input) {
+    public static String streamToString(@Nonnull final InputStream input) {
         Objects.requireNonNull(input, "parameter input cannot be null");
-		final String endOfFile = "\\A";
-		try (final Scanner scanner = new Scanner(input, JSON_ENCODING.name())) {
-			scanner.useDelimiter(endOfFile);
-			if (scanner.hasNext()) {
-				return scanner.next();
-			}
-			return "";
-		}
-	}
+        final String endOfFile = "\\A";
+        try (final Scanner scanner = new Scanner(input, JSON_ENCODING.name())) {
+            scanner.useDelimiter(endOfFile);
+            if (scanner.hasNext()) {
+                return scanner.next();
+            }
+            return "";
+        }
+    }
 
-	/**
-	 * Searches for the given header in a list of HeaderOptions
-	 *
-	 * @param headers the list of headers to search through
-	 * @param header  the header name to search for (case insensitive)
-	 * @return        true if the header has already been set
-	 */
-	@VisibleForTesting
-	static boolean hasHeader(List<HeaderOption> headers, String header) {
-		for (HeaderOption option : headers) {
-			if (option.getName().equalsIgnoreCase(header)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Searches for the given header in a list of HeaderOptions
+     *
+     * @param headers the list of headers to search through
+     * @param header  the header name to search for (case insensitive)
+     * @return        true if the header has already been set
+     */
+    @VisibleForTesting
+    static boolean hasHeader(List<HeaderOption> headers, String header) {
+        for (HeaderOption option : headers) {
+            if (option.getName().equalsIgnoreCase(header)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Gets the logger in use
-	 *
-	 * @return the logger
-	 */
-	@VisibleForTesting
-	@Nullable
+    /**
+     * Gets the logger in use
+     *
+     * @return the logger
+     */
+    @VisibleForTesting
+    @Nullable
     @SuppressFBWarnings
-	public ILogger getLogger() {
-		return logger;
+    public ILogger getLogger() {
+        return logger;
     }
 }

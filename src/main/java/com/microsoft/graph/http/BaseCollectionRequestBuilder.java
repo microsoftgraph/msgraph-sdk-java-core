@@ -20,10 +20,10 @@ import javax.annotation.Nonnull;
 public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
                                             T3 extends ICollectionResponse<T>,
                                             T4 extends BaseCollectionPage<T, ? extends BaseRequestBuilder<T>>,
-											T5 extends BaseCollectionRequest<T, T3, T4>> extends BaseRequestBuilder<T> {
-	private final Class<T5> collRequestClass;
+                                            T5 extends BaseCollectionRequest<T, T3, T4>> extends BaseRequestBuilder<T> {
+    private final Class<T5> collRequestClass;
     private final Class<T2> reqBuilderClass;
-	/**
+    /**
      * The request builder for this collection of ServicePrincipal
      *
      * @param requestUrl     the request URL
@@ -32,11 +32,11 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
      * @param requestBuilderClass the class for the request builder
      * @param collectionRequestClass the class for the collection request
      */
-	public BaseCollectionRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
+    public BaseCollectionRequestBuilder(@Nonnull final String requestUrl, @Nonnull final IBaseClient<?> client, @Nullable final java.util.List<? extends com.microsoft.graph.options.Option> requestOptions,
                                         @Nonnull final Class<T2> requestBuilderClass,
-										@Nonnull final Class<T5> collectionRequestClass) {
+                                        @Nonnull final Class<T5> collectionRequestClass) {
         super(requestUrl, client, requestOptions);
-		this.collRequestClass = Objects.requireNonNull(collectionRequestClass, "parameter collectionRequestClass cannot be null");
+        this.collRequestClass = Objects.requireNonNull(collectionRequestClass, "parameter collectionRequestClass cannot be null");
         this.reqBuilderClass = Objects.requireNonNull(requestBuilderClass, "parameter requestBuilderClass cannot be null");
     }
 
@@ -64,7 +64,7 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
                                     .newInstance(getRequestUrl(), getClient(), requestOptions);
         } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             throw new ClientException("Could not find the required class", ex);
-		}
+        }
     }
 
     /**
@@ -81,6 +81,6 @@ public class BaseCollectionRequestBuilder<T, T2 extends BaseRequestBuilder<T>,
                                 .newInstance(getRequestUrlWithAdditionalSegment(id), getClient(), getOptions());
         } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             throw new ClientException("Could not find the required class", ex);
-		}
+        }
     }
 }

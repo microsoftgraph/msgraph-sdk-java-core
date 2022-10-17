@@ -50,9 +50,9 @@ import okhttp3.Request;
  */
 public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestType> {
     /**
-	 * Restricted constructor
-	 */
-	protected BaseClient() {
+     * Restricted constructor
+     */
+    protected BaseClient() {
     }
 
     /**
@@ -80,32 +80,32 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
         endpoint = String.valueOf(value);
     }
 
-	/**
-	 * Send a custom request to Graph
-	 *
-	 * @param url
-	 *			the full URL to make a request with
-	 * @param responseType
-	 *			the response class to deserialize the response into
-	 * @return the instance of this builder
-	 */
-	@Nonnull
-	public <T> CustomRequestBuilder<T> customRequest(@Nonnull final String url, @Nonnull final Class<T> responseType) {
-		Objects.requireNonNull(url, "url parameter cannot be null");
+    /**
+     * Send a custom request to Graph
+     *
+     * @param url
+     *            the full URL to make a request with
+     * @param responseType
+     *            the response class to deserialize the response into
+     * @return the instance of this builder
+     */
+    @Nonnull
+    public <T> CustomRequestBuilder<T> customRequest(@Nonnull final String url, @Nonnull final Class<T> responseType) {
+        Objects.requireNonNull(url, "url parameter cannot be null");
         Objects.requireNonNull(responseType, "responseType parameter cannot be null");
         return new CustomRequestBuilder<>(getServiceRoot() + url, this, null, responseType);
-	}
+    }
 
-	/**
-	 * Send a custom request to Graph
-	 *
-	 * @param url
-	 *			the full URL to make a request with
-	 * @return the instance of this builder
-	 */
-	@Nonnull
-	public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
-		return this.customRequest(url, JsonElement.class);
+    /**
+     * Send a custom request to Graph
+     *
+     * @param url
+     *            the full URL to make a request with
+     * @return the instance of this builder
+     */
+    @Nonnull
+    public CustomRequestBuilder<JsonElement> customRequest(@Nonnull final String url) {
+        return this.customRequest(url, JsonElement.class);
     }
 
     /**
@@ -118,179 +118,178 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
     }
 
     /**
-	 * Gets the builder to start configuring the client
-	 *
-	 * @return builder to start configuring the client
-	 */
-	@Nonnull
-	public static Builder<OkHttpClient, Request> builder() {
-		return builder(OkHttpClient.class, Request.class);
-	}
+     * Gets the builder to start configuring the client
+     *
+     * @return builder to start configuring the client
+     */
+    @Nonnull
+    public static Builder<OkHttpClient, Request> builder() {
+        return builder(OkHttpClient.class, Request.class);
+    }
 
-	/**
-	 * Gets the builder to start configuring the client
-	 *
+    /**
+     * Gets the builder to start configuring the client
+     *
      * @param <nativeClient> the type of the native http client
      * @param <nativeRequest> the type of the native http request
      * @param nativeClientClass the class of the native http client
      * @param nativeRequestClass the class of the native http request
-	 * @return builder to start configuring the client
-	 */
-	@Nonnull
-	public static <nativeClient, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
-		return new Builder<>();
-	}
+     * @return builder to start configuring the client
+     */
+    @Nonnull
+    public static <nativeClient, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
+        return new Builder<>();
+    }
 
-	/**
-	 * Builder to help configure the Graph service client
+    /**
+     * Builder to help configure the Graph service client
      * @param <httpClientType> type of the native http library client
      * @param <nativeRequestType> type of a request for the native http client
-	 */
-	public static class Builder<httpClientType, nativeRequestType> {
-		private ISerializer serializer;
-		private IHttpProvider<nativeRequestType> httpProvider;
-		private ILogger logger;
-		private httpClientType httpClient;
-		private IAuthenticationProvider auth;
+     */
+    public static class Builder<httpClientType, nativeRequestType> {
+        private ISerializer serializer;
+        private IHttpProvider<nativeRequestType> httpProvider;
+        private ILogger logger;
+        private httpClientType httpClient;
+        private IAuthenticationProvider auth;
 
-		private IAuthenticationProvider getAuthenticationProvider() {
-			if(auth == null) {
-				throw new NullPointerException("auth");
-			} else {
-				return auth;
-			}
-		}
-		private ILogger getLogger() {
-			if(logger == null) {
-				return new DefaultLogger();
-			} else {
-				return logger;
-			}
-		}
-		private ISerializer getSerializer() {
-			if(serializer == null) {
-				return new DefaultSerializer(getLogger());
-			} else {
-				return serializer;
-			}
+        private IAuthenticationProvider getAuthenticationProvider() {
+            if(auth == null) {
+                throw new NullPointerException("auth");
+            } else {
+                return auth;
+            }
+        }
+        private ILogger getLogger() {
+            if(logger == null) {
+                return new DefaultLogger();
+            } else {
+                return logger;
+            }
+        }
+        private ISerializer getSerializer() {
+            if(serializer == null) {
+                return new DefaultSerializer(getLogger());
+            } else {
+                return serializer;
+            }
         }
         @SuppressWarnings("unchecked")
-		private httpClientType getHttpClient() {
-			if(httpClient == null) {
-				return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
-			} else {
-				return httpClient;
-			}
+        private httpClientType getHttpClient() {
+            if(httpClient == null) {
+                return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
+            } else {
+                return httpClient;
+            }
         }
         @SuppressWarnings("unchecked")
-		private IHttpProvider<nativeRequestType> getHttpProvider() {
-			if(httpProvider == null) {
-				return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
-			} else {
-				return httpProvider;
-			}
-		}
+        private IHttpProvider<nativeRequestType> getHttpProvider() {
+            if(httpProvider == null) {
+                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
+            } else {
+                return httpProvider;
+            }
+        }
 
-		/**
-		 * Sets the serializer.
-		 *
-		 * @param serializer
-		 *			the serializer
-		 * @return the instance of this builder
-		 */
-		@Nonnull
-		public Builder<httpClientType, nativeRequestType> serializer(@Nonnull final ISerializer serializer) {
-			Objects.requireNonNull(serializer, "parameter serializer cannot be null");
-			this.serializer = serializer;
-			return this;
-		}
+        /**
+         * Sets the serializer.
+         *
+         * @param serializer
+         *            the serializer
+         * @return the instance of this builder
+         */
+        @Nonnull
+        public Builder<httpClientType, nativeRequestType> serializer(@Nonnull final ISerializer serializer) {
+            Objects.requireNonNull(serializer, "parameter serializer cannot be null");
+            this.serializer = serializer;
+            return this;
+        }
 
-		/**
-		 * Sets the httpProvider
-		 *
-		 * @param httpProvider
-		 *			the httpProvider
-		 * @return the instance of this builder
-		 */
-		@Nonnull
-		public Builder<httpClientType, nativeRequestType> httpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
-			Objects.requireNonNull(httpProvider, "parameter httpProvider cannot be null");
-			this.httpProvider = httpProvider;
-			return this;
-		}
+        /**
+         * Sets the httpProvider
+         *
+         * @param httpProvider
+         *            the httpProvider
+         * @return the instance of this builder
+         */
+        @Nonnull
+        public Builder<httpClientType, nativeRequestType> httpProvider(@Nonnull final IHttpProvider<nativeRequestType> httpProvider) {
+            Objects.requireNonNull(httpProvider, "parameter httpProvider cannot be null");
+            this.httpProvider = httpProvider;
+            return this;
+        }
 
-		/**
-		 * Sets the logger
-		 *
-		 * @param logger
-		 *			the logger
-		 * @return the instance of this builder
-		 */
-		@Nonnull
+        /**
+         * Sets the logger
+         *
+         * @param logger
+         *            the logger
+         * @return the instance of this builder
+         */
+        @Nonnull
         @SuppressFBWarnings
-		public Builder<httpClientType, nativeRequestType> logger(@Nonnull final ILogger logger) {
-			Objects.requireNonNull(logger, "parameter logger cannot be null");
-			this.logger = logger;
-			return this;
-		}
+        public Builder<httpClientType, nativeRequestType> logger(@Nonnull final ILogger logger) {
+            Objects.requireNonNull(logger, "parameter logger cannot be null");
+            this.logger = logger;
+            return this;
+        }
 
-		/**
-		 * Sets the http client
-		 *
-		 * @param client the http client
-		 *
-		 * @return the instance of this builder
-		 */
-		@Nonnull
-		public Builder<httpClientType, nativeRequestType> httpClient(@Nonnull final httpClientType client) {
-			Objects.requireNonNull(client, "parameter client cannot be null");
-			this.httpClient = client;
-			return this;
-		}
+        /**
+         * Sets the http client
+         *
+         * @param client the http client
+         *
+         * @return the instance of this builder
+         */
+        @Nonnull
+        public Builder<httpClientType, nativeRequestType> httpClient(@Nonnull final httpClientType client) {
+            Objects.requireNonNull(client, "parameter client cannot be null");
+            this.httpClient = client;
+            return this;
+        }
 
-		/**
-		 * Sets the authentication provider
-		 *
-		 * @param auth the authentication provider
-		 * @return the instance of this builder
-		 */
-		@Nonnull
-		public Builder<httpClientType, nativeRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
-			Objects.requireNonNull(auth, "parameter auth cannot be null");
-			this.auth = auth;
-			return this;
-		}
+        /**
+         * Sets the authentication provider
+         *
+         * @param auth the authentication provider
+         * @return the instance of this builder
+         */
+        @Nonnull
+        public Builder<httpClientType, nativeRequestType> authenticationProvider(@Nonnull final IAuthenticationProvider auth) {
+            Objects.requireNonNull(auth, "parameter auth cannot be null");
+            this.auth = auth;
+            return this;
+        }
 
-		/**
-		 * Builds and returns the Graph service client.
-		 *
-		 * @param instance the instance to set the information for
-		 * @param <ClientType> the type of the client to return
-		 * @return the Graph service client object
-		 * @throws ClientException
-		 *			 if there was an exception creating the client
-		 */
-		@Nonnull
-		protected <ClientType extends BaseClient<nativeRequestType>> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
+        /**
+         * Builds and returns the Graph service client.
+         *
+         * @param instance the instance to set the information for
+         * @param <ClientType> the type of the client to return
+         * @return the Graph service client object
+         * @throws ClientException if there was an exception creating the client
+         */
+        @Nonnull
+        protected <ClientType extends BaseClient<nativeRequestType>> ClientType buildClient(@Nonnull ClientType instance) throws ClientException {
             Objects.requireNonNull(instance, "The instance cannot be null");
-			instance.setHttpProvider(this.getHttpProvider());
-			instance.setLogger(this.getLogger());
-			instance.setSerializer(this.getSerializer());
-			return instance;
-		}
+            instance.setHttpProvider(this.getHttpProvider());
+            instance.setLogger(this.getLogger());
+            instance.setSerializer(this.getSerializer());
+            return instance;
+        }
 
-		/**
-		 * Builds and returns the Graph service client.
-		 *
-		 * @return the Graph service client object
-		 * @throws ClientException
-		 *			 if there was an exception creating the client
-		 */
-		@Nonnull
-		public IBaseClient<nativeRequestType> buildClient() throws ClientException {
-			return buildClient(new BaseClient<>());
-		}
-	}
+        /**
+         * Builds and returns the Graph service client.
+         *
+         * @return the Graph service client object
+         * @throws ClientException
+         *             if there was an exception creating the client
+         */
+        @Nonnull
+        public IBaseClient<nativeRequestType> buildClient() throws ClientException {
+            return buildClient(new BaseClient<>());
+        }
+    }
 
     /**
      * The HTTP provider instance

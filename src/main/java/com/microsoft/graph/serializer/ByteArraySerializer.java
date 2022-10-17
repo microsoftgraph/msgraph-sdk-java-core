@@ -51,7 +51,7 @@ public final class ByteArraySerializer {
     @Nullable
     public static byte[] deserialize(@Nonnull final String strVal) throws ParseException {
         Objects.requireNonNull(strVal, "parameter strVal cannot be null");
-    	return BaseEncoding.base64().decode(strVal);
+        return BaseEncoding.base64().decode(strVal);
     }
 
     /**
