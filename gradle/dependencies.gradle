@@ -13,7 +13,7 @@ dependencies {
     api 'com.azure:azure-core:1.33.0'
 
     compileOnly 'net.jcip:jcip-annotations:1.0'
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.2'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.3'
     testCompileOnly 'net.jcip:jcip-annotations:1.0'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.2'
 }
