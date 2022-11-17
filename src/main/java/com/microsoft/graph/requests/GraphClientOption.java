@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 import java.util.Objects;
 import java.util.UUID;

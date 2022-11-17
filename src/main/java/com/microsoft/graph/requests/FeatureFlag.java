@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 /**
  * The class which holds the values of each feature flag.

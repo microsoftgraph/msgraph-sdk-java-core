@@ -1,12 +1,11 @@
-package com.microsoft.graph.Requests.Middleware;
+package com.microsoft.graph.requests.Middleware;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.Requests.GraphClientFactory;
-import com.microsoft.graph.Requests.GraphClientOption;
+import com.microsoft.graph.requests.GraphClientFactory;
+import com.microsoft.graph.requests.GraphClientOption;
 import com.microsoft.kiota.http.middleware.RedirectHandler;
 import com.microsoft.kiota.http.middleware.RetryHandler;
 
-import com.microsoft.kiota.http.middleware.TelemetryHandler;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

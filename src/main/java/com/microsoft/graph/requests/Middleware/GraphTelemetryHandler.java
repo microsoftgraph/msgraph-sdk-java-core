@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests.Middleware;
+package com.microsoft.graph.requests.Middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -7,8 +7,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.Requests.FeatureTracker;
-import com.microsoft.graph.Requests.GraphClientOption;
+import com.microsoft.graph.requests.GraphClientOption;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;

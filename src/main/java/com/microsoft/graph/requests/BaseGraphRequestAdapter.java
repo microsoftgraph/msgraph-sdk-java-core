@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;

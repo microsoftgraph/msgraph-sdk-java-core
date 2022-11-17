@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 /**
  * Default client implementation.
  */
-class BaseClient implements IBaseClient{
+public class BaseClient implements IBaseClient{
 
     private RequestAdapter requestAdapter;
     /** RequestBuilder for completing Batch Requests */

@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 //import com.microsoft.graph.content.BatchRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
