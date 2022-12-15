@@ -21,7 +21,7 @@ public class UploadSessionRequestBuilder {
 
     public CompletableFuture<IUploadSession> GetAsync() {
         RequestInformation requestInformation = CreateGetRequestInformation();
-
+        requestInformation.addRequestOptions();
     }
 
     public RequestInformation CreateGetRequestInformation() {

@@ -2,11 +2,11 @@ package com.microsoft.graph.requests;
 
 import com.microsoft.graph.requests.Middleware.GraphTelemetryHandler;
 import com.microsoft.kiota.http.KiotaClientFactory;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**

@@ -2,62 +2,61 @@ package com.microsoft.graph.models;
 
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
 public class UploadSession implements IUploadSession {
 
-    private String UploadUrl;
-    private List<String> NextExpectedRanges;
-    private OffsetDateTime ExpirationDateTime;
-    private Map<String, Object> AdditionalData;
+    private String uploadUrl;
+    private List<String> nextExpectedRanges;
+    private OffsetDateTime expirationDateTime;
+    private Map<String, Object> additionalData;
 
     @Nonnull
     @Override
     public String getUploadUrl() {
-        return this.UploadUrl;
+        return this.uploadUrl;
     }
     public void setUploadUrl(@Nonnull String uploadUrl) {
         Objects.requireNonNull(uploadUrl, "Upload url cannot be null");
-        this.UploadUrl = uploadUrl;
+        this.uploadUrl = uploadUrl;
     }
 
     @Nonnull
     @Override
     public List<String> getNextExpectedRanges() {
-        return this.NextExpectedRanges;
+        return this.nextExpectedRanges;
     }
     public void setNextExpectedRanges(@Nonnull List<String> nextExpectedRanges) {
         Objects.requireNonNull(nextExpectedRanges, "Parameter nextExpectedRanges cannot be null");
-        this.NextExpectedRanges.addAll(nextExpectedRanges);
+        this.nextExpectedRanges.addAll(nextExpectedRanges);
     }
 
     @Nullable
     @Override
     public OffsetDateTime getExpirationDateTime() {
-        return this.ExpirationDateTime;
+        return this.expirationDateTime;
     }
     public void setExpirationDateTime(@Nullable OffsetDateTime expirationDateTime) {
-        this.ExpirationDateTime = expirationDateTime;
+        this.expirationDateTime = expirationDateTime;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 
     public void setAdditionalData(@Nonnull Map<String, Object> additionalData) {
         Objects.requireNonNull(additionalData, "Parameter additionalData cannot be null");
-        this.AdditionalData.putAll(additionalData);
+        this.additionalData.putAll(additionalData);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         final UploadSession currentObj = this;
@@ -69,7 +68,7 @@ public class UploadSession implements IUploadSession {
     }
 
     @Override
-    public void serialize(@NotNull SerializationWriter writer) {
+    public void serialize(@Nonnull SerializationWriter writer) {
         Objects.requireNonNull(writer, "Writer parameter cannot be null");
         writer.writeOffsetDateTimeValue("expirationDateTime", getExpirationDateTime());
         writer.writeCollectionOfPrimitiveValues("nextExpectedRanges", getNextExpectedRanges());
