@@ -1,4 +1,4 @@
-package com.microsoft.graph.requests.Middleware;
+package com.microsoft.graph.requests.middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

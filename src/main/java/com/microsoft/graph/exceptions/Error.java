@@ -55,8 +55,8 @@ public class Error implements Parsable, AdditionalDataHolder {
             this.put("code", (n) -> { currentErr.setCode(n.getStringValue()); });
             this.put("message", (n) -> { currentErr.setMessage(n.getStringValue()); });
             this.put("target", (n) -> { currentErr.setTarget(n.getStringValue()); });
-            this.put("details", (n) -> { currentErr.setDetails(n.<ErrorDetail>getCollectionOfObjectValues(ErrorDetail::createFromDiscriminatorValue)); });
-            this.put("innerError", (n) -> { currentErr.setInnerError(n.<Error>getObjectValue(Error::createFromDiscriminatorValue)); });
+            this.put("details", (n) -> { currentErr.setDetails(n.getCollectionOfObjectValues(ErrorDetail::createFromDiscriminatorValue)); });
+            this.put("innerError", (n) -> { currentErr.setInnerError(n.getObjectValue(Error::createFromDiscriminatorValue)); });
         }};
     }
 

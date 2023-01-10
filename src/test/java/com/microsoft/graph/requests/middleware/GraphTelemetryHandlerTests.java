@@ -1,4 +1,4 @@
-package com.microsoft.graph.requests.Middleware;
+package com.microsoft.graph.requests.middleware;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.GraphClientFactory;

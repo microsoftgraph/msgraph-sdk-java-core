@@ -1,5 +1,6 @@
 package com.microsoft.graph.models;
 
+import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 
@@ -74,6 +75,11 @@ public class UploadSession implements IUploadSession {
         writer.writeCollectionOfPrimitiveValues("nextExpectedRanges", getNextExpectedRanges());
         writer.writeStringValue("uploadUrl", getUploadUrl());
         writer.writeAdditionalData(getAdditionalData());
+    }
+
+    public static UploadSession CreateFromDiscriminatorValue(ParseNode parseNode){
+        Objects.requireNonNull(parseNode);
+        return new UploadSession();
     }
 
 

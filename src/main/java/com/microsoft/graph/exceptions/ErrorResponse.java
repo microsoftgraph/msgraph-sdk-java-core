@@ -34,7 +34,7 @@ public class ErrorResponse implements Parsable, AdditionalDataHolder {
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         ErrorResponse currentObj = this;
         return new HashMap<String, Consumer<ParseNode>>(){{
-         this.put("error", (n) -> { currentObj.setError(n.<Error>getObjectValue(Error::createFromDiscriminatorValue)); });
+         this.put("error", (n) -> { currentObj.setError(n.getObjectValue(Error::createFromDiscriminatorValue)); });
         }};
     }
 

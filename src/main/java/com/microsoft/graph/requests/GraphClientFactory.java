@@ -1,6 +1,6 @@
 package com.microsoft.graph.requests;
 
-import com.microsoft.graph.requests.Middleware.GraphTelemetryHandler;
+import com.microsoft.graph.requests.middleware.GraphTelemetryHandler;
 import com.microsoft.kiota.http.KiotaClientFactory;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
