@@ -15,7 +15,7 @@ public class AzureIdentityAccessTokenProvider extends com.microsoft.kiota.authen
      * @param tokenCredential The Azure.Identity.TokenCredential implementation to use.
      */
     public AzureIdentityAccessTokenProvider(@Nonnull TokenCredential tokenCredential) {
-        this(tokenCredential, new String[] {}, null, new String[] {});
+        this(tokenCredential, new String[] {}, null);
     }
     /** {@inheritDoc} */
     @SuppressWarnings("LambdaLast")
@@ -23,14 +23,13 @@ public class AzureIdentityAccessTokenProvider extends com.microsoft.kiota.authen
             @Nullable final ObservabilityOptions observabilityOptions, @Nonnull final String... scopes) {
         super(tokenCredential, allowedHosts, observabilityOptions, scopes);
         if (allowedHosts.length == 0) {
-            final HashSet<String> allowedHostsSet = new HashSet<String>() {{
-                this.add("graph.microsoft.com");
-                this.add("graph.microsoft.us");
-                this.add("dod-graph.microsoft.us");
-                this.add("graph.microsoft.de");
-                this.add("microsoftgraph.chinacloudapi.cn");
-                this.add("canary.graph.microsoft.com");
-            }};
+            final HashSet<String> allowedHostsSet = new HashSet<String>();
+            allowedHostsSet.add("graph.microsoft.com");
+            allowedHostsSet.add("graph.microsoft.us");
+            allowedHostsSet.add("dod-graph.microsoft.us");
+            allowedHostsSet.add("graph.microsoft.de");
+            allowedHostsSet.add("microsoftgraph.chinacloudapi.cn");
+            allowedHostsSet.add("canary.graph.microsoft.com");
             this.getAllowedHostsValidator().setAllowedHosts(allowedHostsSet);
         }
     }
