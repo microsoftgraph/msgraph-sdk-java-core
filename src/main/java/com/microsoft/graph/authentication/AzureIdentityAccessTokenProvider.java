@@ -18,6 +18,7 @@ public class AzureIdentityAccessTokenProvider extends com.microsoft.kiota.authen
         this(tokenCredential, new String[] {}, null, new String[] {});
     }
     /** {@inheritDoc} */
+    @SuppressWarnings("LambdaLast")
     public AzureIdentityAccessTokenProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final String[] allowedHosts,
             @Nullable final ObservabilityOptions observabilityOptions, @Nonnull final String... scopes) {
         super(tokenCredential, allowedHosts, observabilityOptions, scopes);
