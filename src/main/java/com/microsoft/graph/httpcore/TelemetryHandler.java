@@ -2,7 +2,6 @@ package com.microsoft.graph.httpcore;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -25,9 +24,9 @@ public class TelemetryHandler implements Interceptor{
     /**
      * Current SDK version
      */
-    public static final String VERSION = "v2.0.14";
+    public static final String VERSION = "v2.0.15";
     /**
-     * Verion prefix
+     * Version prefix
      */
     public static final String GRAPH_VERSION_PREFIX = "graph-java-core";
     /**
