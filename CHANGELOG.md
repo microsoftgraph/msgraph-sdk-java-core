@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [2.0.16] - 2023-01-30
+
+### Changed
+
+- Removed unnecessary `net.jcip:jcip-annotations` dependency causing conflicts with Azure Identity.
+
+## [2.0.15] - 2023-01-19
+
+### Changed
+
+- Switched required dependencies from implementation to api to avoid missing dependencies in some scenarios.
+
 ## [2.0.14] - 2022-10-06
 
 ### Added
