@@ -62,7 +62,7 @@ public class GraphErrorResponseTests {
     }
 
     @Test
-    public void testGraphErrorResponseCopy2() {
+    void testGraphErrorResponseCopy2() {
         GraphErrorResponse errorResponse = new GraphErrorResponse();;
 
         //Copy the errorResponse and its subsequent innerErrors
