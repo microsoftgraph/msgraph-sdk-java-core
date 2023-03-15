@@ -80,8 +80,8 @@ public class GraphErrorResponse implements IJsonBackedObject {
     public GraphErrorResponse copy() {
         GraphErrorResponse responseCopy = new GraphErrorResponse();
         responseCopy.additionalDataManager = this.additionalDataManager;
-        responseCopy.rawObject = this.rawObject.deepCopy();
-        responseCopy.error = this.error.copy();
+        responseCopy.rawObject = this.rawObject == null ? null : this.rawObject.deepCopy();
+        responseCopy.error = this.error == null ? null : this.error.copy();
         return responseCopy;
     }
 }
