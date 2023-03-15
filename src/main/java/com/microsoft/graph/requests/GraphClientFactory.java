@@ -65,7 +65,7 @@ public class GraphClientFactory {
     @Nonnull
     public static OkHttpClient.Builder create(@Nullable GraphClientOption graphClientOption) {
         GraphClientOption options = graphClientOption != null ? graphClientOption : new GraphClientOption();
-        return KiotaClientFactory.Create(createDefaultGraphInterceptors(options));
+        return KiotaClientFactory.create(createDefaultGraphInterceptors(options));
     }
     /**
      * Creates the default Interceptors for use with Graph.
@@ -78,7 +78,7 @@ public class GraphClientFactory {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
         handlers.add(new GraphTelemetryHandler(graphClientOption));
-        for(final Interceptor interceptor: KiotaClientFactory.CreateDefaultInterceptors()) {
+        for(final Interceptor interceptor: KiotaClientFactory.createDefaultInterceptors()) {
             handlers.add(interceptor);
         }
         return handlers.toArray(new Interceptor[handlers.size()]);

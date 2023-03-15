@@ -11,10 +11,10 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.google.code.gson:gson:2.9.1'
 
-    api 'com.squareup.okhttp3:okhttp:4.10.0'
     api 'com.azure:azure-core:1.32.0'
+    api 'com.squareup.okhttp3:okhttp:4.9.0'
 
-    implementation fileTree(include: '*.jar' , dir: 'libs')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 //    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.0.8-SNAPSHOT'
 //    api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:0.0.4-SNAPSHOT'
