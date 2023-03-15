@@ -2,6 +2,7 @@ package com.microsoft.graph.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,20 @@ public class GraphErrorResponseTests {
         assertEquals(errorResponseCopy.error.innererror.debugMessage, expectedMessage1);
         assertEquals(errorResponseCopy.error.innererror.innererror.debugMessage, expectedMessage2);
         assertEquals(errorResponseCopy.error.innererror.innererror.innererror.debugMessage, expectedMessage3);
+
+        assertEquals(errorResponse.rawObject, errorResponseCopy.rawObject);
+    }
+
+    @Test
+    public void testGraphErrorResponseCopy2() {
+        GraphErrorResponse errorResponse = new GraphErrorResponse();;
+
+        //Copy the errorResponse and its subsequent innerErrors
+        GraphErrorResponse errorResponseCopy = errorResponse.copy();
+
+        //Ensure default null values are copied without issue.
+        assertNull(errorResponseCopy.error);
+        assertNull(errorResponseCopy.rawObject);
 
         assertEquals(errorResponse.rawObject, errorResponseCopy.rawObject);
     }
