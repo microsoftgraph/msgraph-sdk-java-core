@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [2.0.17] - 2023-03-20
+
 ### Changed
 
+- Aligns default http client timeout to be 100 seconds
 - Fixes NullPointerException in GraphErrorResponse#copy
 
 ## [2.0.16] - 2023-01-30
