@@ -1,5 +1,6 @@
 package com.microsoft.graph.httpcore;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -16,6 +17,9 @@ public class HttpClientsTest {
     public void testHttpClientCreation() {
         OkHttpClient httpclient = HttpClients.createDefault(mock(IAuthenticationProvider.class));
         assertTrue(httpclient != null);
+        assertEquals(100000,httpclient.readTimeoutMillis());
+        assertEquals(100000,httpclient.connectTimeoutMillis());
+        assertEquals(100000,httpclient.callTimeoutMillis());
     }
 
     @Test
