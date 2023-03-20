@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient.Builder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -28,7 +29,10 @@ public class HttpClients {
         return new OkHttpClient.Builder()
                     .addInterceptor(new TelemetryHandler())
                     .followRedirects(false)
-                    .followSslRedirects(false);
+                    .followSslRedirects(false)
+                    .connectTimeout(Duration.ofSeconds(100))
+                    .readTimeout(Duration.ofSeconds(100))
+                    .callTimeout(Duration.ofSeconds(100));
     }
 
     /**
