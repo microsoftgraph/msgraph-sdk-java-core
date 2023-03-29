@@ -49,7 +49,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
         ArrayList<RequestOption> option = new ArrayList<>(Arrays.asList(responseHandlerOption));
         requestInformation.addRequestOptions(option);
 
-        return this.requestAdapter.sendPrimitiveAsync(requestInformation, Void.class, null)
+        return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
             .thenCompose(i -> {
                try {
                    return (CompletableFuture<UploadResult<T>>)responseHandler.HandleResponse((Response) nativeResponseHandler.getValue(), factory);
