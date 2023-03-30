@@ -32,6 +32,7 @@ public class UploadSession implements IUploadSession {
     public List<String> getNextExpectedRanges() {
         return this.nextExpectedRanges;
     }
+    @Override
     public void setNextExpectedRanges(@Nonnull List<String> nextExpectedRanges) {
         Objects.requireNonNull(nextExpectedRanges, "Parameter nextExpectedRanges cannot be null");
         this.nextExpectedRanges.addAll(nextExpectedRanges);
@@ -42,6 +43,7 @@ public class UploadSession implements IUploadSession {
     public OffsetDateTime getExpirationDateTime() {
         return this.expirationDateTime;
     }
+    @Override
     public void setExpirationDateTime(@Nullable OffsetDateTime expirationDateTime) {
         this.expirationDateTime = expirationDateTime;
     }
