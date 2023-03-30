@@ -57,8 +57,8 @@ public class LargeFileUploadTask<T extends Parsable > {
         byte[] buffer = ChunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         try{
-            UploadResult<T> result = uploadSliceRequestBuilder.PutAsync(chunkStream).get();
-            return CompletableFuture.completedFuture(result);
+            return uploadSliceRequestBuilder.PutAsync(chunkStream);
+            //return CompletableFuture.completedFuture(result);
         } catch (ExecutionException ex) {
             return new CompletableFuture<UploadResult<T>>() {{
                 this.completeExceptionally(ex);
@@ -76,6 +76,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         while (uploadTries < maxTries) {
             List<UploadSliceRequestBuilder<T>> uploadSliceRequestBuilders = GetUploadSliceRequests();
             for (UploadSliceRequestBuilder<T> request : uploadSliceRequestBuilders ) {
+                UploadResult<T> result = UploadSliceAsync(request).get();
 //                CompletableFuture<UploadResult<T>> result = UploadSliceAsync(request).thenCompose(x -> {
 //                    //if(x.UploadSucceeded())
 //                        return CompletableFuture.completedFuture(x);

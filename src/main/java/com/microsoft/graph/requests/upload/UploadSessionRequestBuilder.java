@@ -54,8 +54,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
                         this.completeExceptionally(ex);
                     }};
                 }
-            }).
-            thenCompose(result -> (CompletableFuture<IUploadSession>)result.UploadSession);
+            }).thenCompose(result -> (CompletableFuture<IUploadSession>)result.UploadSession);
     }
 
     public RequestInformation CreateDeleteRequestInformation() {
