@@ -9,19 +9,16 @@ import com.microsoft.graph.models.UploadSession;
 import com.microsoft.kiota.serialization.*;
 import okhttp3.Response;
 
-import okhttp3.ResponseBody;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class UploadResponseHandler<T extends Parsable> {
 
@@ -31,7 +28,7 @@ public class UploadResponseHandler<T extends Parsable> {
         this._parseNodeFactory = (parseNodeFactory == null) ? ParseNodeFactoryRegistry.defaultInstance : parseNodeFactory;
     }
 
-    public <T extends Parsable> CompletableFuture<UploadResult<T>> HandleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) throws IOException, URISyntaxException {
+    public <T extends Parsable> CompletableFuture<UploadResult<T>> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) throws IOException, URISyntaxException {
         if (response == null) {
             //handle with error code
         }
@@ -51,18 +48,18 @@ public class UploadResponseHandler<T extends Parsable> {
                 if (response.code() == HttpResponseCode.HTTP_CREATED) {
                     if (response.body().contentLength() > 0) {
                         ParseNode jsonParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                        uploadResult.ItemResponse = jsonParseNode.getObjectValue(factory);
+                        uploadResult.itemResponse = jsonParseNode.getObjectValue(factory);
                     }
-                    uploadResult.Location = new URI(Objects.requireNonNull(response.headers().get("location")));
+                    uploadResult.location = new URI(Objects.requireNonNull(response.headers().get("location")));
                 } else {
                     ParseNode uploadSessionParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                    UploadSession uploadSession = uploadSessionParseNode.getObjectValue(UploadSession::CreateFromDiscriminatorValue);
+                    UploadSession uploadSession = uploadSessionParseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
                     if (uploadSession.getNextExpectedRanges() != null) {
-                        uploadResult.UploadSession = uploadSession;
+                        uploadResult.uploadSession = uploadSession;
                     } else {
                         responseStream.reset();
                         ParseNode objectParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                        uploadResult.ItemResponse = objectParseNode.getObjectValue(factory::create);
+                        uploadResult.itemResponse = objectParseNode.getObjectValue(factory::create);
                     }
                 }
                 return CompletableFuture.completedFuture(uploadResult);

@@ -10,8 +10,6 @@ import okhttp3.Response;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class UploadSessionRequestBuilder<T extends Parsable> {
@@ -28,7 +26,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         this.factory = factory;
     }
 
-    public RequestInformation CreateGetRequestInformation() {
+    public RequestInformation createGetRequestInformation() {
         RequestInformation requestInformation = new RequestInformation() {{
             httpMethod = HttpMethod.GET;
             urlTemplate = this.urlTemplate;
@@ -36,15 +34,15 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         return requestInformation;
     }
 
-    public CompletableFuture<IUploadSession> GetAsync() {
-        RequestInformation requestInformation = CreateGetRequestInformation();
+    public CompletableFuture<IUploadSession> getAsync() {
+        RequestInformation requestInformation = createGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, Void.class, null)
             .thenCompose( i -> {
                 CompletableFuture<UploadResult<T>> result = null;
                 try {
-                     return responseHandler.HandleResponse((Response) nativeResponseHandler.getValue(), factory);
+                     return responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
                 } catch (IOException ex) {
                     return new CompletableFuture<UploadResult>() {{
                         this.completeExceptionally(ex);
@@ -54,10 +52,10 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
                         this.completeExceptionally(ex);
                     }};
                 }
-            }).thenCompose(result -> (CompletableFuture<IUploadSession>)result.UploadSession);
+            }).thenCompose(result -> (CompletableFuture<IUploadSession>)result.uploadSession);
     }
 
-    public RequestInformation CreateDeleteRequestInformation() {
+    public RequestInformation createDeleteRequestInformation() {
         RequestInformation requestInformation = new RequestInformation() {{
             httpMethod = HttpMethod.DELETE;
             urlTemplate = this.urlTemplate;
@@ -65,8 +63,8 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         return requestInformation;
     }
 
-    public CompletableFuture<Void> DeleteAsync() {
-        RequestInformation requestInfo = this.CreateDeleteRequestInformation();
+    public CompletableFuture<Void> deleteAsync() {
+        RequestInformation requestInfo = this.createDeleteRequestInformation();
         return this.requestAdapter.sendPrimitiveAsync(requestInfo, Void.class, null);
     }
 }

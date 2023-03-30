@@ -10,8 +10,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,14 +39,14 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
         this.responseHandler = new UploadResponseHandler(null);
     }
 
-    public CompletableFuture<UploadResult<T>> PutAsync(InputStream stream) {
-        RequestInformation requestInformation = this.CreatePutRequestInformation(stream);
+    public CompletableFuture<UploadResult<T>> putAsync(InputStream stream) {
+        RequestInformation requestInformation = this.createPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
             .thenCompose(i -> {
                try {
-                   return (CompletableFuture<UploadResult<T>>)responseHandler.HandleResponse((Response) nativeResponseHandler.getValue(), factory);
+                   return (CompletableFuture<UploadResult<T>>)responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
                } catch (IOException ex) {
                    return new CompletableFuture<UploadResult<T>>() {{
                        this.completeExceptionally(ex);
@@ -61,7 +59,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
             });
     }
 
-    public RequestInformation CreatePutRequestInformation(InputStream stream) {
+    public RequestInformation createPutRequestInformation(InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation  requestInfo = new RequestInformation() {{
             httpMethod = HttpMethod.PUT;

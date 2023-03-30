@@ -4,14 +4,14 @@ import java.net.URI;
 
 public class UploadResult<T> {
 
-    public IUploadSession UploadSession;
+    public IUploadSession uploadSession;
 
-    public T ItemResponse;
+    public T itemResponse;
 
-    public URI Location;
+    public URI location;
 
-    public boolean UploadSucceeded() {
-        return (this.ItemResponse != null) || (this.Location != null);
+    public boolean uploadSucceeded() {
+        return (this.itemResponse != null) || (this.location != null);
     }
 
 

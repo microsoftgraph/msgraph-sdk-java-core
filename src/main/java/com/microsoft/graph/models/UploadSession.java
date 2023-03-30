@@ -79,7 +79,7 @@ public class UploadSession implements IUploadSession {
         writer.writeAdditionalData(getAdditionalData());
     }
 
-    public static UploadSession CreateFromDiscriminatorValue(ParseNode parseNode){
+    public static UploadSession createFromDiscriminatorValue(ParseNode parseNode){
         Objects.requireNonNull(parseNode);
         return new UploadSession();
     }
