@@ -9,16 +9,16 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.11.2"
-        classpath "com.android.tools.build:gradle:7.3.1"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.43.0"
+        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.12.2"
+        classpath "com.android.tools.build:gradle:7.4.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.44.0"
     }
 }
 
 repositories {
     google()
     gradlePluginPortal()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
 }
 
 apply plugin: "com.android.library"
