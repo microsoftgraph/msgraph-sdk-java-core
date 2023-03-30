@@ -7,6 +7,7 @@ import com.microsoft.graph.requests.BaseGraphRequestAdapter;
 import com.microsoft.graph.requests.FeatureFlag;
 import com.microsoft.graph.requests.GraphClientFactory;
 import com.microsoft.graph.requests.GraphClientOption;
+import com.microsoft.graph.requests.upload.UploadSessionRequestBuilder;
 import com.microsoft.graph.requests.upload.UploadSliceRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
@@ -17,10 +18,15 @@ import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class LargeFileUploadTask<T extends Parsable > {
 
@@ -46,9 +52,39 @@ public class LargeFileUploadTask<T extends Parsable > {
         this.maxSliceSize = Objects.isNull(maxSliceSize) ? defaultMaxSliceSize : maxSliceSize;
     }
 
-    public CompletableFuture<UploadResult<T>> UploadSliceAsync() {
+    public CompletableFuture<UploadResult<T>> UploadSliceAsync(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder) {
         boolean firstAttempt = true;
+        byte[] buffer = ChunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), uploadSliceRequestBuilder.getRangeLength());
+        ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
+        try{
+            UploadResult<T> result = uploadSliceRequestBuilder.PutAsync(chunkStream).get();
+            return CompletableFuture.completedFuture(result);
+        } catch (ExecutionException ex) {
+            return new CompletableFuture<UploadResult<T>>() {{
+                this.completeExceptionally(ex);
+            }};
+        } catch (InterruptedException ex) {
+            return new CompletableFuture<UploadResult<T>>() {{
+                this.completeExceptionally(ex);
+            }};
+        }
+    }
+    //TODO: Finish this after update session
+    public CompletableFuture<UploadResult<T>> UploadAsync(@Nullable int maxTries) throws ExecutionException, InterruptedException {
+        int _maxTries = (Objects.isNull(maxTries)) ? 3 : maxTries;
+        int uploadTries = 0;
+        while (uploadTries < maxTries) {
+            List<UploadSliceRequestBuilder<T>> uploadSliceRequestBuilders = GetUploadSliceRequests();
+            for (UploadSliceRequestBuilder<T> request : uploadSliceRequestBuilders ) {
+//                CompletableFuture<UploadResult<T>> result = UploadSliceAsync(request).thenCompose(x -> {
+//                    //if(x.UploadSucceeded())
+//                        return CompletableFuture.completedFuture(x);
+//                });
+                return UploadSliceAsync(request);
 
+            }
+        }
+        return null;
     }
 
     public UploadSession ExtractSessionFromParsable(Parsable uploadSession) throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
@@ -89,6 +125,12 @@ public class LargeFileUploadTask<T extends Parsable > {
         return builders;
     }
 
+    public CompletableFuture<IUploadSession> UpdateSessionStatusAsync() throws ExecutionException, InterruptedException {
+        UploadSessionRequestBuilder<T> sessionRequestBuilder = new UploadSessionRequestBuilder<T>(this.uploadSession, this.requestAdapter, this.factory);
+        CompletableFuture<IUploadSession> newSession = sessionRequestBuilder.GetAsync();
+        this.rangesRemaining = GetRangesRemaining(newSession.get());
+    }
+
     private ArrayList<AbstractMap.SimpleEntry<Long, Long>> GetRangesRemaining(IUploadSession uploadSession) {
         ArrayList<AbstractMap.SimpleEntry<Long, Long>> remaining = new ArrayList<AbstractMap.SimpleEntry<Long, Long>>();
         for (String range:uploadSession.getNextExpectedRanges()) {
@@ -98,9 +140,22 @@ public class LargeFileUploadTask<T extends Parsable > {
         }
         return remaining;
     }
+
+    public
+
     private long NextSliceSize(long rangeBegin, long rangeEnd) {
         long size = rangeEnd - rangeBegin + 1;
         return size > this.maxSliceSize ? this.maxSliceSize : size;
+    }
+
+    private byte[] ChunkInputStream(InputStream stream, int begin, int length) {
+        byte[] buffer = new byte[length];
+        try{
+            stream.read(buffer, begin, length);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return buffer;
     }
 
 

@@ -43,12 +43,8 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
 
     public CompletableFuture<UploadResult<T>> PutAsync(InputStream stream) {
         RequestInformation requestInformation = this.CreatePutRequestInformation(stream);
-        ResponseHandlerOption responseHandlerOption = new ResponseHandlerOption();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
-        responseHandlerOption.setResponseHandler(nativeResponseHandler);
-        ArrayList<RequestOption> option = new ArrayList<>(Arrays.asList(responseHandlerOption));
-        requestInformation.addRequestOptions(option);
-
+        requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
             .thenCompose(i -> {
                try {
@@ -75,5 +71,14 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
         requestInfo.headers.add("Content-Range", "bytes " + String.format("bytes %f-%f/%f", this.rangeBegin, this.rangeEnd, this.totalSessionLength));
         requestInfo.headers.add("Content-Length", ""+this.rangeLength);
         return requestInfo;
+    }
+
+    public int getRangeLength() {
+        rangeLength = (int) (rangeEnd-rangeBegin);
+        return rangeLength;
+    }
+
+    public long getRangeBegin() {
+        return rangeBegin;
     }
 }

@@ -38,12 +38,8 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
 
     public CompletableFuture<IUploadSession> GetAsync() {
         RequestInformation requestInformation = CreateGetRequestInformation();
-        ResponseHandlerOption responseHandlerOption = new ResponseHandlerOption();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
-        responseHandlerOption.setResponseHandler(nativeResponseHandler);
-        ArrayList<RequestOption> option = new ArrayList<>(Arrays.asList(responseHandlerOption));
-        requestInformation.addRequestOptions(option);
-
+        requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, Void.class, null)
             .thenCompose( i -> {
                 CompletableFuture<UploadResult<T>> result = null;
