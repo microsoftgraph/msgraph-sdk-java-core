@@ -10,7 +10,7 @@ buildscript {
 
     dependencies {
         classpath "com.gradle:gradle-enterprise-gradle-plugin:3.12.2"
-        classpath "com.android.tools.build:gradle:7.4.0"
+        classpath "com.android.tools.build:gradle:8.0.0"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.44.0"
     }
 }
@@ -25,6 +25,8 @@ apply plugin: "com.android.library"
 apply plugin: "com.github.ben-manes.versions"
 
 android {
+    namespace 'com.microsoft.graph'
+
     compileSdkVersion 33
 
     defaultConfig {

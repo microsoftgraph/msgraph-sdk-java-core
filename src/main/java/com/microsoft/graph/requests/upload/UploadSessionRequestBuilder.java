@@ -1,25 +1,25 @@
 package com.microsoft.graph.requests.upload;
 
 import com.microsoft.graph.models.IUploadSession;
-import com.microsoft.graph.models.UploadResult;
 import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
 import okhttp3.Response;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 public class UploadSessionRequestBuilder<T extends Parsable> {
 
-    private UploadResponseHandler responseHandler;
-    private RequestAdapter requestAdapter;
-    private String urlTemplate;
-    private ParsableFactory<T> factory;
+    private final UploadResponseHandler responseHandler;
+    private final RequestAdapter requestAdapter;
+    private final String urlTemplate;
+    private final ParsableFactory<T> factory;
 
-    public UploadSessionRequestBuilder(IUploadSession uploadSession, RequestAdapter requestAdapter, @Nonnull final ParsableFactory<T> factory) {
+    public UploadSessionRequestBuilder(@Nonnull IUploadSession uploadSession,
+                                       @Nonnull RequestAdapter requestAdapter,
+                                       @Nonnull final ParsableFactory<T> factory) {
         this.responseHandler = new UploadResponseHandler(null);
         this.requestAdapter = requestAdapter;
         this.urlTemplate = uploadSession.getUploadUrl();
@@ -27,10 +27,9 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
     }
 
     public RequestInformation createGetRequestInformation() {
-        RequestInformation requestInformation = new RequestInformation() {{
-            httpMethod = HttpMethod.GET;
-            urlTemplate = this.urlTemplate;
-        }};
+        RequestInformation requestInformation = new RequestInformation();
+        requestInformation.httpMethod = HttpMethod.GET;
+        requestInformation.urlTemplate = this.urlTemplate;
         return requestInformation;
     }
 
@@ -38,28 +37,15 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         RequestInformation requestInformation = createGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
-        return this.requestAdapter.sendPrimitiveAsync(requestInformation, Void.class, null)
-            .thenCompose( i -> {
-                CompletableFuture<UploadResult<T>> result = null;
-                try {
-                     return responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
-                } catch (IOException ex) {
-                    return new CompletableFuture<UploadResult>() {{
-                        this.completeExceptionally(ex);
-                    }};
-                } catch (URISyntaxException ex) {
-                    return new CompletableFuture<UploadResult>() {{
-                        this.completeExceptionally(ex);
-                    }};
-                }
-            }).thenCompose(result -> (CompletableFuture<IUploadSession>)result.uploadSession);
+        return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
+            .thenCompose( i -> responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory))
+            .thenCompose(result -> CompletableFuture.completedFuture(result.uploadSession));
     }
 
     public RequestInformation createDeleteRequestInformation() {
-        RequestInformation requestInformation = new RequestInformation() {{
-            httpMethod = HttpMethod.DELETE;
-            urlTemplate = this.urlTemplate;
-        }};
+        RequestInformation requestInformation = new RequestInformation();
+        requestInformation.httpMethod = HttpMethod.DELETE;
+        requestInformation.urlTemplate = this.urlTemplate;
         return requestInformation;
     }
 

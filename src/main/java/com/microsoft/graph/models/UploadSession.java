@@ -12,11 +12,12 @@ import java.util.function.Consumer;
 
 public class UploadSession implements IUploadSession {
 
-    private String uploadUrl;
-    private List<String> nextExpectedRanges;
-    private OffsetDateTime expirationDateTime;
-    private Map<String, Object> additionalData;
+    public String uploadUrl;
+    public List<String> nextExpectedRanges = new ArrayList<String>();
+    public OffsetDateTime expirationDateTime;
+    public Map<String, Object> additionalData = new HashMap<String, Object>();
 
+    public UploadSession() {}
     @Nonnull
     @Override
     public String getUploadUrl() {
@@ -26,7 +27,6 @@ public class UploadSession implements IUploadSession {
         Objects.requireNonNull(uploadUrl, "Upload url cannot be null");
         this.uploadUrl = uploadUrl;
     }
-
     @Nonnull
     @Override
     public List<String> getNextExpectedRanges() {
@@ -37,7 +37,6 @@ public class UploadSession implements IUploadSession {
         Objects.requireNonNull(nextExpectedRanges, "Parameter nextExpectedRanges cannot be null");
         this.nextExpectedRanges.addAll(nextExpectedRanges);
     }
-
     @Nullable
     @Override
     public OffsetDateTime getExpirationDateTime() {

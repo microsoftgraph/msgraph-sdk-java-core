@@ -43,5 +43,5 @@ public interface IUploadSession extends Parsable, AdditionalDataHolder {
      * Set the expiration date of the UploadSession
      * @param dateTime the expiration date of the UploadSession.
      */
-    void setExpirationDateTime(OffsetDateTime dateTime);
+    void setExpirationDateTime(@Nonnull OffsetDateTime dateTime);
 }

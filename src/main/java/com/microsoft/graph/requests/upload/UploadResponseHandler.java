@@ -1,9 +1,8 @@
 package com.microsoft.graph.requests.upload;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.microsoft.graph.HttpResponseCode;
-import com.microsoft.graph.exceptions.ErrorResponse;
-import com.microsoft.graph.exceptions.Error;
+import com.google.common.io.ByteStreams;
+import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
 import com.microsoft.kiota.serialization.*;
@@ -12,15 +11,17 @@ import okhttp3.Response;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-public class UploadResponseHandler<T extends Parsable> {
+public class UploadResponseHandler {
 
     private final ParseNodeFactory _parseNodeFactory;
 
@@ -28,43 +29,46 @@ public class UploadResponseHandler<T extends Parsable> {
         this._parseNodeFactory = (parseNodeFactory == null) ? ParseNodeFactoryRegistry.defaultInstance : parseNodeFactory;
     }
 
-    public <T extends Parsable> CompletableFuture<UploadResult<T>> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) throws IOException, URISyntaxException {
-        if (response == null) {
-            //handle with error code
+    @Nonnull
+    public <T extends Parsable> CompletableFuture<UploadResult<T>> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) {
+        if (response.body() == null) {
+            ServiceException ex = new ServiceException(ErrorConstants.Messages.NoResponseForUpload, null);
+            return new CompletableFuture<UploadResult<T>>() {{
+               completeExceptionally(ex);
+            }};
         }
-        String contentType = response.body().contentType().type().toLowerCase(Locale.ROOT);
-        try {
-            try(InputStream responseStream = response.body().byteStream()) {
-                if (!response.isSuccessful()) {
-                    ParseNode jsonParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                    ErrorResponse errorResponse = jsonParseNode.getObjectValue(ErrorResponse::createFromDiscriminatorValue);
-                    Error error = errorResponse.getError();
-                    String rawResponseBody = response.body().string();
-                    //TODO: throw service exception, create service exception class
-                }
-
-                UploadResult uploadResult = new UploadResult<T>();
-
-                if (response.code() == HttpResponseCode.HTTP_CREATED) {
-                    if (response.body().contentLength() > 0) {
-                        ParseNode jsonParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                        uploadResult.itemResponse = jsonParseNode.getObjectValue(factory);
-                    }
-                    uploadResult.location = new URI(Objects.requireNonNull(response.headers().get("location")));
-                } else {
-                    ParseNode uploadSessionParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                    UploadSession uploadSession = uploadSessionParseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
-                    if (uploadSession.getNextExpectedRanges() != null) {
-                        uploadResult.uploadSession = uploadSession;
-                    } else {
-                        responseStream.reset();
-                        ParseNode objectParseNode = _parseNodeFactory.getParseNode(contentType, responseStream);
-                        uploadResult.itemResponse = objectParseNode.getObjectValue(factory::create);
-                    }
-                }
-                return CompletableFuture.completedFuture(uploadResult);
+        String contentType[] = response.body().contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
+        try(final InputStream in = response.body().byteStream()){
+            byte[] responseStream = ByteStreams.toByteArray(in);
+            if(!response.isSuccessful()) {
+                String rawResponseBody = new String(responseStream, 0, responseStream.length);
+                ServiceException ex = new ServiceException(ErrorConstants.Codes.GeneralException, response.headers(), response.code(), rawResponseBody, null);
+                return new CompletableFuture<UploadResult<T>>() {{
+                    completeExceptionally(ex);
+                }};
             }
-        } catch (JsonParseException ex) {
+            UploadResult<T> uploadResult = new UploadResult<>();
+            if (response.code() == HttpURLConnection.HTTP_CREATED) {
+                if (response.body().contentLength() > 0) {
+                    ParseNode uploadTypeParseNode = _parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
+                    uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
+                }
+                if(!Objects.isNull(response.headers().get("location"))) {
+                    uploadResult.location = new URI(response.headers().get("location"));
+                }
+            } else {
+                ParseNode uploadSessionParseNode = _parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
+                UploadSession uploadSession = uploadSessionParseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
+                if (!uploadSession.getNextExpectedRanges().isEmpty()) {
+                    uploadResult.uploadSession = uploadSession;
+                } else {
+                    ParseNode objectParseNode = _parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
+                    uploadResult.itemResponse = objectParseNode.getObjectValue(factory);
+                }
+            }
+            return CompletableFuture.completedFuture(uploadResult);
+        }
+        catch(IOException | URISyntaxException ex) {
             return new CompletableFuture<UploadResult<T>>() {{
                 this.completeExceptionally(ex);
             }};

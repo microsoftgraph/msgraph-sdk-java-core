@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 /**
  * Default client implementation.
  */
-public class BaseClient implements IBaseClient{
+class BaseClient implements IBaseClient{
 
     private RequestAdapter requestAdapter;
     /** RequestBuilder for completing Batch Requests */
