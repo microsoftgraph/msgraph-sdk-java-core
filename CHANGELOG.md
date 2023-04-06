@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.3] - 2023-04-06
+
+### Changed
+
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components.
+
 ## [3.0.2] - 2022-10-10
 
 ### Changed
