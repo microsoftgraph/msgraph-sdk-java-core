@@ -38,7 +38,7 @@ spotbugsMain {
     excludeFilter = file("spotBugsExcludeFilter.xml")
     reports {
         html {
-            enabled = true
+            required
             destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
@@ -49,7 +49,7 @@ spotbugsTest {
     excludeFilter = file("spotBugsExcludeFilter.xml")
     reports {
         html {
-            enabled = true
+            required
             destination = file("$buildDir/reports/spotbugs/test/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
@@ -58,7 +58,7 @@ spotbugsTest {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required
     }
 }
 
