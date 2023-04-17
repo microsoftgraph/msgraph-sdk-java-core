@@ -79,7 +79,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      *
      * @return the client
      */
-    @Nullable
+    @Nonnull
     @SuppressFBWarnings
     public IBaseClient<?> getClient() {
         return client;
@@ -90,7 +90,7 @@ public abstract class BaseRequestBuilder<T> implements IRequestBuilder {
      *
      * @return the request URL
      */
-    @Nullable
+    @Nonnull
     public String getRequestUrl() {
         return requestUrl;
     }
