@@ -50,7 +50,7 @@ spotbugsTest {
     reports {
         html {
             required
-            outputLocation = new File('$buildDir/reports/spotbugs/test/spotbugs.html')
+            outputLocation = new File("$buildDir/reports/spotbugs/test/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
 
         }

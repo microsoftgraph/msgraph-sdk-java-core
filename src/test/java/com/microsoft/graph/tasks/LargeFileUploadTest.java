@@ -12,37 +12,38 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class LargeFileUploadTest {
+class LargeFileUploadTest {
 
     final OkHttpRequestAdapter adapter = new OkHttpRequestAdapter(mock(AuthenticationProvider.class));
 
     @Test
     void ThrowsIllegalArgumentExceptionOnEmptyStream() throws NoSuchFieldException, IllegalAccessException, IOException {
         UploadSession session = new UploadSession();
-        session.nextExpectedRanges.add("0-");
-        session.uploadUrl = "http://localhost";
-        session.expirationDateTime = OffsetDateTime.parse("2019-11-07T06:39:31.499Z");
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.parse("2019-11-07T06:39:31.499Z"));
 
         InputStream stream = InputStream.nullInputStream();
         int size = stream.available();
         long maxSliceSize = 200*1024;
 
         try{
-            LargeFileUploadTask<TestDriveItem> task = new LargeFileUploadTask<TestDriveItem>(adapter, session, stream, size, maxSliceSize, TestDriveItem::createFromDiscriminatorValue);
-        } catch (IllegalArgumentException ex ) {
+            new LargeFileUploadTask<TestDriveItem>(adapter, session, stream, size, maxSliceSize, TestDriveItem::createFromDiscriminatorValue);
+        } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex ) {
             assertEquals("Must provide a stream that is not empty.", ex.getMessage());
         }
     }
-
     @Test
-    void AllowsVariableSliceSize() throws NoSuchFieldException, IllegalAccessException, IOException {
+    void AllowsVariableSliceSize() throws NoSuchFieldException, IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
         UploadSession session = new UploadSession();
-        session.nextExpectedRanges.add("0-");
-        session.uploadUrl = "http://localhost";
-        session.expirationDateTime = OffsetDateTime.parse("2019-11-07T06:39:31.499Z");
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.parse("2019-11-07T06:39:31.499Z"));
 
         byte[] mockData = new byte[1000000];
         ByteArrayInputStream stream = new ByteArrayInputStream(mockData);
@@ -57,14 +58,13 @@ public class LargeFileUploadTest {
         assertEquals(0, slice.getRangeBegin());
         assertEquals(204799,slice.getRangeEnd());
         assertEquals(204800, slice.getRangeLength());
-        }
-
+    }
     @Test
-    void singleSliceTest() throws IOException, NoSuchFieldException, IllegalAccessException {
+    void singleSliceTest() throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         UploadSession session = new UploadSession();
-        session.nextExpectedRanges.add("0-");
-        session.uploadUrl = "http://localhost";
-        session.expirationDateTime = OffsetDateTime.parse("2019-11-07T06:39:31.499Z");
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.parse("2019-11-07T06:39:31.499Z"));
 
         byte[]  mockData = new byte[100000];
         ByteArrayInputStream stream = new ByteArrayInputStream(mockData);
@@ -79,13 +79,12 @@ public class LargeFileUploadTest {
         assertEquals(size-1, onlySlice.getRangeEnd());
         assertEquals(size, onlySlice.getRangeLength());
     }
-
     @Test
-    void BreakStreamIntoCorrectRanges() throws IOException, NoSuchFieldException, IllegalAccessException {
+    void BreakStreamIntoCorrectRanges() throws IOException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         UploadSession session = new UploadSession();
-        session.nextExpectedRanges.add("0-");
-        session.uploadUrl = "http://localhost";
-        session.expirationDateTime = OffsetDateTime.parse("2019-11-07T06:39:31.499Z");
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.parse("2019-11-07T06:39:31.499Z"));
 
         byte[] mockData = new byte[1000000];
         ByteArrayInputStream stream = new ByteArrayInputStream(mockData);
@@ -107,5 +106,4 @@ public class LargeFileUploadTest {
         assertEquals(size%maxSliceSize, lastSlice.getRangeLength());
         assertEquals(size-1, lastSlice.getRangeEnd());
     }
-
 }

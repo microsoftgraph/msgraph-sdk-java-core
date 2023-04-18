@@ -18,7 +18,7 @@ import java.net.HttpURLConnection;
 import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 
-public class UploadResponseHandlerTest {
+class UploadResponseHandlerTest {
 
     String contentType = "application/json";
     ParseNodeFactoryRegistry registry = defaultInstance;
@@ -43,8 +43,9 @@ public class UploadResponseHandlerTest {
             .build();
         UploadResult<TestDriveItem> result = responseHandler
             .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
+        responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();}).get();
         TestDriveItem item = result.itemResponse;
-        assertTrue(result.uploadSucceeded());
+        assertTrue(result.isUploadSuccessful());
         assertNotNull(item);
         assertEquals("912310013A123", item.id);
         assertEquals("largeFile.vhd", item.name);
@@ -67,7 +68,7 @@ public class UploadResponseHandlerTest {
             .handleResponse(response,TestDriveItem::createFromDiscriminatorValue).get();
         TestDriveItem item = result.itemResponse;
 
-        assertTrue(result.uploadSucceeded());
+        assertTrue(result.isUploadSuccessful());
         assertNull(item);
         assertEquals("http://localhost", result.location.toString());
     }
@@ -96,13 +97,13 @@ public class UploadResponseHandlerTest {
             .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
         UploadSession session = (UploadSession) result.uploadSession;
 
-        assertFalse(result.uploadSucceeded());
+        assertFalse(result.isUploadSuccessful());
         assertNotNull(session);
-        assertNull(session.uploadUrl);
-        assertEquals(OffsetDateTime.parse("2015-01-29T09:21:55.523Z"), session.expirationDateTime);
-        assertEquals("12345-55232", session.nextExpectedRanges.get(0));
-        assertEquals("77829-99375", session.nextExpectedRanges.get(1));
-        assertEquals(2, session.nextExpectedRanges.size());
+        assertTrue(session.getUploadUrl().isEmpty());
+        assertEquals(OffsetDateTime.parse("2015-01-29T09:21:55.523Z"), session.getExpirationDateTime());
+        assertEquals("12345-55232", session.getNextExpectedRanges().get(0));
+        assertEquals("77829-99375", session.getNextExpectedRanges().get(1));
+        assertEquals(2, session.getNextExpectedRanges().size());
     }
     @Test
     void ThrowsServiceExceptionOnErrorResponse() throws InterruptedException {
@@ -131,7 +132,7 @@ public class UploadResponseHandlerTest {
                 .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
         } catch (ExecutionException ex) {
             ServiceException se = (ServiceException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GeneralException, se.getMessage());
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
             assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, se.responseStatusCode);
         }
     }
@@ -162,8 +163,8 @@ public class UploadResponseHandlerTest {
                 .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
         } catch (ExecutionException ex) {
             ServiceException se = (ServiceException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GeneralException, se.getMessage());
-            assertEquals(malformedResponse, se.rawResponseBody);
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
+            assertEquals(malformedResponse, se.getRawResponseBody());
         }
     }
 }

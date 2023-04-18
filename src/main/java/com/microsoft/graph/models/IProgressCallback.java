@@ -1,5 +1,9 @@
 package com.microsoft.graph.models;
 
+/**
+ * Defines how to return progress status from a request.
+ */
+@FunctionalInterface
 public interface IProgressCallback {
 
     /**
@@ -8,5 +12,5 @@ public interface IProgressCallback {
      * @param current the current amount of progress
      * @param max     the max amount of progress
      */
-    void progress(final long current, final long max);
+    void report(final long current, final long max);
 }

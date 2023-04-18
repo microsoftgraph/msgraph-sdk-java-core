@@ -78,10 +78,8 @@ public class GraphClientFactory {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
         handlers.add(new GraphTelemetryHandler(graphClientOption));
-        for(final Interceptor interceptor: KiotaClientFactory.createDefaultInterceptors()) {
-            handlers.add(interceptor);
-        }
-        return handlers.toArray(new Interceptor[handlers.size()]);
+        handlers.addAll(Arrays.asList(KiotaClientFactory.createDefaultInterceptors()));
+        return handlers.toArray(new Interceptor[0]);
     }
     //These are the default features used by the Graph Client
     private static void addDefaultFeatureUsages(GraphClientOption graphClientOption) {

@@ -4,8 +4,6 @@ import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
 import com.microsoft.graph.testModels.TestDriveItem;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
-import com.microsoft.kiota.authentication.AuthenticationProvider;
-import com.microsoft.kiota.http.KiotaClientFactory;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParsableFactory;
@@ -24,7 +22,7 @@ import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.default
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UploadSliceRequestTest {
+class UploadSliceRequestTest {
     String contentType = "application/json";
     ParseNodeFactoryRegistry registry = defaultInstance;
 
@@ -61,13 +59,13 @@ public class UploadSliceRequestTest {
         UploadResult<TestDriveItem> result = sliceRequestBuilder.putAsync(stream).get();
         UploadSession session = (UploadSession) result.uploadSession;
 
-        assertFalse(result.uploadSucceeded());
+        assertFalse(result.isUploadSuccessful());
         assertNotNull(session);
-        assertNull(session.uploadUrl);
-        assertEquals(OffsetDateTime.parse("2015-01-29T09:21:55.523Z"), session.expirationDateTime);
-        assertEquals("12345-55232", session.nextExpectedRanges.get(0));
-        assertEquals("77829-99375", session.nextExpectedRanges.get(1));
-        assertEquals(2, session.nextExpectedRanges.size());
+        assertTrue(session.getUploadUrl().isEmpty());
+        assertEquals(OffsetDateTime.parse("2015-01-29T09:21:55.523Z"), session.getExpirationDateTime());
+        assertEquals("12345-55232", session.getNextExpectedRanges().get(0));
+        assertEquals("77829-99375", session.getNextExpectedRanges().get(1));
+        assertEquals(2, session.getNextExpectedRanges().size());
     }
 
     public static OkHttpClient getMockClient(final Response response) throws IOException {

@@ -17,7 +17,7 @@ public class TestDriveItem implements Parsable, AdditionalDataHolder {
     public String oDataType = "#microsoft.graph.driveItem";
     public String name;
     public long size;
-    HashMap<String, Object> additionalData = new HashMap<String, Object>();
+    public HashMap<String, Object> additionalData = new HashMap<>();
 
     public TestDriveItem() {}
 

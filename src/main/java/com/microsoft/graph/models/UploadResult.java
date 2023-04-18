@@ -1,18 +1,27 @@
 package com.microsoft.graph.models;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URI;
 
+/**
+ * Model containing the information from an upload response.
+ * @param <T> The type of item contained in the response.
+ */
 public class UploadResult<T> {
-
+    /** The UploadSession containing information about the created upload session. */
+    @Nullable
     public IUploadSession uploadSession;
-
+    /** The uploaded item, once upload has completed. */
     public T itemResponse;
-
+    /** The uploaded item location, once upload has completed. */
+    @Nullable
     public URI location;
-
-    public boolean uploadSucceeded() {
+    /**
+     * Status of the request.
+     * @return A boolean dictating whether the upload has been fully completed.
+     */
+    public boolean isUploadSuccessful() {
         return (this.itemResponse != null) || (this.location != null);
     }
-
-
 }

@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 
 /**
  * Extension of the OkHttpRequestAdapter which is used as the default for Graph Requests.
@@ -38,14 +38,15 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * Map of valid cloud urls for use in Graph requests.
      * Accessible using a Clouds enum value.
      */
-    private static final HashMap<Clouds, String> cloudList = new HashMap<Clouds, String>() {{
-        put( Clouds.GLOBAL_CLOUD, "https://graph.microsoft.com" );
-        put( Clouds.USGOV_CLOUD, "https://graph.microsoft.us");
-        put( Clouds.CHINA_CLOUD, "https://microsoftgraph.chinacloudapi.cn");
-        put( Clouds.GERMANY_CLOUD, "https://graph.microsoft.de");
-        put( Clouds.USGOV_DOD_CLOUD, "https://dod-graph.microsoft.us");
-    }};
-
+    private static final EnumMap<Clouds, String> getCloudList() {
+        EnumMap<Clouds, String> cloudList = new EnumMap<>(Clouds.class);
+        cloudList.put( Clouds.GLOBAL_CLOUD, "https://graph.microsoft.com" );
+        cloudList.put( Clouds.USGOV_CLOUD, "https://graph.microsoft.us");
+        cloudList.put( Clouds.CHINA_CLOUD, "https://microsoftgraph.chinacloudapi.cn");
+        cloudList.put( Clouds.GERMANY_CLOUD, "https://graph.microsoft.de");
+        cloudList.put( Clouds.USGOV_DOD_CLOUD, "https://dod-graph.microsoft.us");
+        return cloudList;
+    }
 
     /**
      * The default BaseGraphRequestAdapter constructor, includes all configurable properties.
@@ -151,7 +152,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     }
 
     private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {
-        String cloud = nationalCloud == null ? cloudList.get(Clouds.GLOBAL_CLOUD) : cloudList.get(nationalCloud);
+        String cloud = nationalCloud == null ? getCloudList().get(Clouds.GLOBAL_CLOUD) : getCloudList().get(nationalCloud);
         if(cloud == null) {
             throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }

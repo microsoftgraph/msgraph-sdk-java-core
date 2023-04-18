@@ -16,67 +16,144 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Graph Service Exception
+ */
 public class ServiceException extends ApiException implements Parsable, AdditionalDataHolder {
 
-    public Headers responseHeaders;
-    public String rawResponseBody;
-    public Map<String, Object> additionalData;
+    /** The response headers received. */
+    private final transient Headers responseHeaders;
+    /** The response body received. */
+    private String rawResponseBody;
+    /** The additional data found. */
+    private final transient Map<String, Object> additionalData = new HashMap<>();
 
-    public ServiceException(@Nonnull String message, @Nullable Throwable cause) {
-        this(message, null, 0, null, cause);
+    /**
+     * Creates a new service exception.
+     * @param message The error message.
+     */
+    public ServiceException(@Nonnull final String message) {
+        this(message, null, 0, null);
     }
-    public ServiceException(@Nonnull String message,
-                            @Nullable Headers responseHeaders,
-                            int statusCode,
-                            @Nullable Throwable cause) {
-        super(message, cause);
+    /**
+     * Creates a new service exception.
+     * @param message The error message.
+     * @param cause The possible innerException.
+     */
+    public ServiceException(@Nonnull final String message, @Nonnull final Throwable cause) {
+        this(message, cause, 0, null);
+    }
+    /**
+     * Creates a new service exception.
+     * @param message The error message.
+     * @param cause The possible innerException.
+     * @param statusCode The HTTP status code from the response.
+     * @param responseHeaders The HTTP response headers from the response.
+     */
+    public ServiceException(@Nonnull final String message,
+                            @Nullable final Throwable cause,
+                            final int statusCode,
+                            @Nullable final Headers responseHeaders) {
+        this(message, cause, statusCode, responseHeaders, null);
+    }
+    /**
+     * Creates a new service exception.
+     * @param message The error message.
+     * @param cause The possible innerException.
+     * @param statusCode The HTTP status code from the response.
+     * @param responseHeaders The HTTP response headers from the response.
+     * @param rawResponseBody The raw JSON response body.
+     */
+    public ServiceException(@Nonnull final String message,
+                            @Nullable final Throwable cause,
+                            final int statusCode,
+                            @Nullable final Headers responseHeaders,
+                            @Nullable final String rawResponseBody){
+        super(message);
         this.responseHeaders = responseHeaders;
         this.responseStatusCode = statusCode;
+        this.rawResponseBody = rawResponseBody != null ? rawResponseBody : "";
+        if(!Objects.isNull(cause)){
+            this.initCause(cause);
+        }
     }
-    public ServiceException(@Nonnull String message,
-                            @Nullable Headers responseHeaders,
-                            int statusCode,
-                            @Nonnull String rawResponseBody,
-                            @Nullable Throwable cause ) {
-        this(message, responseHeaders, statusCode, cause);
-        this.rawResponseBody = rawResponseBody;
-    }
+    /**
+     * Get the HTTP response headers from the response.
+     * @return The HTTP response headers.
+     */
+    @Nullable
     public Headers getHeaders() {
         return this.responseHeaders;
     }
+    /**
+     * Get the raw response body from the response.
+     * @return The raw response body.
+     */
+    @Nonnull
     public String getRawResponseBody() {
         return this.rawResponseBody;
     }
-    public Boolean isMatch(String errorCode) {
-        if(errorCode != null && !errorCode.trim().isEmpty()) {
+    /**
+     * Set the raw response body.
+     * @param rawResponseBody The response body to be set.
+     */
+    public void setRawResponseBody(@Nonnull String rawResponseBody) {
+        this.rawResponseBody = rawResponseBody;
+    }
+    /**
+     * Checks if a given error code has been returned by the response at any level in the error stack.
+     * @param errorCode The error code to look for.
+     * @return a boolean declaring whether the error code was found within the error stack.
+     */
+    public boolean isMatch(@Nonnull String errorCode) {
+        if(errorCode.trim().isEmpty()) {
             throw new IllegalArgumentException("Parameter 'errorCode 'cannot be null or empty");
         }
-        if(this.rawResponseBody.toLowerCase(Locale.ROOT).indexOf(errorCode.toLowerCase(Locale.ROOT)) >= 0) {
-            return true;
-        }
-        if(super.getMessage().toLowerCase(Locale.ROOT).indexOf(errorCode.toLowerCase(Locale.ROOT)) >= 0) {
-            return true;
-        }
-        return false;
+        return (this.rawResponseBody.toLowerCase(Locale.ROOT).contains(errorCode.toLowerCase(Locale.ROOT)))
+            || (super.getMessage().toLowerCase(Locale.ROOT).contains(errorCode.toLowerCase(Locale.ROOT)));
     }
+    /**
+     * The Service Exception as a string.
+     * @return Service exception response code and message as a string.
+     */
     @Override
     public String toString() {
-        return String.format(Locale.US,"Status Code: %d \n %s", this.responseStatusCode, super.toString());
+        return String.format(Locale.US,"Status Code: %d %n %s", this.responseStatusCode, super.toString());
     }
+    /**
+     * Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
+     * @return The additional data found.
+     */
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.additionalData;
+        return new HashMap<>(additionalData);
     }
+    /**
+     * Sets the additionalData property value. Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
+     * @param additionalData The AdditionalData to set.
+     */
+    public void setAdditionalData(@Nonnull final Map<String, Object> additionalData) {
+        Map<String, Object> newData = new HashMap<>(additionalData);
+        this.additionalData.putAll(newData);
+    }
+    /**
+     * The deserialization information for the current model.
+     * @return A hash map describing how to deserialize the current model fields.
+     */
     @NotNull
     @Override
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
-        final ServiceException currentObject = this;
-        return new HashMap<String, Consumer<ParseNode>>(2) {{
-            this.put("statusCode", (n) -> {currentObject.responseStatusCode = n.getIntegerValue();} );
-            this.put("rawResponseBody", (n) -> {currentObject.rawResponseBody = n.getStringValue();} );
-        }};
+        final ServiceException currentObj = this;
+        HashMap<String, Consumer<ParseNode>> deserializers = new HashMap<>(2);
+        deserializers.put("statusCode", n -> currentObj.responseStatusCode = n.getIntegerValue());
+        deserializers.put("rawResponseBody", n -> currentObj.setRawResponseBody(n.getStringValue()));
+        return deserializers;
     }
+    /**
+     * Serializes information the current object.
+     * @param writer Serialization writer to use to serialize this model.
+     */
     @Override
     public void serialize(@NotNull SerializationWriter writer) {
         Objects.requireNonNull(writer, "Writer cannot be null");

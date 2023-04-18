@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Interface defining and UploadSession
+ */
 public interface IUploadSession extends Parsable, AdditionalDataHolder {
     /**
      * Gets the Upload Url.
