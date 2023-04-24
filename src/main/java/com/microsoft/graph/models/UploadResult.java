@@ -13,6 +13,7 @@ public class UploadResult<T> {
     @Nullable
     public IUploadSession uploadSession;
     /** The uploaded item, once upload has completed. */
+    @Nullable
     public T itemResponse;
     /** The uploaded item location, once upload has completed. */
     @Nullable
