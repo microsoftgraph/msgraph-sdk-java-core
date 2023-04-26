@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removes Request Builders.
 - GraphClientFactory to handle OkHttp client creation.
 - BaseClient refactored to use Kiota framework.
+## [2.0.18] - 2023-04-06
+
+### Changed
+
+- Fix `getRequestUrl()` and `getClient()` wrongfully being declared `@Nullable` in `BaseRequestBuilder`.
 
 ## [2.0.17] - 2023-03-20
 
