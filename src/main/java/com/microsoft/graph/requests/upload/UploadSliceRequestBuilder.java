@@ -51,7 +51,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
         this.rangeEnd = rangeEnd;
         this.rangeLength = (rangeEnd-rangeBegin+1);
         this.totalSessionLength = totalSessionLength;
-        this.responseHandler = new UploadResponseHandler(null);
+        this.responseHandler = new UploadResponseHandler();
     }
     /**
      * Uploads the slice using PUT.
@@ -61,13 +61,13 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
     @Nonnull
     public CompletableFuture<UploadResult<T>> putAsync(@Nonnull InputStream stream) {
         Objects.requireNonNull(stream);
-        RequestInformation requestInformation = this.createPutRequestInformation(stream);
+        RequestInformation requestInformation = this.toPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
             .thenCompose(i -> responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory));
     }
-    private RequestInformation createPutRequestInformation(InputStream stream) {
+    private RequestInformation toPutRequestInformation(InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation  requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.PUT;

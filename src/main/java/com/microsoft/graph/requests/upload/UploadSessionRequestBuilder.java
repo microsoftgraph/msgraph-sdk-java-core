@@ -32,7 +32,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
     public UploadSessionRequestBuilder(@Nonnull String sessionUrl,
                                        @Nonnull final RequestAdapter requestAdapter,
                                        @Nonnull final ParsableFactory<T> factory) {
-        this.responseHandler = new UploadResponseHandler(null);
+        this.responseHandler = new UploadResponseHandler();
         this.requestAdapter = Objects.requireNonNull(requestAdapter);
         this.urlTemplate = Objects.requireNonNull(sessionUrl);
         this.factory = Objects.requireNonNull(factory);
@@ -43,14 +43,14 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      */
     @Nonnull
     public CompletableFuture<IUploadSession> getAsync() {
-        RequestInformation requestInformation = createGetRequestInformation();
+        RequestInformation requestInformation = toGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
         return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
             .thenCompose( i -> responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory))
             .thenCompose(result -> CompletableFuture.completedFuture(result.uploadSession));
     }
-    private RequestInformation createGetRequestInformation() {
+    private RequestInformation toGetRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
         requestInformation.httpMethod = HttpMethod.GET;
         requestInformation.urlTemplate = this.urlTemplate;
@@ -62,10 +62,10 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      */
     @Nonnull
     public CompletableFuture<Void> deleteAsync() {
-        RequestInformation requestInfo = this.createDeleteRequestInformation();
+        RequestInformation requestInfo = this.toDeleteRequestInformation();
         return this.requestAdapter.sendPrimitiveAsync(requestInfo, Void.class, null);
     }
-    private RequestInformation createDeleteRequestInformation() {
+    private RequestInformation toDeleteRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
         requestInformation.httpMethod = HttpMethod.DELETE;
         requestInformation.urlTemplate = this.urlTemplate;

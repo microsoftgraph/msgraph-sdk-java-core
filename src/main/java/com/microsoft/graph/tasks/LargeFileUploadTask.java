@@ -17,6 +17,7 @@ import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
+import com.microsoft.kiota.serialization.ParseNode;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
@@ -31,6 +32,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Task for uploading large files including pausing and resuming.
@@ -104,7 +106,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> uploadAsync() {
+    public CompletableFuture<UploadResult<T>> uploadAsync() throws InterruptedException {
         return this.uploadAsync(3, null);
     }
     /**
@@ -114,7 +116,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> uploadAsync(int maxTries, @Nullable IProgressCallback progress) {
+    public CompletableFuture<UploadResult<T>> uploadAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         int uploadTries = 0;
         ArrayList<Throwable> exceptionsList = new ArrayList<>();
         while (uploadTries < maxTries) {
@@ -136,11 +138,6 @@ public class LargeFileUploadTask<T extends Parsable > {
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
                 }
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-                exceptionalResult.completeExceptionally(ex);
-                return exceptionalResult;
             } catch (IOException| ExecutionException| ServiceException ex) {
                 CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
                 exceptionalResult.completeExceptionally(ex);
@@ -157,7 +154,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resumeAsync() {
+    public CompletableFuture<UploadResult<T>> resumeAsync() throws InterruptedException {
         return this.resumeAsync(3, null);
     }
     /**
@@ -167,16 +164,11 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @return An UploadResult model containing the information from the server resulting from the upload request..
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resumeAsync(int maxTries, @Nullable IProgressCallback progress) {
+    public CompletableFuture<UploadResult<T>> resumeAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         IUploadSession session;
         try{
             session = updateSessionStatusAsync().get();
         } catch (ExecutionException ex) {
-            CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(ex);
-            return exceptionalResult;
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
             CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
             exceptionalResult.completeExceptionally(ex);
             return exceptionalResult;
@@ -237,9 +229,6 @@ public class LargeFileUploadTask<T extends Parsable > {
                 else{
                     throw ex;
                 }
-            } catch (InterruptedException ex){
-                Thread.currentThread().interrupt();
-                throw ex;
             }
         }
     }
@@ -297,11 +286,12 @@ public class LargeFileUploadTask<T extends Parsable > {
     /** Extract the upload session information from parsable and return in a new UploadSession model. */
     @Nonnull
     private IUploadSession extractSessionFromParsable(@Nonnull Parsable uploadSession) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        if (!uploadSession.getFieldDeserializers().containsKey("expirationDateTime"))
+        Map<String, Consumer<ParseNode>> deserializers = uploadSession.getFieldDeserializers();
+        if (!deserializers.containsKey("expirationDateTime"))
             throw new IllegalArgumentException("The Parsable does not contain the 'expirationDateTime' property");
-        if (!uploadSession.getFieldDeserializers().containsKey("nextExpectedRanges"))
+        if (!deserializers.containsKey("nextExpectedRanges"))
             throw new IllegalArgumentException("The Parsable does not contain the 'nextExpectedRanges' property");
-        if (!uploadSession.getFieldDeserializers().containsKey("uploadUrl"))
+        if (!deserializers.containsKey("uploadUrl"))
             throw new IllegalArgumentException("The Parsable does not contain the 'uploadUrl' property");
 
         UploadSession session = new UploadSession();

@@ -30,6 +30,12 @@ public class UploadResponseHandler {
     private final ParseNodeFactory parseNodeFactory;
     /**
      * UploadResponseHandler constructor.
+     */
+    public UploadResponseHandler() {
+        this(null);
+    }
+    /**
+     * UploadResponseHandler constructor.
      * @param parseNodeFactory The ParseNodeFactory to use for response parsing.
      */
     public UploadResponseHandler(@Nullable ParseNodeFactory parseNodeFactory) {
