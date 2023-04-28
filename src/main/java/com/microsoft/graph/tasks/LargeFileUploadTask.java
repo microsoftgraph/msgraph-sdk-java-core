@@ -104,6 +104,8 @@ public class LargeFileUploadTask<T extends Parsable > {
     /**
      * Perform the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
+     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadSliceAsync() is invoked.
+     * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
     public CompletableFuture<UploadResult<T>> uploadAsync() throws InterruptedException {
@@ -114,6 +116,8 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @param maxTries Number of times to retry the task before giving up.
      * @param progress IProgress interface describing how to report progress.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
+     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadSliceAsync() is invoked.
+     * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
     public CompletableFuture<UploadResult<T>> uploadAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
@@ -152,6 +156,7 @@ public class LargeFileUploadTask<T extends Parsable > {
     /**
      * Resume the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
+     @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
     public CompletableFuture<UploadResult<T>> resumeAsync() throws InterruptedException {
@@ -161,7 +166,8 @@ public class LargeFileUploadTask<T extends Parsable > {
      * Resume the upload task.
      * @param maxTries Number of times to retry the task before giving up.
      * @param progress IProgress interface describing how to report progress.
-     * @return An UploadResult model containing the information from the server resulting from the upload request..
+     * @return An UploadResult model containing the information from the server resulting from the upload request.
+     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
     public CompletableFuture<UploadResult<T>> resumeAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
