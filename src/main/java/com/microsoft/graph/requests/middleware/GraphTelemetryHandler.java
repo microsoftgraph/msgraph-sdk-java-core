@@ -2,7 +2,6 @@ package com.microsoft.graph.requests.middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -52,7 +51,7 @@ public class GraphTelemetryHandler implements Interceptor{
         final String featureUsage = "(featureUsage=" + mGraphClientOption.featureTracker.getSerializedFeatureUsage(); // (featureUsage=<featureFlag>
 
         final String jreVersion = System.getProperty("java.version");
-        final String jreVersionHeader = (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(jreVersion) ? "" : ("; " + String.format(Locale.US,CoreConstants.Headers.RUNTIME_ENV_HEADER_FORMAT,jreVersion))); //runtimeEnvironment=JRE/<JRE version>
+        final String jreVersionHeader = (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(jreVersion) ? "" : ("; runtimeEnvironment=JRE/"+jreVersion)); //runtimeEnvironment=JRE/<JRE version>
 
         final String androidVersion = getAndroidAPILevel(); // android/<version value>
         final String androidVersionHeader = (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(androidVersion) ? "" : ("; " + CoreConstants.Headers.ANDROID_VERSION_PREFIX + "/" + androidVersion));
