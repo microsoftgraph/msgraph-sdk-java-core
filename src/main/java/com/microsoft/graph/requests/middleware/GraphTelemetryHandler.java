@@ -2,6 +2,7 @@ package com.microsoft.graph.requests.middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -43,17 +44,22 @@ public class GraphTelemetryHandler implements Interceptor{
         final Request request = chain.request();
         final Request.Builder telemetryAddedBuilder = request.newBuilder();
 
-        final String graphEndpoint = mGraphClientOption.getGraphServiceTargetVersion();
-        final String featureUsage = "(featureUsage=" + mGraphClientOption.featureTracker.getSerializedFeatureUsage() + ")";
-        final String javaVersion = System.getProperty("java.version");
-        final String androidVersion = getAndroidAPILevel();
-        final String sdkversion_value = "graph-" + CoreConstants.Headers.JAVA_VERSION_PREFIX +"/"+ graphEndpoint +
-            (mGraphClientOption.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOption.getClientLibraryVersion()) + ", " +
-            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOption.getCoreLibraryVersion() + " " + featureUsage +
-            (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(javaVersion) ? "" : (", " + CoreConstants.Headers.JAVA_VERSION_PREFIX + "/" + javaVersion)) +
-            (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(androidVersion) ? "" : (", " + CoreConstants.Headers.ANDROID_VERSION_PREFIX + "/" + androidVersion));
-        telemetryAddedBuilder.addHeader(CoreConstants.Headers.SDK_VERSION_HEADER_NAME, sdkversion_value);
+        final String clientLibraryUsed = "graph-java" + (mGraphClientOption.getGraphServiceTargetVersion().equals("v1.0") ? ""  : "-"+mGraphClientOption.getGraphServiceTargetVersion()); //graph-java | graph-java-beta
+        final String sdkVersion = (mGraphClientOption.getClientLibraryVersion() == null ? "" : "/"+ mGraphClientOption.getClientLibraryVersion()); //SDK version value
 
+        final String coreVersionHeader = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + mGraphClientOption.getCoreLibraryVersion(); //"graph-java-core/3.0.0"
+
+        final String featureUsage = "(featureUsage=" + mGraphClientOption.featureTracker.getSerializedFeatureUsage(); // (featureUsage=<featureFlag>
+
+        final String jreVersion = System.getProperty("java.version");
+        final String jreVersionHeader = (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(jreVersion) ? "" : ("; " + String.format(Locale.US,CoreConstants.Headers.RUNTIME_ENV_HEADER_FORMAT,jreVersion))); //runtimeEnvironment=JRE/<JRE version>
+
+        final String androidVersion = getAndroidAPILevel(); // android/<version value>
+        final String androidVersionHeader = (CoreConstants.Headers.DEFAULT_VERSION_VALUE.equals(androidVersion) ? "" : ("; " + CoreConstants.Headers.ANDROID_VERSION_PREFIX + "/" + androidVersion));
+
+        final String sdkTelemetry = clientLibraryUsed + sdkVersion + ", " + coreVersionHeader + " " + featureUsage + jreVersionHeader + androidVersionHeader+")";
+
+        telemetryAddedBuilder.addHeader(CoreConstants.Headers.SDK_VERSION_HEADER_NAME, sdkTelemetry);
         if(request.header(CoreConstants.Headers.CLIENT_REQUEST_ID) == null) {
             telemetryAddedBuilder.addHeader(CoreConstants.Headers.CLIENT_REQUEST_ID, mGraphClientOption.getClientRequestId());
         }

@@ -18,13 +18,14 @@ import java.io.IOException;
 
 class GraphTelemetryHandlerTests {
 
+    private String defaultSDKVersion = "graph-java";
+
     public GraphTelemetryHandlerTests() {
     }
 
     @Test
     void telemetryHandlerDefaultTests() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
-        final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
         final OkHttpClient client = GraphClientFactory.create().build();
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
@@ -33,13 +34,12 @@ class GraphTelemetryHandlerTests {
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
         assertTrue(!response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(CoreConstants.Headers.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests running on java platform
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
+        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
     void arrayInterceptorsTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
-        final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
         final Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(), new RedirectHandler()};
         final OkHttpClient client = GraphClientFactory.create(interceptors).build();
@@ -48,13 +48,12 @@ class GraphTelemetryHandlerTests {
 
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
+        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
     void arrayInterceptorEmptyTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
-        final String expectedClientEndpoint = CoreConstants.Headers.JAVA_VERSION_PREFIX + "/v1.0";
 
         final Interceptor[] interceptors = new Interceptor[]{};
         final OkHttpClient client = GraphClientFactory.create(interceptors).build();
@@ -63,7 +62,7 @@ class GraphTelemetryHandlerTests {
 
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
+        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
@@ -82,7 +81,7 @@ class GraphTelemetryHandlerTests {
         final String expectedCoreVer =
             CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" +coreLibVer;
         final String expectedClientEndpoint =
-            CoreConstants.Headers.JAVA_VERSION_PREFIX + "/" + serviceLibVer + "/" + clientLibVer;
+            CoreConstants.Headers.JAVA_VERSION_PREFIX + "-" + serviceLibVer + "/" + clientLibVer;
 
         final OkHttpClient client = GraphClientFactory.create(graphClientOption).build();
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();

@@ -37,6 +37,8 @@ public final class CoreConstants {
         public static final String FEATURE_FLAG = "FeatureFlag";
         /** Default version value constant. */
         public static final String DEFAULT_VERSION_VALUE = "0";
+        /** runtimeEnvironment string format */
+        public static final String RUNTIME_ENV_HEADER_FORMAT = "runtimeEnvironment=JRE/%s";
 
         /**The following appear in dotnet core, are they necessary in Java?
          * Content-Type header:
