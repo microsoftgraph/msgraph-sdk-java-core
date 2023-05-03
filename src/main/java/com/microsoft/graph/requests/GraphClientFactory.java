@@ -1,12 +1,12 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
-import com.microsoft.graph.Requests.Middleware.GraphTelemetryHandler;
+import com.microsoft.graph.requests.middleware.GraphTelemetryHandler;
 import com.microsoft.kiota.http.KiotaClientFactory;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -78,10 +78,8 @@ public class GraphClientFactory {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
         handlers.add(new GraphTelemetryHandler(graphClientOption));
-        for(final Interceptor interceptor: KiotaClientFactory.createDefaultInterceptors()) {
-            handlers.add(interceptor);
-        }
-        return handlers.toArray(new Interceptor[handlers.size()]);
+        handlers.addAll(Arrays.asList(KiotaClientFactory.createDefaultInterceptors()));
+        return handlers.toArray(new Interceptor[0]);
     }
     //These are the default features used by the Graph Client
     private static void addDefaultFeatureUsages(GraphClientOption graphClientOption) {

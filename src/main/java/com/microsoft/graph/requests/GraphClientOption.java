@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -22,13 +22,12 @@ public class GraphClientOption implements RequestOption {
      * Feature Tracker instance
      */
     public final FeatureTracker featureTracker = new FeatureTracker();
-
     /**
      * Sets the client request id
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        this.clientRequestId = Objects.requireNonNull(clientRequestId, paramErrorMessage("clientRequestId"));
+        this.clientRequestId = Objects.requireNonNull(clientRequestId, paramErrorMessage(clientRequestId));
     }
     /**
      * Gets the client request id
@@ -43,10 +42,10 @@ public class GraphClientOption implements RequestOption {
     }
     /**
      * Sets a string representation of the client library
-     * @param version client library version specified by user.
+     * @param clientLibraryVersion client library version specified by user.
      */
-    public void setClientLibraryVersion(@Nonnull final String version) {
-        this.clientLibraryVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
+    public void setClientLibraryVersion(@Nonnull final String clientLibraryVersion) {
+        this.clientLibraryVersion = Objects.requireNonNull(clientLibraryVersion, paramErrorMessage("clientLibraryVersion"));
     }
     /**
      * Get the client library version as a string
@@ -59,10 +58,10 @@ public class GraphClientOption implements RequestOption {
     }
     /**
      * Set the core library version as a String, in this format 'x.x.x'
-     * @param version core library version specified by user.
+     * @param coreLibraryVersion core library version specified by user.
      */
-    public void setCoreLibraryVersion(@Nonnull final String version) {
-        this.coreLibraryVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
+    public void setCoreLibraryVersion(@Nonnull final String coreLibraryVersion) {
+        this.coreLibraryVersion = Objects.requireNonNull(coreLibraryVersion, paramErrorMessage("coreLibraryVersion"));
     }
     /**
      * Get the core library version as a String, in this format 'x.x.x'
@@ -75,10 +74,10 @@ public class GraphClientOption implements RequestOption {
     }
     /**
      * Set the target version of the api endpoint we are targeting (v1 or beta)
-     * @param version the version of the Api endpoint we are targeting
+     * @param graphServiceVersion the version of the Api endpoint we are targeting
      */
-    public void setGraphServiceTargetVersion(@Nonnull final String version) {
-        this.graphServiceTargetVersion = Objects.requireNonNull(version, paramErrorMessage("version"));
+    public void setGraphServiceTargetVersion(@Nonnull final String graphServiceVersion) {
+        this.graphServiceTargetVersion = Objects.requireNonNull(graphServiceVersion, paramErrorMessage("graphServiceVersion"));
     }
     /**
      * Get the target version of the api endpoint we are targeting (v1 or beta)
@@ -97,6 +96,6 @@ public class GraphClientOption implements RequestOption {
     }
 
     private static String paramErrorMessage(String paramName){
-        return ("Parameter "+paramName+" cannot be null.");
+        return ("Parameter "+paramName+ " cannot be null.");
     }
 }

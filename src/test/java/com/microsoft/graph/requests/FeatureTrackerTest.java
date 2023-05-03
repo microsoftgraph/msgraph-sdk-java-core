@@ -1,7 +1,5 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
-import com.microsoft.graph.Requests.FeatureFlag;
-import com.microsoft.graph.Requests.FeatureTracker;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

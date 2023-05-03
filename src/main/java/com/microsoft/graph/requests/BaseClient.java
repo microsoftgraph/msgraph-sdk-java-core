@@ -1,4 +1,4 @@
-package com.microsoft.graph.Requests;
+package com.microsoft.graph.requests;
 
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
@@ -14,7 +14,6 @@ class BaseClient implements IBaseClient{
 
     private RequestAdapter requestAdapter;
     /** RequestBuilder for completing Batch Requests */
-    //public BatchRequestBuilder batchRequestBuilder;
 
     /**
      * Constructor requiring only a RequestAdapter.
@@ -53,11 +52,4 @@ class BaseClient implements IBaseClient{
     public RequestAdapter getRequestAdapter() {
         return this.requestAdapter;
     }
-//Keeping this commented out as we still have to refactor the BatchRequestBuilder.
-//    @Override
-//    public BatchRequestBuilder getBatchRequestBuilder() {
-//        TODO: Refactor BatchRequestBuilder so that it accepts a request adapter as the param
-//        return this.batchRequestBuilder != null ? this.batchRequestBuilder : new BatchRequestBuilder(this.requestAdapter)
-//        return this.batchRequestBuilder;
-//    }
 }

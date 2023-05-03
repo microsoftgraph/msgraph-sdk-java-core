@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.4] - 2023-05-03
+
+### Added 
+ 
+- Added LargeFileUploadTask functionality for kiota generated service libraries. 
+
+### Fixed 
+
+- Fixes formatting used in the headers added by the telemetry handler to align with the [msGraph sdk spec.](https://github.com/microsoftgraph/msgraph-sdk-design/blob/master/middleware/TelemetryHandler.md)
+
 ## [3.0.3] - 2023-04-06
 
 ### Changed
