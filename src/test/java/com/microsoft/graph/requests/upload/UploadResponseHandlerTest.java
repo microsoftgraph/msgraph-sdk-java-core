@@ -1,5 +1,6 @@
 package com.microsoft.graph.requests.upload;
 
+import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.models.UploadResult;
@@ -20,12 +21,11 @@ import java.util.concurrent.ExecutionException;
 
 class UploadResponseHandlerTest {
 
-    String contentType = "application/json";
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
     void GetUploadItemOnCompletedUpload() throws ExecutionException, InterruptedException {
-        registry.contentTypeAssociatedFactories.put(contentType, new JsonParseNodeFactory());
+        registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         ResponseBody body = ResponseBody.create("{\n" +
@@ -33,7 +33,7 @@ class UploadResponseHandlerTest {
                 "   \"name\": \"largeFile.vhd\",\n" +
                 "   \"size\": 33\n" +
                 "}"
-            , MediaType.get(contentType));
+            , MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
@@ -53,14 +53,14 @@ class UploadResponseHandlerTest {
     }
     @Test
     void GetFileAttachmentLocationOnCompletedUpload() throws ExecutionException, InterruptedException {
-        registry.contentTypeAssociatedFactories.put(contentType, new JsonParseNodeFactory());
+        registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
             .message("success")
-            .body(ResponseBody.create("", MediaType.get(contentType)))
+            .body(ResponseBody.create("", MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON)))
             .code(HttpURLConnection.HTTP_CREATED)
             .header("location", "http://localhost")
             .build();
@@ -74,7 +74,7 @@ class UploadResponseHandlerTest {
     }
     @Test
     void GetUploadSessionOnProgressingUpload() throws ExecutionException, InterruptedException {
-        registry.contentTypeAssociatedFactories.put(contentType, new JsonParseNodeFactory());
+        registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         ResponseBody body = ResponseBody.create(
@@ -85,7 +85,7 @@ class UploadResponseHandlerTest {
                 "   \"77829-99375\"\n" +
                 "   ]" +
                 "}"
-            , MediaType.get(contentType));
+            , MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
@@ -118,7 +118,7 @@ class UploadResponseHandlerTest {
             "       }" +
             "   }" +
             "}"
-            , MediaType.get(contentType));
+            , MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
@@ -150,7 +150,7 @@ class UploadResponseHandlerTest {
             "   }" +
             "}";
         //Missing open brace
-        ResponseBody body = ResponseBody.create(malformedResponse, MediaType.get(contentType));
+        ResponseBody body = ResponseBody.create(malformedResponse, MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))

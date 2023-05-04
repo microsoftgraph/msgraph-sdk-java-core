@@ -1,5 +1,6 @@
 package com.microsoft.graph.requests.upload;
 
+import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
 import com.microsoft.graph.testModels.TestDriveItem;
@@ -23,12 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UploadSliceRequestTest {
-    String contentType = "application/json";
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
     void PutAsyncReturnsExpectedUploadSessionAsync() throws ExecutionException, InterruptedException, IOException {
-        registry.contentTypeAssociatedFactories.put(contentType, new JsonParseNodeFactory());
+        registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         ParsableFactory<TestDriveItem> factory = TestDriveItem::createFromDiscriminatorValue;
         ResponseBody body = ResponseBody.create(
             "{\n" +
@@ -37,7 +37,7 @@ class UploadSliceRequestTest {
                 "   \"12345-55232\",\n" +
                 "   \"77829-99375\"\n" +
                 "   ]" +
-                "}", MediaType.get(contentType));
+                "}", MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Response response = new Response.Builder()
             .request(new Request.Builder().post(mock(RequestBody.class)).url("https://a.b.c/").build())
             .protocol(Protocol.HTTP_1_1)

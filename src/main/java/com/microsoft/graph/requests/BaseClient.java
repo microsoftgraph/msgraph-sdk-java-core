@@ -4,16 +4,16 @@ import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 /**
  * Default client implementation.
  */
-class BaseClient implements IBaseClient{
+public class BaseClient implements IBaseClient{
 
     private RequestAdapter requestAdapter;
-    /** RequestBuilder for completing Batch Requests */
 
     /**
      * Constructor requiring only a RequestAdapter.
@@ -41,15 +41,33 @@ class BaseClient implements IBaseClient{
         this(new BaseGraphRequestAdapter(authenticationProvider, baseUrl));
     }
 
+    /**
+     * Method to set the RequestAdapter property
+     * @param requestAdapter specifies the desired RequestAdapter
+     */
     @Override
     @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public void setRequestAdapter(@Nonnull final RequestAdapter requestAdapter) {
         this.requestAdapter = requestAdapter;
     }
 
+    /**
+     * Returns the current RequestAdapter for sending requests
+     * @return the RequestAdapter currently in use
+     */
+    @NotNull
     @Override
     @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public RequestAdapter getRequestAdapter() {
         return this.requestAdapter;
+    }
+
+    /**
+     * Gets the BatchRequestBuilder
+     * @return the BatchRequestBuilder instance
+     */
+    @Override
+    public BatchRequestBuilder getBatchRequestBuilder() {
+        return new BatchRequestBuilder(this.requestAdapter);
     }
 }

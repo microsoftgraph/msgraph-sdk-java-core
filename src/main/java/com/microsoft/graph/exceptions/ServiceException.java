@@ -6,10 +6,9 @@ import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 import okhttp3.Headers;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -124,7 +123,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
      * Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
      * @return The additional data found.
      */
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Object> getAdditionalData() {
         return new HashMap<>(additionalData);
@@ -141,7 +140,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
      * The deserialization information for the current model.
      * @return A hash map describing how to deserialize the current model fields.
      */
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         final ServiceException currentObj = this;
@@ -155,8 +154,8 @@ public class ServiceException extends ApiException implements Parsable, Addition
      * @param writer Serialization writer to use to serialize this model.
      */
     @Override
-    public void serialize(@NotNull SerializationWriter writer) {
-        Objects.requireNonNull(writer, "Writer cannot be null");
+    public void serialize(@Nonnull SerializationWriter writer) {
+        Objects.requireNonNull(writer, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "writer"));
         writer.writeIntegerValue("status code", this.responseStatusCode);
         writer.writeStringValue("rawResponseBody", this.rawResponseBody);
         writer.writeStringValue("message", super.getMessage());

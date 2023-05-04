@@ -172,7 +172,7 @@ public class LargeFileUploadTask<T extends Parsable > {
     @Nonnull
     public CompletableFuture<UploadResult<T>> resumeAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         IUploadSession session;
-        try{
+        try {
             session = updateSessionStatusAsync().get();
         } catch (ExecutionException ex) {
             CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
@@ -226,7 +226,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         while(true) {
-            try{
+            try {
                 return uploadSliceRequestBuilder.putAsync(chunkStream).get();
             } catch (ExecutionException ex) {
                 if(ex.getCause() instanceof ServiceException) {

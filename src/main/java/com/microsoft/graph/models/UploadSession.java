@@ -1,5 +1,7 @@
 package com.microsoft.graph.models;
 
+import com.microsoft.graph.CoreConstants;
+import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 
@@ -43,7 +45,7 @@ public class UploadSession implements IUploadSession {
      * @param uploadUrl The upload url for the session.
      */
     public void setUploadUrl(@Nonnull final String uploadUrl) {
-        Objects.requireNonNull(uploadUrl, "Upload url cannot be null");
+        Objects.requireNonNull(uploadUrl, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "uploadUrl"));
         this.uploadUrl = uploadUrl;
     }
     /**
@@ -61,7 +63,7 @@ public class UploadSession implements IUploadSession {
      */
     @Override
     public void setNextExpectedRanges(@Nonnull final List<String> nextExpectedRanges) {
-        Objects.requireNonNull(nextExpectedRanges, "Parameter nextExpectedRanges cannot be null");
+        Objects.requireNonNull(nextExpectedRanges, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "nextExpectedRanges"));
         this.nextExpectedRanges = new ArrayList<>(nextExpectedRanges);
     }
     /**
@@ -95,6 +97,7 @@ public class UploadSession implements IUploadSession {
      * @param additionalData The AdditionalData to set.
      */
     public void setAdditionalData(@Nonnull final Map<String, Object> additionalData) {
+        Objects.requireNonNull(additionalData, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "additionalData"));
         this.additionalData = new HashMap<>(additionalData);
     }
     /**
@@ -117,7 +120,7 @@ public class UploadSession implements IUploadSession {
      */
     @Override
     public void serialize(@Nonnull final SerializationWriter writer) {
-        Objects.requireNonNull(writer, "Writer parameter cannot be null");
+        Objects.requireNonNull(writer, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "writer"));
         writer.writeOffsetDateTimeValue("expirationDateTime", getExpirationDateTime());
         writer.writeCollectionOfPrimitiveValues("nextExpectedRanges", getNextExpectedRanges());
         writer.writeStringValue("uploadUrl", getUploadUrl());

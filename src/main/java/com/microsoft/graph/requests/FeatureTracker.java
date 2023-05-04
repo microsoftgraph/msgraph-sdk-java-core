@@ -8,7 +8,11 @@ import javax.annotation.Nonnull;
  */
 public class FeatureTracker {
 
-
+    /**
+     * Default constructor
+     */
+    public FeatureTracker() {
+    }
     private int featureUsage = FeatureFlag.NONE_FLAG;
     /**
      * Sets a numeric representation of the SDK feature usage
