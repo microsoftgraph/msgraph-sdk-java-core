@@ -15,7 +15,7 @@ plugins {
     id 'signing'
     id 'jacoco'
     id 'com.github.spotbugs' version '5.0.14'
-    id "org.sonarqube" version "4.0.0.2929"
+    id "org.sonarqube" version "4.2.0.3129"
 }
 
 java {
