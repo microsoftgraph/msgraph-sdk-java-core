@@ -10,6 +10,7 @@ import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 import okio.Buffer;
 
@@ -71,7 +72,8 @@ public class BatchRequestContent {
      */
     @Nonnull
     public HashMap<String, BatchRequestStep> getBatchRequestSteps() {
-        return batchRequestSteps;
+
+        return new HashMap<>(batchRequestSteps);
     }
     /**
      * Adds a batch request step to the batch request.
@@ -184,6 +186,7 @@ public class BatchRequestContent {
             return exception;
         }
     }
+    @SuppressFBWarnings
     private void writeBatchRequestStepAsync(BatchRequestStep requestStep, JsonWriter writer) {
         try {
             Request request = requestStep.getRequest();

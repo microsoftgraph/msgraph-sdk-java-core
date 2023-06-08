@@ -14,11 +14,11 @@ public class TestNoteBook implements Parsable, AdditionalDataHolder {
     public String Id;
     public String ODataType;
     public String DisplayName;
-    public HashMap<String, Object> AdditionalData;
+    public HashMap<String, Object> additionalData;
 
     public TestNoteBook() {
         this.ODataType = "microsoft.graph.notebook";
-        this.AdditionalData = new HashMap<>();
+        this.additionalData = new HashMap<>();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TestNoteBook implements Parsable, AdditionalDataHolder {
         writer.writeStringValue("@odata.type", ODataType);
         writer.writeStringValue("id", Id);
         writer.writeStringValue("displayName", DisplayName);
-        writer.writeAdditionalData(AdditionalData);
+        writer.writeAdditionalData(additionalData);
     }
 
     public static TestNoteBook createFromDiscriminatorValue(ParseNode parseNode) {
@@ -50,6 +50,6 @@ public class TestNoteBook implements Parsable, AdditionalDataHolder {
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 }

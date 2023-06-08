@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 public class BatchRequestContentTest {
 
-    public final String requestUrl = "https://graph.microsoft.com/v1.0/me";
+    public static final String requestUrl = "https://graph.microsoft.com/v1.0/me";
     private final IBaseClient client = new BaseClient(new AnonymousAuthenticationProvider(), requestUrl);
 
     @Test
@@ -54,7 +55,7 @@ public class BatchRequestContentTest {
         BatchRequestStep requestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestStep requestStep2 = new BatchRequestStep("2", mock(Request.class), List.of("3"));
         try {
-            BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(requestStep, requestStep2));
+            new BatchRequestContent(client, List.of(requestStep, requestStep2));
         } catch (IllegalArgumentException ex) {
             assertEquals(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID, ex.getMessage());
         }
@@ -127,7 +128,7 @@ public class BatchRequestContentTest {
 
         batchRequestContent.removeBatchRequestStepWithId("1");
         InputStream requestContent = batchRequestContent.getBatchRequestContentAsync().join();
-        String requestContentString = new String(requestContent.readAllBytes());
+        String requestContentString = new String(requestContent.readAllBytes(), StandardCharsets.UTF_8);
         requestContentString = requestContentString.replace("\n", "").replaceAll("\\s", "");
         String expectedContent = "{\"requests\":[{\"id\":\"2\",\"url\":\"/me\",\"method\":\"GET\"}]}";
 
@@ -168,7 +169,7 @@ public class BatchRequestContentTest {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep, batchRequestSte2));
 
         InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
-        String requestContentString = new String(stream.readAllBytes());
+        String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         String expectedJson = "{\n" +
             "  \"requests\": [\n" +
             "    {\n" +
@@ -283,7 +284,7 @@ public class BatchRequestContentTest {
         assertNotNull(Objects.requireNonNull(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().body()).contentType());
 
         InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
-        String requestContentString = new String(stream.readAllBytes());
+        String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         String expectedJsonSection = "      \"url\": \"/me\",\n" +
             "      \"method\": \"POST\",\n" +
             "      \"headers\": {\n" +
@@ -331,7 +332,7 @@ public class BatchRequestContentTest {
 
         batchRequestContent.addBatchRequestStep(batchRequestStep);
         InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
-        String requestContentString = new String(stream.readAllBytes());
+        String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         String expectedJson = "{\n" +
             "  \"requests\": [\n" +
             "    {\n" +

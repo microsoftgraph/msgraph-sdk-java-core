@@ -6,6 +6,7 @@ import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.serialization.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
  * A response handler for deserializing responses to a ModelType. Particularly for Batch requests.
  * @param <T> the ModelType of the response body.
  */
-public class ResponseHandler<T extends Parsable> implements com.microsoft.kiota.ResponseHandler {
+public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.kiota.ResponseHandler {
     private final ParseNodeFactory _parseNodeFactory;
     private final ParsableFactory<T> _factory;
     /**
@@ -29,7 +30,7 @@ public class ResponseHandler<T extends Parsable> implements com.microsoft.kiota.
      * @param parseNodeFactory the parse node factory to use when deserializing the response.
      * @param factory the factory to use when deserializing the response to a ModelType.
      */
-    public ResponseHandler(@Nullable ParseNodeFactory parseNodeFactory, @Nonnull ParsableFactory<T> factory) {
+    public ResponseBodyHandler(@Nullable ParseNodeFactory parseNodeFactory, @Nonnull ParsableFactory<T> factory) {
         this._parseNodeFactory = (parseNodeFactory == null) ? ParseNodeFactoryRegistry.defaultInstance : parseNodeFactory;
         this._factory = factory;
     }
@@ -37,7 +38,7 @@ public class ResponseHandler<T extends Parsable> implements com.microsoft.kiota.
      * Instantiates a new response handler.
      * @param factory the factory to use when deserializing the response to a ModelType.
      */
-    public ResponseHandler(@Nonnull ParsableFactory<T> factory) {
+    public ResponseBodyHandler(@Nonnull ParsableFactory<T> factory) {
         this(null, factory);
     }
     /**
@@ -50,6 +51,7 @@ public class ResponseHandler<T extends Parsable> implements com.microsoft.kiota.
      */
     @Nonnull
     @Override
+    @SuppressFBWarnings
     public <NativeResponseType, ModelType> CompletableFuture<ModelType> handleResponseAsync(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
         if(response instanceof Response && ((Response) response).body()!=null) {
             ResponseBody body = ((Response) response).body();
@@ -72,6 +74,7 @@ public class ResponseHandler<T extends Parsable> implements com.microsoft.kiota.
         return CompletableFuture.completedFuture(null);
     }
 
+    @SuppressFBWarnings
     private CompletableFuture<Boolean> validateSuccessfulResponse(Response responseMessage, HashMap<String, ParsableFactory<? extends Parsable>> errorMapping) {
         if (responseMessage.isSuccessful()) {
             return CompletableFuture.completedFuture(true);

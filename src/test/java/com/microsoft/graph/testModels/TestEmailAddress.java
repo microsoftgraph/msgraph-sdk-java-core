@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 public class TestEmailAddress implements Parsable, AdditionalDataHolder {
     public String Name;
     public String Address;
-    public HashMap<String, Object> AdditionalData;
+    public HashMap<String, Object> additionalData;
     public String ODataType;
 
     public TestEmailAddress() {
         this.ODataType = "microsoft.graph.emailAddress";
-        this.AdditionalData = new HashMap<>();
+        this.additionalData = new HashMap<>();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TestEmailAddress implements Parsable, AdditionalDataHolder {
         writer.writeStringValue("name", Name);
         writer.writeStringValue("address", Address);
         writer.writeStringValue("@odata.type", ODataType);
-        writer.writeAdditionalData(AdditionalData);
+        writer.writeAdditionalData(additionalData);
     }
 
     public static TestEmailAddress createFromDiscriminatorValue(ParseNode parseNode) {
@@ -51,6 +51,6 @@ public class TestEmailAddress implements Parsable, AdditionalDataHolder {
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 }

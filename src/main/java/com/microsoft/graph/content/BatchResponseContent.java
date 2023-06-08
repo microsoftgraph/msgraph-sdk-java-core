@@ -4,9 +4,11 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.*;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.requests.ResponseBodyHandler;
 import com.microsoft.kiota.ResponseHandler;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 
 import javax.annotation.Nonnull;
@@ -126,7 +128,7 @@ public class BatchResponseContent {
      */
     @Nullable
     public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(String requestId, @Nonnull ParsableFactory<T> factory) {
-        return this.getResponseByIdAsync(requestId, new com.microsoft.graph.requests.ResponseHandler<>(factory));
+        return this.getResponseByIdAsync(requestId, new ResponseBodyHandler<>(factory));
     }
     /**
      * Gets the response within the batch response via specified id.
@@ -134,19 +136,21 @@ public class BatchResponseContent {
      * @return The response within the batch response via specified id as an InputStream, null if not found.
      */
     @Nullable
+    @SuppressFBWarnings
     public CompletableFuture<InputStream> getResponseStreamByIdAsync(String requestId) {
         Response response = getResponseByIdAsync(requestId).join();
-        if(response == null || response.body() == null) {
-            return CompletableFuture.completedFuture(null);
+        if(response != null && response.body() != null) {
+            try{
+                InputStream in = response.body().byteStream();
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(ByteStreams.toByteArray(in));
+                return CompletableFuture.completedFuture(byteArrayInputStream);
+            } catch (IOException e) {
+                CompletableFuture<InputStream> exception = new CompletableFuture<>();
+                exception.completeExceptionally(e);
+                return exception;
+            }
         }
-        try(InputStream in = response.body().byteStream()) {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(ByteStreams.toByteArray(in));
-            return CompletableFuture.completedFuture(byteArrayInputStream);
-        } catch (IOException e) {
-            CompletableFuture<InputStream> exception = new CompletableFuture<>();
-            exception.completeExceptionally(e);
-            return exception;
-        }
+        return CompletableFuture.completedFuture(null);
     }
     /**
      * Get the next link of the batch response.
@@ -163,12 +167,13 @@ public class BatchResponseContent {
         }
         return CompletableFuture.completedFuture(null);
     }
+    @SuppressFBWarnings
     private CompletableFuture<JsonObject> getBatchResponseContentAsync() {
-        if (this.batchResponse.body() == null || (this.batchResponse.body().contentType() == null)) {
-            return CompletableFuture.completedFuture(null);
+        if (this.batchResponse.body() != null && this.batchResponse.body().contentType() != null) {
+            InputStream in = this.batchResponse.body().byteStream();
+            return CompletableFuture.completedFuture(JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject());
         }
-        InputStream in = this.batchResponse.body().byteStream();
-        return CompletableFuture.completedFuture(JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject());
+        return CompletableFuture.completedFuture(null);
     }
     private Response getResponseFromJsonObject(JsonElement responseElement) {
         Response.Builder response = new Response.Builder();

@@ -14,11 +14,11 @@ public class TestDrive implements Parsable, AdditionalDataHolder {
     public String Id;
     public String ODataType;
     public String Name;
-    public HashMap<String, Object> AdditionalData;
+    public HashMap<String, Object> additionalData;
 
     public TestDrive() {
         this.ODataType = "microsoft.graph.drive";
-        this.AdditionalData = new HashMap<>();
+        this.additionalData = new HashMap<>();
     }
 
     @Override
@@ -38,13 +38,13 @@ public class TestDrive implements Parsable, AdditionalDataHolder {
         writer.writeStringValue("@odata.type", ODataType);
         writer.writeStringValue("id", Id);
         writer.writeStringValue("name", Name);
-        writer.writeAdditionalData(AdditionalData);
+        writer.writeAdditionalData(additionalData);
     }
 
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 
     public static TestDrive createFromDiscriminatorValue(ParseNode parseNode) {

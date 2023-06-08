@@ -4,10 +4,12 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SuppressFBWarnings
 public class TestAttendee extends TestRecipient implements Parsable, AdditionalDataHolder {
     public TestAttendee() {
         this.ODataType = "microsoft.graph.attendee";
@@ -19,7 +21,7 @@ public class TestAttendee extends TestRecipient implements Parsable, AdditionalD
             throw new IllegalArgumentException("The writer parameter cannot be null.");
         }
         super.serialize(writer);
-        writer.writeAdditionalData(this.AdditionalData);
+        writer.writeAdditionalData(this.additionalData);
     }
 
     public static TestAttendee createFromDiscriminatorValue(ParseNode parseNode) {
@@ -32,6 +34,6 @@ public class TestAttendee extends TestRecipient implements Parsable, AdditionalD
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 }

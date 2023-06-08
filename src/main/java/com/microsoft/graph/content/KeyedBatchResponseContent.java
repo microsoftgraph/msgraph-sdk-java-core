@@ -22,7 +22,7 @@ public class KeyedBatchResponseContent {
      * @param response the BatchResponseContent object to add to the collection.
      */
     public KeyedBatchResponseContent(@Nonnull HashSet<String> keys, @Nonnull BatchResponseContent response) {
-        this.keys = keys;
+        this.keys = new HashSet<>(keys);
         this.response = response;
     }
 }

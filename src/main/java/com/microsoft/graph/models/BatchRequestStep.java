@@ -62,6 +62,9 @@ public class BatchRequestStep {
      */
     @Nullable
     public ArrayList<String> getDependsOn() {
-        return this.dependsOn;
+        if(dependsOn == null) {
+            return null;
+        }
+        return new ArrayList<>(dependsOn);
     }
 }

@@ -4,15 +4,17 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@SuppressFBWarnings
 public class TestRecipient implements Parsable, AdditionalDataHolder {
     public TestEmailAddress EmailAddress;
-    public HashMap<String, Object> AdditionalData;
+    public HashMap<String, Object> additionalData;
     public String ODataType;
 
     public TestRecipient() {
@@ -34,7 +36,7 @@ public class TestRecipient implements Parsable, AdditionalDataHolder {
         }
         writer.writeStringValue("@odata.type", ODataType);
         writer.writeObjectValue("emailAddress", EmailAddress);
-        writer.writeAdditionalData(AdditionalData);
+        writer.writeAdditionalData(additionalData);
     }
 
     public static TestRecipient createFromParseNode(ParseNode parseNode) {
@@ -57,6 +59,6 @@ public class TestRecipient implements Parsable, AdditionalDataHolder {
     @NotNull
     @Override
     public Map<String, Object> getAdditionalData() {
-        return this.AdditionalData;
+        return this.additionalData;
     }
 }

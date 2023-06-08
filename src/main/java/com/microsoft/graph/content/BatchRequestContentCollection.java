@@ -5,6 +5,7 @@ import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestInformation;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Request;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ public class BatchRequestContentCollection {
      * @param baseClient the base client to use for requests.
      * @param batchRequestLimit the maximum number of requests to batch together.
      */
+    @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public BatchRequestContentCollection(@Nonnull IBaseClient baseClient, int batchRequestLimit) {
         Objects.requireNonNull(baseClient, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "baseClient"));
         if(batchRequestLimit < 2 || batchRequestLimit > CoreConstants.BatchRequest.MAX_REQUESTS) {
@@ -90,7 +92,7 @@ public class BatchRequestContentCollection {
         if(currentBatchRequest.getBatchRequestSteps().size() > 0) {
             batchRequests.add(currentBatchRequest);
         }
-        return batchRequests;
+        return new ArrayList<>(batchRequests);
     }
     /**
      * Get all BatchRequestSteps from all BatchRequestContent objects within the collection.

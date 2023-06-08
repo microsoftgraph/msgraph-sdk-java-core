@@ -12,6 +12,7 @@ import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Response;
 
 import javax.annotation.Nonnull;
@@ -27,8 +28,7 @@ import java.util.concurrent.CompletableFuture;
  * A request builder for creating batch requests.
  */
 public class BatchRequestBuilder {
-    private String urlTemplate = "{+baseurl}/$batch";
-    private RequestAdapter requestAdapter;
+    private final RequestAdapter requestAdapter;
     /**
      * Instantiates a new BatchRequestBuilder.
      * @param requestAdapter the adapter to use to build requests.
@@ -77,7 +77,7 @@ public class BatchRequestBuilder {
         Objects.requireNonNull(requestContent, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestContent"));
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.POST;
-        requestInfo.urlTemplate = urlTemplate;
+        requestInfo.urlTemplate = "{+baseurl}/$batch";
         requestInfo.content = requestContent.getBatchRequestContentAsync().join();
         requestInfo.headers.add("Content-Type", CoreConstants.MimeTypeNames.APPLICATION_JSON);
         return CompletableFuture.completedFuture(requestInfo);
@@ -87,14 +87,9 @@ public class BatchRequestBuilder {
      * @return the request adapter.
      */
     @Nonnull
+    @SuppressFBWarnings
     public RequestAdapter getRequestAdapter() {
         return requestAdapter;
     }
-    /**
-     * Sets the request adapter.
-     * @param requestAdapter the request adapter.
-     */
-    public void setRequestAdapter(@Nonnull RequestAdapter requestAdapter) {
-        this.requestAdapter = requestAdapter;
-    }
+
 }

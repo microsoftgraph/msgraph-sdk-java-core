@@ -6,6 +6,7 @@ import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.testModels.*;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 
@@ -50,9 +51,10 @@ public class BatchResponseContentTest {
         assertEquals(0,responses.size());
     }
     @Test
+    @SuppressFBWarnings
     public void BatchResponseContent_InitializeWithNullResponseMessage() {
         try{
-            BatchResponseContent batchResponseContent = new BatchResponseContent(null);
+            new BatchResponseContent(null);
         } catch (NullPointerException ex) {
             assertEquals(String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "batchResponse"), ex.getMessage());
         }

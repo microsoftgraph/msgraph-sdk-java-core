@@ -4,10 +4,12 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+@SuppressFBWarnings
 public class TestDateTimeTimeZone implements Parsable, AdditionalDataHolder {
     private String dateTime;
     private String timeZone;
