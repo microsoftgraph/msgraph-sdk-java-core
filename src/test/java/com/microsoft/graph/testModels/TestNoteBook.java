@@ -11,22 +11,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class TestNoteBook implements Parsable, AdditionalDataHolder {
-    public String Id;
-    public String ODataType;
-    public String DisplayName;
+    public String id;
+    public String odataType;
+    public String displayName;
     public HashMap<String, Object> additionalData;
 
     public TestNoteBook() {
-        this.ODataType = "microsoft.graph.notebook";
+        this.odataType = "microsoft.graph.notebook";
         this.additionalData = new HashMap<>();
     }
 
     @Override
     public HashMap<String, Consumer<ParseNode>> getFieldDeserializers() {
         HashMap<String, Consumer<ParseNode>> props = new HashMap<>();
-        props.put("@odata.type", (n) -> ODataType = n.getStringValue());
-        props.put("id", (n) -> Id = n.getStringValue());
-        props.put("displayName", (n) -> DisplayName = n.getStringValue());
+        props.put("@odata.type", (n) -> odataType = n.getStringValue());
+        props.put("id", (n) -> id = n.getStringValue());
+        props.put("displayName", (n) -> displayName = n.getStringValue());
         return props;
     }
 
@@ -35,9 +35,9 @@ public class TestNoteBook implements Parsable, AdditionalDataHolder {
         if (writer == null) {
             throw new IllegalArgumentException("The writer parameter cannot be null.");
         }
-        writer.writeStringValue("@odata.type", ODataType);
-        writer.writeStringValue("id", Id);
-        writer.writeStringValue("displayName", DisplayName);
+        writer.writeStringValue("@odata.type", odataType);
+        writer.writeStringValue("id", id);
+        writer.writeStringValue("displayName", displayName);
         writer.writeAdditionalData(additionalData);
     }
 

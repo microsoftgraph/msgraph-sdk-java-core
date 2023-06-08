@@ -233,13 +233,13 @@ public class BatchResponseContentTest {
 
         TestDrive drive = batchResponseContent.getResponseByIdAsync("2", TestDrive::createFromDiscriminatorValue).join();
         assertNotNull(drive);
-        assertEquals("OneDrive", drive.Name);
-        assertEquals("b!random-VkHdanfIomf", drive.Id);
+        assertEquals("OneDrive", drive.name);
+        assertEquals("b!random-VkHdanfIomf", drive.id);
 
         TestNoteBook notebook = batchResponseContent.getResponseByIdAsync("3", TestNoteBook::createFromDiscriminatorValue).join();
         assertNotNull(notebook);
-        assertEquals("My Notebook -442293399", notebook.DisplayName);
-        assertEquals("1-9f4fe8ea-7e6e-486e-a8f4-nothing-here", notebook.Id);
+        assertEquals("My Notebook -442293399", notebook.displayName);
+        assertEquals("1-9f4fe8ea-7e6e-486e-a8f4-nothing-here", notebook.id);
 
         try{
            batchResponseContent.getResponseByIdAsync("4", TestDriveItem::createFromDiscriminatorValue).join();

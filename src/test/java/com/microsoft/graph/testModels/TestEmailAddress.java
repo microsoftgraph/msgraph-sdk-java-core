@@ -11,22 +11,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class TestEmailAddress implements Parsable, AdditionalDataHolder {
-    public String Name;
-    public String Address;
+    public String name;
+    public String address;
     public HashMap<String, Object> additionalData;
-    public String ODataType;
+    public String odataType;
 
     public TestEmailAddress() {
-        this.ODataType = "microsoft.graph.emailAddress";
+        this.odataType = "microsoft.graph.emailAddress";
         this.additionalData = new HashMap<>();
     }
 
     @Override
     public HashMap<String, Consumer<ParseNode>> getFieldDeserializers() {
         HashMap<String, Consumer<ParseNode>> props = new HashMap<>();
-        props.put("@odata.type", (n) -> this.ODataType = n.getStringValue());
-        props.put("name", (n) -> this.Name = n.getStringValue());
-        props.put("address", (n) -> this.Address = n.getStringValue());
+        props.put("@odata.type", (n) -> this.odataType = n.getStringValue());
+        props.put("name", (n) -> this.name = n.getStringValue());
+        props.put("address", (n) -> this.address = n.getStringValue());
         return props;
     }
 
@@ -35,9 +35,9 @@ public class TestEmailAddress implements Parsable, AdditionalDataHolder {
         if (writer == null) {
             throw new IllegalArgumentException("The writer parameter cannot be null.");
         }
-        writer.writeStringValue("name", Name);
-        writer.writeStringValue("address", Address);
-        writer.writeStringValue("@odata.type", ODataType);
+        writer.writeStringValue("name", name);
+        writer.writeStringValue("address", address);
+        writer.writeStringValue("@odata.type", odataType);
         writer.writeAdditionalData(additionalData);
     }
 

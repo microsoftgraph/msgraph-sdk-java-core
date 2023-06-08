@@ -11,22 +11,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class TestDrive implements Parsable, AdditionalDataHolder {
-    public String Id;
-    public String ODataType;
-    public String Name;
+    public String id;
+    public String odataType;
+    public String name;
     public HashMap<String, Object> additionalData;
 
     public TestDrive() {
-        this.ODataType = "microsoft.graph.drive";
+        this.odataType = "microsoft.graph.drive";
         this.additionalData = new HashMap<>();
     }
 
     @Override
     public HashMap<String, Consumer<ParseNode>> getFieldDeserializers() {
         HashMap<String, Consumer<ParseNode>> props = new HashMap<>();
-        props.put("@odata.type", (n) ->  this.ODataType = n.getStringValue());
-        props.put("id", (n) -> this.Id = n.getStringValue());
-        props.put("name", (n) -> this.Name = n.getStringValue());
+        props.put("@odata.type", (n) ->  this.odataType = n.getStringValue());
+        props.put("id", (n) -> this.id = n.getStringValue());
+        props.put("name", (n) -> this.name = n.getStringValue());
         return props;
     }
 
@@ -35,9 +35,9 @@ public class TestDrive implements Parsable, AdditionalDataHolder {
         if (writer == null) {
             throw new IllegalArgumentException("The writer parameter cannot be null.");
         }
-        writer.writeStringValue("@odata.type", ODataType);
-        writer.writeStringValue("id", Id);
-        writer.writeStringValue("name", Name);
+        writer.writeStringValue("@odata.type", odataType);
+        writer.writeStringValue("id", id);
+        writer.writeStringValue("name", name);
         writer.writeAdditionalData(additionalData);
     }
 
