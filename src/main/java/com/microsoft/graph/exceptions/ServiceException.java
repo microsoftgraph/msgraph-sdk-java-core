@@ -155,7 +155,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
      */
     @Override
     public void serialize(@Nonnull SerializationWriter writer) {
-        Objects.requireNonNull(writer, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "writer"));
+        Objects.requireNonNull(writer, ErrorConstants.Messages.NULL_PARAMETER + "writer");
         writer.writeIntegerValue("status code", this.responseStatusCode);
         writer.writeStringValue("rawResponseBody", this.rawResponseBody);
         writer.writeStringValue("message", super.getMessage());

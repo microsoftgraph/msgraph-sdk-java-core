@@ -20,12 +20,12 @@ public class BatchRequestContentCollection {
     private List<BatchRequestContent> batchRequests;
     private int batchRequestLimit;
     private BatchRequestContent currentBatchRequest;
-    private Boolean readOnly = false;
+    private boolean readOnly = false;
     /**
      * Creates a new batch request collection with the default maximum number of requests.
      * @param baseClient the base client to use for requests.
      */
-    public BatchRequestContentCollection(IBaseClient baseClient) {
+    public BatchRequestContentCollection(@Nonnull IBaseClient baseClient) {
         this(baseClient, CoreConstants.BatchRequest.MAX_REQUESTS);
     }
     /**
@@ -35,7 +35,7 @@ public class BatchRequestContentCollection {
      */
     @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public BatchRequestContentCollection(@Nonnull IBaseClient baseClient, int batchRequestLimit) {
-        Objects.requireNonNull(baseClient, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "baseClient"));
+        Objects.requireNonNull(baseClient, ErrorConstants.Messages.NULL_PARAMETER + "baseClient");
         if(batchRequestLimit < 2 || batchRequestLimit > CoreConstants.BatchRequest.MAX_REQUESTS) {
             throw new IllegalArgumentException("batchRequestLimit must be between 2 and " + CoreConstants.BatchRequest.MAX_REQUESTS);
         }
@@ -62,17 +62,17 @@ public class BatchRequestContentCollection {
     @Nonnull
     public CompletableFuture<String> addBatchRequestStepAsync(@Nonnull RequestInformation requestInformation) {
         setupCurrentRequest();
-        return currentBatchRequest.addBatchRequestAsync(requestInformation);
+        return currentBatchRequest.addBatchRequestStep(requestInformation);
     }
     /**
      * removes a request from a BatchRequestContent object within the collection.
      * @param requestId the id of the request to remove.
      * @return true if the request was removed, false if it was not found.
      */
-    public boolean removeBatchRequestStepWithId(String requestId) {
+    public boolean removeBatchRequestStepWithId(@Nonnull String requestId) {
         validateReadOnly();
         boolean removed = currentBatchRequest.removeBatchRequestStepWithId(requestId);
-        if(!removed && batchRequests.size() > 0) {
+        if(!removed && !batchRequests.isEmpty()) {
             for (BatchRequestContent batchRequest : batchRequests) {
                 removed = batchRequest.removeBatchRequestStepWithId(requestId);
                 if(removed) {
@@ -99,9 +99,9 @@ public class BatchRequestContentCollection {
      * @return HashMap of BatchRequestSteps from all BatchRequestContent objects within the collection.
      */
     @Nonnull
-    public HashMap<String, BatchRequestStep> getBatchRequestSteps() {
-        if (batchRequests.size() > 0) {
-            HashMap<String, BatchRequestStep> result = currentBatchRequest.getBatchRequestSteps();
+    public Map<String, BatchRequestStep> getBatchRequestSteps() {
+        if (!batchRequests.isEmpty()) {
+            Map<String, BatchRequestStep> result = currentBatchRequest.getBatchRequestSteps();
             for (BatchRequestContent batchRequestContent : batchRequests) {
                 result.putAll(batchRequestContent.getBatchRequestSteps());
             }
@@ -115,9 +115,9 @@ public class BatchRequestContentCollection {
      * @return BatchRequestContentCollection with only failed requests.
      */
     @Nonnull
-    public BatchRequestContentCollection newBatchWithFailedRequests(@Nonnull HashMap<String, Integer> responseStatusCodes) {
+    public BatchRequestContentCollection newBatchWithFailedRequests(@Nonnull Map<String, Integer> responseStatusCodes) {
         BatchRequestContentCollection newBatch = new BatchRequestContentCollection(this.baseClient, this.batchRequestLimit);
-        HashMap<String, BatchRequestStep> steps = this.getBatchRequestSteps();
+        Map<String, BatchRequestStep> steps = this.getBatchRequestSteps();
         responseStatusCodes.forEach((id, statusCode) -> {
             if(steps.containsKey(id) && !BatchResponseContent.isSuccessStatusCode(statusCode)) {
                 newBatch.addBatchRequestStep(steps.get(id).getRequest());

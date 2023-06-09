@@ -10,9 +10,11 @@ import java.net.URI;
  */
 public class UploadResult<T> {
     /**
-     * Instantiates a new UploadResult.
+     * Default constructor.
      */
-    public UploadResult() {}
+    public UploadResult() {
+        //Default constructor
+    }
     /** The UploadSession containing information about the created upload session. */
     @Nullable
     public IUploadSession uploadSession;

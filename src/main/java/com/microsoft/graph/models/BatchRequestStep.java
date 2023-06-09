@@ -4,10 +4,9 @@ import com.microsoft.graph.exceptions.ErrorConstants;
 import okhttp3.Request;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -15,18 +14,17 @@ import java.util.Objects;
  */
 public class BatchRequestStep {
 
-    private String requestId;
-    private Request request;
-    @Nullable
-    private ArrayList<String> dependsOn;
+    private final String requestId;
+    private final Request request;
+    private List<String> dependsOn;
     /**
      * Creates a new BatchRequestStep
      * @param requestId The id of the request
      * @param request The request
      */
     public BatchRequestStep(@Nonnull String requestId, @Nonnull Request request) {
-        Objects.requireNonNull(requestId, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestId"));
-        Objects.requireNonNull(request, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "request"));
+        Objects.requireNonNull(requestId, ErrorConstants.Messages.NULL_PARAMETER + "requestId");
+        Objects.requireNonNull(request, ErrorConstants.Messages.NULL_PARAMETER + "request");
         this.requestId = requestId;
         this.request = request;
     }
@@ -60,11 +58,44 @@ public class BatchRequestStep {
      * Gets the ids of the requests that this request depends on
      * @return The ids of the requests that this request depends on
      */
-    @Nullable
-    public ArrayList<String> getDependsOn() {
+    @Nonnull
+    public List<String> getDependsOn() {
         if(dependsOn == null) {
-            return null;
+            return new ArrayList<>();
         }
         return new ArrayList<>(dependsOn);
+    }
+    /**
+     * Sets the ids of the requests that this request depends on
+     * @param dependsOn The ids of the requests that this request depends on
+     */
+    public void setDependsOn(@Nonnull List<String> dependsOn) {
+        this.dependsOn = new ArrayList<>(dependsOn);
+    }
+    /**
+     * Adds a request id to the dependsOn list.
+     * @param id The id of the request to add to the dependsOn list.
+     */
+    public void addDependsOnId(@Nonnull String id) {
+        if(dependsOn == null) {
+            dependsOn = new ArrayList<>();
+        }
+        dependsOn.add(id);
+    }
+    /**
+     * Removes a request id from the dependsOn list.
+     *
+     * @param id The id of the request to remove.
+     * @return true if the request id is no longer present in the dependsOn collection, false if dependsOn is null.
+     */
+    public boolean removeDependsOnId(@Nonnull String id) {
+        if(dependsOn != null) {
+            if(!dependsOn.contains(id)) {
+                throw new IllegalArgumentException(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID);
+            }
+            dependsOn.removeAll(Collections.singleton(id));
+            return true;
+        }
+        return false;
     }
 }

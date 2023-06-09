@@ -3,7 +3,7 @@ package com.microsoft.graph.content;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
-import com.microsoft.graph.requests.BaseClient;
+import com.microsoft.graph.BaseClient;
 import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.RequestInformation;
@@ -27,20 +27,20 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class BatchRequestContentTest {
+class BatchRequestContentTest {
 
-    public static final String requestUrl = "https://graph.microsoft.com/v1.0/me";
+    static final String requestUrl = "https://graph.microsoft.com/v1.0/me";
     private final IBaseClient client = new BaseClient(new AnonymousAuthenticationProvider(), requestUrl);
 
     @Test
-    public void BatchRequestContent_DefaultInitialization() {
+    void BatchRequestContent_DefaultInitialization() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
 
         assertNotNull(batchRequestContent.getBatchRequestSteps());
         assertEquals(0, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_InitializeWithBatchRequestSteps() {
+    void BatchRequestContent_InitializeWithBatchRequestSteps() {
         ArrayList<BatchRequestStep> requestStepList = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
             requestStepList.add(new BatchRequestStep(String.valueOf(i), mock(Request.class)));
@@ -51,7 +51,7 @@ public class BatchRequestContentTest {
         assertEquals(5, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_InitializeWithInvalidDependsOnIds() {
+    void BatchRequestContent_InitializeWithInvalidDependsOnIds() {
         BatchRequestStep requestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestStep requestStep2 = new BatchRequestStep("2", mock(Request.class), List.of("3"));
         try {
@@ -61,7 +61,7 @@ public class BatchRequestContentTest {
         }
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithNewRequestStep() {
+    void BatchRequestContent_AddBatchRequestStepWithNewRequestStep() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
 
@@ -71,7 +71,7 @@ public class BatchRequestContentTest {
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepToBatchRequestContentWithMaxSteps() {
+    void BatchRequestContent_AddBatchRequestStepToBatchRequestContentWithMaxSteps() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         for(int i = 0; i < CoreConstants.BatchRequest.MAX_REQUESTS; i++) {
             assertTrue(batchRequestContent.addBatchRequestStep(new BatchRequestStep(String.valueOf(i), mock(Request.class))));
@@ -82,7 +82,7 @@ public class BatchRequestContentTest {
         assertEquals(CoreConstants.BatchRequest.MAX_REQUESTS, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithExistingRequestStep() {
+    void BatchRequestContent_AddBatchRequestStepWithExistingRequestStep() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep));
 
@@ -91,7 +91,7 @@ public class BatchRequestContentTest {
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithNullRequestStep() {
+    void BatchRequestContent_AddBatchRequestStepWithNullRequestStep() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep));
 
@@ -100,7 +100,7 @@ public class BatchRequestContentTest {
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
-    public void BatchRequestContent_RemoveBatchRequestStepWithIdForExistingId() {
+    void BatchRequestContent_RemoveBatchRequestStepWithIdForExistingId() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", mock(Request.class), List.of("1", "1", "1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep, batchRequestStep2));
@@ -110,7 +110,7 @@ public class BatchRequestContentTest {
         assertEquals(0, Objects.requireNonNull(batchRequestContent.getBatchRequestSteps().get("2").getDependsOn()).size());
     }
     @Test
-    public void BatchRequestContent_RemoveBatchRequestStepWithIdForNonExistingId() {
+    void BatchRequestContent_RemoveBatchRequestStepWithIdForNonExistingId() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", mock(Request.class), List.of("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep, batchRequestStep2));
@@ -120,7 +120,7 @@ public class BatchRequestContentTest {
         assertEquals(Objects.requireNonNull(batchRequestStep2.getDependsOn()).get(0), Objects.requireNonNull(batchRequestContent.getBatchRequestSteps().get("2").getDependsOn()).get(0));
     }
     @Test
-    public void BatchRequestContent_GetBatchRequestContentFromStep() throws IOException, URISyntaxException {
+    void BatchRequestContent_GetBatchRequestContentFromStep() throws IOException, URISyntaxException {
         Request request = new Request.Builder().url(requestUrl).build();
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", request, List.of("1"));
@@ -137,7 +137,7 @@ public class BatchRequestContentTest {
         assertEquals(expectedContent, requestContentString);
     }
     @Test
-    public void BatchRequestContent_GetBatchRequestContentFromStepAsyncDoesNotModifyDateTimes() throws IOException {
+    void BatchRequestContent_GetBatchRequestContentFromStepAsyncDoesNotModifyDateTimes() throws IOException {
         String bodyString = "{\n" +
             "  \"subject\": \"Lets go for lunch\",\n" +
             "  \"body\": {\n    \"contentType\": \"HTML\",\n" +
@@ -223,7 +223,7 @@ public class BatchRequestContentTest {
         assertEquals(expectedJson, requestContentString);
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessage() {
+    void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessage() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
 
@@ -237,7 +237,7 @@ public class BatchRequestContentTest {
         assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().method(), request.method());
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessageToBatchRequestContentWithMaxSteps() {
+    void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessageToBatchRequestContentWithMaxSteps() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         for(int i = 0; i < CoreConstants.BatchRequest.MAX_REQUESTS; i++) {
             Request request = new Request.Builder().url(requestUrl).build();
@@ -254,23 +254,23 @@ public class BatchRequestContentTest {
         }
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithBaseRequest() throws IOException {
+    void BatchRequestContent_AddBatchRequestStepWithBaseRequest() throws IOException {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.urlTemplate = requestUrl;
         requestInfo.httpMethod = HttpMethod.GET;
 
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
-        String requestId = batchRequestContent.addBatchRequestAsync(requestInfo).join();
+        String requestId = batchRequestContent.addBatchRequestStep(requestInfo).join();
 
         assertNotNull(requestId);
         assertNotNull(batchRequestContent.getBatchRequestSteps());
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
-        assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().url().uri().toString(), requestUrl);
+        assertEquals(requestUrl, batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().url().uri().toString());
         assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().method(), requestInfo.httpMethod.toString());
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithBaseRequestWithHeaderOptions() throws IOException {
+    void BatchRequestContent_AddBatchRequestStepWithBaseRequestWithHeaderOptions() throws IOException {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         Request request = new Request.Builder()
             .url(requestUrl)
@@ -295,20 +295,20 @@ public class BatchRequestContentTest {
         assertTrue(requestContentString.contains(expectedJsonSection));
     }
     @Test
-    public void BatchRequestContent_AddBatchRequestStepWithBaseRequestToBatchRequestContentWithMaxSteps() {
+    void BatchRequestContent_AddBatchRequestStepWithBaseRequestToBatchRequestContentWithMaxSteps() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         for(int i = 0; i < CoreConstants.BatchRequest.MAX_REQUESTS; i++) {
             RequestInformation requestInfo = new RequestInformation();
             requestInfo.urlTemplate = requestUrl;
             requestInfo.httpMethod = HttpMethod.GET;
-            String requestId = batchRequestContent.addBatchRequestAsync(requestInfo).join();
+            String requestId = batchRequestContent.addBatchRequestStep(requestInfo).join();
             assertNotNull(requestId);
         }
         RequestInformation extraRequestInfo = new RequestInformation();
         extraRequestInfo.urlTemplate = requestUrl;
         extraRequestInfo.httpMethod = HttpMethod.GET;
         try {
-            batchRequestContent.addBatchRequestAsync(extraRequestInfo).join();
+            batchRequestContent.addBatchRequestStep(extraRequestInfo).join();
         } catch (Exception e) {
             assertEquals(String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS), e.getMessage());
             assertNotNull(batchRequestContent.getBatchRequestSteps());
@@ -324,7 +324,7 @@ public class BatchRequestContentTest {
         "https://graph.microsoft.com/v1.0/users?$filter=identities/any(id:id/issuer%20eq%20'$74707853-18b3-411f-ad57-2ef65f6fdeb0'%20and%20id/issuerAssignedId%20eq%20'**bobbetancourt@fakeemail.com**') , /users?$filter=identities/any(id:id/issuer%20eq%20%27$74707853-18b3-411f-ad57-2ef65f6fdeb0%27%20and%20id/issuerAssignedId%20eq%20%27**bobbetancourt@fakeemail.com**%27)" ,
         "https://graph.microsoft.com/beta/users?$filter=identities/any(id:id/issuer%20eq%20'$74707853-18b3-411f-ad57-2ef65f6fdeb0'%20and%20id/issuerAssignedId%20eq%20'**bobbetancourt@fakeemail.com**')&$top=1 , /users?$filter=identities/any(id:id/issuer%20eq%20%27$74707853-18b3-411f-ad57-2ef65f6fdeb0%27%20and%20id/issuerAssignedId%20eq%20%27**bobbetancourt@fakeemail.com**%27)&$top=1" ,
     })
-    public void BatchRequestContent_AddBatchRequestStepWithBaseRequestProperlySetsVersion(ArgumentsAccessor argumentsAccessor) throws IOException {
+    void BatchRequestContent_AddBatchRequestStepWithBaseRequestProperlySetsVersion(ArgumentsAccessor argumentsAccessor) throws IOException {
         Request request = new Request.Builder().url(argumentsAccessor.getString(0)).build();
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", request);
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);

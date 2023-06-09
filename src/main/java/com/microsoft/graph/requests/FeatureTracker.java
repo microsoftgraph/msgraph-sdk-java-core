@@ -7,12 +7,13 @@ import javax.annotation.Nonnull;
  * Manages and tracks the flags for tasks and handlers.
  */
 public class FeatureTracker {
-
     /**
      * Default constructor
      */
     public FeatureTracker() {
+        //Default constructor
     }
+
     private int featureUsage = FeatureFlag.NONE_FLAG;
     /**
      * Sets a numeric representation of the SDK feature usage

@@ -42,7 +42,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      * @return the IUploadSession
      */
     @Nonnull
-    public CompletableFuture<IUploadSession> getAsync() {
+    public CompletableFuture<IUploadSession> get() {
         RequestInformation requestInformation = toGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
@@ -61,7 +61,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      * @return Once returned the UploadSession has been deleted.
      */
     @Nonnull
-    public CompletableFuture<Void> deleteAsync() {
+    public CompletableFuture<Void> delete() {
         RequestInformation requestInfo = this.toDeleteRequestInformation();
         return this.requestAdapter.sendPrimitiveAsync(requestInfo, Void.class, null);
     }

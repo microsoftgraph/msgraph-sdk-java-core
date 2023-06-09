@@ -72,7 +72,7 @@ public class ErrorConstants {
         /** Maximum value exceeded error message. */
         public static final String MAXIMUM_VALUE_EXCEEDED = "%s exceeds the maximum value of %d.";
         /** Null parameter error message. */
-        public static final String NULL_PARAMETER = "%s parameter cannot be null.";
+        public static final String NULL_PARAMETER = "The following parameter cannot be null: ";
         /** Unable to deserialize content error message.  */
         public static final String UNABLE_TO_DESERIALIZE_CONTENT = "Unable to deserialize content.";
         /** Invalid depends on request Id error message. */

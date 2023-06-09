@@ -10,57 +10,52 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 
-import javax.print.attribute.standard.Media;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.defaultInstance;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class BatchResponseContentTest {
+class BatchResponseContentTest {
     ParseNodeFactoryRegistry registry = defaultInstance;
     Response.Builder defaultBuilder = new Response.Builder().protocol(Protocol.HTTP_1_1).message("Message").request(mock(Request.class));
 
     @Test
-    public void BatchResponseContent_InitializeWithNoContentAsync() {
+    void BatchResponseContent_InitializeWithNoContentAsync() {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponsesAsync().join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
         Response response1 = responses.get("1");
         assertNotNull(responses);
         assertNull(response1);
         assertEquals(0,responses.size());
     }
     @Test
-    public void BatchResponseContent_InitializeWithEmptyResponseContentAsync() {
+    void BatchResponseContent_InitializeWithEmptyResponseContentAsync() {
         String jsonResponse = "{ \"responses\": [] }";
         ResponseBody responseBody = ResponseBody.create(MediaType.get("application/json"), jsonResponse);
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).body(responseBody).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponsesAsync().join();
-        Response response1 = batchResponseContent.getResponseByIdAsync("1").join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
+        Response response1 = batchResponseContent.getResponseById("1").join();
         assertNotNull(responses);
         assertNull(response1);
         assertEquals(0,responses.size());
     }
     @Test
     @SuppressFBWarnings
-    public void BatchResponseContent_InitializeWithNullResponseMessage() {
+    void BatchResponseContent_InitializeWithNullResponseMessage() {
         try{
             new BatchResponseContent(null);
         } catch (NullPointerException ex) {
-            assertEquals(String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "batchResponse"), ex.getMessage());
+            assertEquals(ErrorConstants.Messages.NULL_PARAMETER + "batchResponse", ex.getMessage());
         }
     }
     @Test
-    public void BatchResponseContent_GetResponsesAsync() {
+    void BatchResponseContent_GetResponsesAsync() {
         String responseJSON = "{\"responses\":"
             +"[{"
             +"\"id\": \"1\","
@@ -84,7 +79,7 @@ public class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        HashMap<String, Response> responses = batchResponseContent.getResponsesAsync().join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
 
         assertNotNull(responses);
         assertEquals(3, responses.size());
@@ -94,7 +89,7 @@ public class BatchResponseContentTest {
         assertEquals(HttpURLConnection.HTTP_CREATED, responses.get("3").code());
     }
     @Test
-    public void BatchResponseContent_GetResponseByIdAsync() {
+    void BatchResponseContent_GetResponseByIdAsync() {
         String responseJSON = "{\"responses\":"
             + "[{"
             + "\"id\": \"1\","
@@ -143,16 +138,16 @@ public class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        Response response2 = batchResponseContent.getResponseByIdAsync("2").join();
-        Response imageResponse = batchResponseContent.getResponseByIdAsync("3").join();
+        Response response2 = batchResponseContent.getResponseById("2").join();
+        Response imageResponse = batchResponseContent.getResponseById("3").join();
 
         assertNotNull(response2);
         assertEquals(HttpURLConnection.HTTP_CONFLICT, response2.code());
         assertEquals("image/jpeg", imageResponse.header("Content-Type"));
-        assertNull(batchResponseContent.getResponseByIdAsync("4").join());
+        assertNull(batchResponseContent.getResponseById("4").join());
     }
     @Test
-    public void BatchResponseContent_GetResponseStreamByIdAsync() throws IOException {
+    void BatchResponseContent_GetResponseStreamByIdAsync() throws IOException {
         String responseJSON = "{"+
             "\"responses\": [" +
             "{" +
@@ -190,12 +185,12 @@ public class BatchResponseContentTest {
         ResponseBody body = ResponseBody.create(MediaType.parse("application/json"), responseJSON);
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        InputStream stream = batchResponseContent.getResponseStreamByIdAsync("1").join();
+        InputStream stream = batchResponseContent.getResponseStreamById("1").join();
         assertNotNull(stream);
         assertTrue(stream.available() > 0);
     }
     @Test
-    public void BatchResponseContent_GetResponseByIdAsyncWithDeserializer() {
+    void BatchResponseContent_GetResponseByIdAsyncWithDeserializer() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\"responses\":"
             + "[{"
@@ -227,33 +222,33 @@ public class BatchResponseContentTest {
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        TestUser user = batchResponseContent.getResponseByIdAsync("1", TestUser::createFromDiscriminatorValue).join();
+        TestUser user = batchResponseContent.getResponseById("1", TestUser::createFromDiscriminatorValue).join();
         assertNotNull(user);
         assertEquals("MOD Administrator", user.getDisplayName());
 
-        TestDrive drive = batchResponseContent.getResponseByIdAsync("2", TestDrive::createFromDiscriminatorValue).join();
+        TestDrive drive = batchResponseContent.getResponseById("2", TestDrive::createFromDiscriminatorValue).join();
         assertNotNull(drive);
         assertEquals("OneDrive", drive.name);
         assertEquals("b!random-VkHdanfIomf", drive.id);
 
-        TestNoteBook notebook = batchResponseContent.getResponseByIdAsync("3", TestNoteBook::createFromDiscriminatorValue).join();
+        TestNoteBook notebook = batchResponseContent.getResponseById("3", TestNoteBook::createFromDiscriminatorValue).join();
         assertNotNull(notebook);
         assertEquals("My Notebook -442293399", notebook.displayName);
         assertEquals("1-9f4fe8ea-7e6e-486e-a8f4-nothing-here", notebook.id);
 
         try{
-           batchResponseContent.getResponseByIdAsync("4", TestDriveItem::createFromDiscriminatorValue).join();
+           batchResponseContent.getResponseById("4", TestDriveItem::createFromDiscriminatorValue).join();
         } catch (Exception ex) {
             assertTrue(ex.getCause() instanceof ServiceException);
             ServiceException serviceException = (ServiceException) ex.getCause();
             assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.responseStatusCode);
             assertNotNull(serviceException.getRawResponseBody());
         }
-        TestNoteBook nonExistingNotebook = batchResponseContent.getResponseByIdAsync("5", TestNoteBook::createFromDiscriminatorValue).join();
+        TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue).join();
         assertNull(nonExistingNotebook);
     }
     @Test
-    public void BatchResponseContent_GetResponseByIdAsyncWithDeserializerWorksWithDateTimeOffsets() {
+    void BatchResponseContent_GetResponseByIdAsyncWithDeserializerWorksWithDateTimeOffsets() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\n" +
             "    \"responses\": [\n" +
@@ -304,13 +299,9 @@ public class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        TestEvent event = batchResponseContent.getResponseByIdAsync("3", TestEvent::createFromDiscriminatorValue).join();
+        TestEvent event = batchResponseContent.getResponseById("3", TestEvent::createFromDiscriminatorValue).join();
         assertEquals("2019-07-30T23:00:00.0000000", event.getEnd().getDateTime());
         assertEquals("2019-07-30T22:00:00.0000000", event.getStart().getDateTime());
         assertEquals("UTC", event.getEnd().getTimeZone());
     }
-
-
-
-
 }

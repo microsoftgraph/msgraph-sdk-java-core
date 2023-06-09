@@ -5,8 +5,8 @@ import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -42,7 +42,7 @@ public class TestEvent implements Parsable, AdditionalDataHolder {
         this.oDataType = oDataType;
     }
 
-    @NotNull
+    @Nonnull
     public HashMap<String, Object> getAdditionalData() {
         return additionalData;
     }

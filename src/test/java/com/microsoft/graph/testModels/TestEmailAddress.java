@@ -4,8 +4,8 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -48,7 +48,7 @@ public class TestEmailAddress implements Parsable, AdditionalDataHolder {
         return new TestEmailAddress();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Object> getAdditionalData() {
         return this.additionalData;

@@ -87,7 +87,7 @@ public final class CoreConstants {
         /** OData type property */
         public static final String ODATA_TYPE = "@odata.type";
         /** OData nextLink property */
-        public static final String ODAta_NEXT_LINK = "@nextLink";
+        public static final String ODATA_NEXT_LINK = "@nextLink";
 
     }
 

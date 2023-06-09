@@ -20,7 +20,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * A class representing the content of a batch request.
@@ -28,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class BatchRequestContent {
     private HashMap<String, BatchRequestStep> batchRequestSteps;
     private RequestAdapter requestAdapter;
-    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private final String maxStepsExceededMessage = String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS);
 
     /**
      * Creates a new BatchRequestContent object.
@@ -51,18 +50,15 @@ public class BatchRequestContent {
      * @param batchRequestSteps The list of BatchRequestSteps to add to the batch request.
      */
     public BatchRequestContent(@Nonnull RequestAdapter requestAdapter, @Nonnull List<BatchRequestStep> batchRequestSteps) {
-        this.requestAdapter = Objects.requireNonNull(requestAdapter, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestAdapter"));
+        this.requestAdapter = Objects.requireNonNull(requestAdapter, ErrorConstants.Messages.NULL_PARAMETER + "requestAdapter");
 
-        Objects.requireNonNull(batchRequestSteps, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "batchRequestSteps"));
+        Objects.requireNonNull(batchRequestSteps, ErrorConstants.Messages.NULL_PARAMETER + "batchRequestSteps");
         if(batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
-            throw new IllegalArgumentException(String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS));
+            throw new IllegalArgumentException(maxStepsExceededMessage);
         }
 
         this.batchRequestSteps = new HashMap<>();
         for (BatchRequestStep requestStep : batchRequestSteps) {
-            if(requestStep.getDependsOn() != null && !ContainsCorrespondingRequestId(requestStep.getDependsOn())) {
-                throw new IllegalArgumentException(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID);
-            }
             addBatchRequestStep(requestStep);
         }
     }
@@ -71,7 +67,7 @@ public class BatchRequestContent {
      * @return The batch request steps.
      */
     @Nonnull
-    public HashMap<String, BatchRequestStep> getBatchRequestSteps() {
+    public Map<String, BatchRequestStep> getBatchRequestSteps() {
 
         return new HashMap<>(batchRequestSteps);
     }
@@ -87,6 +83,9 @@ public class BatchRequestContent {
             || this.batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
             return false;
         }
+        if(!containsCorrespondingRequestId(requestStep.getDependsOn())) {
+            throw new IllegalArgumentException(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID);
+        }
         this.batchRequestSteps.put(requestStep.getRequestId(), requestStep);
         return true;
     }
@@ -95,9 +94,10 @@ public class BatchRequestContent {
      * @param request The request to add.
      * @return The request id of the added request.
      */
+    @Nonnull
     public String addBatchRequestStep(@Nonnull Request request) {
         if(this.batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
-            throw new IllegalArgumentException(String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS));
+            throw new IllegalArgumentException(maxStepsExceededMessage);
         }
         String requestId = java.util.UUID.randomUUID().toString();
         BatchRequestStep requestStep = new BatchRequestStep(requestId, request);
@@ -109,9 +109,10 @@ public class BatchRequestContent {
      * @param requestInformation The request information to add.
      * @return The request id of the added request.
      */
-    public CompletableFuture<String> addBatchRequestAsync(@Nonnull RequestInformation requestInformation) {
+    @Nonnull
+    public CompletableFuture<String> addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
         if(this.batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
-            throw new IllegalArgumentException(String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS));
+            throw new IllegalArgumentException(maxStepsExceededMessage);
         }
         String requestId = java.util.UUID.randomUUID().toString();
         return this.requestAdapter.convertToNativeRequestAsync(requestInformation).thenCompose(request -> {
@@ -125,31 +126,28 @@ public class BatchRequestContent {
      * @param requestId The request id of the request to remove.
      * @return True if the request was removed, false otherwise.
      */
-    public boolean removeBatchRequestStepWithId(String requestId) {
-        if(requestId == null || requestId.isEmpty()) {
-            throw new IllegalArgumentException(String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestId"));
+    public boolean removeBatchRequestStepWithId(@Nonnull String requestId) {
+        if(requestId.isEmpty()) {
+            throw new IllegalArgumentException("requestId cannot be empty.");
         }
         boolean isRemoved = false;
         if(this.batchRequestSteps.containsKey(requestId)) {
             this.batchRequestSteps.remove(requestId);
             isRemoved = true;
             for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
-                if(requestStep != null && requestStep.getDependsOn() != null) {
-                    while(true) {
-                        if(!requestStep.getDependsOn().remove(requestId))
-                            break;
-                    }
-                }
+                requestStep.removeDependsOnId(requestId);
             }
         }
         return isRemoved;
     }
+
     /**
      * Builds a BatchRequestContent object from failed requests.
      * @param responseStatusCodes The response status codes of the failed requests.
      * @return The BatchRequestContent object.
      */
-    public BatchRequestContent newBatchWithFailedRequests (@Nonnull HashMap<String, Integer> responseStatusCodes) {
+    @Nonnull
+    public BatchRequestContent newBatchWithFailedRequests (@Nonnull Map<String, Integer> responseStatusCodes) {
         BatchRequestContent request = new BatchRequestContent(this.requestAdapter, new ArrayList<>());
         responseStatusCodes.forEach((key, value) -> {
             if(this.batchRequestSteps.containsKey(key) && !BatchResponseContent.isSuccessStatusCode(value)) {
@@ -165,8 +163,7 @@ public class BatchRequestContent {
     @Nonnull
     public CompletableFuture<InputStream> getBatchRequestContentAsync() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
-        try {
+        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.setIndent("  ");
             writer.beginObject();
             writer.name(CoreConstants.BatchRequest.REQUESTS);
@@ -177,9 +174,11 @@ public class BatchRequestContent {
             writer.endArray();
             writer.endObject();
             writer.flush();
-
-            ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
-            return CompletableFuture.completedFuture(stream);
+            PipedInputStream in = new PipedInputStream();
+            try(final PipedOutputStream out = new PipedOutputStream(in)) {
+                outputStream.writeTo(out);
+                return CompletableFuture.completedFuture(in);
+            }
         } catch(IOException e) {
             CompletableFuture<InputStream> exception = new CompletableFuture<>();
             exception.completeExceptionally(e);
@@ -197,7 +196,7 @@ public class BatchRequestContent {
 
             List<String> dependsOn = requestStep.getDependsOn();
             Headers headers = request.headers();
-            if(dependsOn != null && !dependsOn.isEmpty()) {
+            if(!dependsOn.isEmpty()) {
                 writer.name(CoreConstants.BatchRequest.DEPENDS_ON);
                 writer.beginArray();
                 for(String id : dependsOn) {
@@ -220,18 +219,17 @@ public class BatchRequestContent {
                 }
             }
             if(requestBody != null) {
-                JsonObject bodyObject = getRequestContentAsync(requestBody).get();
+                JsonObject bodyObject = getRequestContent(requestBody).join();
                 writer.name(CoreConstants.BatchRequest.BODY);
                 writeJsonElement(writer, bodyObject);
             }
             writer.endObject();
-        } catch (IOException | InterruptedException | ExecutionException e) {
+        } catch (IOException e) {
             CompletableFuture<Void> exception = new CompletableFuture<>();
             exception.completeExceptionally(e);
         }
     }
-    private CompletableFuture<JsonObject> getRequestContentAsync(RequestBody requestBody) {
-        Objects.requireNonNull(String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestBody"));
+    private CompletableFuture<JsonObject> getRequestContent(RequestBody requestBody) {
         try {
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
@@ -270,15 +268,15 @@ public class BatchRequestContent {
             writer.endObject();
         }
     }
-    private boolean ContainsCorrespondingRequestId(List<String> dependsOn) {
+    private boolean containsCorrespondingRequestId(List<String> dependsOn) {
         return dependsOn.stream().allMatch(id -> this.batchRequestSteps.containsKey(id));
     }
     private String getRelativeUrl(HttpUrl url) {
         String query = url.encodedQuery(); //Query must be encoded in order for batch requests to work.
-        String path = url.encodedPath();
+        String path = url.encodedPath().substring(5);
         if(query == null || query.isEmpty()) {
-            return path.substring(5);
+            return path;
         }
-        return String.format(Locale.US, "%s?%s", path, query).substring(5); // `v1.0/` and `beta/` are both 5 characters
+        return (path + "?" + query); // `v1.0/` and `beta/` are both 5 characters
     }
 }

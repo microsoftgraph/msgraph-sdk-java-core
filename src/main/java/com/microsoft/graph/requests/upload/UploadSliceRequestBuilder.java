@@ -59,7 +59,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
      * @return The model containing the Upload information retrieved from the response.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> putAsync(@Nonnull InputStream stream) {
+    public CompletableFuture<UploadResult<T>> put(@Nonnull InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation requestInformation = this.toPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();

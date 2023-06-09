@@ -1,5 +1,6 @@
 package com.microsoft.graph.requests;
 
+import com.microsoft.graph.BaseClient;
 import com.microsoft.graph.content.BatchRequestContent;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.kiota.RequestInformation;
@@ -13,10 +14,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BatchRequestBuilderTest {
+class BatchRequestBuilderTest {
 
     @Test
-    public void BatchRequestBuilderTest() {
+    void BatchRequestBuilder_DefaultBuilderTest() {
         BaseClient client = new BaseClient(new AnonymousAuthenticationProvider(), "https://localhost");
         BatchRequestBuilder batchRequestBuilder = new BatchRequestBuilder(client.getRequestAdapter());
 

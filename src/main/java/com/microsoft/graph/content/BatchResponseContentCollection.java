@@ -22,7 +22,7 @@ public class BatchResponseContentCollection {
      * Instantiates a new Batch response content collection.
      */
     public BatchResponseContentCollection() {
-        batchResponses = new ArrayList<KeyedBatchResponseContent>();
+        batchResponses = new ArrayList<>();
     }
     /**
      * Add BatchResponseContent object to the collection.
@@ -37,7 +37,7 @@ public class BatchResponseContentCollection {
      * @param requestId the id of the request to get the response for.
      * @return the BatchResponseContent object containing the response for the request with the given id, null if no response was found.
      */
-    private BatchResponseContent getBatchResponseContaining(String requestId) {
+    private BatchResponseContent getBatchResponseContaining(@Nonnull String requestId) {
         for(KeyedBatchResponseContent keyedResponse : batchResponses) {
             if(keyedResponse.keys.contains(requestId)) {
                 return keyedResponse.response;
@@ -51,9 +51,9 @@ public class BatchResponseContentCollection {
      * @return the response for the request with the given id, null if no response was found.
      */
     @Nullable
-    public CompletableFuture<Response> getResponseByIdAsync(String requestId) {
+    public CompletableFuture<Response> getResponseByIdAsync(@Nonnull String requestId) {
         BatchResponseContent response = getBatchResponseContaining(requestId);
-        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseByIdAsync(requestId);
+        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId);
     }
     /**
      * Gets the response for the request with the given id.
@@ -63,9 +63,9 @@ public class BatchResponseContentCollection {
      * @param <T> the type of the response.
      */
     @Nullable
-    public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(String requestId, @Nonnull ResponseHandler handler) {
+    public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(@Nonnull String requestId, @Nonnull ResponseHandler handler) {
         BatchResponseContent response = getBatchResponseContaining(requestId);
-        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseByIdAsync(requestId, handler);
+        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId, handler);
     }
     /**
      * Gets the response for the request with the given id.
@@ -75,9 +75,9 @@ public class BatchResponseContentCollection {
      * @param <T> the type of the response.
      */
     @Nullable
-    public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(String requestId, @Nonnull ParsableFactory<T> factory) {
+    public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
         BatchResponseContent response = getBatchResponseContaining(requestId);
-        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseByIdAsync(requestId, factory);
+        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId, factory);
     }
     /**
      * Gets the response for the request with the given id as a stream.
@@ -85,9 +85,9 @@ public class BatchResponseContentCollection {
      * @return the response for the request with the given id, null if no response was found.
      */
     @Nullable
-    public CompletableFuture<InputStream> getResponseStreamByIdAsync(String requestId) {
+    public CompletableFuture<InputStream> getResponseStreamByIdAsync(@Nonnull String requestId) {
         BatchResponseContent response = getBatchResponseContaining(requestId);
-        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseStreamByIdAsync(requestId);
+        return response == null ? CompletableFuture.completedFuture(null) : response.getResponseStreamById(requestId);
     }
     /**
      * Gets the response codes for all the requests in the batch.
@@ -97,7 +97,7 @@ public class BatchResponseContentCollection {
     public CompletableFuture<HashMap<String, Integer>> getResponsesStatusCodesAsync() {
         HashMap<String, Integer> statusCodes = new HashMap<>();
         for(KeyedBatchResponseContent keyedResponse : batchResponses) {
-            HashMap<String, Integer> responseStatusCodes = keyedResponse.response.getResponsesStatusCodeAsync().join();
+            HashMap<String, Integer> responseStatusCodes = keyedResponse.response.getResponsesStatusCode().join();
             statusCodes.putAll(responseStatusCodes);
         }
         return CompletableFuture.completedFuture(statusCodes);

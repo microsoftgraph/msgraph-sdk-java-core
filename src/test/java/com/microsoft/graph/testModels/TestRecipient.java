@@ -5,8 +5,8 @@ import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -56,7 +56,7 @@ public class TestRecipient implements Parsable, AdditionalDataHolder {
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Object> getAdditionalData() {
         return this.additionalData;

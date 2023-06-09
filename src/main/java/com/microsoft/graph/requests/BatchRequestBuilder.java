@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +34,7 @@ public class BatchRequestBuilder {
      * @param requestAdapter the adapter to use to build requests.
      */
     public BatchRequestBuilder(@Nonnull RequestAdapter requestAdapter) {
-        this.requestAdapter = Objects.requireNonNull(requestAdapter, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestAdapter"));
+        this.requestAdapter = Objects.requireNonNull(requestAdapter, ErrorConstants.Messages.NULL_PARAMETER + "requestAdapter");
     }
     /**
      * Posts a batch request.
@@ -43,12 +43,12 @@ public class BatchRequestBuilder {
      * @return the batch response content.
      */
     @Nonnull
-    public CompletableFuture<BatchResponseContent> postAsync(@Nonnull BatchRequestContent requestContent, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
-        Objects.requireNonNull(requestContent, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestContent"));
+    public CompletableFuture<BatchResponseContent> post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
+        Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = toPostRequestInformationAsync(requestContent).join();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInfo.setResponseHandler(nativeResponseHandler);
-        return requestAdapter.sendPrimitiveAsync(requestInfo, InputStream.class, errorMappings)
+        return requestAdapter.sendPrimitiveAsync(requestInfo, InputStream.class, errorMappings == null ? null : new HashMap<>(errorMappings))
             .thenCompose(i -> CompletableFuture.completedFuture(new BatchResponseContent((Response) nativeResponseHandler.getValue(), errorMappings)));
     }
     /**
@@ -58,11 +58,11 @@ public class BatchRequestBuilder {
      * @return the BatchResponseContentCollection.
      */
     @Nonnull
-    public CompletableFuture<BatchResponseContentCollection> postAsync(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public CompletableFuture<BatchResponseContentCollection> post(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
         BatchResponseContentCollection collection = new BatchResponseContentCollection();
         List<BatchRequestContent> requests = batchRequestContentCollection.getBatchRequestsForExecution();
         for (BatchRequestContent request : requests) {
-            BatchResponseContent responseContent = postAsync(request, errorMappings).join();
+            BatchResponseContent responseContent = post(request, errorMappings).join();
             collection.addBatchResponse(request.getBatchRequestSteps().keySet(), responseContent);
         }
         return CompletableFuture.completedFuture(collection);
@@ -74,7 +74,7 @@ public class BatchRequestBuilder {
      */
     @Nonnull
     public CompletableFuture<RequestInformation> toPostRequestInformationAsync(@Nonnull BatchRequestContent requestContent) {
-        Objects.requireNonNull(requestContent, String.format(Locale.US, ErrorConstants.Messages.NULL_PARAMETER, "requestContent"));
+        Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.POST;
         requestInfo.urlTemplate = "{+baseurl}/$batch";

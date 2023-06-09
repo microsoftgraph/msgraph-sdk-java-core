@@ -56,7 +56,7 @@ class UploadSliceRequestTest {
         UploadSliceRequestBuilder<TestDriveItem> sliceRequestBuilder = new UploadSliceRequestBuilder<>(
             "https://a.b.c/", adapter, 0, 200 , 1000, factory);
 
-        UploadResult<TestDriveItem> result = sliceRequestBuilder.putAsync(stream).get();
+        UploadResult<TestDriveItem> result = sliceRequestBuilder.put(stream).get();
         UploadSession session = (UploadSession) result.uploadSession;
 
         assertFalse(result.isUploadSuccessful());
