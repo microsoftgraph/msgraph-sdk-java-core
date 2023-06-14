@@ -163,7 +163,7 @@ class BatchRequestContentTest {
             "    }\n" +
             "  ]\n" +
             "}";
-        Request eventRequest = new Request.Builder().url(requestUrl).method("POST", RequestBody.create(bodyString, MediaType.parse("text/plain"))).build();
+        Request eventRequest = new Request.Builder().url(requestUrl).method("POST", RequestBody.create(bodyString, MediaType.parse("application/json"))).build();
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", new Request.Builder().url(requestUrl).build());
         BatchRequestStep batchRequestSte2 = new BatchRequestStep("2", eventRequest, List.of("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, List.of(batchRequestStep, batchRequestSte2));
@@ -184,9 +184,6 @@ class BatchRequestContentTest {
             "      \"dependsOn\": [\n" +
             "        \"1\"\n" +
             "      ],\n" +
-            "      \"headers\": {\n" +
-            "        \"Content-Type\": \"text/plain; charset=utf-8\"\n" +
-            "      },\n" +
             "      \"body\": {\n" +
             "        \"subject\": \"Lets go for lunch\",\n" +
             "        \"body\": {\n" +
@@ -213,6 +210,9 @@ class BatchRequestContentTest {
             "            \"type\": \"required\"\n" +
             "          }\n" +
             "        ]\n" +
+            "      },\n" +
+            "      \"headers\": {\n" +
+            "        \"Content-Type\": \"application/json; charset=utf-8\"\n" +
             "      }\n" +
             "    }\n" +
             "  ]\n" +
@@ -287,6 +287,7 @@ class BatchRequestContentTest {
         String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         String expectedJsonSection = "      \"url\": \"/me\",\n" +
             "      \"method\": \"POST\",\n" +
+            "      \"body\": {},\n" +
             "      \"headers\": {\n" +
             "        \"ConsistencyLevel\": \"eventual\",\n" + // Ensure the requestMessage headers are present
             "        \"Content-Type\": \"application/json; charset=utf-8\"\n" + // Ensure the content headers are present

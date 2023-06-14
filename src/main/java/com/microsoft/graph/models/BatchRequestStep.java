@@ -77,6 +77,9 @@ public class BatchRequestStep {
      * @param id The id of the request to add to the dependsOn list.
      */
     public void addDependsOnId(@Nonnull String id) {
+        if(id.isEmpty()) {
+            throw new IllegalArgumentException("id cannot be empty");
+        }
         if(dependsOn == null) {
             dependsOn = new ArrayList<>();
         }
@@ -90,8 +93,8 @@ public class BatchRequestStep {
      */
     public boolean removeDependsOnId(@Nonnull String id) {
         if(dependsOn != null) {
-            if(!dependsOn.contains(id)) {
-                throw new IllegalArgumentException(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID);
+            if(!dependsOn.contains(id) || id.isEmpty()) {
+                throw new IllegalArgumentException("id is not present in the dependsOn collection or is empty");
             }
             dependsOn.removeAll(Collections.singleton(id));
             return true;

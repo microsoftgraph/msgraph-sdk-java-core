@@ -147,7 +147,7 @@ public class BatchRequestContent {
      * @return The BatchRequestContent object.
      */
     @Nonnull
-    public BatchRequestContent newBatchWithFailedRequests (@Nonnull Map<String, Integer> responseStatusCodes) {
+    public BatchRequestContent createNewBatchFromFailedRequests (@Nonnull Map<String, Integer> responseStatusCodes) {
         BatchRequestContent request = new BatchRequestContent(this.requestAdapter, new ArrayList<>());
         responseStatusCodes.forEach((key, value) -> {
             if(this.batchRequestSteps.containsKey(key) && !BatchResponseContent.isSuccessStatusCode(value)) {
@@ -195,7 +195,6 @@ public class BatchRequestContent {
             writer.name(CoreConstants.BatchRequest.METHOD).value(request.method());
 
             List<String> dependsOn = requestStep.getDependsOn();
-            Headers headers = request.headers();
             if(!dependsOn.isEmpty()) {
                 writer.name(CoreConstants.BatchRequest.DEPENDS_ON);
                 writer.beginArray();
@@ -205,23 +204,26 @@ public class BatchRequestContent {
                 writer.endArray();
             }
             RequestBody requestBody = request.body();
+            Headers headers = request.headers();
+            if(requestBody != null) {
+                String contentType = Objects.requireNonNull(requestBody.contentType()).toString();
+                headers = headers.newBuilder().add("Content-Type", contentType).build();
+                writer.name(CoreConstants.BatchRequest.BODY);
+                if(contentType.toLowerCase(Locale.US).contains(CoreConstants.MimeTypeNames.APPLICATION_JSON)){
+                    JsonObject bodyObject = getJsonRequestContent(requestBody).join();
+                    writeJsonElement(writer, bodyObject);
+                } else {
+                    String rawBodyContent = getRawRequestContent(requestBody).join();
+                    writer.value(rawBodyContent);
+                }
+            }
             if(headers.size() != 0 || requestBody != null) {
                 writer.name(CoreConstants.BatchRequest.HEADERS);
                 writer.beginObject();
                 for(int i = 0; i < headers.size(); i++) {
                     writer.name(headers.name(i)).value(headers.value(i));
                 }
-                if (requestBody != null) {
-                    writer.name("Content-Type").value(Objects.requireNonNull(requestBody.contentType()).toString());
-                    writer.endObject();
-                } else {
-                    writer.endObject();
-                }
-            }
-            if(requestBody != null) {
-                JsonObject bodyObject = getRequestContent(requestBody).join();
-                writer.name(CoreConstants.BatchRequest.BODY);
-                writeJsonElement(writer, bodyObject);
+                writer.endObject();
             }
             writer.endObject();
         } catch (IOException e) {
@@ -229,7 +231,7 @@ public class BatchRequestContent {
             exception.completeExceptionally(e);
         }
     }
-    private CompletableFuture<JsonObject> getRequestContent(RequestBody requestBody) {
+    private CompletableFuture<JsonObject> getJsonRequestContent(RequestBody requestBody) {
         try {
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
@@ -242,6 +244,19 @@ public class BatchRequestContent {
             return exception;
         }
     }
+    private CompletableFuture<String> getRawRequestContent(RequestBody requestBody) {
+        try{
+            Buffer buffer = new Buffer();
+            requestBody.writeTo(buffer);
+            return CompletableFuture.completedFuture(buffer.readUtf8());
+        } catch(IOException e) {
+            ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
+            CompletableFuture<String> exception = new CompletableFuture<>();
+            exception.completeExceptionally(clientException);
+            return exception;
+        }
+    }
+
     //Used to solve indentation issue when there are several nested jsonElements.
     private void writeJsonElement(JsonWriter writer, JsonElement element) throws IOException {
         if(element.isJsonPrimitive()) {

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.5] - 2023-06-15
+
+### Added
+
+- Added Batch Request and Batch Request Collection functionality for Kiota generated service libraries.
+
 ## [3.0.4] - 2023-05-03
 
 ### Added 

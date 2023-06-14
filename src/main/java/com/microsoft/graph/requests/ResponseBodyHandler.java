@@ -13,9 +13,7 @@ import okhttp3.ResponseBody;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -54,13 +52,18 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
     @SuppressFBWarnings
     public <NativeResponseType, ModelType> CompletableFuture<ModelType> handleResponseAsync(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
         if(response instanceof Response && ((Response) response).body()!=null) {
-            ResponseBody body = ((Response) response).body();
-            try{boolean successfulResponse = validateSuccessfulResponse((Response) response, errorMappings);
-                if(successfulResponse) {
-                    return handleSuccessfulResponse(body);
+            Response nativeResponse = (Response) response;
+            ResponseBody body = nativeResponse.body();
+            try(final InputStream in = body.byteStream()) {
+                ParseNode parseNode = this.parseNodeFactory.getParseNode(body.contentType().type() + "/" + body.contentType().subtype(), in);
+                if(nativeResponse.isSuccessful()) {
+                    final ModelType result = (ModelType) parseNode.getObjectValue(this.factory); //We can be sure this is the correct type since return of this method is based on the type of the factory.
+                    return CompletableFuture.completedFuture(result);
+                } else {
+                    handleFailedResponse(nativeResponse, errorMappings, parseNode);
                 }
             }
-            catch(ApiException ex) {
+            catch(ApiException | IOException ex) {
                 CompletableFuture<ModelType> exceptionalResult = new CompletableFuture<>();
                 exceptionalResult.completeExceptionally(ex);
                 return exceptionalResult;
@@ -70,48 +73,21 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
         }
         return CompletableFuture.completedFuture(null);
     }
-    @SuppressFBWarnings
-    private <ModelType> CompletableFuture<ModelType> handleSuccessfulResponse(ResponseBody body) {
-        try(final InputStream in = body.byteStream()) {
-            String[] contentType = body.contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
-            byte[] responseStream = ByteStreams.toByteArray(in);
-            ParseNode jsonParseNode = this.parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
-            final ModelType result = (ModelType) jsonParseNode.getObjectValue(this.factory); //We can be sure this is the correct type since return of this method is based on the type of the factory.
-            return CompletableFuture.completedFuture(result);
-        } catch (IOException ex) {
-            CompletableFuture<ModelType> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(ex);
-            return exceptionalResult;
-        }
-    }
-    @SuppressFBWarnings
-    private boolean validateSuccessfulResponse(Response responseMessage, HashMap<String, ParsableFactory<? extends Parsable>> errorMapping) throws ApiException {
-        if (responseMessage.isSuccessful()) {
-            return true;
-        }
-        int statusCode = responseMessage.code();
+
+    private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) throws ApiException {
+        int statusCode = nativeResponse.code();
         String statusCodeString = String.valueOf(statusCode);
-        try (final InputStream in = Objects.requireNonNull(responseMessage.body()).byteStream()) {
-            String[] contentType = responseMessage.body().contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
-            byte[] responseStream = ByteStreams.toByteArray(in);
-            String rawResponseBody = new String(responseStream, StandardCharsets.UTF_8);
-            ParseNode node = this.parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
-            if (errorMapping == null ||
-                !errorMapping.containsKey(statusCodeString) ||
-                !(statusCode >= 400 && statusCode <= 499 && errorMapping.containsKey("4XX")) &&
-                    !(statusCode >= 500 && statusCode <= 599 && errorMapping.containsKey("5XX"))) {
-                throw new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, null, statusCode, responseMessage.headers(), rawResponseBody);
+        if (errorMappings == null ||
+            !errorMappings.containsKey(statusCodeString) ||
+            !(statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) &&
+                !(statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX"))) {
+            throw new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, null, statusCode, nativeResponse.headers(), nativeResponse.toString());
 
-            } else {
-                Parsable result = node.getObjectValue(errorMapping.get(statusCodeString));
-                if (!(result instanceof Exception)) {
-                    throw new ApiException("The server returned an unexpected status code and the error registered for this code failed to deserialize: " + statusCodeString);
-                }
+        } else {
+            Parsable result = parseNode.getObjectValue(errorMappings.get(statusCodeString));
+            if (!(result instanceof Exception)) {
+                throw new ApiException("The server returned an unexpected status code and the error registered for this code failed to deserialize: " + statusCodeString);
             }
-
-        } catch (IOException exception) {
-            throw new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, exception);
         }
-        return false;
     }
 }

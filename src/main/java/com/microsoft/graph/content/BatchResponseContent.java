@@ -180,7 +180,7 @@ public class BatchResponseContent {
         }
         String contentType = null;
         if(responseObject.has(CoreConstants.BatchRequest.HEADERS)) {
-            JsonObject headers = responseObject.get("headers").getAsJsonObject();
+            JsonObject headers = responseObject.get(CoreConstants.BatchRequest.HEADERS).getAsJsonObject();
             for(Map.Entry<String, JsonElement> header : headers.entrySet()) {
                 String key = header.getKey();
                 String value = header.getValue().getAsString();
@@ -191,7 +191,7 @@ public class BatchResponseContent {
             }
         }
         if(responseObject.has(CoreConstants.BatchRequest.BODY)) {
-            String body = responseObject.get("body").toString();
+            String body = responseObject.get(CoreConstants.BatchRequest.BODY).toString();
             if(responseObject.get("body").isJsonObject()) {
                 JsonObject bodyObject = responseObject.get("body").getAsJsonObject();
                 if(bodyObject.has(CoreConstants.BatchRequest.ERROR)) {
@@ -211,7 +211,7 @@ public class BatchResponseContent {
     private int getStatusCodeFromJsonObject(JsonElement responseElement) {
         JsonObject responseObject = responseElement.getAsJsonObject();
         if(responseObject.has(CoreConstants.BatchRequest.STATUS)) {
-            return responseObject.get("status").getAsInt();
+            return responseObject.get(CoreConstants.BatchRequest.STATUS).getAsInt();
         } else {
             throw new IllegalArgumentException("Response object does not contain status code");
         }
