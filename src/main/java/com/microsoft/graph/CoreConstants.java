@@ -88,7 +88,18 @@ public final class CoreConstants {
         public static final String ODATA_TYPE = "@odata.type";
         /** OData nextLink property */
         public static final String ODATA_NEXT_LINK = "@nextLink";
+    }
 
+    public static class OdataInstanceAnnotations {
+        private OdataInstanceAnnotations(){}
+        public static final String NEXT_LINK = "@odata.nextLink";
+        public static final String DELTA_LINK = "@odata.deltaLink";
+    }
+
+    public static class CollectionResponseMethods {
+        private CollectionResponseMethods(){}
+        public static final String GET_ODATA_DELTA_LINK = "getOdataDeltaLink";
+        public static final String GET_ODATA_NEXT_LINK = "getOdataNextLink";
     }
 
 }

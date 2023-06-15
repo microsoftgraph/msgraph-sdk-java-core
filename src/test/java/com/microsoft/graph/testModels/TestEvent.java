@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @SuppressFBWarnings
@@ -104,9 +105,7 @@ public class TestEvent implements Parsable, AdditionalDataHolder {
     }
 
     public void serialize(SerializationWriter writer) {
-        if (writer == null) {
-            throw new IllegalArgumentException("The writer cannot be null.");
-        }
+        Objects.requireNonNull(writer);
         writer.writeStringValue("@odata.type", getODataType());
         writer.writeStringValue("id", getId());
         writer.writeStringValue("subject", getSubject());
