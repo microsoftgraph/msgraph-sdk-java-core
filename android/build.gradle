@@ -25,7 +25,7 @@ apply plugin: "com.github.ben-manes.versions"
 android {
     namespace "com.microsoft.graph"
 
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         versionCode 1
