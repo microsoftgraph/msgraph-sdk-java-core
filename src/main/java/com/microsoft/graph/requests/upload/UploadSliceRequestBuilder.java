@@ -45,6 +45,10 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
                                      long totalSessionLength,
                                      @Nonnull ParsableFactory<T> factory) {
         this.urlTemplate = Objects.requireNonNull(sessionUrl);
+        if(sessionUrl.isEmpty())
+        {
+            throw new IllegalArgumentException("sessionUrl cannot be empty");
+        }
         this.requestAdapter = Objects.requireNonNull(requestAdapter);
         this.factory = factory;
         this.rangeBegin = rangeBegin;

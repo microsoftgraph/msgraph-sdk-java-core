@@ -44,6 +44,8 @@ public class UploadSession implements IUploadSession {
      */
     public void setUploadUrl(@Nonnull final String uploadUrl) {
         Objects.requireNonNull(uploadUrl, ErrorConstants.Messages.NULL_PARAMETER + "uploadUrl" );
+        if(uploadUrl.isEmpty())
+            throw new IllegalArgumentException("uploadUrl cannot be empty");
         this.uploadUrl = uploadUrl;
     }
     /**

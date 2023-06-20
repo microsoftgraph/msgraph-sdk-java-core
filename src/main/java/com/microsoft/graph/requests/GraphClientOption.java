@@ -35,7 +35,11 @@ public class GraphClientOption implements RequestOption {
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        this.clientRequestId = Objects.requireNonNull(clientRequestId, ErrorConstants.Messages.NULL_PARAMETER + "clientRequestId");
+        Objects.requireNonNull(clientRequestId, ErrorConstants.Messages.NULL_PARAMETER + "clientRequestId");
+        if(clientRequestId.isEmpty()) {
+            throw new IllegalArgumentException("clientRequestId cannot be empty");
+        }
+        this.clientRequestId = clientRequestId;
     }
     /**
      * Gets the client request id
@@ -53,7 +57,12 @@ public class GraphClientOption implements RequestOption {
      * @param clientLibraryVersion client library version specified by user.
      */
     public void setClientLibraryVersion(@Nonnull final String clientLibraryVersion) {
-        this.clientLibraryVersion = Objects.requireNonNull(clientLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "clientLibraryVersion");
+        Objects.requireNonNull(clientLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "clientLibraryVersion");
+        if(clientLibraryVersion.isEmpty())
+        {
+            throw new IllegalArgumentException("clientLibraryVersion cannot be empty");
+        }
+        this.clientLibraryVersion = clientLibraryVersion;
     }
     /**
      * Get the client library version as a string
@@ -69,7 +78,12 @@ public class GraphClientOption implements RequestOption {
      * @param coreLibraryVersion core library version specified by user.
      */
     public void setCoreLibraryVersion(@Nonnull final String coreLibraryVersion) {
-        this.coreLibraryVersion = Objects.requireNonNull(coreLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "coreLibraryVersion");
+        Objects.requireNonNull(coreLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "coreLibraryVersion");
+        if(coreLibraryVersion.isEmpty())
+        {
+            throw new IllegalArgumentException("coreLibraryVersion cannot be empty");
+        }
+        this.coreLibraryVersion = coreLibraryVersion;
     }
     /**
      * Get the core library version as a String, in this format 'x.x.x'
@@ -85,7 +99,12 @@ public class GraphClientOption implements RequestOption {
      * @param graphServiceVersion the version of the Api endpoint we are targeting
      */
     public void setGraphServiceTargetVersion(@Nonnull final String graphServiceVersion) {
-        this.graphServiceTargetVersion = Objects.requireNonNull(graphServiceVersion, ErrorConstants.Messages.NULL_PARAMETER + "graphServiceVersion");
+        Objects.requireNonNull(graphServiceVersion, ErrorConstants.Messages.NULL_PARAMETER + "graphServiceVersion");
+        if(graphServiceVersion.isEmpty())
+        {
+            throw new IllegalArgumentException("graphServiceVersion cannot be empty");
+        }
+        this.graphServiceTargetVersion = graphServiceVersion;
     }
     /**
      * Get the target version of the api endpoint we are targeting (v1 or beta)

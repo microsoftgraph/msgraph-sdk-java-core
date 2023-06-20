@@ -1,6 +1,5 @@
 package com.microsoft.graph.requests;
 
-import com.google.common.io.ByteStreams;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.kiota.ApiException;
@@ -56,6 +55,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
             ResponseBody body = nativeResponse.body();
             try(final InputStream in = body.byteStream()) {
                 ParseNode parseNode = this.parseNodeFactory.getParseNode(body.contentType().type() + "/" + body.contentType().subtype(), in);
+                body.close();
                 if(nativeResponse.isSuccessful()) {
                     final ModelType result = (ModelType) parseNode.getObjectValue(this.factory); //We can be sure this is the correct type since return of this method is based on the type of the factory.
                     return CompletableFuture.completedFuture(result);

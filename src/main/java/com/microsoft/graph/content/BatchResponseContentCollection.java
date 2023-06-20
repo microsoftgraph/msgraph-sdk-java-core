@@ -38,6 +38,7 @@ public class BatchResponseContentCollection {
      * @return the BatchResponseContent object containing the response for the request with the given id, null if no response was found.
      */
     private BatchResponseContent getBatchResponseContaining(@Nonnull String requestId) {
+        Objects.requireNonNull(requestId);
         for(KeyedBatchResponseContent keyedResponse : batchResponses) {
             if(keyedResponse.keys.contains(requestId)) {
                 return keyedResponse.response;
@@ -52,6 +53,7 @@ public class BatchResponseContentCollection {
      */
     @Nullable
     public CompletableFuture<Response> getResponseByIdAsync(@Nonnull String requestId) {
+        Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId);
     }
@@ -64,6 +66,7 @@ public class BatchResponseContentCollection {
      */
     @Nullable
     public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(@Nonnull String requestId, @Nonnull ResponseHandler handler) {
+        Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId, handler);
     }
@@ -76,6 +79,7 @@ public class BatchResponseContentCollection {
      */
     @Nullable
     public <T extends Parsable> CompletableFuture<T> getResponseByIdAsync(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
+        Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? CompletableFuture.completedFuture(null) : response.getResponseById(requestId, factory);
     }

@@ -217,7 +217,9 @@ class BatchRequestContentTest {
             "    }\n" +
             "  ]\n" +
             "}";
-
+        // Ignore indentation and whitespace
+        requestContentString = requestContentString.replace("\n", "").replaceAll("\\s", "");
+        expectedJson = expectedJson.replace("\n", "").replaceAll("\\s", "");
         assertNotNull(requestContentString);
         assertEquals(2, batchRequestContent.getBatchRequestSteps().size());
         assertEquals(expectedJson, requestContentString);
@@ -285,14 +287,16 @@ class BatchRequestContentTest {
 
         InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
         String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-        String expectedJsonSection = "      \"url\": \"/me\",\n" +
-            "      \"method\": \"POST\",\n" +
-            "      \"body\": {},\n" +
-            "      \"headers\": {\n" +
-            "        \"ConsistencyLevel\": \"eventual\",\n" + // Ensure the requestMessage headers are present
-            "        \"Content-Type\": \"application/json; charset=utf-8\"\n" + // Ensure the content headers are present
+        String expectedJsonSection = "      \"url\": \"/me\"," +
+            "      \"method\": \"POST\"," +
+            "      \"body\": {}," +
+            "      \"headers\": {" +
+            "        \"ConsistencyLevel\": \"eventual\"," + // Ensure the requestMessage headers are present
+            "        \"Content-Type\": \"application/json; charset=utf-8\"" + // Ensure the content headers are present
             "      }";
-
+        //Ignore indentation and whitespace
+        requestContentString = requestContentString.replaceAll("\\s", "").replace("\n", "");
+        expectedJsonSection = expectedJsonSection.replace("\n", "").replaceAll("\\s", "");
         assertTrue(requestContentString.contains(expectedJsonSection));
     }
     @Test
@@ -334,15 +338,18 @@ class BatchRequestContentTest {
         batchRequestContent.addBatchRequestStep(batchRequestStep);
         InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
         String requestContentString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-        String expectedJson = "{\n" +
-            "  \"requests\": [\n" +
-            "    {\n" +
-            "      \"id\": \"1\",\n" +
-            "      \"url\": \""+ argumentsAccessor.getString(1) +"\",\n" +
-            "      \"method\": \"GET\"\n" +
-            "    }\n" +
-            "  ]\n" +
+        String expectedJson = "{" +
+            "  \"requests\": [" +
+            "    {" +
+            "      \"id\": \"1\"," +
+            "      \"url\": \""+ argumentsAccessor.getString(1) +"\"," +
+            "      \"method\": \"GET\"" +
+            "    }" +
+            "  ]" +
             "}";
+        //Ignore indentation and whitespace
+        expectedJson = expectedJson.replaceAll("\\s", "").replace("\n", "");
+        requestContentString = requestContentString.replaceAll("\\s", "").replace("\n", "");
         assertEquals(expectedJson, requestContentString);
     }
 }

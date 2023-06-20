@@ -127,6 +127,7 @@ public class BatchRequestContent {
      * @return True if the request was removed, false otherwise.
      */
     public boolean removeBatchRequestStepWithId(@Nonnull String requestId) {
+        Objects.requireNonNull(requestId);
         if(requestId.isEmpty()) {
             throw new IllegalArgumentException("requestId cannot be empty.");
         }
@@ -164,7 +165,6 @@ public class BatchRequestContent {
     public CompletableFuture<InputStream> getBatchRequestContentAsync() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
-            writer.setIndent("  ");
             writer.beginObject();
             writer.name(CoreConstants.BatchRequest.REQUESTS);
             writer.beginArray();
@@ -211,7 +211,7 @@ public class BatchRequestContent {
                 writer.name(CoreConstants.BatchRequest.BODY);
                 if(contentType.toLowerCase(Locale.US).contains(CoreConstants.MimeTypeNames.APPLICATION_JSON)){
                     JsonObject bodyObject = getJsonRequestContent(requestBody).join();
-                    writeJsonElement(writer, bodyObject);
+                    writer.jsonValue(bodyObject.toString());
                 } else {
                     String rawBodyContent = getRawRequestContent(requestBody).join();
                     writer.value(rawBodyContent);
@@ -254,33 +254,6 @@ public class BatchRequestContent {
             CompletableFuture<String> exception = new CompletableFuture<>();
             exception.completeExceptionally(clientException);
             return exception;
-        }
-    }
-
-    //Used to solve indentation issue when there are several nested jsonElements.
-    private void writeJsonElement(JsonWriter writer, JsonElement element) throws IOException {
-        if(element.isJsonPrimitive()) {
-            JsonPrimitive primitive = element.getAsJsonPrimitive();
-            if(primitive.isString()) {
-                writer.value(primitive.getAsString());
-            } else if(primitive.isBoolean()) {
-                writer.value(primitive.getAsBoolean());
-            } else if(primitive.isNumber()) {
-                writer.value(primitive.getAsNumber());
-            }
-        } else if(element.isJsonArray()) {
-            writer.beginArray();
-            for(JsonElement arrayElement : element.getAsJsonArray()) {
-                writeJsonElement(writer, arrayElement);
-            }
-            writer.endArray();
-        } else if(element.isJsonObject()) {
-            writer.beginObject();
-            for(Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-                writer.name(entry.getKey());
-                writeJsonElement(writer, entry.getValue());
-            }
-            writer.endObject();
         }
     }
     private boolean containsCorrespondingRequestId(List<String> dependsOn) {

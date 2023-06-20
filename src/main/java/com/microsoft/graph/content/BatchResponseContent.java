@@ -10,6 +10,7 @@ import com.microsoft.kiota.serialization.ParsableFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
@@ -89,14 +90,17 @@ public class BatchResponseContent {
      */
     @Nullable
     public CompletableFuture<Response> getResponseById(@Nonnull String requestId) {
-        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
-        if (jsonBatchResponseObject != null) {
-            JsonElement responsesElement = jsonBatchResponseObject.get(CoreConstants.BatchRequest.RESPONSES);
-            if (responsesElement != null && responsesElement.isJsonArray()) { //ensure "responses" is not null and is an array.
-                JsonArray responsesArray = responsesElement.getAsJsonArray();
-                for (JsonElement responseElement : responsesArray) {
-                    if (responseElement.getAsJsonObject().get("id").getAsString().equals(requestId)) {
-                        return CompletableFuture.completedFuture(getResponseFromJsonObject(responseElement));
+        Objects.requireNonNull(requestId);
+        if(!requestId.isEmpty()) {
+            jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
+            if (jsonBatchResponseObject != null) {
+                JsonElement responsesElement = jsonBatchResponseObject.get(CoreConstants.BatchRequest.RESPONSES);
+                if (responsesElement != null && responsesElement.isJsonArray()) { //ensure "responses" is not null and is an array.
+                    JsonArray responsesArray = responsesElement.getAsJsonArray();
+                    for (JsonElement responseElement : responsesArray) {
+                        if (responseElement.getAsJsonObject().get("id").getAsString().equals(requestId)) {
+                            return CompletableFuture.completedFuture(getResponseFromJsonObject(responseElement));
+                        }
                     }
                 }
             }
@@ -201,6 +205,7 @@ public class BatchResponseContent {
             }
             ResponseBody responseBody = ResponseBody.create(body, MediaType.parse(contentType != null ? contentType : CoreConstants.MimeTypeNames.APPLICATION_JSON));
             response.body(responseBody);
+            responseBody.close();
         }
         response.protocol(this.batchResponseProtocol);
         response.message(message == null ? "See status code for details" : message);

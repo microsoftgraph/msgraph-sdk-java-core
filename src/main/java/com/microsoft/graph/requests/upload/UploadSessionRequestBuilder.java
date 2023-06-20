@@ -35,6 +35,10 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         this.responseHandler = new UploadResponseHandler();
         this.requestAdapter = Objects.requireNonNull(requestAdapter);
         this.urlTemplate = Objects.requireNonNull(sessionUrl);
+        if(sessionUrl.isEmpty())
+        {
+            throw new IllegalArgumentException("sessionUrl cannot be empty");
+        }
         this.factory = Objects.requireNonNull(factory);
     }
     /**
