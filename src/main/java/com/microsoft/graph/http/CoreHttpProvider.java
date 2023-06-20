@@ -488,12 +488,10 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
                 }
             }
         } catch (final GraphServiceException ex) {
-            logger.logError("Graph service exception", ex);
             throw ex;
         } catch (final Exception ex) {
             final ClientException clientException = new ClientException("Error during http request",
                     ex);
-            logger.logError("Error during http request", clientException);
             throw clientException;
         }
     }
