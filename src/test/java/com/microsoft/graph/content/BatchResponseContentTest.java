@@ -36,7 +36,7 @@ class BatchResponseContentTest {
     @Test
     void BatchResponseContent_InitializeWithEmptyResponseContentAsync() {
         String jsonResponse = "{ \"responses\": [] }";
-        ResponseBody responseBody = ResponseBody.create(MediaType.get("application/json"), jsonResponse);
+        ResponseBody responseBody = ResponseBody.create(jsonResponse,MediaType.get("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).body(responseBody).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
         HashMap<String, Response> responses = batchResponseContent.getResponses().join();
@@ -75,7 +75,7 @@ class BatchResponseContentTest {
             + "\"headers\":{\"Location\":\"https://graph.microsoft.com/v1.0/users/9f4fe8ea-7e6e-486e-a8f4-nothing-here/onenote/notebooks/1-zyz-a1c1-441a-8b41-9378jjdd2\",\"Preference-Applied\":\"odata.include-annotations=*\",\"Cache-Control\":\"no-cache\",\"OData-Version\":\"4.0\",\"Content-Type\":\"application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false;charset=utf-8\"},"
             + "\"body\":{\"@odata.context\":\"https://graph.microsoft.com/v1.0/$metadata#users('9f4fe8ea-7e6e-486e-a8f4-nothing-here')/onenote/notebooks/$entity\",\"id\":\"1-9f4fe8ea-7e6e-486e-a8f4-nothing-here\",\"self\":\"https://graph.microsoft.com/v1.0/users/9f4fe8ea-7e6e-486e-a8f4-nothing-here/onenote/notebooks/1-9f4fe8ea-7e6e-486e-a8f4-nothing-here\",\"createdDateTime\":\"2019-03-06T08:08:09Z\",\"displayName\":\"My Notebook -442293399\",\"lastModifiedDateTime\":\"2019-03-06T08:08:09Z\"}"
             + "}]}";
-        ResponseBody body = ResponseBody.create(MediaType.get("application/json"), responseJSON);
+        ResponseBody body = ResponseBody.create(responseJSON, MediaType.get("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
@@ -134,7 +134,7 @@ class BatchResponseContentTest {
             "+bf9CjAAluzmdX4AEIIAAAAASUVORK5CYII=\"" +
             "}" +
             "]}";
-        ResponseBody body = ResponseBody.create(MediaType.parse("application/json"), responseJSON);
+        ResponseBody body = ResponseBody.create(responseJSON, MediaType.parse("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
@@ -182,7 +182,7 @@ class BatchResponseContentTest {
             "}" +
             "]" +
             "}";
-        ResponseBody body = ResponseBody.create(MediaType.parse("application/json"), responseJSON);
+        ResponseBody body = ResponseBody.create(responseJSON, MediaType.parse("application/json"));
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
         InputStream stream = batchResponseContent.getResponseStreamById("1").join();
@@ -218,7 +218,7 @@ class BatchResponseContentTest {
             + "\"body\":{\"error\": {\"code\": \"20117\",\"message\": \"An item with this name already exists in this location.\",\"innerError\":{\"request-id\": \"nothing1b13-45cd-new-92be873c5781\",\"date\": \"2019-03-22T23:17:50\"}}}"
             + "}" +
             "]}";
-        ResponseBody body = ResponseBody.create(MediaType.parse("application/json"), responseJSON);
+        ResponseBody body = ResponseBody.create(responseJSON, MediaType.parse("application/json"));
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
@@ -295,7 +295,7 @@ class BatchResponseContentTest {
             "        }\n" +
             "    ]\n" +
             "}";
-        ResponseBody body = ResponseBody.create(MediaType.parse("application/json"), responseJSON);
+        ResponseBody body = ResponseBody.create(responseJSON, MediaType.parse("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 

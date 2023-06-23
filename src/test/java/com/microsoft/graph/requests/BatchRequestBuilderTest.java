@@ -1,6 +1,7 @@
 package com.microsoft.graph.requests;
 
 import com.microsoft.graph.BaseClient;
+import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.content.BatchRequestContent;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.kiota.RequestInformation;
@@ -22,7 +23,7 @@ class BatchRequestBuilderTest {
         BatchRequestBuilder batchRequestBuilder = new BatchRequestBuilder(client.getRequestAdapter());
 
         Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/").build();
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), "{}");
+        RequestBody requestBody = RequestBody.create("{}", MediaType.get(CoreConstants.MimeTypeNames.APPLICATION_JSON));
         Request request2 = new Request.Builder().url("https://graph.microsoft.com/v1.0/me/onenote/notebooks").post(requestBody).build();
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", request);
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", request2, List.of("1"));
