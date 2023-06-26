@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 20
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
@@ -59,7 +59,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 20
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
