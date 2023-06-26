@@ -26,8 +26,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 18
-          distribution: 'adopt'
+          java-version: 20
+          distribution: 'temurin'
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
@@ -58,8 +58,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 18
-          distribution: 'adopt'
+          java-version: 20
+          distribution: 'temurin'
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
