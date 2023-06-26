@@ -45,6 +45,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removes Request Builders.
 - GraphClientFactory to handle OkHttp client creation.
 - BaseClient refactored to use Kiota framework.
+
+## [2.0.19] - 2023-06-20
+
+### Changed
+
+- Remove explicit logging of GraphServiceException in the CoreHttpProvider class. [#885](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/885)
+- Thank you to @MaHa6543 for the contribution. 
+
 ## [2.0.18] - 2023-04-06
 
 ### Changed

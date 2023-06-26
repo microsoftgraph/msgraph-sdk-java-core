@@ -2,14 +2,13 @@ buildscript {
     repositories {
         google()
         gradlePluginPortal()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
     }
 
     dependencies {
-        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.13.3"
+        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.13.4"
         classpath "com.android.tools.build:gradle:8.0.2"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.47.0"
     }
@@ -27,13 +26,13 @@ apply plugin: "com.github.ben-manes.versions"
 android {
     namespace "com.microsoft.graph"
 
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         versionCode 1
         versionName "1.0"
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 34
     }
 
     buildTypes {
