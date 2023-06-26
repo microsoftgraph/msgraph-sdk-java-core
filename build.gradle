@@ -74,7 +74,6 @@ sourceSets {
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for jacoco, until 0.8.7 gets released
 }
 
 apply from: "gradle/dependencies.gradle"
