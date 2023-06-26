@@ -190,8 +190,9 @@ def fixAscNames = { name ->
 }
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+  options.compilerArgs << "-parameters"
+  sourceCompatibility = '1.8'
+  targetCompatibility = '1.8'
 }
 
 def getVersionCode() {
@@ -203,9 +204,7 @@ def getVersionName() {
 }
 
 artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
+	archives jar
 }
 
 def customizePom(pom) {
@@ -239,8 +238,8 @@ def customizePom(pom) {
             }
             scm {
                 url 'https://github.com/microsoftgraph/msgraph-sdk-java-core'
-                connection 'scm:git:git://github.com/microsoftgraph/msgraph-sdk-java-core.git'
-                developerConnection 'scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git'
+            	connection 'scm:git:git://github.com/microsoftgraph/msgraph-sdk-java-core.git'
+            	developerConnection 'scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git'
             }
             developers {
                 developer {
@@ -252,13 +251,13 @@ def customizePom(pom) {
 }
 
 gradle.taskGraph.whenReady { taskGraph ->
-    if (project.rootProject.file('local.properties').exists()) {
+	if (project.rootProject.file('local.properties').exists()) {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         tasks.withType(Sign)*.enabled = (properties.containsKey('enableSigning')) ? properties.getProperty('enableSigning').toBoolean() : false
         allprojects { ext."signing.keyId" = properties.getProperty('signing.keyId') }
         allprojects { ext."signing.secretKeyRingFile" = properties.getProperty('signing.secretKeyRingFile') }
-        allprojects { ext."signing.password" = properties.getProperty('signing.password') }
+		allprojects { ext."signing.password" = properties.getProperty('signing.password') }
     }
 }
 
