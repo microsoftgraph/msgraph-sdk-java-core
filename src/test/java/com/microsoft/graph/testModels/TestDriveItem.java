@@ -4,8 +4,8 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,13 +21,13 @@ public class TestDriveItem implements Parsable, AdditionalDataHolder {
 
     public TestDriveItem() {}
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Object> getAdditionalData() {
         return this.additionalData;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         final HashMap<String, Consumer<ParseNode>> deserializerMap = new HashMap<String, Consumer<ParseNode>>();
@@ -39,7 +39,7 @@ public class TestDriveItem implements Parsable, AdditionalDataHolder {
     }
 
     @Override
-    public void serialize(@NotNull SerializationWriter writer) {
+    public void serialize(@Nonnull SerializationWriter writer) {
         Objects.requireNonNull(writer);
         writer.writeStringValue("id", id);
         writer.writeStringValue("@odata.type", oDataType);

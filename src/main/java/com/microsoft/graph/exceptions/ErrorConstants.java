@@ -56,11 +56,11 @@ public class ErrorConstants {
         /** Request Url missing error message. */
         public static final String REQUEST_URL_MISSING = "Request URL is required to send a request.";
         /** Too many redirects error message. */
-        public static final String TOO_MANY_REDIRECTS_FORMAT_STRING = "More than {0} redirects encountered while sending the request.";
+        public static final String TOO_MANY_REDIRECTS_FORMAT_STRING = "More than %d redirects encountered while sending the request.";
         /** Too many retries error message. */
-        public static final String TOO_MANY_RETRIES_FORMAT_STRING = "More than {0} retries encountered while sending the request.";
+        public static final String TOO_MANY_RETRIES_FORMAT_STRING = "More than %d retries encountered while sending the request.";
         /** Unable to create instance of type error message. */
-        public static final String UNABLE_TO_CREATE_INSTANCE_OF_TYPE_FORMAT_STRING = "Unable to create an instance of type {0}.";
+        public static final String UNABLE_TO_CREATE_INSTANCE_OF_TYPE_FORMAT_STRING = "Unable to create an instance of type %s.";
         /** Unable to deserialize date error message. */
         public static final String UNABLE_TO_DESERIALIZE_DATE = "Unable to deserialize the returned Date.";
         /** Unable to deserialize date time offset error message. */
@@ -70,9 +70,9 @@ public class ErrorConstants {
         /** Unexpected exception response error message. */
         public static final String UNEXPECTED_EXCEPTION_RESPONSE = "Unexpected exception returned from the service.";
         /** Maximum value exceeded error message. */
-        public static final String MAXIMUM_VALUE_EXCEEDED = "{0} exceeds the maximum value of {1}.";
+        public static final String MAXIMUM_VALUE_EXCEEDED = "%s exceeds the maximum value of %d.";
         /** Null parameter error message. */
-        public static final String NULL_PARAMETER = "{0} parameter cannot be null.";
+        public static final String NULL_PARAMETER = "The following parameter cannot be null: ";
         /** Unable to deserialize content error message.  */
         public static final String UNABLE_TO_DESERIALIZE_CONTENT = "Unable to deserialize content.";
         /** Invalid depends on request Id error message. */
@@ -82,11 +82,11 @@ public class ErrorConstants {
         /** No response for upload error message. */
         public static final String NO_RESPONSE_FOR_UPLOAD = "No Response Received for upload.";
         /** Null value error message. */
-        public static final String NULL_VALUE = "{0} cannot be null.";
+        public static final String NULL_VALUE = "%s cannot be null.";
         /** Unexpected msal exception error message. */
         public static final String UNEXPECTED_MSAL_EXCEPTION = "Unexpected exception returned from MSAL.";
         /** Unexpected exception error message. */
-        public static final String UNEXPECTED_EXCEPTION = "Unexpected exception occured while authenticating the request.";
+        public static final String UNEXPECTED_EXCEPTION = "Unexpected exception occurred while authenticating the request.";
         /** Missing retry after header error message. */
         public static final String MISSING_RETRY_AFTER_HEADER = "Missing retry after header.";
         /** Invalid proxy argument error message. */

@@ -108,8 +108,8 @@ public class LargeFileUploadTask<T extends Parsable > {
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> uploadAsync() throws InterruptedException {
-        return this.uploadAsync(3, null);
+    public CompletableFuture<UploadResult<T>> upload() throws InterruptedException {
+        return this.upload(3, null);
     }
     /**
      * Perform the upload task.
@@ -120,7 +120,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> uploadAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public CompletableFuture<UploadResult<T>> upload(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         int uploadTries = 0;
         ArrayList<Throwable> exceptionsList = new ArrayList<>();
         while (uploadTries < maxTries) {
@@ -128,7 +128,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                 List<UploadSliceRequestBuilder<T>> uploadSliceRequestBuilders = getUploadSliceRequests();
                 for (UploadSliceRequestBuilder<T> request : uploadSliceRequestBuilders) {
                     UploadResult<T> result;
-                    result = uploadSliceAsync(request, exceptionsList);
+                    result = uploadSlice(request, exceptionsList);
                     amountUploaded += request.getRangeLength();
                     if(progress != null) {
                         progress.report(amountUploaded, this.totalUploadLength);
@@ -137,7 +137,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                         return CompletableFuture.completedFuture(result);
                     }
                 }
-                updateSessionStatusAsync().get();
+                updateSessionStatus().get();
                 uploadTries += 1;
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
@@ -159,8 +159,8 @@ public class LargeFileUploadTask<T extends Parsable > {
      @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resumeAsync() throws InterruptedException {
-        return this.resumeAsync(3, null);
+    public CompletableFuture<UploadResult<T>> resume() throws InterruptedException {
+        return this.resume(3, null);
     }
     /**
      * Resume the upload task.
@@ -170,10 +170,10 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resumeAsync(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public CompletableFuture<UploadResult<T>> resume(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         IUploadSession session;
-        try{
-            session = updateSessionStatusAsync().get();
+        try {
+            session = updateSessionStatus().get();
         } catch (ExecutionException ex) {
             CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
             exceptionalResult.completeExceptionally(ex);
@@ -186,14 +186,14 @@ public class LargeFileUploadTask<T extends Parsable > {
             exceptionalResult.completeExceptionally(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
             return exceptionalResult;
         }
-        return this.uploadAsync(maxTries, progress);
+        return this.upload(maxTries, progress);
     }
     /**
      * Delete the upload session.
      * @return Once returned the task is complete and the session has been deleted.
      */
     @Nonnull
-    public CompletableFuture<Void> deleteSessionAsync() {
+    public CompletableFuture<Void> deleteSession() {
         OffsetDateTime expirationDateTime =
             Objects.isNull(this.uploadSession.getExpirationDateTime()) ? OffsetDateTime.now() : this.uploadSession.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
@@ -203,16 +203,16 @@ public class LargeFileUploadTask<T extends Parsable > {
 
         }
         UploadSessionRequestBuilder<T> builder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
-        return builder.deleteAsync();
+        return builder.delete();
     }
     /**
      * Get the session information from the server, and update the internally held session with the updated information.
      * @return the updated UploadSession model.
      */
     @Nonnull
-    public CompletableFuture<IUploadSession> updateSessionStatusAsync() {
+    public CompletableFuture<IUploadSession> updateSessionStatus() {
         UploadSessionRequestBuilder<T> sessionRequestBuilder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
-        return sessionRequestBuilder.getAsync().thenApply(x ->
+        return sessionRequestBuilder.get().thenApply(x ->
         {
             this.rangesRemaining = getRangesRemaining(x);
             x.setUploadUrl(this.uploadSession.getUploadUrl());
@@ -221,13 +221,13 @@ public class LargeFileUploadTask<T extends Parsable > {
         });
     }
     private boolean firstAttempt;
-    private UploadResult<T> uploadSliceAsync(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException, ExecutionException, InterruptedException {
+    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException, ExecutionException, InterruptedException {
         this.firstAttempt = true;
         byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         while(true) {
-            try{
-                return uploadSliceRequestBuilder.putAsync(chunkStream).get();
+            try {
+                return uploadSliceRequestBuilder.put(chunkStream).get();
             } catch (ExecutionException ex) {
                 if(ex.getCause() instanceof ServiceException) {
                     handleServiceException((ServiceException)ex.getCause(), exceptionsList);

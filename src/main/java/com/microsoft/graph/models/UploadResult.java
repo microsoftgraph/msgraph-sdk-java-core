@@ -1,6 +1,6 @@
 package com.microsoft.graph.models;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import java.net.URI;
 
@@ -9,6 +9,12 @@ import java.net.URI;
  * @param <T> The type of item contained in the response.
  */
 public class UploadResult<T> {
+    /**
+     * Default constructor.
+     */
+    public UploadResult() {
+        //Default constructor
+    }
     /** The UploadSession containing information about the created upload session. */
     @Nullable
     public IUploadSession uploadSession;

@@ -11,7 +11,7 @@ public final class CoreConstants {
     private static class VersionValues {
         private static final int MAJOR = 3;
         private static final int MINOR = 0;
-        private static final int PATCH = 4;
+        private static final int PATCH = 5;
     }
 
     /**
@@ -37,11 +37,58 @@ public final class CoreConstants {
         public static final String FEATURE_FLAG = "FeatureFlag";
         /** Default version value constant. */
         public static final String DEFAULT_VERSION_VALUE = "0";
-        /**The following appear in dotnet core, are they necessary in Java?
-         * Content-Type header:
-         * public final String FormUrlEncodedContentType = "application/x-www-form-urlencoded";
-         * Throw-site header:
-         * public final String ThrowSiteHeaderName = "X-ThrowSite";
-         **/
     }
+
+    /**
+     * Batch Request Constants
+     */
+    public static class BatchRequest {
+        private BatchRequest(){}
+        /** Batch request max requests property */
+        public static final int MAX_REQUESTS = 20;
+        /** Batch request step id property */
+        public static final String ID = "id";
+        /** Batch request step url property */
+        public static final String URL = "url";
+        /** Batch request step body property */
+        public static final String BODY = "body";
+        /** Batch request step dependsOn property */
+        public static final String DEPENDS_ON = "dependsOn";
+        /** Batch request step method property */
+        public static final String METHOD = "method";
+        /** Batch request step requests property */
+        public static final String REQUESTS = "requests";
+        /** Batch request step responses property */
+        public static final String RESPONSES = "responses";
+        /** Batch request step status property */
+        public static final String STATUS = "status";
+        /** Batch request step headers property */
+        public static final String HEADERS = "headers";
+        /** Batch request step error property */
+        public static final String ERROR = "error";
+    }
+
+    /**
+     * MimeTypeNames Constants
+     */
+    public static class MimeTypeNames {
+        private MimeTypeNames(){}
+        /** Content type header constant for application/json */
+        public static final String APPLICATION_JSON = "application/json";
+        /** Content type header constant for application/octet-stream */
+        public static final String APPLICATION_STREAM = "application/octet-stream";
+    }
+
+    /**
+     * Serialization Constants
+     */
+    public static class Serialization {
+        private Serialization(){}
+        /** OData type property */
+        public static final String ODATA_TYPE = "@odata.type";
+        /** OData nextLink property */
+        public static final String ODATA_NEXT_LINK = "@nextLink";
+
+    }
+
 }

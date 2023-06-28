@@ -32,7 +32,7 @@ class LargeFileUploadTest {
         int size = stream.available();
         long maxSliceSize = 200*1024;
 
-        try{
+        try {
             new LargeFileUploadTask<TestDriveItem>(adapter, session, stream, size, maxSliceSize, TestDriveItem::createFromDiscriminatorValue);
         } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex ) {
             assertEquals("Must provide a stream that is not empty.", ex.getMessage());

@@ -45,6 +45,10 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
                                      long totalSessionLength,
                                      @Nonnull ParsableFactory<T> factory) {
         this.urlTemplate = Objects.requireNonNull(sessionUrl);
+        if(sessionUrl.isEmpty())
+        {
+            throw new IllegalArgumentException("sessionUrl cannot be empty");
+        }
         this.requestAdapter = Objects.requireNonNull(requestAdapter);
         this.factory = factory;
         this.rangeBegin = rangeBegin;
@@ -59,7 +63,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
      * @return The model containing the Upload information retrieved from the response.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> putAsync(@Nonnull InputStream stream) {
+    public CompletableFuture<UploadResult<T>> put(@Nonnull InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation requestInformation = this.toPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();

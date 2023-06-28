@@ -9,9 +9,8 @@ import com.microsoft.kiota.serialization.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Response;
 
-import org.jetbrains.annotations.Nullable;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

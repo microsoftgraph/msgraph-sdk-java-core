@@ -8,7 +8,6 @@ description: Branch protection policy for the msgraph-sdk-java-core repository
 resource: repository
 configuration:
   branchProtectionRules:
-
     - branchNamePattern: dev
       # This branch pattern applies to the following branches as of 06/12/2023 10:31:16:
       # dev

@@ -1,5 +1,6 @@
 package com.microsoft.graph.models;
 
+import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 
@@ -21,7 +22,9 @@ public class UploadSession implements IUploadSession {
     private OffsetDateTime expirationDateTime;
     /** Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well. */
     private Map<String, Object> additionalData = new HashMap<>();
-
+    private static final String UPLOAD_URL = "uploadUrl";
+    private static final String NEXT_EXPECTED_RANGES = "nextExpectedRanges";
+    private static final String EXPIRATION_DATE_TIME = "expirationDateTime";
     /**
      * Instantiates a new uploadSession and sets the default values.
      */
@@ -43,7 +46,9 @@ public class UploadSession implements IUploadSession {
      * @param uploadUrl The upload url for the session.
      */
     public void setUploadUrl(@Nonnull final String uploadUrl) {
-        Objects.requireNonNull(uploadUrl, "Upload url cannot be null");
+        Objects.requireNonNull(uploadUrl, ErrorConstants.Messages.NULL_PARAMETER + UPLOAD_URL );
+        if(uploadUrl.isEmpty())
+            throw new IllegalArgumentException("uploadUrl cannot be empty");
         this.uploadUrl = uploadUrl;
     }
     /**
@@ -61,7 +66,7 @@ public class UploadSession implements IUploadSession {
      */
     @Override
     public void setNextExpectedRanges(@Nonnull final List<String> nextExpectedRanges) {
-        Objects.requireNonNull(nextExpectedRanges, "Parameter nextExpectedRanges cannot be null");
+        Objects.requireNonNull(nextExpectedRanges, ErrorConstants.Messages.NULL_PARAMETER + NEXT_EXPECTED_RANGES);
         this.nextExpectedRanges = new ArrayList<>(nextExpectedRanges);
     }
     /**
@@ -95,6 +100,7 @@ public class UploadSession implements IUploadSession {
      * @param additionalData The AdditionalData to set.
      */
     public void setAdditionalData(@Nonnull final Map<String, Object> additionalData) {
+        Objects.requireNonNull(additionalData, ErrorConstants.Messages.NULL_PARAMETER + "additionalData");
         this.additionalData = new HashMap<>(additionalData);
     }
     /**
@@ -106,9 +112,9 @@ public class UploadSession implements IUploadSession {
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         final UploadSession currentObj = this;
         HashMap<String, Consumer<ParseNode>> deserializers = new HashMap<>(3);
-        deserializers.put("expirationDateTime", n -> currentObj.setExpirationDateTime(n.getOffsetDateTimeValue()));
-        deserializers.put("nextExpectedRanges", n -> currentObj.setNextExpectedRanges(n.getCollectionOfPrimitiveValues(String.class)));
-        deserializers.put("uploadUrl", n -> currentObj.setUploadUrl(n.getStringValue()));
+        deserializers.put(EXPIRATION_DATE_TIME, n -> currentObj.setExpirationDateTime(n.getOffsetDateTimeValue()));
+        deserializers.put(NEXT_EXPECTED_RANGES, n -> currentObj.setNextExpectedRanges(n.getCollectionOfPrimitiveValues(String.class)));
+        deserializers.put(UPLOAD_URL, n -> currentObj.setUploadUrl(n.getStringValue()));
         return deserializers;
     }
     /**
@@ -117,10 +123,10 @@ public class UploadSession implements IUploadSession {
      */
     @Override
     public void serialize(@Nonnull final SerializationWriter writer) {
-        Objects.requireNonNull(writer, "Writer parameter cannot be null");
-        writer.writeOffsetDateTimeValue("expirationDateTime", getExpirationDateTime());
-        writer.writeCollectionOfPrimitiveValues("nextExpectedRanges", getNextExpectedRanges());
-        writer.writeStringValue("uploadUrl", getUploadUrl());
+        Objects.requireNonNull(writer, ErrorConstants.Messages.NULL_PARAMETER + "writer");
+        writer.writeOffsetDateTimeValue(EXPIRATION_DATE_TIME, getExpirationDateTime());
+        writer.writeCollectionOfPrimitiveValues(NEXT_EXPECTED_RANGES, getNextExpectedRanges());
+        writer.writeStringValue(UPLOAD_URL, getUploadUrl());
         writer.writeAdditionalData(getAdditionalData());
     }
     /**
