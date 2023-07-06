@@ -14,10 +14,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -135,7 +133,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
-                throw new IllegalArgumentException("The collection page must contain a value field");
+                throw new IllegalArgumentException("The Parsable does not contain a collection property.");
             }
             instance.setRequestAdapter(Objects.requireNonNull(this.getRequestAdapter()));
             instance.setCurrentPage(Objects.requireNonNull(this.getCollectionPage()));
@@ -211,7 +209,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
-                throw new IllegalArgumentException("The collection page must contain a value field");
+                throw new IllegalArgumentException("The Parsable does not contain a collection property.");
             }
             instance.setRequestAdapter(Objects.requireNonNull(this.getRequestAdapter()));
             instance.setCurrentPage(Objects.requireNonNull(this.getCollectionPage()));
@@ -229,7 +227,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             return this.build(new PageIterator<>());
         }
     }
-    private CompletableFuture<Boolean> intrapageIterate() throws InvocationTargetException, IllegalAccessException {
+    private CompletableFuture<Boolean> intrapageIterate() throws ReflectiveOperationException {
         this.state = PageIteratorState.INTRAPAGE_ITERATION;
         while (!this.pageItemQueue.isEmpty()) {
             boolean shouldContinue;
@@ -245,7 +243,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
 
         String extractedNextLink = extractNextLinkFromParsable(this.currentPage, null);
-        if (!nextLink.isEmpty()) {
+        if (!extractedNextLink.isEmpty()) {
             this.nextLink = extractedNextLink;
             deltaLink = "";
             return CompletableFuture.completedFuture(true);
@@ -271,7 +269,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             return CompletableFuture.completedFuture(false);
         }
     }
-    private CompletableFuture<Void> interpageIterate() throws InvocationTargetException, IllegalAccessException, ServiceException {
+    private CompletableFuture<Void> interpageIterate() throws ReflectiveOperationException, ServiceException {
         this.state = PageIteratorState.INTERPAGE_ITERATION;
         if(!this.nextLink.isEmpty() || !this.deltaLink.isEmpty()) {
             RequestInformation nextPageRequestInformation = new RequestInformation();
@@ -290,7 +288,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
         return CompletableFuture.completedFuture(null);
     }
-    public CompletableFuture<Void> iterate() throws ServiceException, InvocationTargetException, IllegalAccessException {
+    public CompletableFuture<Void> iterate() throws ServiceException, ReflectiveOperationException {
         if(this.state == PageIteratorState.DELTA) {
             interpageIterate().join();
         }
@@ -301,7 +299,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
         return CompletableFuture.completedFuture(null);
     }
-    public CompletableFuture<Void> resume() throws ServiceException, InvocationTargetException, IllegalAccessException {
+    public CompletableFuture<Void> resume() throws ServiceException, ReflectiveOperationException {
         return CompletableFuture.completedFuture(iterate().join());
     }
     @SuppressFBWarnings
@@ -309,22 +307,24 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         try{
             return (List<TEntity>) parsableCollection.getClass().getDeclaredMethod("getValue").invoke(parsableCollection);
         } catch (NoSuchMethodException e) {
-            throw new IllegalAccessException("The Parsable does not contain a collection property");
+            throw new IllegalAccessException("The Parsable does not contain a collection property.");
         }
     }
-    private static <TCollectionPage extends Parsable & AdditionalDataHolder> String extractNextLinkFromParsable(TCollectionPage parsableCollection, @Nullable String getNextLinkMethodName) throws   IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    private static <TCollectionPage extends Parsable & AdditionalDataHolder> String extractNextLinkFromParsable(TCollectionPage parsableCollection, @Nullable String getNextLinkMethodName) throws ReflectiveOperationException {
         String methodName = getNextLinkMethodName == null ? CoreConstants.CollectionResponseMethods.GET_ODATA_NEXT_LINK : getNextLinkMethodName;
-        try{
-            String nextLink = (String) parsableCollection.getClass().getDeclaredMethod(methodName).invoke(parsableCollection);
-            if(!nextLink.isEmpty()) {
-                return nextLink;
-            } else {
-                nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
-                return nextLink != null ? nextLink : "";
+        Method[] methods = parsableCollection.getClass().getDeclaredMethods();
+        String nextLink = null;
+        if(Arrays.stream(methods).anyMatch(m -> m.getName().equals(methodName))) {
+            try {
+                nextLink = (String) parsableCollection.getClass().getDeclaredMethod(methodName).invoke(parsableCollection);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new ReflectiveOperationException("Could not extract nextLink from parsableCollection.");
             }
-        } catch (NoSuchMethodException e) {
-            throw new IllegalAccessException("The Parsable does not contain a odataNextLink property");
         }
+        if(nextLink != null && nextLink.isEmpty()) {
+            nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
+        }
+        return nextLink == null ? "" : nextLink;
     }
     public enum PageIteratorState {
         NOT_STARTED,
