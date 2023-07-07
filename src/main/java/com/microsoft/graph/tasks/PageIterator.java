@@ -106,6 +106,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             requestAdapter(client.getRequestAdapter());
             return this;
         }
+        @SuppressFBWarnings
         @Override
         public BuilderWithAsyncProcess<TEntity, TCollectionPage> requestAdapter(@Nonnull RequestAdapter requestAdapter) {
             this.requestAdapter = Objects.requireNonNull(requestAdapter);
@@ -181,7 +182,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             this.requestAdapter = Objects.requireNonNull(client).getRequestAdapter();
             return this;
         }
-
+        @SuppressFBWarnings
         @Override
         public BuilderWithSyncProcess<TEntity, TCollectionPage> requestAdapter(@Nonnull RequestAdapter requestAdapter) {
             this.requestAdapter = Objects.requireNonNull(requestAdapter);

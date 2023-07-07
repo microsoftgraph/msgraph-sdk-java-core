@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class TestEventsResponse implements Parsable, AdditionalDataHolder {
-    private Map<String, Object> additionalData;
+    public Map<String, Object> additionalData;
     private String odataNextLink;
-    private List<TestEventItem> value;
+    public List<TestEventItem> value;
 
     public TestEventsResponse() {
         additionalData = new HashMap<>();

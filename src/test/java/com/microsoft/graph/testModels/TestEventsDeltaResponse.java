@@ -9,10 +9,10 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class TestEventsDeltaResponse implements Parsable, AdditionalDataHolder {
-    private Map<String, Object> additionalData;
+    public Map<String, Object> additionalData;
     private String odataDeltaLink;
     private String odataNextLink;
-    private List<TestEventItem> value;
+    public List<TestEventItem> value;
 
     public TestEventsDeltaResponse() {
         additionalData = new HashMap<>();

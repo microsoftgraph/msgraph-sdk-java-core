@@ -7,10 +7,7 @@ import com.microsoft.kiota.serialization.SerializationWriter;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class TestEventItem implements Parsable, AdditionalDataHolder {
@@ -19,7 +16,7 @@ public class TestEventItem implements Parsable, AdditionalDataHolder {
     private Boolean hasAttachments;
     private Boolean hideAttendees;
     private String iCalUId;
-    private List<TestEventItem> instances;
+    public List<TestEventItem> instances;
     private Boolean isAllDay;
     private Boolean isCancelled;
     private Boolean isDraft;
@@ -36,7 +33,7 @@ public class TestEventItem implements Parsable, AdditionalDataHolder {
     private String subject;
     private String transactionId;
     private String webLink;
-    private Map<String, Object> additionalData;
+    public Map<String, Object> additionalData;
 
     public Boolean getAllowNewTimeProposals() {
         return allowNewTimeProposals;
@@ -79,11 +76,11 @@ public class TestEventItem implements Parsable, AdditionalDataHolder {
     }
 
     public List<TestEventItem> getInstances() {
-        return instances;
+        return this.instances;
     }
 
     public void setInstances(List<TestEventItem> instances) {
-        this.instances = instances;
+        this.instances = new ArrayList<>(instances);
     }
 
     public Boolean getIsAllDay() {
@@ -215,12 +212,12 @@ public class TestEventItem implements Parsable, AdditionalDataHolder {
     }
 
     @Nonnull
+    @Override
     public Map<String, Object> getAdditionalData() {
-        return additionalData;
+        return this.additionalData;
     }
-
-    public void setAdditionalData(Map<String, Object> additionalData) {
-        this.additionalData = additionalData;
+    public void setAdditionalData (@Nonnull Map<String, Object> additionalData) {
+        this.additionalData = new HashMap<>(additionalData);
     }
 
     @Nonnull

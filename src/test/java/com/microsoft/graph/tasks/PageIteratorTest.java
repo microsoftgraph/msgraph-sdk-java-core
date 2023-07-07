@@ -9,6 +9,7 @@ import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,7 @@ public class PageIteratorTest {
     @Test
     void given_NonCollection_Parsable_Will_Throw_ArgumentException() {
         try {
-            PageIterator<TestEventItem, TestEventItem> pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventItem>()
+            new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventItem>()
                 .client(baseClient)
                 .collectionPage(new TestEventItem())
                 .collectionPageFactory(TestEventItem::createFromDiscriminatorValue)
@@ -44,6 +45,7 @@ public class PageIteratorTest {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
     }
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Collection_Page_Will_Throw_NullPointerException() {
         try {
@@ -58,6 +60,7 @@ public class PageIteratorTest {
             assertEquals(NullPointerException.class, e.getClass());
         }
     }
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Async_Delegate_Will_Throw_NullPointerException() {
         try{
@@ -72,6 +75,7 @@ public class PageIteratorTest {
             assertEquals(NullPointerException.class, e.getClass());
         }
     }
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Delegate_Will_Throw_NullPointerException() {
         try{
