@@ -33,7 +33,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     protected PageIterator() {
         // default constructor
     }
-    private static String NO_COLLECTION_PROPERTY_ERROR = "The Parsable does not contain a collection property.";
+    private static final String NO_COLLECTION_PROPERTY_ERROR = "The Parsable does not contain a collection property.";
     private RequestAdapter requestAdapter;
     private TCollectionPage currentPage;
     private ParsableFactory<TCollectionPage> collectionPageFactory;
