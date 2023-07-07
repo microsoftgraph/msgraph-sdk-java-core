@@ -1,6 +1,5 @@
 package com.microsoft.graph.tasks;
 
-import com.azure.core.http.rest.Page;
 import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
@@ -10,7 +9,6 @@ import com.microsoft.kiota.serialization.ParsableFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 interface PageIteratorBuilder<TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> {
@@ -41,6 +39,10 @@ interface PageIteratorBuilder<TEntity extends Parsable, TCollectionPage extends 
     public PageIteratorBuilder<TEntity, TCollectionPage> requestConfigurator(@Nonnull UnaryOperator<RequestInformation> requestConfigurator);
     /**
      * Build the PageIterator.
+     * Should fail if request adapter is not set.
+     * Should fail if current collection page is not set.
+     * Should fail if collection page factory is not set.
+     * Should fail if process page item callback is not set.
      * @return the built PageIterator.
      */
     PageIterator<TEntity, TCollectionPage> build() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException;

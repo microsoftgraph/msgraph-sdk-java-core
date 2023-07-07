@@ -24,7 +24,7 @@ import java.util.function.UnaryOperator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class PageIteratorTest {
+class PageIteratorTest {
 
     private PageIterator<TestEventItem, TestEventsResponse> pageIterator;
     final OkHttpRequestAdapter adapter = new OkHttpRequestAdapter(mock(AuthenticationProvider.class));
@@ -192,6 +192,8 @@ public class PageIteratorTest {
 
         assertTrue(reachedNextPage[0]);
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
+        assertEquals("http://localhost/events?$skip=11", pageIterator.getNextLink());
+
     }
     @Test
     void given_CollectionPage_Delta_Link_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ServiceException {

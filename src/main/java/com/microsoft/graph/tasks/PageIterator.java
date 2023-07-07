@@ -20,12 +20,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
+/**
+ * A class for iterating through pages of a collection
+ * Uses to automatically pages through result sets across multiple calls and process each item in the result set.
+ * @param <TEntity> The type of the entity returned in the collection. This type must implement {@link Parsable}
+ * @param <TCollectionPage> The Microsoft Graph collection response type returned in the collection response. This type must implement {@link Parsable} and {@link AdditionalDataHolder}
+ */
 public class PageIterator<TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> {
-
-    protected PageIterator() {
-    }
-
-
+    private PageIterator() {}
     private RequestAdapter requestAdapter;
     private TCollectionPage currentPage;
     private ParsableFactory<TCollectionPage> collectionPageFactory;
@@ -37,55 +39,84 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
 
     private String deltaLink;
 
+    /**
+     * The deltaLink returned from a delta query.
+     * @return the deltaLink from the delta query
+     */
     public String getDeltaLink() {
         return deltaLink;
     }
-
     private String nextLink;
+    /**
+     * The nextLink returned from a collection query.
+     * @return the nextLink from the collection query
+     */
     public String getNextLink() {
         return nextLink;
     }
     private PageIteratorState state;
+    /**
+     * The state of the page iterator
+     * @return the state of the page iterator
+     */
     public PageIteratorState getPageIteratorState() {
         return state;
     }
-    public void setPageIteratorState(PageIteratorState state) {
+    /**
+     * Set the state of the page iterator
+     * @param state the state of the page iterator
+     */
+    public void setPageIteratorState(@Nonnull PageIteratorState state) {
         this.state = state;
     }
+    /**
+     * Boolean indicating whether the processPageItemCallback is synchronous or asynchronous
+     */
     protected boolean isProcessPageItemCallbackAsync;
 
-    protected void setRequestAdapter(RequestAdapter requestAdapter) {
+    private void setRequestAdapter(RequestAdapter requestAdapter) {
         this.requestAdapter = requestAdapter;
     }
 
-    protected void setCollectionPageFactory(ParsableFactory<TCollectionPage> collectionPageFactory) {
+    private void setCollectionPageFactory(ParsableFactory<TCollectionPage> collectionPageFactory) {
         this.collectionPageFactory = collectionPageFactory;
     }
-    protected void setRequestConfigurator(UnaryOperator<RequestInformation> requestConfigurator) {
+    private void setRequestConfigurator(UnaryOperator<RequestInformation> requestConfigurator) {
         this.requestConfigurator = requestConfigurator;
     }
-    protected void setCurrentPage(TCollectionPage currentPage) {
+    private void setCurrentPage(TCollectionPage currentPage) {
         this.currentPage = currentPage;
     }
-    protected void setProcessPageItemCallback(Function<TEntity, Boolean> processPageItemCallback) {
+    private void setProcessPageItemCallback(Function<TEntity, Boolean> processPageItemCallback) {
         this.processPageItemCallback = processPageItemCallback;
         isProcessPageItemCallbackAsync = false;
     }
-    protected void setAsyncProcessPageItemCallback(Function<TEntity, CompletableFuture<Boolean>> asyncProcessPageItemCallback) {
+    private void setAsyncProcessPageItemCallback(Function<TEntity, CompletableFuture<Boolean>> asyncProcessPageItemCallback) {
         this.asyncProcessPageItemCallback = asyncProcessPageItemCallback;
         isProcessPageItemCallbackAsync = true;
     }
-    protected void setPageItemQueue(Queue<TEntity> pageItemQueue) {
+    private void setPageItemQueue(Queue<TEntity> pageItemQueue) {
         this.pageItemQueue = pageItemQueue;
     }
 
+    /**
+     * A builder class for building a PageIterator.
+     * This Builder class should be used when the processPageItemCallback is asynchronous.
+     * @param <TEntity> The type of the entity returned in the collection. This type must implement {@link Parsable}
+     * @param <TCollectionPage> The Microsoft Graph collection response type returned in the collection response. This type must implement {@link Parsable} and {@link AdditionalDataHolder}
+     */
     public static class BuilderWithAsyncProcess<TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> implements PageIteratorBuilder<TEntity, TCollectionPage>{
+        /**
+         * Constructor for the Builder class of a PageIterator with an asynchronous processPageItemCallback.
+         */
+        public BuilderWithAsyncProcess() {
+            // default constructor
+        }
         private RequestAdapter requestAdapter;
         private TCollectionPage currentPage;
         private ParsableFactory<TCollectionPage> collectionPageFactory;
         private UnaryOperator<RequestInformation> requestConfigurator;
         private Function<TEntity, CompletableFuture<Boolean>> asyncProcessPageItemCallback;
-
         private RequestAdapter getRequestAdapter() {
             return this.requestAdapter;
         }
@@ -127,10 +158,22 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             this.requestConfigurator = Objects.requireNonNull(requestConfigurator);
             return this;
         }
+        /**
+         * Sets the callback to be called for each item in the collection.
+         * @param asyncProcessPageItemCallback the callback to be called for each item in the collection.
+         * @return the builder object itself
+         */
         public BuilderWithAsyncProcess<TEntity, TCollectionPage> asyncProcessPageItemCallback(@Nonnull Function<TEntity, CompletableFuture<Boolean>> asyncProcessPageItemCallback) {
             this.asyncProcessPageItemCallback = Objects.requireNonNull(asyncProcessPageItemCallback);
             return this;
         }
+        /**
+         * Builds the PageIterator object.
+         * Will fail if request adapter is not set.
+         * Will fail if current collection page is not set.
+         * Will fail if collection page factory is not set.
+         * Will fail if process page item callback is not set.
+         */
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
@@ -153,13 +196,24 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
     }
 
+    /**
+     * A builder class for building a PageIterator.
+     * This Builder class should be used when the processPageItemCallback is synchronous.
+     * @param <TEntity> The type of the entity returned in the collection. This type must implement {@link Parsable}
+     * @param <TCollectionPage> The Microsoft Graph collection response type returned in the collection response. This type must implement {@link Parsable} and {@link AdditionalDataHolder}
+     */
     public static class BuilderWithSyncProcess<TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> implements PageIteratorBuilder<TEntity, TCollectionPage>{
+        /**
+         * Constructor for the Builder class of a PageIterator with a synchronous processPageItemCallback.
+         */
+        public BuilderWithSyncProcess() {
+            // Default constructor
+        }
         private RequestAdapter requestAdapter;
         private TCollectionPage currentPage;
         private ParsableFactory<TCollectionPage> collectionPageFactory;
         private UnaryOperator<RequestInformation> requestConfigurator;
         private Function<TEntity, Boolean> processPageItemCallback;
-
         private RequestAdapter getRequestAdapter() {
             return this.requestAdapter;
         }
@@ -203,10 +257,22 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             this.requestConfigurator = Objects.requireNonNull(requestConfigurator);
             return this;
         }
+        /**
+         * Sets the callback to be called for each item in the collection.
+         * @param processPageItemCallback the callback to be called for each item in the collection.
+         * @return the builder object itself
+         */
         public BuilderWithSyncProcess<TEntity, TCollectionPage> processPageItemCallback(@Nonnull Function<TEntity, Boolean> processPageItemCallback) {
             this.processPageItemCallback = Objects.requireNonNull(processPageItemCallback);
             return this;
         }
+        /**
+         * Builds the PageIterator object.
+         * Will fail if request adapter is not set.
+         * Will fail if current collection page is not set.
+         * Will fail if collection page factory is not set.
+         * Will fail if process page item callback is not set.
+         */
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
@@ -289,6 +355,14 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
         return CompletableFuture.completedFuture(null);
     }
+
+    /**
+     * Iterates over the collection of entities in the collation page.
+     * Will continues to iterate over the collection of entities in the next page, if there is a next page.
+     * @return a CompletableFuture that completes when the iteration is complete.
+     * @throws ServiceException if the request was unable to complete for any reason.
+     * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
+     */
     public CompletableFuture<Void> iterate() throws ServiceException, ReflectiveOperationException {
         if(this.state == PageIteratorState.DELTA) {
             interpageIterate().join();
@@ -300,6 +374,13 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
         return CompletableFuture.completedFuture(null);
     }
+
+    /**
+     * Resumes the iteration over the collection of entities in the collation page.
+     * @return a CompletableFuture that completes when the iteration is complete.
+     * @throws ServiceException if the request was unable to complete for any reason.
+     * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
+     */
     public CompletableFuture<Void> resume() throws ServiceException, ReflectiveOperationException {
         return CompletableFuture.completedFuture(iterate().join());
     }
@@ -328,12 +409,22 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
         return nextLink == null ? "" : nextLink;
     }
+
+    /**
+     * Enum to represent the possible states of the PageIterator.
+     */
     public enum PageIteratorState {
+        /** The PageIterator has not started iterating. */
         NOT_STARTED,
+        /** The PageIterator is currently paused. A callback returned false. Iterator can be resumed. */
         PAUSED,
+        /** The PageIterator is currently iterating over paged requests. */
         INTERPAGE_ITERATION,
+        /** The PageIterator is currently iterating over the contents of a page. */
         INTRAPAGE_ITERATION,
+        /** A deltaToken was returned, the iterator is can be resumed. */
         DELTA,
+        /** The PageIterator has completed iterating. */
         COMPLETE
     }
 }
