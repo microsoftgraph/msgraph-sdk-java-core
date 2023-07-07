@@ -22,7 +22,7 @@ class LargeFileUploadTest {
     final OkHttpRequestAdapter adapter = new OkHttpRequestAdapter(mock(AuthenticationProvider.class));
 
     @Test
-    void ThrowsIllegalArgumentExceptionOnEmptyStream() throws NoSuchFieldException, IllegalAccessException, IOException {
+    void ThrowsIllegalArgumentExceptionOnEmptyStream() throws IllegalAccessException, IOException {
         UploadSession session = new UploadSession();
         session.setNextExpectedRanges(Arrays.asList("0-"));
         session.setUploadUrl("http://localhost");

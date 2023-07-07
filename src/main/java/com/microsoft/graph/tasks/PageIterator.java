@@ -313,17 +313,18 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     private static <TCollectionPage extends Parsable & AdditionalDataHolder> String extractNextLinkFromParsable(TCollectionPage parsableCollection, @Nullable String getNextLinkMethodName) throws ReflectiveOperationException {
         String methodName = getNextLinkMethodName == null ? CoreConstants.CollectionResponseMethods.GET_ODATA_NEXT_LINK : getNextLinkMethodName;
         Method[] methods = parsableCollection.getClass().getDeclaredMethods();
-        String nextLink = null;
+        String nextLink;
         if(Arrays.stream(methods).anyMatch(m -> m.getName().equals(methodName))) {
             try {
                 nextLink = (String) parsableCollection.getClass().getDeclaredMethod(methodName).invoke(parsableCollection);
+                if(nextLink != null && !nextLink.isEmpty()) {
+                    return nextLink;
+                }
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new ReflectiveOperationException("Could not extract nextLink from parsableCollection.");
             }
         }
-        if(nextLink != null && nextLink.isEmpty()) {
-            nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
-        }
+        nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
         return nextLink == null ? "" : nextLink;
     }
     public enum PageIteratorState {
