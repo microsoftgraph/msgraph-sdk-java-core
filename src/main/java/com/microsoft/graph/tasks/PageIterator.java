@@ -33,6 +33,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     protected PageIterator() {
         // default constructor
     }
+    private static String NO_COLLECTION_PROPERTY_ERROR = "The Parsable does not contain a collection property.";
     private RequestAdapter requestAdapter;
     private TCollectionPage currentPage;
     private ParsableFactory<TCollectionPage> collectionPageFactory;
@@ -218,7 +219,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
-                throw new IllegalArgumentException("The Parsable does not contain a collection property.");
+                throw new IllegalArgumentException(NO_COLLECTION_PROPERTY_ERROR);
             }
             instance.setRequestAdapter(Objects.requireNonNull(this.getRequestAdapter()));
             instance.setCurrentPage(Objects.requireNonNull(this.getCollectionPage()));
@@ -325,7 +326,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         private PageIterator<TEntity, TCollectionPage> build(@Nonnull PageIterator<TEntity, TCollectionPage> instance) throws InvocationTargetException, IllegalAccessException {
             Objects.requireNonNull(instance);
             if(!this.currentPage.getFieldDeserializers().containsKey("value")) {
-                throw new IllegalArgumentException("The Parsable does not contain a collection property.");
+                throw new IllegalArgumentException(NO_COLLECTION_PROPERTY_ERROR);
             }
             instance.setRequestAdapter(Objects.requireNonNull(this.getRequestAdapter()));
             instance.setCurrentPage(Objects.requireNonNull(this.getCollectionPage()));
@@ -452,7 +453,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         try{
             return (List<TEntity>) parsableCollection.getClass().getDeclaredMethod("getValue").invoke(parsableCollection);
         } catch (NoSuchMethodException e) {
-            throw new IllegalAccessException("The Parsable does not contain a collection property.");
+            throw new IllegalAccessException("NO_COLLECTION_PROPERTY_ERROR");
         }
     }
     private static <TCollectionPage extends Parsable & AdditionalDataHolder> String extractNextLinkFromParsable(@Nonnull TCollectionPage parsableCollection, @Nullable String getNextLinkMethodName) throws ReflectiveOperationException {
