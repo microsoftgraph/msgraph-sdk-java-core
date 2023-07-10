@@ -1,5 +1,6 @@
 package com.microsoft.graph.models;
 
+import com.google.common.base.Strings;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import okhttp3.Request;
 
@@ -23,10 +24,9 @@ public class BatchRequestStep {
      * @param request The request
      */
     public BatchRequestStep(@Nonnull String requestId, @Nonnull Request request) {
-        Objects.requireNonNull(requestId, ErrorConstants.Messages.NULL_PARAMETER + "requestId");
         Objects.requireNonNull(request, ErrorConstants.Messages.NULL_PARAMETER + "request");
-        if(requestId.isEmpty()) {
-            throw new IllegalArgumentException("requestId cannot be empty.");
+        if(Strings.isNullOrEmpty(requestId)) {
+            throw new IllegalArgumentException("requestId cannot be null or empty.");
         }
         this.requestId = requestId;
         this.request = request;
@@ -80,9 +80,8 @@ public class BatchRequestStep {
      * @param id The id of the request to add to the dependsOn list.
      */
     public void addDependsOnId(@Nonnull String id) {
-        Objects.requireNonNull(id);
-        if(id.isEmpty()) {
-            throw new IllegalArgumentException("id cannot be empty");
+        if(Strings.isNullOrEmpty(id)) {
+            throw new IllegalArgumentException("id cannot be null or empty");
         }
         if(dependsOn == null) {
             dependsOn = new ArrayList<>();

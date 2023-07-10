@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.RequestOption;
@@ -35,9 +36,8 @@ public class GraphClientOption implements RequestOption {
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        Objects.requireNonNull(clientRequestId, ErrorConstants.Messages.NULL_PARAMETER + "clientRequestId");
-        if(clientRequestId.isEmpty()) {
-            throw new IllegalArgumentException("clientRequestId cannot be empty");
+        if(Strings.isNullOrEmpty(clientRequestId)) {
+            throw new IllegalArgumentException("clientRequestId cannot be null or empty");
         }
         this.clientRequestId = clientRequestId;
     }
@@ -57,10 +57,9 @@ public class GraphClientOption implements RequestOption {
      * @param clientLibraryVersion client library version specified by user.
      */
     public void setClientLibraryVersion(@Nonnull final String clientLibraryVersion) {
-        Objects.requireNonNull(clientLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "clientLibraryVersion");
-        if(clientLibraryVersion.isEmpty())
+        if(Strings.isNullOrEmpty(clientLibraryVersion))
         {
-            throw new IllegalArgumentException("clientLibraryVersion cannot be empty");
+            throw new IllegalArgumentException("clientLibraryVersion cannot be null or empty");
         }
         this.clientLibraryVersion = clientLibraryVersion;
     }
@@ -78,10 +77,9 @@ public class GraphClientOption implements RequestOption {
      * @param coreLibraryVersion core library version specified by user.
      */
     public void setCoreLibraryVersion(@Nonnull final String coreLibraryVersion) {
-        Objects.requireNonNull(coreLibraryVersion, ErrorConstants.Messages.NULL_PARAMETER + "coreLibraryVersion");
-        if(coreLibraryVersion.isEmpty())
+        if(Strings.isNullOrEmpty(coreLibraryVersion))
         {
-            throw new IllegalArgumentException("coreLibraryVersion cannot be empty");
+            throw new IllegalArgumentException("coreLibraryVersion cannot be null or empty");
         }
         this.coreLibraryVersion = coreLibraryVersion;
     }
@@ -99,10 +97,9 @@ public class GraphClientOption implements RequestOption {
      * @param graphServiceVersion the version of the Api endpoint we are targeting
      */
     public void setGraphServiceTargetVersion(@Nonnull final String graphServiceVersion) {
-        Objects.requireNonNull(graphServiceVersion, ErrorConstants.Messages.NULL_PARAMETER + "graphServiceVersion");
-        if(graphServiceVersion.isEmpty())
+        if(Strings.isNullOrEmpty(graphServiceVersion))
         {
-            throw new IllegalArgumentException("graphServiceVersion cannot be empty");
+            throw new IllegalArgumentException("graphServiceVersion cannot be null or empty");
         }
         this.graphServiceTargetVersion = graphServiceVersion;
     }
