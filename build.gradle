@@ -69,9 +69,6 @@ sourceSets {
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
-    maven {
-        url "https://plugins.gradle.org/m2/" // Added for SonarQube
-    }
 }
 
 apply from: "gradle/dependencies.gradle"
