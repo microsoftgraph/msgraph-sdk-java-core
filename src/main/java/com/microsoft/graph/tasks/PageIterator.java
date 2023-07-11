@@ -164,8 +164,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         @Override
         @Nonnull
         public BuilderWithAsyncProcess<TEntity, TCollectionPage> client(@Nonnull IBaseClient client) {
-            requestAdapter(client.getRequestAdapter());
-            return this;
+            return this.requestAdapter(client.getRequestAdapter());
         }
         @SuppressFBWarnings
         @Override
@@ -270,8 +269,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         @Override
         @Nonnull
         public BuilderWithSyncProcess<TEntity, TCollectionPage> client(@Nonnull IBaseClient client) {
-            this.requestAdapter = Objects.requireNonNull(client).getRequestAdapter();
-            return this;
+            return this.requestAdapter(client.getRequestAdapter());
         }
         @SuppressFBWarnings
         @Override
