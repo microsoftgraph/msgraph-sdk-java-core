@@ -11,7 +11,7 @@ public final class CoreConstants {
     private static class VersionValues {
         private static final int MAJOR = 3;
         private static final int MINOR = 0;
-        private static final int PATCH = 5;
+        private static final int PATCH = 6;
     }
 
     /**
@@ -88,7 +88,27 @@ public final class CoreConstants {
         public static final String ODATA_TYPE = "@odata.type";
         /** OData nextLink property */
         public static final String ODATA_NEXT_LINK = "@nextLink";
-
     }
 
+    /**
+     * Odata Instance Annotation Constants
+     */
+    public static class OdataInstanceAnnotations {
+        private OdataInstanceAnnotations(){}
+        /** NextLink odata instance annotation */
+        public static final String NEXT_LINK = "@odata.nextLink";
+        /** DeltaLink odata instance annotation */
+        public static final String DELTA_LINK = "@odata.deltaLink";
+    }
+
+    /**
+     * Collection Response Method Name Constants
+     */
+    public static class CollectionResponseMethods {
+        private CollectionResponseMethods(){}
+        /** Method name constant for getOdataDeltaLink in collection responses*/
+        public static final String GET_ODATA_DELTA_LINK = "getOdataDeltaLink";
+        /** Method name constant for getOdataNextLink in collection responses*/
+        public static final String GET_ODATA_NEXT_LINK = "getOdataNextLink";
+    }
 }

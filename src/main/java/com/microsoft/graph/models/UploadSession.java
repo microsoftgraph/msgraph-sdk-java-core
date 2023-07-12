@@ -1,5 +1,6 @@
 package com.microsoft.graph.models;
 
+import com.google.common.base.Strings;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
@@ -46,9 +47,8 @@ public class UploadSession implements IUploadSession {
      * @param uploadUrl The upload url for the session.
      */
     public void setUploadUrl(@Nonnull final String uploadUrl) {
-        Objects.requireNonNull(uploadUrl, ErrorConstants.Messages.NULL_PARAMETER + UPLOAD_URL );
-        if(uploadUrl.isEmpty())
-            throw new IllegalArgumentException("uploadUrl cannot be empty");
+        if(Strings.isNullOrEmpty(uploadUrl))
+            throw new IllegalArgumentException("uploadUrl cannot be null or empty");
         this.uploadUrl = uploadUrl;
     }
     /**
