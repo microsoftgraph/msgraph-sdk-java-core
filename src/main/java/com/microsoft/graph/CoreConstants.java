@@ -1,6 +1,8 @@
 package com.microsoft.graph;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Core Constants for use in other classes.
@@ -105,10 +107,26 @@ public final class CoreConstants {
      * Collection Response Method Name Constants
      */
     public static class CollectionResponseMethods {
-        private CollectionResponseMethods(){}
-        /** Method name constant for getOdataDeltaLink in collection responses*/
+        private CollectionResponseMethods() {}
+        /** Method name constant for getOdataDeltaLink in collection responses */
         public static final String GET_ODATA_DELTA_LINK = "getOdataDeltaLink";
-        /** Method name constant for getOdataNextLink in collection responses*/
+        /** Method name constant for getOdataNextLink in collection responses */
         public static final String GET_ODATA_NEXT_LINK = "getOdataNextLink";
     }
+
+    public static class ReplacementConstants {
+        private ReplacementConstants() {
+        }
+        public static final String USER_ID_TOKEN_TO_REPLACE = "TokenToReplace";
+        public static final String USERS_ENDPOINT_WITH_REPLACE_TOKEN = "/users/" + USER_ID_TOKEN_TO_REPLACE;
+        public static final String ME_ENDPOINT = "/me";
+
+        public static Map<String, String> getDefaultReplacementPairs() {
+            HashMap<String, String> defaultReplacementPairs = new HashMap<>();
+            defaultReplacementPairs.put(USERS_ENDPOINT_WITH_REPLACE_TOKEN, ME_ENDPOINT);
+            return defaultReplacementPairs;
+        }
+
+    }
+
 }

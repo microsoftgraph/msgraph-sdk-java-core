@@ -1,6 +1,10 @@
 package com.microsoft.graph.requests;
 
+import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.middleware.GraphTelemetryHandler;
+import com.microsoft.graph.requests.middleware.UrlReplaceHandler;
+import com.microsoft.graph.requests.options.GraphClientOption;
+import com.microsoft.graph.requests.options.UrlReplaceOption;
 import com.microsoft.kiota.http.KiotaClientFactory;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -77,6 +81,9 @@ public class GraphClientFactory {
     public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption) {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
+        UrlReplaceOption urlReplaceOption = new UrlReplaceOption(CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
+
+        handlers.add(new UrlReplaceHandler(urlReplaceOption));
         handlers.add(new GraphTelemetryHandler(graphClientOption));
         handlers.addAll(Arrays.asList(KiotaClientFactory.createDefaultInterceptors()));
         return handlers.toArray(new Interceptor[0]);
@@ -85,5 +92,7 @@ public class GraphClientFactory {
     private static void addDefaultFeatureUsages(GraphClientOption graphClientOption) {
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
+        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.URL_REPLACEMENT_FLAG);
+        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.BATCH_REQUEST_FLAG);
     }
 }

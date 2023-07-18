@@ -32,4 +32,6 @@ public final class FeatureFlag {
     public static final int PAGE_ITERATOR_FLAG = 1024;
     /** The value of the File Upload flag, 100000000000. */
     public static final int FILE_UPLOAD_FLAG = 2048;
+    /** The value of the UrlReplacement flag, 1000000000000. */
+    public static final int URL_REPLACEMENT_FLAG = 4096;
 }
