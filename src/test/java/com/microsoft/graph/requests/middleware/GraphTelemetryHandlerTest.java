@@ -2,7 +2,7 @@ package com.microsoft.graph.requests.middleware;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.GraphClientFactory;
-import com.microsoft.graph.requests.GraphClientOption;
+import com.microsoft.graph.requests.options.GraphClientOption;
 import com.microsoft.kiota.http.middleware.RedirectHandler;
 import com.microsoft.kiota.http.middleware.RetryHandler;
 
@@ -16,12 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-class GraphTelemetryHandlerTests {
+class GraphTelemetryHandlerTest {
 
-    private String defaultSDKVersion = "graph-java";
-
-    public GraphTelemetryHandlerTests() {
-    }
+    private static final String defaultSDKVersion = "graph-java";
 
     @Test
     void telemetryHandlerDefaultTests() throws IOException {

@@ -1,6 +1,7 @@
 package com.microsoft.graph.requests;
 
 import com.google.common.base.Strings;
+import com.microsoft.graph.requests.options.GraphClientOption;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;
@@ -157,6 +158,6 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
         if(cloud == null) {
             throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }
-        return version == null ? (cloud+"/v1.0/") : (cloud+"/"+version+"/");
+        return version == null ? (cloud+"/v1.0") : (cloud+"/"+version);
     }
 }

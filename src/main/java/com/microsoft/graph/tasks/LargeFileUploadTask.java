@@ -10,7 +10,7 @@ import com.microsoft.graph.models.UploadSession;
 import com.microsoft.graph.requests.BaseGraphRequestAdapter;
 import com.microsoft.graph.requests.FeatureFlag;
 import com.microsoft.graph.requests.GraphClientFactory;
-import com.microsoft.graph.requests.GraphClientOption;
+import com.microsoft.graph.requests.options.GraphClientOption;
 import com.microsoft.graph.requests.upload.UploadSessionRequestBuilder;
 import com.microsoft.graph.requests.upload.UploadSliceRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
