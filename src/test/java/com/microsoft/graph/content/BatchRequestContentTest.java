@@ -1,7 +1,6 @@
 package com.microsoft.graph.content;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.UrlReplacement;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.BaseClient;
@@ -10,6 +9,7 @@ import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 
+import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +24,6 @@ import java.util.*;
 
 import static com.microsoft.graph.CoreConstants.ReplacementConstants.USERS_ENDPOINT_WITH_REPLACE_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class BatchRequestContentTest {
     static final String requestUrl = "https://graph.microsoft.com/v1.0"+USERS_ENDPOINT_WITH_REPLACE_TOKEN;
@@ -240,7 +239,7 @@ class BatchRequestContentTest {
 
         Request request = new Request.Builder().url(requestUrl).build();
         String requestId = batchRequestContent.addBatchRequestStep(request);
-        request = UrlReplacement.replaceRequestUrl(request, CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
+        request = UrlReplaceHandler.replaceRequestUrl(request, CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
 
         assertNotNull(requestId);
         assertNotNull(batchRequestContent.getBatchRequestSteps());

@@ -2,10 +2,10 @@ package com.microsoft.graph.requests;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.middleware.GraphTelemetryHandler;
-import com.microsoft.graph.requests.middleware.UrlReplaceHandler;
 import com.microsoft.graph.requests.options.GraphClientOption;
-import com.microsoft.graph.requests.options.UrlReplaceOption;
 import com.microsoft.kiota.http.KiotaClientFactory;
+import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
+import com.microsoft.kiota.http.middleware.options.UrlReplaceHandlerOption;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -81,9 +81,8 @@ public class GraphClientFactory {
     public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption) {
         List<Interceptor> handlers = new ArrayList<>();
         addDefaultFeatureUsages(graphClientOption);
-        UrlReplaceOption urlReplaceOption = new UrlReplaceOption(CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
 
-        handlers.add(new UrlReplaceHandler(urlReplaceOption));
+        handlers.add(new UrlReplaceHandler(new UrlReplaceHandlerOption(CoreConstants.ReplacementConstants.getDefaultReplacementPairs())));
         handlers.add(new GraphTelemetryHandler(graphClientOption));
         handlers.addAll(Arrays.asList(KiotaClientFactory.createDefaultInterceptors()));
         return handlers.toArray(new Interceptor[0]);
