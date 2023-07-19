@@ -114,13 +114,26 @@ public final class CoreConstants {
         public static final String GET_ODATA_NEXT_LINK = "getOdataNextLink";
     }
 
+    /**
+     * Url Replacement Constants
+     * Example: /users/{id} -> /me
+     */
     public static class ReplacementConstants {
         private ReplacementConstants() {
         }
+        /** Default token to replace the id value in 'user/{id}' */
         public static final String USER_ID_TOKEN_TO_REPLACE = "TokenToReplace";
+        /** Default endpoint to be replaced by /me
+         * users/TokenToReplace -> /me
+         */
         public static final String USERS_ENDPOINT_WITH_REPLACE_TOKEN = "/users/" + USER_ID_TOKEN_TO_REPLACE;
+        /** /me endpoint constant */
         public static final String ME_ENDPOINT = "/me";
 
+        /**
+         * The default replacement pairs for /users/{id} -> /me
+         * @return the default replacement pairs
+         */
         public static Map<String, String> getDefaultReplacementPairs() {
             HashMap<String, String> defaultReplacementPairs = new HashMap<>();
             defaultReplacementPairs.put(USERS_ENDPOINT_WITH_REPLACE_TOKEN, ME_ENDPOINT);
