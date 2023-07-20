@@ -1,5 +1,6 @@
 package com.microsoft.graph;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -134,6 +135,7 @@ public final class CoreConstants {
          * The default replacement pairs for /users/{id} -> /me
          * @return the default replacement pairs
          */
+        @Nonnull
         public static Map<String, String> getDefaultReplacementPairs() {
             HashMap<String, String> defaultReplacementPairs = new HashMap<>();
             defaultReplacementPairs.put(USERS_ENDPOINT_WITH_REPLACE_TOKEN, ME_ENDPOINT);
