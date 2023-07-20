@@ -1,14 +1,13 @@
 package com.microsoft.graph.models;
 
 import com.google.common.base.Strings;
+import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.Request;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single request in a batch request
@@ -29,7 +28,7 @@ public class BatchRequestStep {
             throw new IllegalArgumentException("requestId cannot be null or empty.");
         }
         this.requestId = requestId;
-        this.request = request;
+        this.request = UrlReplaceHandler.replaceRequestUrl(request, CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
     }
     /**
      * Creates a new BatchRequestStep

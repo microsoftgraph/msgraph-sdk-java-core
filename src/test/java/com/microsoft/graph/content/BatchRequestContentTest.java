@@ -9,6 +9,7 @@ import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 
+import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,13 +22,13 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.microsoft.graph.CoreConstants.ReplacementConstants.USERS_ENDPOINT_WITH_REPLACE_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class BatchRequestContentTest {
-
-    static final String requestUrl = "https://graph.microsoft.com/v1.0/me";
+    static final String requestUrl = "https://graph.microsoft.com/v1.0"+USERS_ENDPOINT_WITH_REPLACE_TOKEN;
     private final IBaseClient client = new BaseClient(new AnonymousAuthenticationProvider(), requestUrl);
+    private final Request defaultTestRequest = new Request.Builder().url(requestUrl).build();
 
     @Test
     void BatchRequestContent_DefaultInitialization() {
@@ -40,7 +41,7 @@ class BatchRequestContentTest {
     void BatchRequestContent_InitializeWithBatchRequestSteps() {
         ArrayList<BatchRequestStep> requestStepList = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
-            requestStepList.add(new BatchRequestStep(String.valueOf(i), mock(Request.class)));
+            requestStepList.add(new BatchRequestStep(String.valueOf(i), defaultTestRequest));
         }
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, requestStepList);
 
@@ -49,8 +50,8 @@ class BatchRequestContentTest {
     }
     @Test
     void BatchRequestContent_InitializeWithInvalidDependsOnIds() {
-        BatchRequestStep requestStep = new BatchRequestStep("1", mock(Request.class));
-        BatchRequestStep requestStep2 = new BatchRequestStep("2", mock(Request.class), Arrays.asList("3"));
+        BatchRequestStep requestStep = new BatchRequestStep("1", defaultTestRequest);
+        BatchRequestStep requestStep2 = new BatchRequestStep("2", defaultTestRequest, Arrays.asList("3"));
         try {
             new BatchRequestContent(client, Arrays.asList(requestStep, requestStep2));
         } catch (IllegalArgumentException ex) {
@@ -59,7 +60,7 @@ class BatchRequestContentTest {
     }
     @Test
     void BatchRequestContent_AddBatchRequestStepWithNewRequestStep() {
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
 
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
@@ -71,16 +72,16 @@ class BatchRequestContentTest {
     void BatchRequestContent_AddBatchRequestStepToBatchRequestContentWithMaxSteps() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         for(int i = 0; i < CoreConstants.BatchRequest.MAX_REQUESTS; i++) {
-            assertTrue(batchRequestContent.addBatchRequestStep(new BatchRequestStep(String.valueOf(i), mock(Request.class))));
+            assertTrue(batchRequestContent.addBatchRequestStep(new BatchRequestStep(String.valueOf(i), defaultTestRequest)));
         }
-        BatchRequestStep batchRequestStep21 = new BatchRequestStep("failing_id", mock(Request.class));
+        BatchRequestStep batchRequestStep21 = new BatchRequestStep("failing_id", defaultTestRequest);
 
         assertFalse(batchRequestContent.addBatchRequestStep(batchRequestStep21));
         assertEquals(CoreConstants.BatchRequest.MAX_REQUESTS, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
     void BatchRequestContent_AddBatchRequestStepWithExistingRequestStep() {
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep));
 
         assertFalse(batchRequestContent.addBatchRequestStep(batchRequestStep));
@@ -89,7 +90,7 @@ class BatchRequestContentTest {
     }
     @Test
     void BatchRequestContent_AddBatchRequestStepWithNullRequestStep() {
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep));
 
         assertFalse(batchRequestContent.addBatchRequestStep((BatchRequestStep) null));
@@ -97,9 +98,19 @@ class BatchRequestContentTest {
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
     }
     @Test
+    void BatchRequestContent_AddBatchRequestStep_WithTokenToReplaceUrl() {
+        Request requestWithReplaceableToken = new Request.Builder().url("https://test-url.com"+USERS_ENDPOINT_WITH_REPLACE_TOKEN).build();
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", requestWithReplaceableToken);
+        BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep));
+
+        assertNotNull(batchRequestContent.getBatchRequestSteps());
+        assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
+        assertEquals("https://test-url.com/me", batchRequestContent.getBatchRequestSteps().get("1").getRequest().url().toString());
+    }
+    @Test
     void BatchRequestContent_RemoveBatchRequestStepWithIdForExistingId() {
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
-        BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", mock(Request.class), Arrays.asList("1", "1", "1"));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
+        BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", defaultTestRequest, Arrays.asList("1", "1", "1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestStep2));
 
         assertTrue(batchRequestContent.removeBatchRequestStepWithId("1"));
@@ -108,8 +119,8 @@ class BatchRequestContentTest {
     }
     @Test
     void BatchRequestContent_RemoveBatchRequestStepWithIdForNonExistingId() {
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
-        BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", mock(Request.class), Arrays.asList("1"));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
+        BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", defaultTestRequest, Arrays.asList("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestStep2));
 
         assertFalse(batchRequestContent.removeBatchRequestStepWithId("3"));
@@ -119,7 +130,7 @@ class BatchRequestContentTest {
     @Test
     void BatchRequestContent_GetBatchRequestContentFromStep() throws Exception {
         Request request = new Request.Builder().url(requestUrl).build();
-        BatchRequestStep batchRequestStep = new BatchRequestStep("1", mock(Request.class));
+        BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", request, Arrays.asList("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestStep2));
 
@@ -228,6 +239,7 @@ class BatchRequestContentTest {
 
         Request request = new Request.Builder().url(requestUrl).build();
         String requestId = batchRequestContent.addBatchRequestStep(request);
+        request = UrlReplaceHandler.replaceRequestUrl(request, CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
 
         assertNotNull(requestId);
         assertNotNull(batchRequestContent.getBatchRequestSteps());
@@ -256,16 +268,18 @@ class BatchRequestContentTest {
     void BatchRequestContent_AddBatchRequestStepWithBaseRequest() throws IOException {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         RequestInformation requestInfo = new RequestInformation();
-        requestInfo.urlTemplate = requestUrl;
+        requestInfo.urlTemplate = requestUrl; //URL here is https://graph.microsoft.com/v1.0/users/TokenToReplace
         requestInfo.httpMethod = HttpMethod.GET;
 
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
         String requestId = batchRequestContent.addBatchRequestStep(requestInfo).join();
+        String expectedUrl = "https://graph.microsoft.com/v1.0/me"; //We expect the url to be changed because it contains the default replacement pairs
+
 
         assertNotNull(requestId);
         assertNotNull(batchRequestContent.getBatchRequestSteps());
         assertEquals(1, batchRequestContent.getBatchRequestSteps().size());
-        assertEquals(requestUrl, batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().url().uri().toString());
+        assertEquals(expectedUrl, batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().url().uri().toString());
         assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().method(), requestInfo.httpMethod.toString());
     }
     @Test

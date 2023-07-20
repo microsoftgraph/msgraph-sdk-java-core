@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.7] - 2023-07-20
+
+### Added
+
+- Adds graph-java-sdk implementation of the `UrlReplaceHandler` middleware including default replacement pairs. 
+- Default replacement pair: '/users/TokenToReplace' -> '/me'
+
 ## [3.0.6] - 2023-07-11
 
 ### Added

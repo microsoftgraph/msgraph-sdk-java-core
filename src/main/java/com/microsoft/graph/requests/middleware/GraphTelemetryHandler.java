@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.requests.GraphClientOption;
+import com.microsoft.graph.requests.options.GraphClientOption;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;

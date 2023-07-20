@@ -1,6 +1,5 @@
-package com.microsoft.graph.requests;
+package com.microsoft.graph.requests.options;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -8,7 +7,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.requests.FeatureTracker;
 import com.microsoft.kiota.RequestOption;
 
 /**
