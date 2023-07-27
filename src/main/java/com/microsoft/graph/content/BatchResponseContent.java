@@ -11,8 +11,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;

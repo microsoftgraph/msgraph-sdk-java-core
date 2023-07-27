@@ -1,7 +1,7 @@
 package com.microsoft.graph.authentication;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.azure.core.credential.TokenCredential;
 import com.microsoft.kiota.authentication.BaseBearerTokenAuthenticationProvider;

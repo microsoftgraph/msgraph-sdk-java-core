@@ -2,7 +2,7 @@ package com.microsoft.graph.exceptions;
 
 import com.microsoft.kiota.ApiException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Graph client exception wrapper.

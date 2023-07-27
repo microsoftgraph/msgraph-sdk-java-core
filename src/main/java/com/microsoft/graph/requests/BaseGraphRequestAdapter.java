@@ -10,8 +10,8 @@ import com.microsoft.kiota.serialization.SerializationWriterFactory;
 import okhttp3.OkHttpClient;
 
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.EnumMap;
 
