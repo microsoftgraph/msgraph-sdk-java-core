@@ -12,7 +12,7 @@ dependencies {
     api 'com.azure:azure-core:1.41.0'
     api 'com.github.spotbugs:spotbugs-annotations:4.7.3'
 
-    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.4.7'
+    api 'com.microsoft.kiota:microsoft-kiota-abstractions:0.5.0'
     implementation 'com.microsoft.kiota:microsoft-kiota-authentication-azure:0.4.7'
     implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:0.4.7'
     implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:0.4.7'
