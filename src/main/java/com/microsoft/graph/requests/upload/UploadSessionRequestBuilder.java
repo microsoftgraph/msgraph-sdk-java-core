@@ -8,7 +8,7 @@ import com.microsoft.kiota.serialization.ParsableFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Response;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;

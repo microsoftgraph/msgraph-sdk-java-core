@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.options.GraphClientOption;

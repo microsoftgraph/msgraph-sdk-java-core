@@ -2,7 +2,7 @@ package com.microsoft.graph.requests;
 
 import com.microsoft.kiota.RequestAdapter;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * The default client interface

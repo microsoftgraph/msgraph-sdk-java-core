@@ -5,7 +5,7 @@ import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Consumer;

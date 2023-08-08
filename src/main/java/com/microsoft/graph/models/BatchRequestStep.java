@@ -6,7 +6,7 @@ import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.Request;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**

@@ -5,8 +5,8 @@ import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Consumer;

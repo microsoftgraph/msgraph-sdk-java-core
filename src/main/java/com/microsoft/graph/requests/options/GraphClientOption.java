@@ -2,8 +2,8 @@ package com.microsoft.graph.requests.options;
 
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;

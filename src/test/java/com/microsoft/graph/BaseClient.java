@@ -8,7 +8,7 @@ import com.microsoft.kiota.authentication.AuthenticationProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Default client implementation.

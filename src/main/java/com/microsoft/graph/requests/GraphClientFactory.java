@@ -9,8 +9,8 @@ import com.microsoft.kiota.http.middleware.options.UrlReplaceHandlerOption;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 /**

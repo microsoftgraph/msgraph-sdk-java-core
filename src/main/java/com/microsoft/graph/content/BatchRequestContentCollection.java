@@ -8,7 +8,7 @@ import com.microsoft.kiota.RequestInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Request;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 

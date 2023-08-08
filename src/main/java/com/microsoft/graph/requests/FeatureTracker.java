@@ -1,7 +1,7 @@
 package com.microsoft.graph.requests;
 
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Manages and tracks the flags for tasks and handlers.

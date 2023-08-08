@@ -1,6 +1,6 @@
 package com.microsoft.graph.models;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.net.URI;
 
