@@ -12,7 +12,6 @@ import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Response;
 
 import jakarta.annotation.Nonnull;
@@ -87,7 +86,6 @@ public class BatchRequestBuilder {
      * @return the request adapter.
      */
     @Nonnull
-    @SuppressFBWarnings
     public RequestAdapter getRequestAdapter() {
         return requestAdapter;
     }

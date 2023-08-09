@@ -4,7 +4,6 @@ import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@SuppressFBWarnings
 public class TestEvent implements Parsable, AdditionalDataHolder {
     private String id;
     private String oDataType;

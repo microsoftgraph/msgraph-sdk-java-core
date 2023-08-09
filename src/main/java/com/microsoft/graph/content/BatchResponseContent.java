@@ -7,7 +7,6 @@ import com.microsoft.graph.requests.ResponseBodyHandler;
 import com.microsoft.kiota.ResponseHandler;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 
 
@@ -139,7 +138,6 @@ public class BatchResponseContent {
      * @return The response within the batch response via specified id as an InputStream, null if not found.
      */
     @Nullable
-    @SuppressFBWarnings
     public CompletableFuture<InputStream> getResponseStreamById(@Nonnull String requestId) {
         Response response = getResponseById(requestId).join();
         if(response != null && response.body() != null) {
@@ -163,7 +161,6 @@ public class BatchResponseContent {
         }
         return CompletableFuture.completedFuture(null);
     }
-    @SuppressFBWarnings
     private CompletableFuture<JsonObject> getBatchResponseContent() {
         if (this.batchResponse.body() != null && this.batchResponse.body().contentType() != null) {
             InputStream in = this.batchResponse.body().byteStream();

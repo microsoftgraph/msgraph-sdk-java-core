@@ -9,7 +9,6 @@ import jakarta.annotation.Nonnull;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.options.GraphClientOption;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -32,7 +31,6 @@ public class GraphTelemetryHandler implements Interceptor{
      * Instantiate a GraphTelemetryHandler with specified GraphClientOption
      * @param graphClientOption the specified GraphClientOption for the GraphTelemetryHandler.
      */
-    @SuppressFBWarnings
     public GraphTelemetryHandler(@Nonnull final GraphClientOption graphClientOption){
         this.mGraphClientOption = Objects.requireNonNull(graphClientOption);
     }

@@ -6,8 +6,6 @@ import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -51,7 +49,6 @@ public class BaseClient implements IBaseClient {
      * @param requestAdapter specifies the desired RequestAdapter
      */
     @Override
-    @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public void setRequestAdapter(@Nonnull final RequestAdapter requestAdapter) {
         this.requestAdapter = requestAdapter;
     }
@@ -62,7 +59,6 @@ public class BaseClient implements IBaseClient {
      */
     @Nonnull
     @Override
-    @SuppressFBWarnings //Suppressing warnings as we intend to expose the RequestAdapter.
     public RequestAdapter getRequestAdapter() {
         return this.requestAdapter;
     }

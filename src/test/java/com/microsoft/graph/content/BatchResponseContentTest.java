@@ -6,7 +6,6 @@ import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.testModels.*;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +45,6 @@ class BatchResponseContentTest {
         assertEquals(0,responses.size());
     }
     @Test
-    @SuppressFBWarnings
     void BatchResponseContent_InitializeWithNullResponseMessage() {
         try{
             new BatchResponseContent(null);

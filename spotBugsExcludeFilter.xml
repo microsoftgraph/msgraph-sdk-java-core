@@ -21,4 +21,48 @@ xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubu
 		<Class name="com.microsoft.graph.authentication.AzureIdentityAccessTokenProvider" />
 		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
 	</Match>
+	<Match>
+		<Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+		<Or>
+			<Class name="com.microsoft.graph.content.BatchRequestContent" />
+			<Class name="com.microsoft.graph.content.BatchResponseContent" />
+			<Class name="com.microsoft.graph.requests.ResponseBodyHandler" />
+			<Class name="com.microsoft.graph.requests.upload.UploadResponseHandler" />
+		</Or>
+	</Match>
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP" />
+		<Class name="com.microsoft.graph.requests.BatchRequestBuilder" />
+	</Match>
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP2" />
+		<Or>
+			<Class name="com.microsoft.graph.content.BatchRequestContentCollection" />
+			<Class name="com.microsoft.graph.requests.middleware.GraphTelemetryHandler" />
+			<Class name="com.microsoft.graph.requests.upload.UploadSessionRequestBuilder" />
+			<Class name="com.microsoft.graph.requests.upload.UploadSliceRequestBuilder" />
+			<Class name="com.microsoft.graph.tasks.PageIterator$BuilderWithAsyncProcess" />
+			<Class name="com.microsoft.graph.tasks.PageIterator$BuilderWithSyncProcess" />
+		</Or>
+	</Match>
+
+	<!-- SpotBugs' exclusions for test classes -->
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP" />
+		<Or>
+			<Package name="~com\.microsoft\.graph\.testModels.*" />
+			<Class name="com.microsoft.graph.BaseClient" />
+		</Or>
+	</Match>
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP2" />
+		<Or>
+			<Package name="~com\.microsoft\.graph\.testModels.*" />
+			<Class name="com.microsoft.graph.BaseClient" />
+		</Or>
+	</Match>
+	<Match>
+		<Bug pattern="DCN_NULLPOINTER_EXCEPTION" />
+		<Class name="com.microsoft.graph.content.BatchResponseContentTest" />
+	</Match>
 </FindBugsFilter>

@@ -11,7 +11,6 @@ import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.*;
 import okio.Buffer;
 
@@ -186,7 +185,6 @@ public class BatchRequestContent {
             return exception;
         }
     }
-    @SuppressFBWarnings
     private void writeBatchRequestStepAsync(BatchRequestStep requestStep, JsonWriter writer) {
         try {
             Request request = requestStep.getRequest();
