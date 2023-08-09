@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.8] - 2023-08-09
+
+### Changed
+
+- Replaces Javax annotations in favor of Jakarta annotations.
+
+### Removed
+
+- Removes 'SuppressFBWarnings' annotations and dependency.  
+
 ## [3.0.7] - 2023-07-20
 
 ### Added
