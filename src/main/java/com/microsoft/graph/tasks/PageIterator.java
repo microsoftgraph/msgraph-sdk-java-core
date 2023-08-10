@@ -10,7 +10,6 @@ import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -167,7 +166,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             Objects.requireNonNull(client);
             return this.requestAdapter(client.getRequestAdapter());
         }
-        @SuppressFBWarnings
         @Override
         @Nonnull
         public BuilderWithAsyncProcess<TEntity, TCollectionPage> requestAdapter(@Nonnull RequestAdapter requestAdapter) {
@@ -273,7 +271,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             Objects.requireNonNull(client);
             return this.requestAdapter(client.getRequestAdapter());
         }
-        @SuppressFBWarnings
         @Override
         @Nonnull
         public BuilderWithSyncProcess<TEntity, TCollectionPage> requestAdapter(@Nonnull RequestAdapter requestAdapter) {
@@ -431,7 +428,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
      * @throws InvocationTargetException if the Parsable does not contain a collection property.
      */
     @Nonnull
-    @SuppressFBWarnings
     protected static <TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> List<TEntity> extractEntityListFromParsable(@Nonnull TCollectionPage parsableCollection) throws  IllegalAccessException, InvocationTargetException {
         try{
             return (List<TEntity>) parsableCollection.getClass().getDeclaredMethod("getValue").invoke(parsableCollection);

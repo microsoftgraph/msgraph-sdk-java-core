@@ -9,7 +9,6 @@ import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import jakarta.annotation.Nonnull;
@@ -45,7 +44,6 @@ class PageIteratorTest {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
     }
-    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Collection_Page_Will_Throw_NullPointerException() {
         try {
@@ -60,7 +58,6 @@ class PageIteratorTest {
             assertEquals(NullPointerException.class, e.getClass());
         }
     }
-    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Async_Delegate_Will_Throw_NullPointerException() {
         try{
@@ -75,7 +72,6 @@ class PageIteratorTest {
             assertEquals(NullPointerException.class, e.getClass());
         }
     }
-    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Testing null value")
     @Test
     void given_Null_Delegate_Will_Throw_NullPointerException() {
         try{
