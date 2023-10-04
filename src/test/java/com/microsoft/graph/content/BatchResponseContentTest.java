@@ -239,7 +239,7 @@ class BatchResponseContentTest {
         } catch (Exception ex) {
             assertTrue(ex.getCause() instanceof ServiceException);
             ServiceException serviceException = (ServiceException) ex.getCause();
-            assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.responseStatusCode);
+            assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.getResponseStatusCode());
             assertNotNull(serviceException.getRawResponseBody());
         }
         TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue).join();
