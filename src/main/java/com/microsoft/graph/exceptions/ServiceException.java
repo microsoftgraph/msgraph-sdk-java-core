@@ -71,7 +71,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
                             @Nullable final String rawResponseBody){
         super(message);
         this.responseHeaders = responseHeaders;
-        this.responseStatusCode = statusCode;
+        this.setResponseStatusCode(statusCode);
         this.rawResponseBody = rawResponseBody != null ? rawResponseBody : "";
         if(!Objects.isNull(cause)){
             this.initCause(cause);
@@ -118,7 +118,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
      */
     @Override
     public String toString() {
-        return String.format(Locale.US,"Status Code: %d %n %s", this.responseStatusCode, super.toString());
+        return String.format(Locale.US,"Status Code: %d %n %s", this.getResponseStatusCode(), super.toString());
     }
     /**
      * Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
@@ -146,7 +146,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
         final ServiceException currentObj = this;
         HashMap<String, Consumer<ParseNode>> deserializers = new HashMap<>(2);
-        deserializers.put("statusCode", n -> currentObj.responseStatusCode = n.getIntegerValue());
+        deserializers.put("statusCode", n -> currentObj.setResponseStatusCode(n.getIntegerValue()));
         deserializers.put("rawResponseBody", n -> currentObj.setRawResponseBody(n.getStringValue()));
         return deserializers;
     }
@@ -157,7 +157,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
     @Override
     public void serialize(@Nonnull SerializationWriter writer) {
         Objects.requireNonNull(writer, ErrorConstants.Messages.NULL_PARAMETER + "writer");
-        writer.writeIntegerValue("status code", this.responseStatusCode);
+        writer.writeIntegerValue("status code", this.getResponseStatusCode());
         writer.writeStringValue("rawResponseBody", this.rawResponseBody);
         writer.writeStringValue("message", super.getMessage());
         writer.writeAdditionalData(this.additionalData);

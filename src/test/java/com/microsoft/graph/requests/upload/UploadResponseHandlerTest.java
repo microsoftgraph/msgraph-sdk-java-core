@@ -133,7 +133,7 @@ class UploadResponseHandlerTest {
         } catch (ExecutionException ex) {
             ServiceException se = (ServiceException) ex.getCause();
             assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
-            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, se.responseStatusCode);
+            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, se.getResponseStatusCode());
         }
     }
     @Test
