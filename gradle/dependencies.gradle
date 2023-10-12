@@ -12,5 +12,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     api 'com.azure:azure-core:1.44.0'
 
-    api 'com.github.spotbugs:spotbugs-annotations:4.7.3'
+    api 'com.github.spotbugs:spotbugs-annotations:4.8.0'
 }
