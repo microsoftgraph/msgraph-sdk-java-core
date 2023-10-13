@@ -3,47 +3,46 @@
 xmlns="https://github.com/spotbugs/filter/3.0.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.authentication.BaseAuthenticationProviderTest" />
-		<Method name="providerDoesNotAddTokenOnNullUrls" />
-		<Bug code="NP" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.authentication.TokenCredentialAuthProvider" />
-		<Bug code="CT" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.httpcore.middlewareoption.RedirectOptions" />
-		<Bug code="CT" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.httpcore.middlewareoption.RetryOptions" />
-		<Bug code="CT" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.options.Option" />
-		<Bug code="CT" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.options.Option" />
-		<Bug code="PI" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.core.Multipart" />
-		<Bug code="PI" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.http.GraphError" />
-		<Bug code="PA" />
-	</Match>
-	<Match><!-- TODO remove for v3-->
-		<Class name="com.microsoft.graph.http.GraphInnerError" />
-		<Bug code="PA" />
-	</Match>
 	<Match>
 		<Class name="com.microsoft.graph.content.BatchRequestContent" />
 		<Field name="requests" />
 		<Bug code="PA" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.content.BatchRequestContent" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.content.BatchRequestContentCollection" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.models.BatchRequestStep" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.requests.upload.UploadSessionRequestBuilder" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.requests.upload.UploadSliceRequestBuilder" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.tasks.LargeFileUploadTask" />
+		<Bug code="CT" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.CoreConstants$Headers" />
+		<Bug code="PI" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.CoreConstants$BatchRequest" />
+		<Bug code="PI" />
+	</Match>
+	<Match>
+		<Class name="com.microsoft.graph.exceptions.ErrorConstants$Messages" />
+		<Bug code="PI" />
 	</Match>
 	<Match>
 		<Class name="com.microsoft.graph.tasks.LargeFileUploadRequest" />
