@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [2.0.20] - 2023-10-23
+
+### Changed 
+
+- Updates Okhttp3 to avoid transient vulnerabilty. [#1038](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1038) 
+
 ## [2.0.19] - 2023-06-20
 
 ### Changed

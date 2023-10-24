@@ -15,12 +15,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 18
-          distribution: 'adopt'
+          java-version: 20
+          distribution: 'temurin'
           cache: gradle     
       - name: Easy detect-secrets
         uses: RobertFischer/detect-secrets-action@v2.0.0

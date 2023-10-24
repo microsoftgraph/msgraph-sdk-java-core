@@ -11,11 +11,11 @@ jobs:
   samples-build-check-device-code:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
-        java-version: 18
+        distribution: 'temurin'
+        java-version: 20
     - name: Add execution right to the script
       run: chmod +x gradlew
       working-directory: ./samples/deviceCodeSample
@@ -25,11 +25,11 @@ jobs:
   samples-build-check-interactive:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
-        java-version: 18
+        distribution: 'temurin'
+        java-version: 20
     - name: Add execution right to the script
       run: chmod +x gradlew
       working-directory: ./samples/interactiveBrowserSample
