@@ -138,7 +138,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @return builder to start configuring the client
      */
     @Nonnull
-    public static <nativeClient extends Call.Factory, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
+    public static <nativeClient, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
         return new Builder<>();
     }
 
@@ -147,7 +147,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @param <httpClientType> type of the native http library client
      * @param <nativeRequestType> type of a request for the native http client
      */
-    public static class Builder<httpClientType extends Call.Factory, nativeRequestType> {
+    public static class Builder<httpClientType, nativeRequestType> {
         private ISerializer serializer;
         private IHttpProvider<nativeRequestType> httpProvider;
         private ILogger logger;
@@ -175,9 +175,10 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
                 return serializer;
             }
         }
-        private Call.Factory getHttpClient() {
+        @SuppressWarnings("unchecked")
+        private httpClientType getHttpClient() {
             if(httpClient == null) {
-                return HttpClients.createDefault(getAuthenticationProvider());
+                return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
             } else {
                 return httpClient;
             }
@@ -185,7 +186,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
         @SuppressWarnings("unchecked")
         private IHttpProvider<nativeRequestType> getHttpProvider() {
             if(httpProvider == null) {
-                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), getHttpClient());
+                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (Call.Factory) getHttpClient());
             } else {
                 return httpProvider;
             }
