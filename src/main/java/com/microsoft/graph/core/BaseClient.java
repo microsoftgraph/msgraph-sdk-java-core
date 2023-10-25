@@ -41,6 +41,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -137,7 +138,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @return builder to start configuring the client
      */
     @Nonnull
-    public static <nativeClient, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
+    public static <nativeClient extends Call.Factory, nativeRequest> Builder<nativeClient, nativeRequest> builder(@Nonnull final Class<nativeClient> nativeClientClass, @Nonnull final Class<nativeRequest> nativeRequestClass) {
         return new Builder<>();
     }
 
@@ -146,7 +147,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
      * @param <httpClientType> type of the native http library client
      * @param <nativeRequestType> type of a request for the native http client
      */
-    public static class Builder<httpClientType, nativeRequestType> {
+    public static class Builder<httpClientType extends Call.Factory, nativeRequestType> {
         private ISerializer serializer;
         private IHttpProvider<nativeRequestType> httpProvider;
         private ILogger logger;
@@ -174,10 +175,9 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
                 return serializer;
             }
         }
-        @SuppressWarnings("unchecked")
-        private httpClientType getHttpClient() {
+        private Call.Factory getHttpClient() {
             if(httpClient == null) {
-                return (httpClientType)HttpClients.createDefault(getAuthenticationProvider());
+                return HttpClients.createDefault(getAuthenticationProvider());
             } else {
                 return httpClient;
             }
@@ -185,7 +185,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
         @SuppressWarnings("unchecked")
         private IHttpProvider<nativeRequestType> getHttpProvider() {
             if(httpProvider == null) {
-                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
+                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), getHttpClient());
             } else {
                 return httpProvider;
             }
