@@ -51,7 +51,7 @@ public class BatchResponseContentCollection {
      * @return the response for the request with the given id, null if no response was found.
      */
     @Nullable
-    public Response getResponseByIdAsync(@Nonnull String requestId) {
+    public Response getResponseById(@Nonnull String requestId) {
         Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? null : response.getResponseById(requestId);
@@ -64,7 +64,7 @@ public class BatchResponseContentCollection {
      * @param <T> the type of the response.
      */
     @Nullable
-    public <T extends Parsable> T getResponseByIdAsync(@Nonnull String requestId, @Nonnull ResponseHandler handler) {
+    public <T extends Parsable> T getResponseById(@Nonnull String requestId, @Nonnull ResponseHandler handler) {
         Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? null : response.getResponseById(requestId, handler);
@@ -77,7 +77,7 @@ public class BatchResponseContentCollection {
      * @param <T> the type of the response.
      */
     @Nullable
-    public <T extends Parsable> T getResponseByIdAsync(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
+    public <T extends Parsable> T getResponseById(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
         Objects.requireNonNull(requestId);
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? null : response.getResponseById(requestId, factory);
@@ -88,7 +88,7 @@ public class BatchResponseContentCollection {
      * @return the response for the request with the given id, null if no response was found.
      */
     @Nullable
-    public InputStream getResponseStreamByIdAsync(@Nonnull String requestId) {
+    public InputStream getResponseStreamById(@Nonnull String requestId) {
         BatchResponseContent response = getBatchResponseContaining(requestId);
         return response == null ? null : response.getResponseStreamById(requestId);
     }
@@ -97,7 +97,7 @@ public class BatchResponseContentCollection {
      * @return the response codes for all the requests in the batch.
      */
     @Nonnull
-    public HashMap<String, Integer> getResponsesStatusCodesAsync() {
+    public Map<String, Integer> getResponsesStatusCodes() {
         HashMap<String, Integer> statusCodes = new HashMap<>();
         for(KeyedBatchResponseContent keyedResponse : batchResponses) {
             HashMap<String, Integer> responseStatusCodes = keyedResponse.response.getResponsesStatusCode();

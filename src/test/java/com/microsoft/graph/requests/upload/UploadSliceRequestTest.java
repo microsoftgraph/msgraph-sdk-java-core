@@ -27,7 +27,7 @@ class UploadSliceRequestTest {
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
-    void PutAsyncReturnsExpectedUploadSessionAsync() throws ExecutionException, InterruptedException, IOException {
+    void putReturnsExpectedUploadSession() throws IOException {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         ParsableFactory<TestDriveItem> factory = TestDriveItem::createFromDiscriminatorValue;
         ResponseBody body = ResponseBody.create(

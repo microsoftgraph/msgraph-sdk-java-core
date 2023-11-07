@@ -135,7 +135,7 @@ class BatchRequestContentTest {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestStep2));
 
         batchRequestContent.removeBatchRequestStepWithId("1");
-        InputStream requestContent = batchRequestContent.getBatchRequestContentAsync();
+        InputStream requestContent = batchRequestContent.getBatchRequestContent();
         String requestContentString = readInputStream(requestContent);
         requestContentString = requestContentString.replace("\n", "").replaceAll("\\s", "");
         String expectedContent = "{\"requests\":[{\"id\":\"2\",\"url\":\"/me\",\"method\":\"GET\"}]}";
@@ -145,7 +145,7 @@ class BatchRequestContentTest {
         assertEquals(expectedContent, requestContentString);
     }
     @Test
-    void BatchRequestContent_GetBatchRequestContentFromStepAsyncDoesNotModifyDateTimes() throws Exception {
+    void BatchRequestContent_GetBatchRequestContentFromStepDoesNotModifyDateTimes() throws Exception {
         String bodyString = "{\n" +
             "  \"subject\": \"Lets go for lunch\",\n" +
             "  \"body\": {\n    \"contentType\": \"HTML\",\n" +
@@ -176,7 +176,7 @@ class BatchRequestContentTest {
         BatchRequestStep batchRequestSte2 = new BatchRequestStep("2", eventRequest, Arrays.asList("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestSte2));
 
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
+        InputStream stream = batchRequestContent.getBatchRequestContent();
         String requestContentString = readInputStream(stream);
         String expectedJson = "{\n" +
             "  \"requests\": [\n" +
@@ -296,7 +296,7 @@ class BatchRequestContentTest {
         assertTrue(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().headers().size() > 0);
         assertNotNull(Objects.requireNonNull(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().body()).contentType());
 
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
+        InputStream stream = batchRequestContent.getBatchRequestContent();
         String requestContentString = readInputStream(stream);
         String expectedJsonSection = "      \"url\": \"/me\"," +
             "      \"method\": \"POST\"," +
@@ -347,7 +347,7 @@ class BatchRequestContentTest {
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
 
         batchRequestContent.addBatchRequestStep(batchRequestStep);
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
+        InputStream stream = batchRequestContent.getBatchRequestContent();
         String requestContentString = readInputStream(stream);
         String expectedJson = "{" +
             "  \"requests\": [" +

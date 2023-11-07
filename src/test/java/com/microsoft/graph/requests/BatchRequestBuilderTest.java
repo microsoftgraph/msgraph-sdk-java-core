@@ -29,7 +29,7 @@ class BatchRequestBuilderTest {
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", request2, Arrays.asList("1"));
 
         BatchRequestContent batchRequestContent = new BatchRequestContent(client,Arrays.asList(batchRequestStep, batchRequestStep2));
-        RequestInformation requestInformation = batchRequestBuilder.toPostRequestInformationAsync(batchRequestContent);
+        RequestInformation requestInformation = batchRequestBuilder.toPostRequestInformation(batchRequestContent);
 
         assertEquals("{+baseurl}/$batch", requestInformation.urlTemplate);
         assertEquals(client.getRequestAdapter(), batchRequestBuilder.getRequestAdapter());

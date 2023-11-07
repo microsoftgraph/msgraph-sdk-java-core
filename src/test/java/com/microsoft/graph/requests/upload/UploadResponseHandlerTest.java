@@ -24,7 +24,7 @@ class UploadResponseHandlerTest {
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
-    void GetUploadItemOnCompletedUpload() throws ExecutionException, InterruptedException {
+    void GetUploadItemOnCompletedUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -52,7 +52,7 @@ class UploadResponseHandlerTest {
         assertEquals(33, item.size);
     }
     @Test
-    void GetFileAttachmentLocationOnCompletedUpload() throws ExecutionException, InterruptedException {
+    void getFileAttachmentLocationOnCompletedUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -73,7 +73,7 @@ class UploadResponseHandlerTest {
         assertEquals("http://localhost", result.location.toString());
     }
     @Test
-    void GetUploadSessionOnProgressingUpload() throws ExecutionException, InterruptedException {
+    void getUploadSessionOnProgressingUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -106,7 +106,7 @@ class UploadResponseHandlerTest {
         assertEquals(2, session.getNextExpectedRanges().size());
     }
     @Test
-    void ThrowsServiceExceptionOnErrorResponse() throws InterruptedException {
+    void throwsServiceExceptionOnErrorResponse() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         ResponseBody body = ResponseBody.create("{\n" +
             "   \"error\": {\n"+
@@ -137,7 +137,7 @@ class UploadResponseHandlerTest {
         }
     }
     @Test
-    void ThrowsSerializationErrorOnInvalidJson() throws InterruptedException {
+    void throwsSerializationErrorOnInvalidJson() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         String malformedResponse =
             "   \"error\": {\n"+

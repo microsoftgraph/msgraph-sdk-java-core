@@ -43,7 +43,7 @@ public class BatchRequestBuilder {
     @Nonnull
     public BatchResponseContent post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
-        RequestInformation requestInfo = toPostRequestInformationAsync(requestContent);
+        RequestInformation requestInfo = toPostRequestInformation(requestContent);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInfo.setResponseHandler(nativeResponseHandler);
         requestAdapter.sendPrimitive(requestInfo, InputStream.class, errorMappings == null ? null : new HashMap<>(errorMappings));
@@ -71,12 +71,12 @@ public class BatchRequestBuilder {
      * @return the request information.
      */
     @Nonnull
-    public RequestInformation toPostRequestInformationAsync(@Nonnull BatchRequestContent requestContent) {
+    public RequestInformation toPostRequestInformation(@Nonnull BatchRequestContent requestContent) {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.POST;
         requestInfo.urlTemplate = "{+baseurl}/$batch";
-        requestInfo.content = requestContent.getBatchRequestContentAsync();
+        requestInfo.content = requestContent.getBatchRequestContent();
         requestInfo.headers.add("Content-Type", CoreConstants.MimeTypeNames.APPLICATION_JSON);
         return requestInfo;
     }

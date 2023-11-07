@@ -23,7 +23,7 @@ class BatchResponseContentTest {
     Response.Builder defaultBuilder = new Response.Builder().protocol(Protocol.HTTP_1_1).message("Message").request(mock(Request.class));
 
     @Test
-    void BatchResponseContent_InitializeWithNoContentAsync() {
+    void BatchResponseContent_InitializeWithNoContent() {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
         HashMap<String, Response> responses = batchResponseContent.getResponses();
@@ -33,7 +33,7 @@ class BatchResponseContentTest {
         assertEquals(0,responses.size());
     }
     @Test
-    void BatchResponseContent_InitializeWithEmptyResponseContentAsync() {
+    void BatchResponseContent_InitializeWithEmptyResponseContent() {
         String jsonResponse = "{ \"responses\": [] }";
         ResponseBody responseBody = ResponseBody.create(jsonResponse,MediaType.get("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).body(responseBody).build();
@@ -53,7 +53,7 @@ class BatchResponseContentTest {
         }
     }
     @Test
-    void BatchResponseContent_GetResponsesAsync() {
+    void BatchResponseContent_GetResponses() {
         String responseJSON = "{\"responses\":"
             +"[{"
             +"\"id\": \"1\","
@@ -87,7 +87,7 @@ class BatchResponseContentTest {
         assertEquals(HttpURLConnection.HTTP_CREATED, responses.get("3").code());
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsync() {
+    void BatchResponseContent_GetResponseById() {
         String responseJSON = "{\"responses\":"
             + "[{"
             + "\"id\": \"1\","
@@ -145,7 +145,7 @@ class BatchResponseContentTest {
         assertNull(batchResponseContent.getResponseById("4").join());
     }
     @Test
-    void BatchResponseContent_GetResponseStreamByIdAsync() throws IOException {
+    void BatchResponseContent_GetResponseStreamById() throws IOException {
         String responseJSON = "{"+
             "\"responses\": [" +
             "{" +
@@ -188,7 +188,7 @@ class BatchResponseContentTest {
         assertTrue(stream.available() > 0);
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsyncWithDeserializer() {
+    void BatchResponseContent_GetResponseByIdWithDeserializer() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\"responses\":"
             + "[{"
@@ -246,7 +246,7 @@ class BatchResponseContentTest {
         assertNull(nonExistingNotebook);
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsyncWithDeserializerWorksWithDateTimeOffsets() {
+    void BatchResponseContent_GetResponseByIdWithDeserializerWorksWithDateTimeOffsets() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\n" +
             "    \"responses\": [\n" +

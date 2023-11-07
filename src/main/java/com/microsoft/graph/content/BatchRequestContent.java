@@ -160,14 +160,14 @@ public class BatchRequestContent {
      * @return The json content of the batch request as an InputStream.
      */
     @Nonnull
-    public InputStream getBatchRequestContentAsync() {
+    public InputStream getBatchRequestContent() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.beginObject();
             writer.name(CoreConstants.BatchRequest.REQUESTS);
             writer.beginArray();
             for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
-                writeBatchRequestStepAsync(requestStep, writer);
+                writeBatchRequestStep(requestStep, writer);
             }
             writer.endArray();
             writer.endObject();
@@ -181,7 +181,7 @@ public class BatchRequestContent {
             throw new RuntimeException(e);
         }
     }
-    private void writeBatchRequestStepAsync(BatchRequestStep requestStep, JsonWriter writer) {
+    private void writeBatchRequestStep(BatchRequestStep requestStep, JsonWriter writer) {
         try {
             Request request = requestStep.getRequest();
             writer.beginObject();

@@ -70,10 +70,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         return state;
     }
     /**
-     * Boolean indicating whether the processPageItemCallback is synchronous or asynchronous
-     */
-    protected boolean isProcessPageItemCallbackAsync;
-    /**
      * Sets the request adapter to use for requests in the page iterator.
      * @param requestAdapter the request adapter to use for requests.
      */
@@ -107,7 +103,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
      */
     protected void setProcessPageItemCallback(@Nonnull Function<TEntity, Boolean> processPageItemCallback) {
         this.processPageItemCallback = Objects.requireNonNull(processPageItemCallback);
-        isProcessPageItemCallbackAsync = false;
     }
     /**
      * The queue of items in the current page.

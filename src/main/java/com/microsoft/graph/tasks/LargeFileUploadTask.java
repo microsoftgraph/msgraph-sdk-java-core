@@ -103,11 +103,10 @@ public class LargeFileUploadTask<T extends Parsable > {
     /**
      * Perform the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
-     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadSliceAsync() is invoked.
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public UploadResult<T> upload() throws InterruptedException {
+    public UploadResult<T> upload() {
         return this.upload(3, null);
     }
     /**
@@ -115,11 +114,10 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @param maxTries Number of times to retry the task before giving up.
      * @param progress IProgress interface describing how to report progress.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
-     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadSliceAsync() is invoked.
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public UploadResult<T> upload(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public UploadResult<T> upload(int maxTries, @Nullable IProgressCallback progress) {
         int uploadTries = 0;
         ArrayList<Throwable> exceptionsList = new ArrayList<>();
         while (uploadTries < maxTries) {
@@ -151,10 +149,9 @@ public class LargeFileUploadTask<T extends Parsable > {
     /**
      * Resume the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
-     @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public UploadResult<T> resume() throws InterruptedException {
+    public UploadResult<T> resume() {
         return this.resume(3, null);
     }
     /**
@@ -162,10 +159,9 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @param maxTries Number of times to retry the task before giving up.
      * @param progress IProgress interface describing how to report progress.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
-     * @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public UploadResult<T> resume(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public UploadResult<T> resume(int maxTries, @Nullable IProgressCallback progress) {
         IUploadSession session;
         session = updateSessionStatus();
         OffsetDateTime expirationDateTime = Objects.isNull(session.getExpirationDateTime()) ? OffsetDateTime.now() : session.getExpirationDateTime();
@@ -199,7 +195,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         return session;
     }
     private boolean firstAttempt;
-    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException, ExecutionException, InterruptedException {
+    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException {
         this.firstAttempt = true;
         byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);

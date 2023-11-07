@@ -58,20 +58,6 @@ class PageIteratorTest {
         }
     }
     @Test
-    void given_Null_Async_Delegate_Will_Throw_NullPointerException() {
-        try{
-            pageIterator = new PageIterator.BuilderWithAsyncProcess<TestEventItem, TestEventsResponse>()
-                .client(baseClient)
-                .collectionPage(new TestEventsResponse())
-                .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
-                .asyncProcessPageItemCallback(null)
-                .requestConfigurator(requestInformation -> requestInformation)
-                .build();
-        } catch (Exception e) {
-            assertEquals(NullPointerException.class, e.getClass());
-        }
-    }
-    @Test
     void given_Null_Delegate_Will_Throw_NullPointerException() {
         try{
             pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
@@ -106,7 +92,6 @@ class PageIteratorTest {
                 return true; })
             .build();
 
-        assertFalse(pageIterator.isProcessPageItemCallbackAsync);
         pageIterator.iterate();
 
         assertFalse(testEventItems.isEmpty());
@@ -218,53 +203,6 @@ class PageIteratorTest {
     }
 
     @Test
-    void given_CollectionPage_It_Iterates_Across_Pages_With_Async_Delegate() throws ReflectiveOperationException, ServiceException {
-        TestEventsResponse originalPage = new TestEventsResponse();
-        originalPage.setValue(new LinkedList<>());
-        originalPage.setOdataNextLink("http://localhost/events?$skip=11");
-        int inputEventCount = 17;
-        for(int i = 0; i < inputEventCount; i++) {
-            TestEventItem testEventItem = new TestEventItem();
-            testEventItem.setSubject("Test Event: " + i);
-            originalPage.getValue().add(testEventItem);
-        }
-
-        TestEventsResponse secondPage = new TestEventsResponse();
-        secondPage.setValue(new LinkedList<>());
-        int secondPageEventCount = 5;
-        for(int i = 0; i < secondPageEventCount; i++) {
-            TestEventItem testEventItem = new TestEventItem();
-            testEventItem.setSubject("Second Page Test Event: " + i);
-            secondPage.getValue().add(testEventItem);
-        }
-
-        boolean[] reachedNextPage = {false};
-
-        Function<TestEventItem, Boolean> processPageItemCallback = item -> {
-            if(item.getSubject().contains("Second Page Test Event")) {
-
-                reachedNextPage[0] = true;
-                return false;
-            }
-            return true;
-        };
-
-        MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
-
-        pageIterator = new PageIterator.BuilderWithAsyncProcess<TestEventItem, TestEventsResponse>()
-            .requestAdapter(mockAdapter)
-            .collectionPage(originalPage)
-            .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
-            .asyncProcessPageItemCallback(processPageItemCallback)
-            .build();
-        assertTrue(pageIterator.isProcessPageItemCallbackAsync);
-
-        pageIterator.iterate();
-
-        assertTrue(reachedNextPage[0]);
-        assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
-    }
-    @Test
     void given_CollectionPage_It_Iterates_Across_Pages() throws ReflectiveOperationException, ServiceException{
         TestEventsResponse originalPage = new TestEventsResponse();
         originalPage.setValue(new LinkedList<>());
@@ -307,7 +245,6 @@ class PageIteratorTest {
 
         pageIterator.iterate();
 
-        assertFalse(pageIterator.isProcessPageItemCallbackAsync);
         assertTrue(reachedNextPage[0]);
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
     }
