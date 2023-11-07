@@ -40,7 +40,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
      * Handles the response and returns the deserialized response body as a ModelType.
      * @param response The native response object.
      * @param errorMappings the error mappings for the response to use when deserializing failed responses bodies. Where an error code like 401 applies specifically to that status code, a class code like 4XX applies to all status codes within the range if an the specific error code is not present.
-     * @return A CompletableFuture that represents the asynchronous operation and contains the deserialized response.
+     * @return the deserialized response.
      * @param <NativeResponseType> The type of the native response object.
      * @param <ModelType> The type of the response model object.
      */

@@ -270,7 +270,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     /**
      * Iterates over the collection of entities in the collation page.
      * Will continues to iterate over the collection of entities in the next page, if there is a next page.
-     * @return a CompletableFuture that completes when the iteration is complete.
      * @throws ServiceException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */
@@ -288,7 +287,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
 
     /**
      * Resumes the iteration over the collection of entities in the collation page.
-     * @return a CompletableFuture that completes when the iteration is complete.
      * @throws ServiceException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */

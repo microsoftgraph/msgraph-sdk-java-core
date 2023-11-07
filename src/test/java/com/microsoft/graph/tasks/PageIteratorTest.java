@@ -240,13 +240,13 @@ class PageIteratorTest {
 
         boolean[] reachedNextPage = {false};
 
-        Function<TestEventItem, CompletableFuture<Boolean>> processPageItemCallback = item -> {
+        Function<TestEventItem, Boolean> processPageItemCallback = item -> {
             if(item.getSubject().contains("Second Page Test Event")) {
 
                 reachedNextPage[0] = true;
-                return CompletableFuture.completedFuture(false);
+                return false;
             }
-            return CompletableFuture.completedFuture(true);
+            return true;
         };
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
@@ -445,7 +445,7 @@ class PageIteratorTest {
             mockResponse = response;
         }
 
-        public <T extends Parsable> T sendAsync(@Nonnull RequestInformation request, @Nonnull ParsableFactory<T> parsableFactory, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
-            return CompletableFuture.completedFuture((T) this.mockResponse);
+        public <T extends Parsable> T send(@Nonnull RequestInformation request, @Nonnull ParsableFactory<T> parsableFactory, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+            return (T) this.mockResponse;
         }
     }
