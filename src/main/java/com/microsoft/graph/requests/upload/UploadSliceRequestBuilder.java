@@ -1,6 +1,5 @@
 package com.microsoft.graph.requests.upload;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.Parsable;
@@ -42,7 +41,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
                                      long rangeEnd,
                                      long totalSessionLength,
                                      @Nonnull ParsableFactory<T> factory) {
-        if(Strings.isNullOrEmpty(sessionUrl))
+        if(Compatibility.isBlank(sessionUrl))
         {
             throw new IllegalArgumentException("sessionUrl cannot be null or empty");
         }

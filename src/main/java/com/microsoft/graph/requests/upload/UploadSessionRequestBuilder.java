@@ -1,6 +1,5 @@
 package com.microsoft.graph.requests.upload;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.models.IUploadSession;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.kiota.*;
@@ -33,7 +32,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
                                        @Nonnull final ParsableFactory<T> factory) {
         this.responseHandler = new UploadResponseHandler();
         this.requestAdapter = Objects.requireNonNull(requestAdapter);
-        if(Strings.isNullOrEmpty(sessionUrl))
+        if(Compatibility.isBlank(sessionUrl))
         {
             throw new IllegalArgumentException("sessionUrl cannot be null or empty");
         }

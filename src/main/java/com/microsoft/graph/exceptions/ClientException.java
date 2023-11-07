@@ -18,7 +18,7 @@ public class ClientException extends ApiException {
     }
     /***
      * Constructor for a ClientException
-     * @param message Th exception message.
+     * @param message The exception message.
      */
     public ClientException(@Nonnull String message) {
         super(message);

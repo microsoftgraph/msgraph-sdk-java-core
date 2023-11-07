@@ -142,7 +142,7 @@ class BatchResponseContentTest {
         assertNotNull(response2);
         assertEquals(HttpURLConnection.HTTP_CONFLICT, response2.code());
         assertEquals("image/jpeg", imageResponse.header("Content-Type"));
-        assertNull(batchResponseContent.getResponseById("4").join());
+        assertNull(batchResponseContent.getResponseById("4"));
     }
     @Test
     void BatchResponseContent_GetResponseStreamById() throws IOException {

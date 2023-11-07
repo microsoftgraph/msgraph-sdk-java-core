@@ -1,9 +1,9 @@
 package com.microsoft.graph.tasks;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.requests.IBaseClient;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
@@ -113,13 +113,12 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     }
     /**
      * A builder class for building a PageIterator.
-     * This Builder class should be used when the processPageItemCallback is synchronous.
      * @param <TEntity> The type of the entity returned in the collection. This type must implement {@link Parsable}
      * @param <TCollectionPage> The Microsoft Graph collection response type returned in the collection response. This type must implement {@link Parsable} and {@link AdditionalDataHolder}
      */
     public static class Builder<TEntity extends Parsable, TCollectionPage extends Parsable & AdditionalDataHolder> implements PageIteratorBuilder<TEntity, TCollectionPage>{
         /**
-         * Constructor for the Builder class of a PageIterator with a synchronous processPageItemCallback.
+         * Constructor for the Builder class of a PageIterator.
          */
         public Builder() {
             // Default constructor
@@ -226,14 +225,14 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         }
 
         String extractedNextLink = extractNextLinkFromParsable(this.currentPage, null);
-        if (!Strings.isNullOrEmpty(extractedNextLink)){
+        if (!Compatibility.isBlank(extractedNextLink)){
             this.nextLink = extractedNextLink;
             this.deltaLink = "";
             return true;
         }
 
         String extractedDeltaLink = extractNextLinkFromParsable(this.currentPage, CoreConstants.CollectionResponseMethods.GET_ODATA_DELTA_LINK);
-        if (!Strings.isNullOrEmpty(extractedDeltaLink)){
+        if (!Compatibility.isBlank(extractedDeltaLink)){
             this.deltaLink = extractedDeltaLink;
             this.state = PageIteratorState.DELTA;
         } else {
@@ -245,10 +244,10 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     private void interpageIterate() throws ReflectiveOperationException, ServiceException {
         this.state = PageIteratorState.INTERPAGE_ITERATION;
 
-        if(!Strings.isNullOrEmpty(nextLink) || !Strings.isNullOrEmpty(deltaLink)) {
+        if(!Compatibility.isBlank(nextLink) || !Compatibility.isBlank(deltaLink)) {
             RequestInformation nextPageRequestInformation = new RequestInformation();
             nextPageRequestInformation.httpMethod = HttpMethod.GET;
-            nextPageRequestInformation.urlTemplate = Strings.isNullOrEmpty(nextLink) ? deltaLink : nextLink;
+            nextPageRequestInformation.urlTemplate = Compatibility.isBlank(nextLink) ? deltaLink : nextLink;
 
             nextPageRequestInformation = requestConfigurator == null ? nextPageRequestInformation : requestConfigurator.apply(nextPageRequestInformation);
             this.currentPage = Objects.requireNonNull(this.requestAdapter.send(nextPageRequestInformation, this.collectionPageFactory, null));
@@ -257,7 +256,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
                 this.pageItemQueue.addAll(pageItems);
             }
         }
-        if(!Strings.isNullOrEmpty(nextLink) && this.nextLink.equals(extractNextLinkFromParsable(this.currentPage, null))) {
+        if(!Compatibility.isBlank(nextLink) && this.nextLink.equals(extractNextLinkFromParsable(this.currentPage, null))) {
             throw new ServiceException("Detected a nextLink loop. NextLink value: " + this.nextLink);
         }
     }
@@ -314,7 +313,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         if(Arrays.stream(methods).anyMatch(m -> m.getName().equals(methodName))) {
             try {
                 nextLink = (String) parsableCollection.getClass().getDeclaredMethod(methodName).invoke(parsableCollection);
-                if(!Strings.isNullOrEmpty(nextLink)) {
+                if(!Compatibility.isBlank(nextLink)) {
                     return nextLink;
                 }
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

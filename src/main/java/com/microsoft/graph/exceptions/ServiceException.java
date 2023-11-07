@@ -1,7 +1,7 @@
 package com.microsoft.graph.exceptions;
 
-import com.google.common.base.Strings;
 import com.microsoft.kiota.ApiException;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParseNode;
@@ -106,7 +106,7 @@ public class ServiceException extends ApiException implements Parsable, Addition
      * @return a boolean declaring whether the error code was found within the error stack.
      */
     public boolean isMatch(@Nonnull String errorCode) {
-        if(Strings.isNullOrEmpty(errorCode)) {
+        if(Compatibility.isBlank(errorCode)) {
             throw new IllegalArgumentException("Parameter 'errorCode 'cannot be null or empty");
         }
         return (this.rawResponseBody.toLowerCase(Locale.ROOT).contains(errorCode.toLowerCase(Locale.ROOT)))

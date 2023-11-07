@@ -1,7 +1,7 @@
 package com.microsoft.graph.requests;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.requests.options.GraphClientOption;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.serialization.ParseNodeFactory;
@@ -64,7 +64,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
     @SuppressWarnings("LambdaLast")
     public BaseGraphRequestAdapter(@Nonnull final AuthenticationProvider authenticationProvider, @Nullable final ParseNodeFactory parseNodeFactory, @Nullable final SerializationWriterFactory serializationWriterFactory, @Nullable final OkHttpClient client, @Nullable final GraphClientOption graphClientOption, @Nullable String baseUrl) {
         super(authenticationProvider, parseNodeFactory, serializationWriterFactory, client != null ? client : GraphClientFactory.create(graphClientOption).build());
-        if (!Strings.isNullOrEmpty(baseUrl)) {
+        if (!Compatibility.isBlank(baseUrl)) {
             setBaseUrl(baseUrl);
         } else {
             setBaseUrl(determineBaseAddress(null, null));

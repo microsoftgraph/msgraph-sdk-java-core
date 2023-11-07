@@ -1,6 +1,5 @@
 package com.microsoft.graph.content;
 
-import com.google.common.base.Strings;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import com.microsoft.graph.CoreConstants;
@@ -8,6 +7,7 @@ import com.microsoft.graph.exceptions.ClientException;
 import com.microsoft.graph.exceptions.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 
@@ -126,7 +126,7 @@ public class BatchRequestContent {
      * @return True if the request was removed, false otherwise.
      */
     public boolean removeBatchRequestStepWithId(@Nonnull String requestId) {
-        if(Strings.isNullOrEmpty(requestId)) {
+        if(Compatibility.isBlank(requestId)) {
             throw new IllegalArgumentException("requestId cannot be null or empty.");
         }
         boolean isRemoved = false;
@@ -251,7 +251,7 @@ public class BatchRequestContent {
     private String getRelativeUrl(HttpUrl url) {
         String query = url.encodedQuery(); //Query must be encoded in order for batch requests to work.
         String path = url.encodedPath().substring(5);
-        if(Strings.isNullOrEmpty(query)) {
+        if(Compatibility.isBlank(query)) {
             return path;
         }
         return (path + "?" + query); // `v1.0/` and `beta/` are both 5 characters
