@@ -11,7 +11,6 @@ import jakarta.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Request for uploading a slice of a large file.
@@ -62,20 +61,20 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
      * @return The model containing the Upload information retrieved from the response.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> put(@Nonnull InputStream stream) {
+    public UploadResult<T> put(@Nonnull InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation requestInformation = this.toPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
-        return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
-            .thenCompose(i -> responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory));
+        requestAdapter.sendPrimitive(requestInformation, InputStream.class, null);
+        return responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
     }
     private RequestInformation toPutRequestInformation(InputStream stream) {
         Objects.requireNonNull(stream);
         RequestInformation  requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.PUT;
         requestInfo.urlTemplate = this.urlTemplate;
-        requestInfo.setStreamContent(stream);
+        requestInfo.setStreamContent(stream,"application/octet-stream");
         requestInfo.headers.add("Content-Range", String.format(Locale.US, "bytes %d-%d/%d", this.rangeBegin, this.rangeEnd, this.totalSessionLength));
         requestInfo.headers.add("Content-Length", ""+this.rangeLength);
         return requestInfo;

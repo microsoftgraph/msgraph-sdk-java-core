@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A request builder for creating batch requests.
@@ -42,13 +41,13 @@ public class BatchRequestBuilder {
      * @return the batch response content.
      */
     @Nonnull
-    public CompletableFuture<BatchResponseContent> post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public BatchResponseContent post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
-        RequestInformation requestInfo = toPostRequestInformationAsync(requestContent).join();
+        RequestInformation requestInfo = toPostRequestInformationAsync(requestContent);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInfo.setResponseHandler(nativeResponseHandler);
-        return requestAdapter.sendPrimitiveAsync(requestInfo, InputStream.class, errorMappings == null ? null : new HashMap<>(errorMappings))
-            .thenCompose(i -> CompletableFuture.completedFuture(new BatchResponseContent((Response) nativeResponseHandler.getValue(), errorMappings)));
+        requestAdapter.sendPrimitive(requestInfo, InputStream.class, errorMappings == null ? null : new HashMap<>(errorMappings));
+        return new BatchResponseContent((Response) nativeResponseHandler.getValue(), errorMappings);
     }
     /**
      * Posts a BatchRequestContentCollection.
@@ -57,14 +56,14 @@ public class BatchRequestBuilder {
      * @return the BatchResponseContentCollection.
      */
     @Nonnull
-    public CompletableFuture<BatchResponseContentCollection> post(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public BatchResponseContentCollection post(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
         BatchResponseContentCollection collection = new BatchResponseContentCollection();
         List<BatchRequestContent> requests = batchRequestContentCollection.getBatchRequestsForExecution();
         for (BatchRequestContent request : requests) {
-            BatchResponseContent responseContent = post(request, errorMappings).join();
+            BatchResponseContent responseContent = post(request, errorMappings);
             collection.addBatchResponse(request.getBatchRequestSteps().keySet(), responseContent);
         }
-        return CompletableFuture.completedFuture(collection);
+        return collection;
     }
     /**
      * Creates the request information for a batch request.
@@ -72,14 +71,14 @@ public class BatchRequestBuilder {
      * @return the request information.
      */
     @Nonnull
-    public CompletableFuture<RequestInformation> toPostRequestInformationAsync(@Nonnull BatchRequestContent requestContent) {
+    public RequestInformation toPostRequestInformationAsync(@Nonnull BatchRequestContent requestContent) {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.POST;
         requestInfo.urlTemplate = "{+baseurl}/$batch";
-        requestInfo.content = requestContent.getBatchRequestContentAsync().join();
+        requestInfo.content = requestContent.getBatchRequestContentAsync();
         requestInfo.headers.add("Content-Type", CoreConstants.MimeTypeNames.APPLICATION_JSON);
-        return CompletableFuture.completedFuture(requestInfo);
+        return requestInfo;
     }
     /**
      * Gets the request adapter.

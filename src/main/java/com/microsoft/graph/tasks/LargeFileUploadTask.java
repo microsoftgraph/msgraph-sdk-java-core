@@ -29,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -108,7 +107,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> upload() throws InterruptedException {
+    public UploadResult<T> upload() throws InterruptedException {
         return this.upload(3, null);
     }
     /**
@@ -120,7 +119,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      * May also occur if interruption occurs in .sleep() call.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> upload(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public UploadResult<T> upload(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         int uploadTries = 0;
         ArrayList<Throwable> exceptionsList = new ArrayList<>();
         while (uploadTries < maxTries) {
@@ -134,24 +133,20 @@ public class LargeFileUploadTask<T extends Parsable > {
                         progress.report(amountUploaded, this.totalUploadLength);
                     }
                     if (result.isUploadSuccessful()) {
-                        return CompletableFuture.completedFuture(result);
+                        return result;
                     }
                 }
-                updateSessionStatus().get();
+                updateSessionStatus();
                 uploadTries += 1;
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
                 }
             } catch (IOException| ExecutionException| ServiceException ex) {
-                CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-                exceptionalResult.completeExceptionally(ex);
-                return exceptionalResult;
+                throw new RuntimeException(ex);
             }
 
         }
-        CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-        exceptionalResult.completeExceptionally(new CancellationException());
-        return exceptionalResult;
+        throw new CancellationException();
     }
     /**
      * Resume the upload task.
@@ -159,7 +154,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resume() throws InterruptedException {
+    public UploadResult<T> resume() throws InterruptedException {
         return this.resume(3, null);
     }
     /**
@@ -170,55 +165,38 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @throws InterruptedException can be thrown when updateSessionStatus() or uploadAsync() is invoked.
      */
     @Nonnull
-    public CompletableFuture<UploadResult<T>> resume(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
+    public UploadResult<T> resume(int maxTries, @Nullable IProgressCallback progress) throws InterruptedException {
         IUploadSession session;
-        try {
-            session = updateSessionStatus().get();
-        } catch (ExecutionException ex) {
-            CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(ex);
-            return exceptionalResult;
-        }
-        OffsetDateTime expirationDateTime =
-            Objects.isNull(session.getExpirationDateTime()) ? OffsetDateTime.now() : session.getExpirationDateTime();
+        session = updateSessionStatus();
+        OffsetDateTime expirationDateTime = Objects.isNull(session.getExpirationDateTime()) ? OffsetDateTime.now() : session.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
-            return exceptionalResult;
+            throw new RuntimeException(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
         }
         return this.upload(maxTries, progress);
     }
     /**
      * Delete the upload session.
-     * @return Once returned the task is complete and the session has been deleted.
      */
-    @Nonnull
-    public CompletableFuture<Void> deleteSession() {
-        OffsetDateTime expirationDateTime =
-            Objects.isNull(this.uploadSession.getExpirationDateTime()) ? OffsetDateTime.now() : this.uploadSession.getExpirationDateTime();
+    public void deleteSession() {
+        OffsetDateTime expirationDateTime = Objects.isNull(this.uploadSession.getExpirationDateTime()) ? OffsetDateTime.now() : this.uploadSession.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            CompletableFuture<Void> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
-            return exceptionalResult;
-
+            throw new RuntimeException(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
         }
         UploadSessionRequestBuilder<T> builder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
-        return builder.delete();
+        builder.delete();
     }
     /**
      * Get the session information from the server, and update the internally held session with the updated information.
      * @return the updated UploadSession model.
      */
     @Nonnull
-    public CompletableFuture<IUploadSession> updateSessionStatus() {
+    public IUploadSession updateSessionStatus() {
         UploadSessionRequestBuilder<T> sessionRequestBuilder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
-        return sessionRequestBuilder.get().thenApply(x ->
-        {
-            this.rangesRemaining = getRangesRemaining(x);
-            x.setUploadUrl(this.uploadSession.getUploadUrl());
-            this.uploadSession = x;
-            return x;
-        });
+        IUploadSession session = sessionRequestBuilder.get();
+        this.rangesRemaining = getRangesRemaining(session);
+        session.setUploadUrl(this.uploadSession.getUploadUrl());
+        this.uploadSession = session;
+        return session;
     }
     private boolean firstAttempt;
     private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException, ExecutionException, InterruptedException {
@@ -227,8 +205,8 @@ public class LargeFileUploadTask<T extends Parsable > {
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         while(true) {
             try {
-                return uploadSliceRequestBuilder.put(chunkStream).get();
-            } catch (ExecutionException ex) {
+                return uploadSliceRequestBuilder.put(chunkStream);
+            } catch (RuntimeException ex) {
                 if(ex.getCause() instanceof ServiceException) {
                     handleServiceException((ServiceException)ex.getCause(), exceptionsList);
                 }

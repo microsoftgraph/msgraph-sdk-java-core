@@ -12,7 +12,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.io.*;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A response handler for deserializing responses to a ModelType. Particularly for Batch requests.
@@ -47,7 +46,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
      */
     @Nonnull
     @Override
-    public <NativeResponseType, ModelType> CompletableFuture<ModelType> handleResponseAsync(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public <NativeResponseType, ModelType> ModelType handleResponse(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
         if(response instanceof Response && ((Response) response).body()!=null) {
             Response nativeResponse = (Response) response;
             ResponseBody body = nativeResponse.body();
@@ -56,20 +55,18 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
                 body.close();
                 if(nativeResponse.isSuccessful()) {
                     final ModelType result = (ModelType) parseNode.getObjectValue(this.factory); //We can be sure this is the correct type since return of this method is based on the type of the factory.
-                    return CompletableFuture.completedFuture(result);
+                    return result;
                 } else {
                     handleFailedResponse(nativeResponse, errorMappings, parseNode);
                 }
             }
             catch(ApiException | IOException ex) {
-                CompletableFuture<ModelType> exceptionalResult = new CompletableFuture<>();
-                exceptionalResult.completeExceptionally(ex);
-                return exceptionalResult;
+                throw new RuntimeException(ex);
             }
         } else {
             throw new IllegalArgumentException("The provided response type is not supported by this response handler.");
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
 
     private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) throws ApiException {

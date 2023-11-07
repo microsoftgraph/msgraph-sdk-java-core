@@ -135,7 +135,7 @@ class BatchRequestContentTest {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestStep2));
 
         batchRequestContent.removeBatchRequestStepWithId("1");
-        InputStream requestContent = batchRequestContent.getBatchRequestContentAsync().join();
+        InputStream requestContent = batchRequestContent.getBatchRequestContentAsync();
         String requestContentString = readInputStream(requestContent);
         requestContentString = requestContentString.replace("\n", "").replaceAll("\\s", "");
         String expectedContent = "{\"requests\":[{\"id\":\"2\",\"url\":\"/me\",\"method\":\"GET\"}]}";
@@ -176,7 +176,7 @@ class BatchRequestContentTest {
         BatchRequestStep batchRequestSte2 = new BatchRequestStep("2", eventRequest, Arrays.asList("1"));
         BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(batchRequestStep, batchRequestSte2));
 
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
+        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
         String requestContentString = readInputStream(stream);
         String expectedJson = "{\n" +
             "  \"requests\": [\n" +
@@ -272,7 +272,7 @@ class BatchRequestContentTest {
         requestInfo.httpMethod = HttpMethod.GET;
 
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
-        String requestId = batchRequestContent.addBatchRequestStep(requestInfo).join();
+        String requestId = batchRequestContent.addBatchRequestStep(requestInfo);
         String expectedUrl = "https://graph.microsoft.com/v1.0/me"; //We expect the url to be changed because it contains the default replacement pairs
 
 
@@ -296,7 +296,7 @@ class BatchRequestContentTest {
         assertTrue(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().headers().size() > 0);
         assertNotNull(Objects.requireNonNull(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().body()).contentType());
 
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
+        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
         String requestContentString = readInputStream(stream);
         String expectedJsonSection = "      \"url\": \"/me\"," +
             "      \"method\": \"POST\"," +
@@ -317,14 +317,14 @@ class BatchRequestContentTest {
             RequestInformation requestInfo = new RequestInformation();
             requestInfo.urlTemplate = requestUrl;
             requestInfo.httpMethod = HttpMethod.GET;
-            String requestId = batchRequestContent.addBatchRequestStep(requestInfo).join();
+            String requestId = batchRequestContent.addBatchRequestStep(requestInfo);
             assertNotNull(requestId);
         }
         RequestInformation extraRequestInfo = new RequestInformation();
         extraRequestInfo.urlTemplate = requestUrl;
         extraRequestInfo.httpMethod = HttpMethod.GET;
         try {
-            batchRequestContent.addBatchRequestStep(extraRequestInfo).join();
+            batchRequestContent.addBatchRequestStep(extraRequestInfo);
         } catch (Exception e) {
             assertEquals(String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS), e.getMessage());
             assertNotNull(batchRequestContent.getBatchRequestSteps());
@@ -347,7 +347,7 @@ class BatchRequestContentTest {
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
 
         batchRequestContent.addBatchRequestStep(batchRequestStep);
-        InputStream stream = batchRequestContent.getBatchRequestContentAsync().join();
+        InputStream stream = batchRequestContent.getBatchRequestContentAsync();
         String requestContentString = readInputStream(stream);
         String expectedJson = "{" +
             "  \"requests\": [" +

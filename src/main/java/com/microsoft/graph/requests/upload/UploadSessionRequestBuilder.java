@@ -2,6 +2,7 @@ package com.microsoft.graph.requests.upload;
 
 import com.google.common.base.Strings;
 import com.microsoft.graph.models.IUploadSession;
+import com.microsoft.graph.models.UploadResult;
 import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
@@ -10,7 +11,6 @@ import okhttp3.Response;
 import jakarta.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * UploadSessionRequestBuilder class to get and delete an UploadSession.
@@ -45,13 +45,13 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      * @return the IUploadSession
      */
     @Nonnull
-    public CompletableFuture<IUploadSession> get() {
+    public IUploadSession get() {
         RequestInformation requestInformation = toGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
-        return this.requestAdapter.sendPrimitiveAsync(requestInformation, InputStream.class, null)
-            .thenCompose( i -> responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory))
-            .thenCompose(result -> CompletableFuture.completedFuture(result.uploadSession));
+        requestAdapter.sendPrimitive(requestInformation, InputStream.class, null);
+        UploadResult<T> result = responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
+        return result.uploadSession;
     }
     private RequestInformation toGetRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
@@ -61,12 +61,10 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
     }
     /**
      * Deletes the specified UploadSession.
-     * @return Once returned the UploadSession has been deleted.
      */
-    @Nonnull
-    public CompletableFuture<Void> delete() {
+    public void delete() {
         RequestInformation requestInfo = this.toDeleteRequestInformation();
-        return this.requestAdapter.sendPrimitiveAsync(requestInfo, Void.class, null);
+        this.requestAdapter.sendPrimitive(requestInfo, Void.class, null);
     }
     private RequestInformation toDeleteRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();

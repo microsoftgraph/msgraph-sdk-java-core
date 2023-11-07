@@ -16,7 +16,6 @@ import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -32,7 +31,7 @@ class PageIteratorTest {
     @Test
     void given_NonCollection_Parsable_Will_Throw_ArgumentException() {
         try {
-            new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventItem>()
+            new PageIterator.Builder<TestEventItem, TestEventItem>()
                 .client(baseClient)
                 .collectionPage(new TestEventItem())
                 .collectionPageFactory(TestEventItem::createFromDiscriminatorValue)
@@ -47,7 +46,7 @@ class PageIteratorTest {
     @Test
     void given_Null_Collection_Page_Will_Throw_NullPointerException() {
         try {
-            pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+            pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
                 .client(baseClient)
                 .collectionPage(null)
                 .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -75,7 +74,7 @@ class PageIteratorTest {
     @Test
     void given_Null_Delegate_Will_Throw_NullPointerException() {
         try{
-            pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+            pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
                 .client(baseClient)
                 .collectionPage(new TestEventsResponse())
                 .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -98,7 +97,7 @@ class PageIteratorTest {
             originalPage.getValue().add(testEventItem);
         }
         List<TestEventItem> testEventItems = new LinkedList<TestEventItem>();
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .client(baseClient)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -108,7 +107,7 @@ class PageIteratorTest {
             .build();
 
         assertFalse(pageIterator.isProcessPageItemCallbackAsync);
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertFalse(testEventItems.isEmpty());
         assertEquals(inputEventCount, testEventItems.size());
@@ -126,7 +125,7 @@ class PageIteratorTest {
             originalPage.getValue().add(testEventItem);
         }
         List<TestEventItem> testEventItems = new LinkedList<TestEventItem>();
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .client(baseClient)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -137,7 +136,7 @@ class PageIteratorTest {
                 testEventItems.add(item);
                 return true;
             }).build();
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertEquals(7, testEventItems.size());
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
@@ -177,14 +176,14 @@ class PageIteratorTest {
         };
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
             .processPageItemCallback(processPageItemCallback)
             .build();
 
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertTrue(reachedNextPage[0]);
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
@@ -205,14 +204,14 @@ class PageIteratorTest {
 
         Function<TestEventItem, Boolean> processPageItemCallback = item -> true;
 
-        PageIterator<TestEventItem, TestEventsDeltaResponse> pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsDeltaResponse>()
+        PageIterator<TestEventItem, TestEventsDeltaResponse> pageIterator = new PageIterator.Builder<TestEventItem, TestEventsDeltaResponse>()
             .client(baseClient)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsDeltaResponse::createFromDiscriminatorValue)
             .processPageItemCallback(processPageItemCallback)
             .build();
 
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertEquals(PageIterator.PageIteratorState.DELTA, pageIterator.getPageIteratorState());
         assertEquals("http://localhost/events?$skip=11", pageIterator.getDeltaLink());
@@ -260,7 +259,7 @@ class PageIteratorTest {
             .build();
         assertTrue(pageIterator.isProcessPageItemCallbackAsync);
 
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertTrue(reachedNextPage[0]);
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
@@ -299,14 +298,14 @@ class PageIteratorTest {
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
 
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
             .processPageItemCallback(processPageItemCallback)
             .build();
 
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertFalse(pageIterator.isProcessPageItemCallbackAsync);
         assertTrue(reachedNextPage[0]);
@@ -338,7 +337,7 @@ class PageIteratorTest {
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
 
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -346,7 +345,7 @@ class PageIteratorTest {
             .build();
 
         try{
-            pageIterator.iterate().join();
+            pageIterator.iterate();
         } catch (Exception e) {
             assertEquals(ServiceException.class, e.getClass());
             assertTrue(e.getMessage().contains("Detected a nextLink loop. NextLink value:"));
@@ -371,7 +370,7 @@ class PageIteratorTest {
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
 
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -379,7 +378,7 @@ class PageIteratorTest {
             .build();
 
         try{
-            pageIterator.iterate().join();
+            pageIterator.iterate();
         } catch (ServiceException e) {
             fail("Should not throw exception");
         }
@@ -388,7 +387,7 @@ class PageIteratorTest {
     void given_PageIterator_It_Has_NotStarted_PagingState() throws ReflectiveOperationException {
         TestEventsResponse originalPage = new TestEventsResponse();
         originalPage.setValue(new LinkedList<>());
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .client(baseClient)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -426,7 +425,7 @@ class PageIteratorTest {
 
         MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
 
-        pageIterator = new PageIterator.BuilderWithSyncProcess<TestEventItem, TestEventsResponse>()
+        pageIterator = new PageIterator.Builder<TestEventItem, TestEventsResponse>()
             .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsResponse::createFromDiscriminatorValue)
@@ -434,7 +433,7 @@ class PageIteratorTest {
             .requestConfigurator(requestConfigurator)
             .build();
 
-        pageIterator.iterate().join();
+        pageIterator.iterate();
 
         assertTrue(requestConfiguratorInvoked[0]);
     }
@@ -446,7 +445,7 @@ class PageIteratorTest {
             mockResponse = response;
         }
 
-        public <T extends Parsable> CompletableFuture<T> sendAsync(@Nonnull RequestInformation request, @Nonnull ParsableFactory<T> parsableFactory, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+        public <T extends Parsable> T sendAsync(@Nonnull RequestInformation request, @Nonnull ParsableFactory<T> parsableFactory, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
             return CompletableFuture.completedFuture((T) this.mockResponse);
         }
     }

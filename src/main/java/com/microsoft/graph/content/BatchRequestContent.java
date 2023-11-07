@@ -20,7 +20,6 @@ import jakarta.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A class representing the content of a batch request.
@@ -111,16 +110,15 @@ public class BatchRequestContent {
      * @return The request id of the added request.
      */
     @Nonnull
-    public CompletableFuture<String> addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
+    public String addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
         if(this.batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
             throw new IllegalArgumentException(maxStepsExceededMessage);
         }
         String requestId = java.util.UUID.randomUUID().toString();
-        return this.requestAdapter.convertToNativeRequestAsync(requestInformation).thenCompose(request -> {
-            BatchRequestStep requestStep = new BatchRequestStep(requestId, (Request) request);
-            this.batchRequestSteps.put(requestId, requestStep);
-            return CompletableFuture.completedFuture(requestId);
-        });
+        Request request = this.requestAdapter.convertToNativeRequest(requestInformation);
+        BatchRequestStep requestStep = new BatchRequestStep(requestId, request);
+        this.batchRequestSteps.put(requestId, requestStep);
+        return requestId;
     }
     /**
      * Removes a batch request step from the batch request.
@@ -162,7 +160,7 @@ public class BatchRequestContent {
      * @return The json content of the batch request as an InputStream.
      */
     @Nonnull
-    public CompletableFuture<InputStream> getBatchRequestContentAsync() {
+    public InputStream getBatchRequestContentAsync() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.beginObject();
@@ -177,12 +175,10 @@ public class BatchRequestContent {
             PipedInputStream in = new PipedInputStream();
             try(final PipedOutputStream out = new PipedOutputStream(in)) {
                 outputStream.writeTo(out);
-                return CompletableFuture.completedFuture(in);
+                return in;
             }
         } catch(IOException e) {
-            CompletableFuture<InputStream> exception = new CompletableFuture<>();
-            exception.completeExceptionally(e);
-            return exception;
+            throw new RuntimeException(e);
         }
     }
     private void writeBatchRequestStepAsync(BatchRequestStep requestStep, JsonWriter writer) {
@@ -209,10 +205,10 @@ public class BatchRequestContent {
                 headers = headers.newBuilder().add("Content-Type", contentType).build();
                 writer.name(CoreConstants.BatchRequest.BODY);
                 if(contentType.toLowerCase(Locale.US).contains(CoreConstants.MimeTypeNames.APPLICATION_JSON)){
-                    JsonObject bodyObject = getJsonRequestContent(requestBody).join();
+                    JsonObject bodyObject = getJsonRequestContent(requestBody);
                     writer.jsonValue(bodyObject.toString());
                 } else {
-                    String rawBodyContent = getRawRequestContent(requestBody).join();
+                    String rawBodyContent = getRawRequestContent(requestBody);
                     writer.value(rawBodyContent);
                 }
             }
@@ -226,33 +222,27 @@ public class BatchRequestContent {
             }
             writer.endObject();
         } catch (IOException e) {
-            CompletableFuture<Void> exception = new CompletableFuture<>();
-            exception.completeExceptionally(e);
+            throw new RuntimeException(e);
         }
     }
-    private CompletableFuture<JsonObject> getJsonRequestContent(RequestBody requestBody) {
+    private JsonObject getJsonRequestContent(RequestBody requestBody) {
         try {
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
-            JsonObject jsonObject = JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
-            return CompletableFuture.completedFuture(jsonObject);
+            return JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
         } catch(IOException e) {
             ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            CompletableFuture<JsonObject> exception = new CompletableFuture<>();
-            exception.completeExceptionally(clientException);
-            return exception;
+            throw new RuntimeException(clientException);
         }
     }
-    private CompletableFuture<String> getRawRequestContent(RequestBody requestBody) {
+    private String getRawRequestContent(RequestBody requestBody) {
         try{
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
-            return CompletableFuture.completedFuture(buffer.readUtf8());
+            return buffer.readUtf8();
         } catch(IOException e) {
             ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            CompletableFuture<String> exception = new CompletableFuture<>();
-            exception.completeExceptionally(clientException);
-            return exception;
+            throw new RuntimeException(clientException);
         }
     }
     private boolean containsCorrespondingRequestId(List<String> dependsOn) {

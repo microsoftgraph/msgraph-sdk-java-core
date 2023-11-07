@@ -15,7 +15,7 @@ import jakarta.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
+
 
 /**
  * A class representing the content of a batch request response.
@@ -49,9 +49,9 @@ public class BatchResponseContent {
      * @return The responses of the batch request.
      */
     @Nonnull
-    public CompletableFuture<HashMap<String, Response>> getResponses() {
+    public HashMap<String, Response> getResponses() {
         HashMap<String, Response> responses = new HashMap<>();
-        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
+        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
         if (jsonBatchResponseObject != null) {
             JsonElement responsesElement = jsonBatchResponseObject.get(CoreConstants.BatchRequest.RESPONSES);
             if (responsesElement != null && responsesElement.isJsonArray()) { //ensure "responses" is not null and is an array.
@@ -61,16 +61,16 @@ public class BatchResponseContent {
                 }
             }
         }
-        return CompletableFuture.completedFuture(responses);
+        return responses;
     }
     /**
      * Gets the status codes of the responses of the batch request.
      * @return The status codes of the responses of the batch request.
      */
     @Nonnull
-    public CompletableFuture<HashMap<String, Integer>> getResponsesStatusCode() {
+    public HashMap<String, Integer> getResponsesStatusCode() {
         HashMap<String, Integer> statusCodes = new HashMap<>();
-        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
+        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
         if (jsonBatchResponseObject != null) {
             JsonElement responsesElement = jsonBatchResponseObject.get(CoreConstants.BatchRequest.RESPONSES);
             if (responsesElement != null && responsesElement.isJsonArray()) { //ensure "responses" is not null and is an array.
@@ -80,7 +80,7 @@ public class BatchResponseContent {
                 }
             }
         }
-        return CompletableFuture.completedFuture(statusCodes);
+        return statusCodes;
     }
     /**
      * Gets the response within the batch response via specified id.
@@ -88,23 +88,23 @@ public class BatchResponseContent {
      * @return The response within the batch response via specified id, null if not found.
      */
     @Nullable
-    public CompletableFuture<Response> getResponseById(@Nonnull String requestId) {
+    public Response getResponseById(@Nonnull String requestId) {
         Objects.requireNonNull(requestId);
         if(!requestId.isEmpty()) {
-            jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
+            jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
             if (jsonBatchResponseObject != null) {
                 JsonElement responsesElement = jsonBatchResponseObject.get(CoreConstants.BatchRequest.RESPONSES);
                 if (responsesElement != null && responsesElement.isJsonArray()) { //ensure "responses" is not null and is an array.
                     JsonArray responsesArray = responsesElement.getAsJsonArray();
                     for (JsonElement responseElement : responsesArray) {
                         if (responseElement.getAsJsonObject().get("id").getAsString().equals(requestId)) {
-                            return CompletableFuture.completedFuture(getResponseFromJsonObject(responseElement));
+                            return getResponseFromJsonObject(responseElement);
                         }
                     }
                 }
             }
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
     /**
      * Gets the response within the batch response via specified id.
@@ -114,12 +114,12 @@ public class BatchResponseContent {
      * @param <T> The type of the response body.
      */
     @Nullable
-    public <T extends Parsable> CompletableFuture<T> getResponseById(@Nonnull String requestId, @Nonnull ResponseHandler responseHandler) {
-        Response response = getResponseById(requestId).join();
+    public <T extends Parsable> T getResponseById(@Nonnull String requestId, @Nonnull ResponseHandler responseHandler) {
+        Response response = getResponseById(requestId);
         if(response == null) {
-            return CompletableFuture.completedFuture(null);
+            return null;
         }
-        return responseHandler.handleResponseAsync(response, apiErrorMappings);
+        return responseHandler.handleResponse(response, apiErrorMappings);
     }
     /**
      * Gets the response within the batch response via specified id.
@@ -129,7 +129,7 @@ public class BatchResponseContent {
      * @param <T> The type of the response body.
      */
     @Nullable
-    public <T extends Parsable> CompletableFuture<T> getResponseById(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
+    public <T extends Parsable> T getResponseById(@Nonnull String requestId, @Nonnull ParsableFactory<T> factory) {
         return this.getResponseById(requestId, new ResponseBodyHandler<>(factory));
     }
     /**
@@ -138,39 +138,39 @@ public class BatchResponseContent {
      * @return The response within the batch response via specified id as an InputStream, null if not found.
      */
     @Nullable
-    public CompletableFuture<InputStream> getResponseStreamById(@Nonnull String requestId) {
-        Response response = getResponseById(requestId).join();
+    public InputStream getResponseStreamById(@Nonnull String requestId) {
+        Response response = getResponseById(requestId);
         if(response != null && response.body() != null) {
             InputStream in = response.body().byteStream();
-            return CompletableFuture.completedFuture(in);
+            return in;
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
     /**
      * Get the next link of the batch response.
      * @return The next link of the batch response.
      */
     @Nullable
-    public CompletableFuture<String> getNextLink() {
-        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent().join();
+    public String getNextLink() {
+        jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
         if(jsonBatchResponseObject != null) {
             JsonElement nextLinkElement = jsonBatchResponseObject.get(CoreConstants.Serialization.ODATA_NEXT_LINK);
             if (nextLinkElement != null && nextLinkElement.isJsonPrimitive()) {
-                return CompletableFuture.completedFuture(nextLinkElement.getAsString());
+                return nextLinkElement.getAsString();
             }
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
-    private CompletableFuture<JsonObject> getBatchResponseContent() {
+    private JsonObject getBatchResponseContent() {
         if (this.batchResponse.body() != null && this.batchResponse.body().contentType() != null) {
             InputStream in = this.batchResponse.body().byteStream();
             try(InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                return CompletableFuture.completedFuture(JsonParser.parseReader(reader).getAsJsonObject());
+                return JsonParser.parseReader(reader).getAsJsonObject();
             } catch (IOException e) {
-                return CompletableFuture.completedFuture(null);
+                return null;
             }
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
     private Response getResponseFromJsonObject(JsonElement responseElement) {
         Response.Builder response = new Response.Builder();

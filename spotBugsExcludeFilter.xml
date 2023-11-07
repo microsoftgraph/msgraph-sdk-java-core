@@ -77,8 +77,7 @@ xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubu
 			<Class name="com.microsoft.graph.requests.middleware.GraphTelemetryHandler" />
 			<Class name="com.microsoft.graph.requests.upload.UploadSessionRequestBuilder" />
 			<Class name="com.microsoft.graph.requests.upload.UploadSliceRequestBuilder" />
-			<Class name="com.microsoft.graph.tasks.PageIterator$BuilderWithAsyncProcess" />
-			<Class name="com.microsoft.graph.tasks.PageIterator$BuilderWithSyncProcess" />
+			<Class name="com.microsoft.graph.tasks.PageIterator$Builder" />
 		</Or>
 	</Match>
 
