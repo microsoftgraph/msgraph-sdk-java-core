@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+## [2.0.21] - 2023-11-08
+
 ### Changed
 
 - Changed CoreHttpProvider dependency from OkHttpClient to Call.Factory (parent interface implemented by OkHttpClient). This make usage of OpenTelemetry tracing possible.
@@ -29,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     .authenticationProvider(authenticationProvider)
     .buildClient();
 ```
-
 
 ## [2.0.20] - 2023-10-23
 
