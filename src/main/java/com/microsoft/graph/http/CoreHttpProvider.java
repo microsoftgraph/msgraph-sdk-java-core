@@ -98,9 +98,9 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
     private final ILogger logger;
 
     /**
-     * The OkHttpClient that handles all requests
+     * The OkHttpClient(Call.Factory) that handles all requests
      */
-    private OkHttpClient corehttpClient;
+    private Call.Factory corehttpClient;
 
     /**
      * Creates the CoreHttpProvider
@@ -112,7 +112,7 @@ public class CoreHttpProvider implements IHttpProvider<Request> {
     @SuppressFBWarnings
     public CoreHttpProvider(@Nonnull final ISerializer serializer,
             @Nonnull final ILogger logger,
-            @Nonnull final OkHttpClient httpClient) {
+            @Nonnull final Call.Factory httpClient) {
         Objects.requireNonNull(logger, "parameter logger cannot be null");
         Objects.requireNonNull(serializer, "parameter serializer cannot be null");
         Objects.requireNonNull(httpClient, "parameter httpClient cannot be null");

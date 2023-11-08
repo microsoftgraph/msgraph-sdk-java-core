@@ -41,6 +41,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -185,7 +186,7 @@ public class BaseClient<nativeRequestType> implements IBaseClient<nativeRequestT
         @SuppressWarnings("unchecked")
         private IHttpProvider<nativeRequestType> getHttpProvider() {
             if(httpProvider == null) {
-                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (OkHttpClient)getHttpClient());
+                return (IHttpProvider<nativeRequestType>)new CoreHttpProvider(getSerializer(), getLogger(), (Call.Factory) getHttpClient());
             } else {
                 return httpProvider;
             }
