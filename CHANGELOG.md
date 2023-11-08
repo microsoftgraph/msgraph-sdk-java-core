@@ -9,6 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+## [2.0.21] - 2023-11-08
+
+### Changed
+
+- Changed CoreHttpProvider dependency from OkHttpClient to Call.Factory (parent interface implemented by OkHttpClient). This make usage of OpenTelemetry tracing possible.
+  https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation/okhttp/okhttp-3.0/library/README.md
+
+```java
+  private Call.Factory createTracedClient(OpenTelemetry openTelemetry, @Nonnull final IAuthenticationProvider auth) {
+    return OkHttpTelemetry.builder(openTelemetry).build().newCallFactory(createClient(auth));
+  }
+
+  private OkHttpClient createClient(@Nonnull final IAuthenticationProvider auth) {
+    return HttpClients.createDefault(auth);
+  }
+  
+  // then create the GraphServiceClient
+    IAuthenticationProvider authenticationProvider = ...;
+    GraphServiceClient
+    .builder(Call.Factory.class, Request.class)
+    .httpClient(createTracedClient(openTelemetry, authenticationProvider))
+    .authenticationProvider(authenticationProvider)
+    .buildClient();
+```
+
 ## [2.0.20] - 2023-10-23
 
 ### Changed 
