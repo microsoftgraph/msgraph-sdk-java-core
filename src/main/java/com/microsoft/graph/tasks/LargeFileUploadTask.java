@@ -1,8 +1,6 @@
 package com.microsoft.graph.tasks;
 
-import com.microsoft.graph.exceptions.ClientException;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.IProgressCallback;
 import com.microsoft.graph.models.IUploadSession;
 import com.microsoft.graph.models.UploadResult;
@@ -13,6 +11,7 @@ import com.microsoft.graph.requests.GraphClientFactory;
 import com.microsoft.graph.requests.options.GraphClientOption;
 import com.microsoft.graph.requests.upload.UploadSessionRequestBuilder;
 import com.microsoft.graph.requests.upload.UploadSliceRequestBuilder;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.serialization.Parsable;
@@ -139,7 +138,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
                 }
-            } catch (IOException| ExecutionException| ServiceException ex) {
+            } catch (IOException| ExecutionException| ApiException ex) {
                 throw new RuntimeException(ex);
             }
 
@@ -166,7 +165,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         session = updateSessionStatus();
         OffsetDateTime expirationDateTime = Objects.isNull(session.getExpirationDateTime()) ? OffsetDateTime.now() : session.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            throw new RuntimeException(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
+            throw new RuntimeException(new ApiException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
         }
         return this.upload(maxTries, progress);
     }
@@ -176,7 +175,7 @@ public class LargeFileUploadTask<T extends Parsable > {
     public void deleteSession() {
         OffsetDateTime expirationDateTime = Objects.isNull(this.uploadSession.getExpirationDateTime()) ? OffsetDateTime.now() : this.uploadSession.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            throw new RuntimeException(new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
+            throw new RuntimeException(new ApiException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
         }
         UploadSessionRequestBuilder<T> builder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
         builder.delete();
@@ -195,7 +194,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         return session;
     }
     private boolean firstAttempt;
-    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ServiceException {
+    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ApiException {
         this.firstAttempt = true;
         byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
@@ -203,8 +202,8 @@ public class LargeFileUploadTask<T extends Parsable > {
             try {
                 return uploadSliceRequestBuilder.put(chunkStream);
             } catch (RuntimeException ex) {
-                if(ex.getCause() instanceof ServiceException) {
-                    handleServiceException((ServiceException)ex.getCause(), exceptionsList);
+                if(ex.getCause() instanceof ApiException) {
+                    handleApiException((ApiException)ex.getCause(), exceptionsList);
                 }
                 else{
                     throw ex;
@@ -212,20 +211,20 @@ public class LargeFileUploadTask<T extends Parsable > {
             }
         }
     }
-    private UploadResult<T> handleServiceException(ServiceException serviceException, ArrayList<Throwable> exceptionsList) throws ServiceException {
-        if(serviceException.isMatch(ErrorConstants.Codes.GENERAL_EXCEPTION)
-            || serviceException.isMatch(ErrorConstants.Codes.TIMEOUT)) {
+    private UploadResult<T> handleApiException(ApiException apiException, ArrayList<Throwable> exceptionsList) throws ApiException {
+        if(apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.GENERAL_EXCEPTION.toLowerCase(Locale.ROOT))
+            || apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.TIMEOUT.toLowerCase(Locale.ROOT))) {
             if(this.firstAttempt) {
                 this.firstAttempt = false;
-                exceptionsList.add(serviceException);
+                exceptionsList.add(apiException);
             }
             else {
-                throw serviceException;
+                throw apiException;
             }
-        } else if (serviceException.isMatch(ErrorConstants.Codes.INVALID_RANGE)) {
+        } else if (apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.INVALID_RANGE.toLowerCase(Locale.ROOT))) {
             return new UploadResult<>();
         }
-        throw serviceException;
+        throw apiException;
     }
     /**
      * Creates the UploadSliceRequestBuilders for the upload task based on the upload session information.

@@ -1,6 +1,6 @@
 package com.microsoft.graph.models;
 
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.serialization.ParseNode;
 import com.microsoft.kiota.serialization.SerializationWriter;

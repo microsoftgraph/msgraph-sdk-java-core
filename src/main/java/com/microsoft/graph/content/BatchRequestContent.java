@@ -3,10 +3,10 @@ package com.microsoft.graph.content;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ClientException;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
@@ -231,8 +231,8 @@ public class BatchRequestContent {
             requestBody.writeTo(buffer);
             return JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
         } catch(IOException e) {
-            ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            throw new RuntimeException(clientException);
+            ApiException exception = new ApiException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
+            throw new RuntimeException(exception);
         }
     }
     private String getRawRequestContent(RequestBody requestBody) {
@@ -241,8 +241,8 @@ public class BatchRequestContent {
             requestBody.writeTo(buffer);
             return buffer.readUtf8();
         } catch(IOException e) {
-            ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            throw new RuntimeException(clientException);
+            ApiException exception = new ApiException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
+            throw new RuntimeException(exception);
         }
     }
     private boolean containsCorrespondingRequestId(List<String> dependsOn) {

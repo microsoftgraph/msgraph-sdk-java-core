@@ -2,7 +2,7 @@ package com.microsoft.graph.content;
 
 import com.google.gson.*;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.requests.ResponseBodyHandler;
 import com.microsoft.kiota.ResponseHandler;
 import com.microsoft.kiota.serialization.Parsable;

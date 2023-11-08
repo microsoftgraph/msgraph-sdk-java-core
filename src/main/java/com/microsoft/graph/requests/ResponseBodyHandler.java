@@ -1,8 +1,9 @@
 package com.microsoft.graph.requests;
 
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.kiota.ApiException;
+import com.microsoft.kiota.ApiExceptionBuilder;
+import com.microsoft.kiota.http.HeadersCompatibility;
 import com.microsoft.kiota.serialization.*;
 
 import okhttp3.Response;
@@ -76,8 +77,11 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
             !errorMappings.containsKey(statusCodeString) ||
             !(statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) &&
                 !(statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX"))) {
-            throw new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, null, statusCode, nativeResponse.headers(), nativeResponse.toString());
-
+            throw new ApiExceptionBuilder()
+                    .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
+                    .withResponseStatusCode(statusCode)
+                    .withResponseHeaders(HeadersCompatibility.getResponseHeaders(nativeResponse.headers()))
+                    .build();
         } else {
             Parsable result = parseNode.getObjectValue(errorMappings.get(statusCodeString));
             if (!(result instanceof Exception)) {

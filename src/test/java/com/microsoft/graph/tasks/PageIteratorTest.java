@@ -2,8 +2,8 @@ package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.BaseClient;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.testModels.*;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
@@ -72,7 +72,7 @@ class PageIteratorTest {
         }
     }
     @Test
-    void given_Concrete_Generated_Collection_Page_Will_Iterate_PageItems() throws ReflectiveOperationException, ServiceException {
+    void given_Concrete_Generated_Collection_Page_Will_Iterate_PageItems() throws ReflectiveOperationException, ApiException {
         int inputEventCount = 17;
 
         TestEventsResponse originalPage = new TestEventsResponse();
@@ -99,7 +99,7 @@ class PageIteratorTest {
     }
 
     @Test
-    void given_Concrete_Generated_CollectionPage_It_Stops_Iterating_PageItems() throws ReflectiveOperationException, ServiceException {
+    void given_Concrete_Generated_CollectionPage_It_Stops_Iterating_PageItems() throws ReflectiveOperationException, ApiException {
         int inputEventCount = 10;
 
         TestEventsResponse originalPage = new TestEventsResponse();
@@ -127,7 +127,7 @@ class PageIteratorTest {
         assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
     }
     @Test
-    void given_CollectionPage_Without_NextLink_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ServiceException {
+    void given_CollectionPage_Without_NextLink_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ApiException {
         TestEventsResponse originalPage = new TestEventsResponse();
         originalPage.setValue(new LinkedList<>());
         HashMap<String, Object> additionalData = new HashMap<>();
@@ -176,7 +176,7 @@ class PageIteratorTest {
 
     }
     @Test
-    void given_CollectionPage_Delta_Link_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ServiceException {
+    void given_CollectionPage_Delta_Link_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ApiException {
         TestEventsDeltaResponse originalPage = new TestEventsDeltaResponse();
         originalPage.setValue(new LinkedList<>());
         originalPage.setOdataDeltaLink("http://localhost/events?$skip=11");
@@ -203,7 +203,7 @@ class PageIteratorTest {
     }
 
     @Test
-    void given_CollectionPage_It_Iterates_Across_Pages() throws ReflectiveOperationException, ServiceException{
+    void given_CollectionPage_It_Iterates_Across_Pages() throws ReflectiveOperationException, ApiException{
         TestEventsResponse originalPage = new TestEventsResponse();
         originalPage.setValue(new LinkedList<>());
         originalPage.setOdataNextLink("http://localhost/events?$skip=11");
@@ -284,7 +284,7 @@ class PageIteratorTest {
         try{
             pageIterator.iterate();
         } catch (Exception e) {
-            assertEquals(ServiceException.class, e.getClass());
+            assertEquals(ApiException.class, e.getClass());
             assertTrue(e.getMessage().contains("Detected a nextLink loop. NextLink value:"));
         }
     }
@@ -316,7 +316,7 @@ class PageIteratorTest {
 
         try{
             pageIterator.iterate();
-        } catch (ServiceException e) {
+        } catch (ApiException e) {
             fail("Should not throw exception");
         }
     }
@@ -333,7 +333,7 @@ class PageIteratorTest {
         assertEquals(PageIterator.PageIteratorState.NOT_STARTED, pageIterator.getPageIteratorState());
     }
     @Test
-    void given_RequestConfigurator_It_Is_Invoked() throws ReflectiveOperationException, ServiceException {
+    void given_RequestConfigurator_It_Is_Invoked() throws ReflectiveOperationException, ApiException {
         TestEventsResponse originalPage = new TestEventsResponse();
         originalPage.setValue(new LinkedList<>());
         originalPage.setOdataNextLink("http://localhost/events?$skip=11");

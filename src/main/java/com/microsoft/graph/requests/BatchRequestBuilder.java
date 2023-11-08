@@ -5,7 +5,7 @@ import com.microsoft.graph.content.BatchRequestContent;
 import com.microsoft.graph.content.BatchRequestContentCollection;
 import com.microsoft.graph.content.BatchResponseContent;
 import com.microsoft.graph.content.BatchResponseContentCollection;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.NativeResponseHandler;
 import com.microsoft.kiota.RequestAdapter;

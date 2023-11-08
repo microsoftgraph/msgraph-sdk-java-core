@@ -1,7 +1,7 @@
 package com.microsoft.graph.models;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.Request;

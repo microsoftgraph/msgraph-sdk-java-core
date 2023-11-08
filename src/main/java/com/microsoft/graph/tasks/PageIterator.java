@@ -1,12 +1,8 @@
 package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ServiceException;
 import com.microsoft.graph.requests.IBaseClient;
-import com.microsoft.kiota.Compatibility;
-import com.microsoft.kiota.HttpMethod;
-import com.microsoft.kiota.RequestAdapter;
-import com.microsoft.kiota.RequestInformation;
+import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.AdditionalDataHolder;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
@@ -241,7 +237,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         this.nextLink = "";
         return false;
     }
-    private void interpageIterate() throws ReflectiveOperationException, ServiceException {
+    private void interpageIterate() throws ReflectiveOperationException, ApiException {
         this.state = PageIteratorState.INTERPAGE_ITERATION;
 
         if(!Compatibility.isBlank(nextLink) || !Compatibility.isBlank(deltaLink)) {
@@ -257,18 +253,18 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             }
         }
         if(!Compatibility.isBlank(nextLink) && this.nextLink.equals(extractNextLinkFromParsable(this.currentPage, null))) {
-            throw new ServiceException("Detected a nextLink loop. NextLink value: " + this.nextLink);
+            throw new ApiException("Detected a nextLink loop. NextLink value: " + this.nextLink);
         }
     }
 
     /**
      * Iterates over the collection of entities in the collation page.
      * Will continues to iterate over the collection of entities in the next page, if there is a next page.
-     * @throws ServiceException if the request was unable to complete for any reason.
+     * @throws ApiException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */
     @Nonnull
-    public void iterate() throws ServiceException, ReflectiveOperationException {
+    public void iterate() throws ApiException, ReflectiveOperationException {
         if(this.state == PageIteratorState.DELTA) {
             interpageIterate();
         }
@@ -281,11 +277,11 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
 
     /**
      * Resumes the iteration over the collection of entities in the collation page.
-     * @throws ServiceException if the request was unable to complete for any reason.
+     * @throws ApiException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */
     @Nonnull
-    public void resume() throws ServiceException, ReflectiveOperationException {
+    public void resume() throws ApiException, ReflectiveOperationException {
         iterate();
     }
 

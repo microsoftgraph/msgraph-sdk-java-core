@@ -1,9 +1,9 @@
 package com.microsoft.graph.content;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.testModels.*;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
 import okhttp3.*;
@@ -237,10 +237,9 @@ class BatchResponseContentTest {
         try{
            batchResponseContent.getResponseById("4", TestDriveItem::createFromDiscriminatorValue);
         } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof ServiceException);
-            ServiceException serviceException = (ServiceException) ex.getCause();
+            assertTrue(ex.getCause() instanceof ApiException);
+            ApiException serviceException = (ApiException) ex.getCause();
             assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.getResponseStatusCode());
-            assertNotNull(serviceException.getRawResponseBody());
         }
         TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue);
         assertNull(nonExistingNotebook);

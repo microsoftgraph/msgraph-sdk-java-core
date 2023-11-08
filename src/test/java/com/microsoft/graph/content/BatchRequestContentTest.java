@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.BaseClient;
 import com.microsoft.graph.requests.IBaseClient;

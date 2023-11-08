@@ -41,7 +41,7 @@ xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubu
 		<Bug code="PI" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.exceptions.ErrorConstants$Messages" />
+		<Class name="com.microsoft.graph.ErrorConstants$Messages" />
 		<Bug code="PI" />
 	</Match>
 	<Match>
