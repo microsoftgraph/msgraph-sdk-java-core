@@ -158,31 +158,28 @@ public class BatchRequestContent {
     /**
      * Builds the json content of the batch request.
      * @return The json content of the batch request as an InputStream.
+     * @throws IOException if there was an error writing the batch request content.
      */
     @Nonnull
-    public InputStream getBatchRequestContent() {
+    public InputStream getBatchRequestContent() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
-            writer.beginObject();
-            writer.name(CoreConstants.BatchRequest.REQUESTS);
-            writer.beginArray();
-            for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
-                writeBatchRequestStep(requestStep, writer);
-            }
-            writer.endArray();
-            writer.endObject();
-            writer.flush();
-            PipedInputStream in = new PipedInputStream();
-            try(final PipedOutputStream out = new PipedOutputStream(in)) {
-                outputStream.writeTo(out);
-                return in;
-            }
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        writer.beginObject();
+        writer.name(CoreConstants.BatchRequest.REQUESTS);
+        writer.beginArray();
+        for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
+            writeBatchRequestStep(requestStep, writer);
+        }
+        writer.endArray();
+        writer.endObject();
+        writer.flush();
+        PipedInputStream in = new PipedInputStream();
+        try(final PipedOutputStream out = new PipedOutputStream(in)) {
+            outputStream.writeTo(out);
+            return in;
         }
     }
-    private void writeBatchRequestStep(BatchRequestStep requestStep, JsonWriter writer) {
-        try {
+    private void writeBatchRequestStep(BatchRequestStep requestStep, JsonWriter writer) throws IOException {
             Request request = requestStep.getRequest();
             writer.beginObject();
             writer.name(CoreConstants.BatchRequest.ID).value(requestStep.getRequestId());
@@ -221,28 +218,23 @@ public class BatchRequestContent {
                 writer.endObject();
             }
             writer.endObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
-    private JsonObject getJsonRequestContent(RequestBody requestBody) {
+    private JsonObject getJsonRequestContent(RequestBody requestBody) throws IOException {
         try {
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
             return JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
         } catch(IOException e) {
-            ApiException exception = new ApiException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            throw new RuntimeException(exception);
+            throw new IOException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
         }
     }
-    private String getRawRequestContent(RequestBody requestBody) {
+    private String getRawRequestContent(RequestBody requestBody) throws IOException {
         try{
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
             return buffer.readUtf8();
         } catch(IOException e) {
-            ApiException exception = new ApiException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            throw new RuntimeException(exception);
+            throw new IOException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
         }
     }
     private boolean containsCorrespondingRequestId(List<String> dependsOn) {

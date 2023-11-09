@@ -51,19 +51,17 @@ public class UploadResponseHandler {
         Objects.requireNonNull(response);
         Objects.requireNonNull(factory);
         if (Objects.isNull(response.body())) {
-            ApiException ex = new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
-            throw new RuntimeException(ex);
+            throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
         }
         try(final InputStream in = Objects.requireNonNull(response.body()).byteStream()){
             String[] contentType = response.body().contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
             byte[] responseStream = ByteStreams.toByteArray(in);
             if(!response.isSuccessful()) {
-                ApiException ex = new ApiExceptionBuilder()
+                throw new ApiExceptionBuilder()
                         .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
                         .withResponseStatusCode(response.code())
                         .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
                         .build();
-                throw new RuntimeException(ex);
             }
             UploadResult<T> uploadResult = new UploadResult<>();
             if (response.code() == HttpURLConnection.HTTP_CREATED) {

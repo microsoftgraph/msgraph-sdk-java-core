@@ -129,10 +129,9 @@ class UploadResponseHandlerTest {
         try {
             responseHandler
                 .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
-        } catch (RuntimeException ex) {
-            ApiException se = (ApiException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
-            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, se.getResponseStatusCode());
+        } catch (ApiException ex) {
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
+            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, ex.getResponseStatusCode());
         }
     }
     @Test
@@ -160,9 +159,8 @@ class UploadResponseHandlerTest {
         try {
             responseHandler
                 .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
-        } catch (RuntimeException ex) {
-            ApiException se = (ApiException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
+        } catch (ApiException ex) {
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
         }
     }
 }

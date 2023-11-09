@@ -17,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.time.OffsetDateTime;
-import java.util.concurrent.ExecutionException;
 
 import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.defaultInstance;
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,7 +55,7 @@ class UploadSliceRequestTest {
         UploadSliceRequestBuilder<TestDriveItem> sliceRequestBuilder = new UploadSliceRequestBuilder<>(
             "https://a.b.c/", adapter, 0, 200 , 1000, factory);
 
-        UploadResult<TestDriveItem> result = sliceRequestBuilder.put(stream).get();
+        UploadResult<TestDriveItem> result = sliceRequestBuilder.put(stream);
         UploadSession session = (UploadSession) result.uploadSession;
 
         assertFalse(result.isUploadSuccessful());

@@ -372,5 +372,4 @@ class BatchRequestContentTest {
         }
         return new String(result.toByteArray(), StandardCharsets.UTF_8);
     }
-
 }

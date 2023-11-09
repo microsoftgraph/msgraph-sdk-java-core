@@ -16,6 +16,8 @@ import okhttp3.Response;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +41,10 @@ public class BatchRequestBuilder {
      * @param requestContent the batch request content.
      * @param errorMappings the error mappings to use when parsing the response.
      * @return the batch response content.
+     * @throws IOException if there was an error writing the request content.
      */
     @Nonnull
-    public BatchResponseContent post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public BatchResponseContent post(@Nonnull BatchRequestContent requestContent, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) throws IOException {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = toPostRequestInformation(requestContent);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
@@ -54,9 +57,10 @@ public class BatchRequestBuilder {
      * @param batchRequestContentCollection the BatchRequestContentCollection to post.
      * @param errorMappings the error mappings to use when parsing the response.
      * @return the BatchResponseContentCollection.
+     * @throws IOException if there was an error writing the request content.
      */
     @Nonnull
-    public BatchResponseContentCollection post(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public BatchResponseContentCollection post(@Nonnull BatchRequestContentCollection batchRequestContentCollection, @Nullable Map<String, ParsableFactory<? extends Parsable>> errorMappings) throws IOException {
         BatchResponseContentCollection collection = new BatchResponseContentCollection();
         List<BatchRequestContent> requests = batchRequestContentCollection.getBatchRequestsForExecution();
         for (BatchRequestContent request : requests) {
@@ -69,9 +73,10 @@ public class BatchRequestBuilder {
      * Creates the request information for a batch request.
      * @param requestContent the batch request content.
      * @return the request information.
+     * @throws IOException if there was an error writing the request content.
      */
     @Nonnull
-    public RequestInformation toPostRequestInformation(@Nonnull BatchRequestContent requestContent) {
+    public RequestInformation toPostRequestInformation(@Nonnull BatchRequestContent requestContent) throws IOException {
         Objects.requireNonNull(requestContent, ErrorConstants.Messages.NULL_PARAMETER + "requestContent");
         RequestInformation requestInfo = new RequestInformation();
         requestInfo.httpMethod = HttpMethod.POST;

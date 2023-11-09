@@ -1,6 +1,7 @@
 package com.microsoft.graph.tasks;
 
 import com.microsoft.graph.ErrorConstants;
+import com.microsoft.graph.exceptions.ClientException;
 import com.microsoft.graph.models.IProgressCallback;
 import com.microsoft.graph.models.IUploadSession;
 import com.microsoft.graph.models.UploadResult;
@@ -28,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -103,9 +103,11 @@ public class LargeFileUploadTask<T extends Parsable > {
      * Perform the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      * May also occur if interruption occurs in .sleep() call.
+     * @throws IOException if there was an error reading the chunk input stream.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
     @Nonnull
-    public UploadResult<T> upload() {
+    public UploadResult<T> upload() throws IOException, InterruptedException{
         return this.upload(3, null);
     }
     /**
@@ -114,13 +116,15 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @param progress IProgress interface describing how to report progress.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      * May also occur if interruption occurs in .sleep() call.
+     * @throws IOException if there was an error reading the chunk input stream.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
     @Nonnull
-    public UploadResult<T> upload(int maxTries, @Nullable IProgressCallback progress) {
+    public UploadResult<T> upload(int maxTries, @Nullable IProgressCallback progress) throws IOException, InterruptedException {
         int uploadTries = 0;
         ArrayList<Throwable> exceptionsList = new ArrayList<>();
         while (uploadTries < maxTries) {
-            try {
+
                 List<UploadSliceRequestBuilder<T>> uploadSliceRequestBuilders = getUploadSliceRequests();
                 for (UploadSliceRequestBuilder<T> request : uploadSliceRequestBuilders) {
                     UploadResult<T> result;
@@ -138,19 +142,18 @@ public class LargeFileUploadTask<T extends Parsable > {
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
                 }
-            } catch (IOException| ExecutionException| ApiException ex) {
-                throw new RuntimeException(ex);
             }
-
-        }
         throw new CancellationException();
     }
     /**
      * Resume the upload task.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
+     * @throws ClientException if the upload session has expired.
+     * @throws IOException if there was an error reading the chunk input stream.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
     @Nonnull
-    public UploadResult<T> resume() {
+    public UploadResult<T> resume() throws ClientException, IOException , InterruptedException{
         return this.resume(3, null);
     }
     /**
@@ -158,24 +161,28 @@ public class LargeFileUploadTask<T extends Parsable > {
      * @param maxTries Number of times to retry the task before giving up.
      * @param progress IProgress interface describing how to report progress.
      * @return An UploadResult model containing the information from the server resulting from the upload request.
+     * @throws ClientException if the upload session has expired.
+     * @throws IOException if there was an error reading the chunk input stream.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
     @Nonnull
-    public UploadResult<T> resume(int maxTries, @Nullable IProgressCallback progress) {
+    public UploadResult<T> resume(int maxTries, @Nullable IProgressCallback progress) throws ClientException, IOException , InterruptedException{
         IUploadSession session;
         session = updateSessionStatus();
         OffsetDateTime expirationDateTime = Objects.isNull(session.getExpirationDateTime()) ? OffsetDateTime.now() : session.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            throw new RuntimeException(new ApiException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
+            throw new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION);
         }
         return this.upload(maxTries, progress);
     }
     /**
      * Delete the upload session.
+     * @throws ClientException if the upload session has expired.
      */
-    public void deleteSession() {
+    public void deleteSession() throws ClientException {
         OffsetDateTime expirationDateTime = Objects.isNull(this.uploadSession.getExpirationDateTime()) ? OffsetDateTime.now() : this.uploadSession.getExpirationDateTime();
         if(expirationDateTime.isBefore(OffsetDateTime.now()) || expirationDateTime.isEqual(OffsetDateTime.now())) {
-            throw new RuntimeException(new ApiException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION));
+            throw new ClientException(ErrorConstants.Messages.EXPIRED_UPLOAD_SESSION);
         }
         UploadSessionRequestBuilder<T> builder = new UploadSessionRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter, this.factory);
         builder.delete();
@@ -193,34 +200,19 @@ public class LargeFileUploadTask<T extends Parsable > {
         this.uploadSession = session;
         return session;
     }
-    private boolean firstAttempt;
-    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException, ApiException {
-        this.firstAttempt = true;
+    private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException {
         byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
-        while(true) {
-            try {
-                return uploadSliceRequestBuilder.put(chunkStream);
-            } catch (RuntimeException ex) {
-                if(ex.getCause() instanceof ApiException) {
-                    handleApiException((ApiException)ex.getCause(), exceptionsList);
-                }
-                else{
-                    throw ex;
-                }
-            }
+        try {
+            return uploadSliceRequestBuilder.put(chunkStream);
+        } catch (ApiException apiException) {
+            return handleApiException(apiException, exceptionsList);
         }
     }
-    private UploadResult<T> handleApiException(ApiException apiException, ArrayList<Throwable> exceptionsList) throws ApiException {
+    private UploadResult<T> handleApiException(ApiException apiException, ArrayList<Throwable> exceptionsList) {
         if(apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.GENERAL_EXCEPTION.toLowerCase(Locale.ROOT))
             || apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.TIMEOUT.toLowerCase(Locale.ROOT))) {
-            if(this.firstAttempt) {
-                this.firstAttempt = false;
                 exceptionsList.add(apiException);
-            }
-            else {
-                throw apiException;
-            }
         } else if (apiException.getMessage().toLowerCase(Locale.ROOT).contains(ErrorConstants.Codes.INVALID_RANGE.toLowerCase(Locale.ROOT))) {
             return new UploadResult<>();
         }

@@ -61,7 +61,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
                     handleFailedResponse(nativeResponse, errorMappings, parseNode);
                 }
             }
-            catch(ApiException | IOException ex) {
+            catch(IOException ex) {
                 throw new RuntimeException(ex);
             }
         } else {
@@ -70,7 +70,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
         return null;
     }
 
-    private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) throws ApiException {
+    private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) {
         int statusCode = nativeResponse.code();
         String statusCodeString = String.valueOf(statusCode);
         if (errorMappings == null ||

@@ -237,9 +237,9 @@ class BatchResponseContentTest {
         try{
            batchResponseContent.getResponseById("4", TestDriveItem::createFromDiscriminatorValue);
         } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof ApiException);
-            ApiException serviceException = (ApiException) ex.getCause();
-            assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.getResponseStatusCode());
+            assertTrue(ex instanceof ApiException);
+            ApiException apiException = (ApiException) ex;
+            assertEquals(HttpURLConnection.HTTP_CONFLICT, apiException.getResponseStatusCode());
         }
         TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue);
         assertNull(nonExistingNotebook);
