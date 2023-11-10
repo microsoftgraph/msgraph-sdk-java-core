@@ -6,7 +6,6 @@ import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
-import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
