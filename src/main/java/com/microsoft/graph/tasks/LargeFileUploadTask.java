@@ -143,7 +143,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
                 }
             }
-        throw new CancellationException();
+        throw new CancellationException("The upload task was retried the maximum number of times without success and has been cancelled.");
     }
     /**
      * Resume the upload task.

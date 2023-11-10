@@ -115,7 +115,7 @@ public class BatchRequestContent {
             throw new IllegalArgumentException(maxStepsExceededMessage);
         }
         String requestId = java.util.UUID.randomUUID().toString();
-        Request request = this.requestAdapter.convertToNativeRequest(requestInformation);
+        final Request request = this.requestAdapter.convertToNativeRequest(requestInformation);
         BatchRequestStep requestStep = new BatchRequestStep(requestId, request);
         this.batchRequestSteps.put(requestId, requestStep);
         return requestId;
