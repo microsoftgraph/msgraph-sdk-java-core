@@ -11,6 +11,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BatchRequestBuilderTest {
 
     @Test
-    void BatchRequestBuilder_DefaultBuilderTest() {
+    void BatchRequestBuilder_DefaultBuilderTest() throws IOException {
         BaseClient client = new BaseClient(new AnonymousAuthenticationProvider(), "https://localhost");
         BatchRequestBuilder batchRequestBuilder = new BatchRequestBuilder(client.getRequestAdapter());
 
@@ -29,7 +30,7 @@ class BatchRequestBuilderTest {
         BatchRequestStep batchRequestStep2 = new BatchRequestStep("2", request2, Arrays.asList("1"));
 
         BatchRequestContent batchRequestContent = new BatchRequestContent(client,Arrays.asList(batchRequestStep, batchRequestStep2));
-        RequestInformation requestInformation = batchRequestBuilder.toPostRequestInformationAsync(batchRequestContent).join();
+        RequestInformation requestInformation = batchRequestBuilder.toPostRequestInformation(batchRequestContent);
 
         assertEquals("{+baseurl}/$batch", requestInformation.urlTemplate);
         assertEquals(client.getRequestAdapter(), batchRequestBuilder.getRequestAdapter());

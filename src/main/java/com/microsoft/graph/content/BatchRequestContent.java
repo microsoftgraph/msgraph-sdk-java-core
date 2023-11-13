@@ -1,13 +1,12 @@
 package com.microsoft.graph.content;
 
-import com.google.common.base.Strings;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ClientException;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 
@@ -20,7 +19,6 @@ import jakarta.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A class representing the content of a batch request.
@@ -111,16 +109,15 @@ public class BatchRequestContent {
      * @return The request id of the added request.
      */
     @Nonnull
-    public CompletableFuture<String> addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
+    public String addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
         if(this.batchRequestSteps.size() >= CoreConstants.BatchRequest.MAX_REQUESTS) {
             throw new IllegalArgumentException(maxStepsExceededMessage);
         }
         String requestId = java.util.UUID.randomUUID().toString();
-        return this.requestAdapter.convertToNativeRequestAsync(requestInformation).thenCompose(request -> {
-            BatchRequestStep requestStep = new BatchRequestStep(requestId, (Request) request);
-            this.batchRequestSteps.put(requestId, requestStep);
-            return CompletableFuture.completedFuture(requestId);
-        });
+        final Request request = this.requestAdapter.convertToNativeRequest(requestInformation);
+        BatchRequestStep requestStep = new BatchRequestStep(requestId, request);
+        this.batchRequestSteps.put(requestId, requestStep);
+        return requestId;
     }
     /**
      * Removes a batch request step from the batch request.
@@ -128,7 +125,7 @@ public class BatchRequestContent {
      * @return True if the request was removed, false otherwise.
      */
     public boolean removeBatchRequestStepWithId(@Nonnull String requestId) {
-        if(Strings.isNullOrEmpty(requestId)) {
+        if(Compatibility.isBlank(requestId)) {
             throw new IllegalArgumentException("requestId cannot be null or empty.");
         }
         boolean isRemoved = false;
@@ -160,33 +157,28 @@ public class BatchRequestContent {
     /**
      * Builds the json content of the batch request.
      * @return The json content of the batch request as an InputStream.
+     * @throws IOException if there was an error writing the batch request content.
      */
     @Nonnull
-    public CompletableFuture<InputStream> getBatchRequestContentAsync() {
+    public InputStream getBatchRequestContent() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
-            writer.beginObject();
-            writer.name(CoreConstants.BatchRequest.REQUESTS);
-            writer.beginArray();
-            for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
-                writeBatchRequestStepAsync(requestStep, writer);
-            }
-            writer.endArray();
-            writer.endObject();
-            writer.flush();
-            PipedInputStream in = new PipedInputStream();
-            try(final PipedOutputStream out = new PipedOutputStream(in)) {
-                outputStream.writeTo(out);
-                return CompletableFuture.completedFuture(in);
-            }
-        } catch(IOException e) {
-            CompletableFuture<InputStream> exception = new CompletableFuture<>();
-            exception.completeExceptionally(e);
-            return exception;
+        JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        writer.beginObject();
+        writer.name(CoreConstants.BatchRequest.REQUESTS);
+        writer.beginArray();
+        for (BatchRequestStep requestStep : this.batchRequestSteps.values()) {
+            writeBatchRequestStep(requestStep, writer);
+        }
+        writer.endArray();
+        writer.endObject();
+        writer.flush();
+        PipedInputStream in = new PipedInputStream();
+        try(final PipedOutputStream out = new PipedOutputStream(in)) {
+            outputStream.writeTo(out);
+            return in;
         }
     }
-    private void writeBatchRequestStepAsync(BatchRequestStep requestStep, JsonWriter writer) {
-        try {
+    private void writeBatchRequestStep(BatchRequestStep requestStep, JsonWriter writer) throws IOException {
             Request request = requestStep.getRequest();
             writer.beginObject();
             writer.name(CoreConstants.BatchRequest.ID).value(requestStep.getRequestId());
@@ -209,10 +201,10 @@ public class BatchRequestContent {
                 headers = headers.newBuilder().add("Content-Type", contentType).build();
                 writer.name(CoreConstants.BatchRequest.BODY);
                 if(contentType.toLowerCase(Locale.US).contains(CoreConstants.MimeTypeNames.APPLICATION_JSON)){
-                    JsonObject bodyObject = getJsonRequestContent(requestBody).join();
+                    JsonObject bodyObject = getJsonRequestContent(requestBody);
                     writer.jsonValue(bodyObject.toString());
                 } else {
-                    String rawBodyContent = getRawRequestContent(requestBody).join();
+                    String rawBodyContent = getRawRequestContent(requestBody);
                     writer.value(rawBodyContent);
                 }
             }
@@ -225,34 +217,23 @@ public class BatchRequestContent {
                 writer.endObject();
             }
             writer.endObject();
-        } catch (IOException e) {
-            CompletableFuture<Void> exception = new CompletableFuture<>();
-            exception.completeExceptionally(e);
-        }
     }
-    private CompletableFuture<JsonObject> getJsonRequestContent(RequestBody requestBody) {
+    private JsonObject getJsonRequestContent(RequestBody requestBody) throws IOException {
         try {
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
-            JsonObject jsonObject = JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
-            return CompletableFuture.completedFuture(jsonObject);
+            return JsonParser.parseString(buffer.readUtf8()).getAsJsonObject();
         } catch(IOException e) {
-            ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            CompletableFuture<JsonObject> exception = new CompletableFuture<>();
-            exception.completeExceptionally(clientException);
-            return exception;
+            throw new IOException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
         }
     }
-    private CompletableFuture<String> getRawRequestContent(RequestBody requestBody) {
+    private String getRawRequestContent(RequestBody requestBody) throws IOException {
         try{
             Buffer buffer = new Buffer();
             requestBody.writeTo(buffer);
-            return CompletableFuture.completedFuture(buffer.readUtf8());
+            return buffer.readUtf8();
         } catch(IOException e) {
-            ClientException clientException = new ClientException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
-            CompletableFuture<String> exception = new CompletableFuture<>();
-            exception.completeExceptionally(clientException);
-            return exception;
+            throw new IOException(ErrorConstants.Messages.UNABLE_TO_DESERIALIZE_CONTENT, e);
         }
     }
     private boolean containsCorrespondingRequestId(List<String> dependsOn) {
@@ -261,7 +242,7 @@ public class BatchRequestContent {
     private String getRelativeUrl(HttpUrl url) {
         String query = url.encodedQuery(); //Query must be encoded in order for batch requests to work.
         String path = url.encodedPath().substring(5);
-        if(Strings.isNullOrEmpty(query)) {
+        if(Compatibility.isBlank(query)) {
             return path;
         }
         return (path + "?" + query); // `v1.0/` and `beta/` are both 5 characters

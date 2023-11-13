@@ -1,13 +1,11 @@
 package com.microsoft.graph.exceptions;
 
-import com.microsoft.kiota.ApiException;
-
 import jakarta.annotation.Nonnull;
 
 /**
  * Graph client exception wrapper.
  */
-public class ClientException extends ApiException {
+public class ClientException extends Exception {
     /**
      * Constructor for a ClientException
      * @param message The exception message.
@@ -18,7 +16,7 @@ public class ClientException extends ApiException {
     }
     /***
      * Constructor for a ClientException
-     * @param message Th exception message.
+     * @param message The exception message.
      */
     public ClientException(@Nonnull String message) {
         super(message);

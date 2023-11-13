@@ -1,8 +1,8 @@
 package com.microsoft.graph.models;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
+import com.microsoft.kiota.Compatibility;
 import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.Request;
 
@@ -24,7 +24,7 @@ public class BatchRequestStep {
      */
     public BatchRequestStep(@Nonnull String requestId, @Nonnull Request request) {
         Objects.requireNonNull(request, ErrorConstants.Messages.NULL_PARAMETER + "request");
-        if(Strings.isNullOrEmpty(requestId)) {
+        if(Compatibility.isBlank(requestId)) {
             throw new IllegalArgumentException("requestId cannot be null or empty.");
         }
         this.requestId = requestId;
@@ -79,7 +79,7 @@ public class BatchRequestStep {
      * @param id The id of the request to add to the dependsOn list.
      */
     public void addDependsOnId(@Nonnull String id) {
-        if(Strings.isNullOrEmpty(id)) {
+        if(Compatibility.isBlank(id)) {
             throw new IllegalArgumentException("id cannot be null or empty");
         }
         if(dependsOn == null) {

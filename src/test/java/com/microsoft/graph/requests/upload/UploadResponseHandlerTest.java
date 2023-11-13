@@ -1,11 +1,11 @@
 package com.microsoft.graph.requests.upload;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
 import com.microsoft.graph.testModels.TestDriveItem;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
 import okhttp3.*;
@@ -17,14 +17,13 @@ import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.default
 
 import java.net.HttpURLConnection;
 import java.time.OffsetDateTime;
-import java.util.concurrent.ExecutionException;
 
 class UploadResponseHandlerTest {
 
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
-    void GetUploadItemOnCompletedUpload() throws ExecutionException, InterruptedException {
+    void GetUploadItemOnCompletedUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -42,8 +41,8 @@ class UploadResponseHandlerTest {
             .code(HttpURLConnection.HTTP_CREATED)
             .build();
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
-        responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();}).get();
+            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+        responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();});
         TestDriveItem item = result.itemResponse;
         assertTrue(result.isUploadSuccessful());
         assertNotNull(item);
@@ -52,7 +51,7 @@ class UploadResponseHandlerTest {
         assertEquals(33, item.size);
     }
     @Test
-    void GetFileAttachmentLocationOnCompletedUpload() throws ExecutionException, InterruptedException {
+    void getFileAttachmentLocationOnCompletedUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -65,7 +64,7 @@ class UploadResponseHandlerTest {
             .header("location", "http://localhost")
             .build();
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response,TestDriveItem::createFromDiscriminatorValue).get();
+            .handleResponse(response,TestDriveItem::createFromDiscriminatorValue);
         TestDriveItem item = result.itemResponse;
 
         assertTrue(result.isUploadSuccessful());
@@ -73,7 +72,7 @@ class UploadResponseHandlerTest {
         assertEquals("http://localhost", result.location.toString());
     }
     @Test
-    void GetUploadSessionOnProgressingUpload() throws ExecutionException, InterruptedException {
+    void getUploadSessionOnProgressingUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -94,7 +93,7 @@ class UploadResponseHandlerTest {
             .code(HttpURLConnection.HTTP_OK)
             .build();
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
+            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
         UploadSession session = (UploadSession) result.uploadSession;
 
         assertFalse(result.isUploadSuccessful());
@@ -106,7 +105,7 @@ class UploadResponseHandlerTest {
         assertEquals(2, session.getNextExpectedRanges().size());
     }
     @Test
-    void ThrowsServiceExceptionOnErrorResponse() throws InterruptedException {
+    void throwsServiceExceptionOnErrorResponse() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         ResponseBody body = ResponseBody.create("{\n" +
             "   \"error\": {\n"+
@@ -129,15 +128,14 @@ class UploadResponseHandlerTest {
 
         try {
             responseHandler
-                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
-        } catch (ExecutionException ex) {
-            ServiceException se = (ServiceException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
-            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, se.getResponseStatusCode());
+                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+        } catch (ApiException ex) {
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
+            assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, ex.getResponseStatusCode());
         }
     }
     @Test
-    void ThrowsSerializationErrorOnInvalidJson() throws InterruptedException {
+    void throwsSerializationErrorOnInvalidJson() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         String malformedResponse =
             "   \"error\": {\n"+
@@ -160,11 +158,9 @@ class UploadResponseHandlerTest {
             .build();
         try {
             responseHandler
-                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue).get();
-        } catch (ExecutionException ex) {
-            ServiceException se = (ServiceException) ex.getCause();
-            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, se.getMessage());
-            assertEquals(malformedResponse, se.getRawResponseBody());
+                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+        } catch (ApiException ex) {
+            assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
         }
     }
 }

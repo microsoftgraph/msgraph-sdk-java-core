@@ -1,8 +1,9 @@
 package com.microsoft.graph.requests;
 
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.kiota.ApiException;
+import com.microsoft.kiota.ApiExceptionBuilder;
+import com.microsoft.kiota.http.HeadersCompatibility;
 import com.microsoft.kiota.serialization.*;
 
 import okhttp3.Response;
@@ -12,7 +13,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.io.*;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A response handler for deserializing responses to a ModelType. Particularly for Batch requests.
@@ -41,13 +41,13 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
      * Handles the response and returns the deserialized response body as a ModelType.
      * @param response The native response object.
      * @param errorMappings the error mappings for the response to use when deserializing failed responses bodies. Where an error code like 401 applies specifically to that status code, a class code like 4XX applies to all status codes within the range if an the specific error code is not present.
-     * @return A CompletableFuture that represents the asynchronous operation and contains the deserialized response.
+     * @return the deserialized response.
      * @param <NativeResponseType> The type of the native response object.
      * @param <ModelType> The type of the response model object.
      */
     @Nonnull
     @Override
-    public <NativeResponseType, ModelType> CompletableFuture<ModelType> handleResponseAsync(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+    public <NativeResponseType, ModelType> ModelType handleResponse(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
         if(response instanceof Response && ((Response) response).body()!=null) {
             Response nativeResponse = (Response) response;
             ResponseBody body = nativeResponse.body();
@@ -56,31 +56,32 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
                 body.close();
                 if(nativeResponse.isSuccessful()) {
                     final ModelType result = (ModelType) parseNode.getObjectValue(this.factory); //We can be sure this is the correct type since return of this method is based on the type of the factory.
-                    return CompletableFuture.completedFuture(result);
+                    return result;
                 } else {
                     handleFailedResponse(nativeResponse, errorMappings, parseNode);
                 }
             }
-            catch(ApiException | IOException ex) {
-                CompletableFuture<ModelType> exceptionalResult = new CompletableFuture<>();
-                exceptionalResult.completeExceptionally(ex);
-                return exceptionalResult;
+            catch(IOException ex) {
+                throw new RuntimeException(ex);
             }
         } else {
             throw new IllegalArgumentException("The provided response type is not supported by this response handler.");
         }
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
 
-    private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) throws ApiException {
+    private void handleFailedResponse(Response nativeResponse, HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, ParseNode parseNode) {
         int statusCode = nativeResponse.code();
         String statusCodeString = String.valueOf(statusCode);
         if (errorMappings == null ||
             !errorMappings.containsKey(statusCodeString) ||
             !(statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) &&
                 !(statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX"))) {
-            throw new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, null, statusCode, nativeResponse.headers(), nativeResponse.toString());
-
+            throw new ApiExceptionBuilder()
+                    .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
+                    .withResponseStatusCode(statusCode)
+                    .withResponseHeaders(HeadersCompatibility.getResponseHeaders(nativeResponse.headers()))
+                    .build();
         } else {
             Parsable result = parseNode.getObjectValue(errorMappings.get(statusCodeString));
             if (!(result instanceof Exception)) {

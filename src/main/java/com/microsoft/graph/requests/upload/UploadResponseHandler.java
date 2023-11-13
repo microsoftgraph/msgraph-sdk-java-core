@@ -1,10 +1,12 @@
 package com.microsoft.graph.requests.upload;
 
 import com.google.common.io.ByteStreams;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
+import com.microsoft.kiota.ApiException;
+import com.microsoft.kiota.ApiExceptionBuilder;
+import com.microsoft.kiota.http.HeadersCompatibility;
 import com.microsoft.kiota.serialization.*;
 import okhttp3.Response;
 
@@ -16,9 +18,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The request handler for upload requests.
@@ -47,24 +47,21 @@ public class UploadResponseHandler {
      * @return An UploadResult model containing the information from the server resulting from the upload request.
      */
     @Nonnull
-    public <T extends Parsable> CompletableFuture<UploadResult<T>> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) {
+    public <T extends Parsable> UploadResult<T> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) {
         Objects.requireNonNull(response);
         Objects.requireNonNull(factory);
         if (Objects.isNull(response.body())) {
-            ServiceException ex = new ServiceException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
-            CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(ex);
-            return exceptionalResult;
+            throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
         }
         try(final InputStream in = Objects.requireNonNull(response.body()).byteStream()){
             String[] contentType = response.body().contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
             byte[] responseStream = ByteStreams.toByteArray(in);
             if(!response.isSuccessful()) {
-                String rawResponseBody = new String(responseStream, StandardCharsets.UTF_8);
-                ServiceException ex = new ServiceException(ErrorConstants.Codes.GENERAL_EXCEPTION, null, response.code(), response.headers(), rawResponseBody);
-                CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-                exceptionalResult.completeExceptionally(ex);
-                return exceptionalResult;
+                throw new ApiExceptionBuilder()
+                        .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
+                        .withResponseStatusCode(response.code())
+                        .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
+                        .build();
             }
             UploadResult<T> uploadResult = new UploadResult<>();
             if (response.code() == HttpURLConnection.HTTP_CREATED) {
@@ -85,12 +82,10 @@ public class UploadResponseHandler {
                     uploadResult.itemResponse = objectParseNode.getObjectValue(factory);
                 }
             }
-            return CompletableFuture.completedFuture(uploadResult);
+            return uploadResult;
         }
         catch(IOException | URISyntaxException ex) {
-            CompletableFuture<UploadResult<T>> exceptionalResult = new CompletableFuture<>();
-            exceptionalResult.completeExceptionally(ex);
-            return exceptionalResult;
+            throw new RuntimeException(ex);
         }
     }
 }

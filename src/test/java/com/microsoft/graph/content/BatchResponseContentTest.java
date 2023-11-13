@@ -1,9 +1,9 @@
 package com.microsoft.graph.content;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
-import com.microsoft.graph.exceptions.ServiceException;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.testModels.*;
+import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
 import okhttp3.*;
@@ -23,23 +23,23 @@ class BatchResponseContentTest {
     Response.Builder defaultBuilder = new Response.Builder().protocol(Protocol.HTTP_1_1).message("Message").request(mock(Request.class));
 
     @Test
-    void BatchResponseContent_InitializeWithNoContentAsync() {
+    void BatchResponseContent_InitializeWithNoContent() {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses();
         Response response1 = responses.get("1");
         assertNotNull(responses);
         assertNull(response1);
         assertEquals(0,responses.size());
     }
     @Test
-    void BatchResponseContent_InitializeWithEmptyResponseContentAsync() {
+    void BatchResponseContent_InitializeWithEmptyResponseContent() {
         String jsonResponse = "{ \"responses\": [] }";
         ResponseBody responseBody = ResponseBody.create(jsonResponse,MediaType.get("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).body(responseBody).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
-        Response response1 = batchResponseContent.getResponseById("1").join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses();
+        Response response1 = batchResponseContent.getResponseById("1");
         assertNotNull(responses);
         assertNull(response1);
         assertEquals(0,responses.size());
@@ -53,7 +53,7 @@ class BatchResponseContentTest {
         }
     }
     @Test
-    void BatchResponseContent_GetResponsesAsync() {
+    void BatchResponseContent_GetResponses() {
         String responseJSON = "{\"responses\":"
             +"[{"
             +"\"id\": \"1\","
@@ -77,7 +77,7 @@ class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        HashMap<String, Response> responses = batchResponseContent.getResponses().join();
+        HashMap<String, Response> responses = batchResponseContent.getResponses();
 
         assertNotNull(responses);
         assertEquals(3, responses.size());
@@ -87,7 +87,7 @@ class BatchResponseContentTest {
         assertEquals(HttpURLConnection.HTTP_CREATED, responses.get("3").code());
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsync() {
+    void BatchResponseContent_GetResponseById() {
         String responseJSON = "{\"responses\":"
             + "[{"
             + "\"id\": \"1\","
@@ -136,16 +136,16 @@ class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        Response response2 = batchResponseContent.getResponseById("2").join();
-        Response imageResponse = batchResponseContent.getResponseById("3").join();
+        Response response2 = batchResponseContent.getResponseById("2");
+        Response imageResponse = batchResponseContent.getResponseById("3");
 
         assertNotNull(response2);
         assertEquals(HttpURLConnection.HTTP_CONFLICT, response2.code());
         assertEquals("image/jpeg", imageResponse.header("Content-Type"));
-        assertNull(batchResponseContent.getResponseById("4").join());
+        assertNull(batchResponseContent.getResponseById("4"));
     }
     @Test
-    void BatchResponseContent_GetResponseStreamByIdAsync() throws IOException {
+    void BatchResponseContent_GetResponseStreamById() throws IOException {
         String responseJSON = "{"+
             "\"responses\": [" +
             "{" +
@@ -183,12 +183,12 @@ class BatchResponseContentTest {
         ResponseBody body = ResponseBody.create(responseJSON, MediaType.parse("application/json"));
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        InputStream stream = batchResponseContent.getResponseStreamById("1").join();
+        InputStream stream = batchResponseContent.getResponseStreamById("1");
         assertNotNull(stream);
         assertTrue(stream.available() > 0);
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsyncWithDeserializer() {
+    void BatchResponseContent_GetResponseByIdWithDeserializer() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\"responses\":"
             + "[{"
@@ -220,33 +220,32 @@ class BatchResponseContentTest {
         Response response = defaultBuilder.code(200).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        TestUser user = batchResponseContent.getResponseById("1", TestUser::createFromDiscriminatorValue).join();
+        TestUser user = batchResponseContent.getResponseById("1", TestUser::createFromDiscriminatorValue);
         assertNotNull(user);
         assertEquals("MOD Administrator", user.getDisplayName());
 
-        TestDrive drive = batchResponseContent.getResponseById("2", TestDrive::createFromDiscriminatorValue).join();
+        TestDrive drive = batchResponseContent.getResponseById("2", TestDrive::createFromDiscriminatorValue);
         assertNotNull(drive);
         assertEquals("OneDrive", drive.name);
         assertEquals("b!random-VkHdanfIomf", drive.id);
 
-        TestNoteBook notebook = batchResponseContent.getResponseById("3", TestNoteBook::createFromDiscriminatorValue).join();
+        TestNoteBook notebook = batchResponseContent.getResponseById("3", TestNoteBook::createFromDiscriminatorValue);
         assertNotNull(notebook);
         assertEquals("My Notebook -442293399", notebook.displayName);
         assertEquals("1-9f4fe8ea-7e6e-486e-a8f4-nothing-here", notebook.id);
 
         try{
-           batchResponseContent.getResponseById("4", TestDriveItem::createFromDiscriminatorValue).join();
+           batchResponseContent.getResponseById("4", TestDriveItem::createFromDiscriminatorValue);
         } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof ServiceException);
-            ServiceException serviceException = (ServiceException) ex.getCause();
-            assertEquals(HttpURLConnection.HTTP_CONFLICT, serviceException.getResponseStatusCode());
-            assertNotNull(serviceException.getRawResponseBody());
+            assertTrue(ex instanceof ApiException);
+            ApiException apiException = (ApiException) ex;
+            assertEquals(HttpURLConnection.HTTP_CONFLICT, apiException.getResponseStatusCode());
         }
-        TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue).join();
+        TestNoteBook nonExistingNotebook = batchResponseContent.getResponseById("5", TestNoteBook::createFromDiscriminatorValue);
         assertNull(nonExistingNotebook);
     }
     @Test
-    void BatchResponseContent_GetResponseByIdAsyncWithDeserializerWorksWithDateTimeOffsets() {
+    void BatchResponseContent_GetResponseByIdWithDeserializerWorksWithDateTimeOffsets() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
         String responseJSON = "{\n" +
             "    \"responses\": [\n" +
@@ -297,7 +296,7 @@ class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        TestEvent event = batchResponseContent.getResponseById("3", TestEvent::createFromDiscriminatorValue).join();
+        TestEvent event = batchResponseContent.getResponseById("3", TestEvent::createFromDiscriminatorValue);
         assertEquals("2019-07-30T23:00:00.0000000", event.getEnd().getDateTime());
         assertEquals("2019-07-30T22:00:00.0000000", event.getStart().getDateTime());
         assertEquals("UTC", event.getEnd().getTimeZone());

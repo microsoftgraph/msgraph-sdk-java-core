@@ -1,4 +1,4 @@
-package com.microsoft.graph.exceptions;
+package com.microsoft.graph;
 /**
  * Constants used for exception building
  */

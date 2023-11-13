@@ -1,7 +1,7 @@
 package com.microsoft.graph.content;
 
 import com.microsoft.graph.CoreConstants;
-import com.microsoft.graph.exceptions.ErrorConstants;
+import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.BatchRequestStep;
 import com.microsoft.graph.requests.IBaseClient;
 import com.microsoft.kiota.RequestInformation;
@@ -9,7 +9,6 @@ import okhttp3.Request;
 
 import jakarta.annotation.Nonnull;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A collection of batch requests
@@ -58,7 +57,7 @@ public class BatchRequestContentCollection {
      * @return the id of the request in the batch.
      */
     @Nonnull
-    public CompletableFuture<String> addBatchRequestStepAsync(@Nonnull RequestInformation requestInformation) {
+    public String addBatchRequestStep(@Nonnull RequestInformation requestInformation) {
         setupCurrentRequest();
         return currentBatchRequest.addBatchRequestStep(requestInformation);
     }

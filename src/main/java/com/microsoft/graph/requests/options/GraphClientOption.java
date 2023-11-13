@@ -2,10 +2,10 @@ package com.microsoft.graph.requests.options;
 
 import java.util.UUID;
 
+import com.microsoft.kiota.Compatibility;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-import com.google.common.base.Strings;
 import com.microsoft.graph.CoreConstants;
 import com.microsoft.graph.requests.FeatureTracker;
 import com.microsoft.kiota.RequestOption;
@@ -35,7 +35,7 @@ public class GraphClientOption implements RequestOption {
      * @param clientRequestId the client request id to set, preferably the string representation of a GUID
      */
     public void setClientRequestId(@Nonnull final String clientRequestId) {
-        if(Strings.isNullOrEmpty(clientRequestId)) {
+        if(Compatibility.isBlank(clientRequestId)) {
             throw new IllegalArgumentException("clientRequestId cannot be null or empty");
         }
         this.clientRequestId = clientRequestId;
@@ -56,7 +56,7 @@ public class GraphClientOption implements RequestOption {
      * @param clientLibraryVersion client library version specified by user.
      */
     public void setClientLibraryVersion(@Nonnull final String clientLibraryVersion) {
-        if(Strings.isNullOrEmpty(clientLibraryVersion))
+        if(Compatibility.isBlank(clientLibraryVersion))
         {
             throw new IllegalArgumentException("clientLibraryVersion cannot be null or empty");
         }
@@ -76,7 +76,7 @@ public class GraphClientOption implements RequestOption {
      * @param coreLibraryVersion core library version specified by user.
      */
     public void setCoreLibraryVersion(@Nonnull final String coreLibraryVersion) {
-        if(Strings.isNullOrEmpty(coreLibraryVersion))
+        if(Compatibility.isBlank(coreLibraryVersion))
         {
             throw new IllegalArgumentException("coreLibraryVersion cannot be null or empty");
         }
@@ -96,7 +96,7 @@ public class GraphClientOption implements RequestOption {
      * @param graphServiceVersion the version of the Api endpoint we are targeting
      */
     public void setGraphServiceTargetVersion(@Nonnull final String graphServiceVersion) {
-        if(Strings.isNullOrEmpty(graphServiceVersion))
+        if(Compatibility.isBlank(graphServiceVersion))
         {
             throw new IllegalArgumentException("graphServiceVersion cannot be null or empty");
         }
