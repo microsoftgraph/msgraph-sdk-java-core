@@ -100,7 +100,7 @@ public class BatchResponseContentCollection {
     public Map<String, Integer> getResponsesStatusCodes() {
         HashMap<String, Integer> statusCodes = new HashMap<>();
         for(KeyedBatchResponseContent keyedResponse : batchResponses) {
-            HashMap<String, Integer> responseStatusCodes = keyedResponse.response.getResponsesStatusCode();
+            Map<String, Integer> responseStatusCodes = keyedResponse.response.getResponsesStatusCode();
             statusCodes.putAll(responseStatusCodes);
         }
         return statusCodes;
