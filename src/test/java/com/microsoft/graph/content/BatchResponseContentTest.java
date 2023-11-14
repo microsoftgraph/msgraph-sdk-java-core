@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.defaultInstance;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +27,7 @@ class BatchResponseContentTest {
     void BatchResponseContent_InitializeWithNoContent() {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponses();
+        Map<String, Response> responses = batchResponseContent.getResponses();
         Response response1 = responses.get("1");
         assertNotNull(responses);
         assertNull(response1);
@@ -38,7 +39,7 @@ class BatchResponseContentTest {
         ResponseBody responseBody = ResponseBody.create(jsonResponse,MediaType.get("application/json"));
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_BAD_REQUEST).body(responseBody).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
-        HashMap<String, Response> responses = batchResponseContent.getResponses();
+        Map<String, Response> responses = batchResponseContent.getResponses();
         Response response1 = batchResponseContent.getResponseById("1");
         assertNotNull(responses);
         assertNull(response1);
@@ -77,7 +78,7 @@ class BatchResponseContentTest {
         Response response = defaultBuilder.code(HttpURLConnection.HTTP_OK).body(body).build();
         BatchResponseContent batchResponseContent = new BatchResponseContent(response);
 
-        HashMap<String, Response> responses = batchResponseContent.getResponses();
+        Map<String, Response> responses = batchResponseContent.getResponses();
 
         assertNotNull(responses);
         assertEquals(3, responses.size());

@@ -45,7 +45,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
      * @param <NativeResponseType> The type of the native response object.
      * @param <ModelType> The type of the response model object.
      */
-    @Nonnull
+    @Nullable
     @Override
     public <NativeResponseType, ModelType> ModelType handleResponse(@Nonnull NativeResponseType response, @Nullable HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
         if(response instanceof Response && ((Response) response).body()!=null) {

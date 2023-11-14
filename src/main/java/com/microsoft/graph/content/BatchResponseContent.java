@@ -49,7 +49,7 @@ public class BatchResponseContent {
      * @return The responses of the batch request.
      */
     @Nonnull
-    public HashMap<String, Response> getResponses() {
+    public Map<String, Response> getResponses() {
         HashMap<String, Response> responses = new HashMap<>();
         jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
         if (jsonBatchResponseObject != null) {
@@ -68,7 +68,7 @@ public class BatchResponseContent {
      * @return The status codes of the responses of the batch request.
      */
     @Nonnull
-    public HashMap<String, Integer> getResponsesStatusCode() {
+    public Map<String, Integer> getResponsesStatusCode() {
         HashMap<String, Integer> statusCodes = new HashMap<>();
         jsonBatchResponseObject = jsonBatchResponseObject != null ? jsonBatchResponseObject : getBatchResponseContent();
         if (jsonBatchResponseObject != null) {
