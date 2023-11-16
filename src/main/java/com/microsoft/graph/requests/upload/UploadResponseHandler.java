@@ -1,6 +1,5 @@
 package com.microsoft.graph.requests.upload;
 
-import com.google.common.io.ByteStreams;
 import com.microsoft.graph.ErrorConstants;
 import com.microsoft.graph.models.UploadResult;
 import com.microsoft.graph.models.UploadSession;
@@ -9,6 +8,7 @@ import com.microsoft.kiota.ApiExceptionBuilder;
 import com.microsoft.kiota.http.HeadersCompatibility;
 import com.microsoft.kiota.serialization.*;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -50,39 +50,40 @@ public class UploadResponseHandler {
     public <T extends Parsable> UploadResult<T> handleResponse(@Nonnull final Response response, @Nonnull final ParsableFactory<T> factory) {
         Objects.requireNonNull(response);
         Objects.requireNonNull(factory);
-        if (Objects.isNull(response.body())) {
-            throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
-        }
-        try(final InputStream in = Objects.requireNonNull(response.body()).byteStream()){
-            String[] contentType = response.body().contentType().toString().split(";"); //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
-            byte[] responseStream = ByteStreams.toByteArray(in);
-            if(!response.isSuccessful()) {
-                throw new ApiExceptionBuilder()
-                        .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
-                        .withResponseStatusCode(response.code())
-                        .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
-                        .build();
+        try (final ResponseBody body = response.body()) {
+            if (Objects.isNull(body)) {
+                throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
             }
-            UploadResult<T> uploadResult = new UploadResult<>();
-            if (response.code() == HttpURLConnection.HTTP_CREATED) {
-                if (Objects.requireNonNull(response.body()).contentLength() > 0) {
-                    ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
-                    uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
+            try(final InputStream in = body.byteStream()){
+                final String contentType = body.contentType().toString().split(";")[0]; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
+                if(!response.isSuccessful()) {
+                    throw new ApiExceptionBuilder()
+                            .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
+                            .withResponseStatusCode(response.code())
+                            .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
+                            .build();
                 }
-                if(!Objects.isNull(response.headers().get("location"))) {
-                    uploadResult.location = new URI(Objects.requireNonNull(response.headers().get("location")));
-                }
-            } else {
-                ParseNode uploadSessionParseNode = parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
-                UploadSession uploadSession = uploadSessionParseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
-                if (!uploadSession.getNextExpectedRanges().isEmpty()) {
-                    uploadResult.uploadSession = uploadSession;
+                UploadResult<T> uploadResult = new UploadResult<>();
+                if (response.code() == HttpURLConnection.HTTP_CREATED) {
+                    if (body.contentLength() > 0) {
+                        final ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType, in);
+                        uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
+                    }
+                    final String location = response.headers().get("location");
+                    if(!Objects.isNull(location) && !location.isEmpty()) {
+                        uploadResult.location = new URI(location);
+                    }
                 } else {
-                    ParseNode objectParseNode = parseNodeFactory.getParseNode(contentType[0], new ByteArrayInputStream(responseStream));
-                    uploadResult.itemResponse = objectParseNode.getObjectValue(factory);
+                    final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
+                    final UploadSession uploadSession = parseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
+                    if (!uploadSession.getNextExpectedRanges().isEmpty()) {
+                        uploadResult.uploadSession = uploadSession;
+                    } else {
+                        uploadResult.itemResponse = parseNode.getObjectValue(factory);
+                    }
                 }
+                return uploadResult;
             }
-            return uploadResult;
         }
         catch(IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
