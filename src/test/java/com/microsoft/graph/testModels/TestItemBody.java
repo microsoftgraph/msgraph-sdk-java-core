@@ -53,9 +53,9 @@ public class TestItemBody implements Parsable, AdditionalDataHolder {
 
     public HashMap<String, Consumer<ParseNode>> getFieldDeserializers() {
         return new HashMap<String, Consumer<ParseNode>>() {{
-            put("@odata.type", (n) -> { oDataType = n.getStringValue(); });
-            put("contentType", (n) -> { contentType = n.getEnumValue(TestBodyType.class); });
-            put("content", (n) -> { content = n.getStringValue(); });
+            put("@odata.type", (n) -> { setODataType(n.getStringValue()); });
+            put("contentType", (n) -> { setContentType(n.getEnumValue(TestBodyType::forValue)); });
+            put("content", (n) -> { setContent(n.getStringValue()); });
         }};
     }
 

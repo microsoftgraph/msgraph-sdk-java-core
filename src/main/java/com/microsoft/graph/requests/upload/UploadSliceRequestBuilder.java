@@ -65,7 +65,7 @@ public class UploadSliceRequestBuilder<T extends Parsable> {
         RequestInformation requestInformation = this.toPutRequestInformation(stream);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
-        requestAdapter.sendPrimitive(requestInformation, InputStream.class, null);
+        requestAdapter.sendPrimitive(requestInformation,null, InputStream.class);
         return responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
     }
     private RequestInformation toPutRequestInformation(InputStream stream) {

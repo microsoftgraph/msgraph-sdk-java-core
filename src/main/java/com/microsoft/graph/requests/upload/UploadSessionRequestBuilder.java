@@ -48,7 +48,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
         RequestInformation requestInformation = toGetRequestInformation();
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInformation.setResponseHandler(nativeResponseHandler);
-        requestAdapter.sendPrimitive(requestInformation, InputStream.class, null);
+        requestAdapter.sendPrimitive(requestInformation, null,  InputStream.class);
         UploadResult<T> result = responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
         return result.uploadSession;
     }
@@ -63,7 +63,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
      */
     public void delete() {
         RequestInformation requestInfo = this.toDeleteRequestInformation();
-        this.requestAdapter.sendPrimitive(requestInfo, Void.class, null);
+        this.requestAdapter.sendPrimitive(requestInfo, null, Void.class);
     }
     private RequestInformation toDeleteRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
