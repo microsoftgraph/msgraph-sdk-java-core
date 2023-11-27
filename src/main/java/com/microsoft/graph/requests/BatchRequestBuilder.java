@@ -93,5 +93,4 @@ public class BatchRequestBuilder {
     public RequestAdapter getRequestAdapter() {
         return requestAdapter;
     }
-
 }
