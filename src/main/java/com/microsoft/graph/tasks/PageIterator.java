@@ -237,7 +237,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
         this.nextLink = "";
         return false;
     }
-    private void interpageIterate() throws ReflectiveOperationException, ApiException {
+    private void interpageIterate() throws ReflectiveOperationException {
         this.state = PageIteratorState.INTERPAGE_ITERATION;
 
         if(!Compatibility.isBlank(nextLink) || !Compatibility.isBlank(deltaLink)) {
@@ -246,7 +246,7 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
             nextPageRequestInformation.urlTemplate = Compatibility.isBlank(nextLink) ? deltaLink : nextLink;
 
             nextPageRequestInformation = requestConfigurator == null ? nextPageRequestInformation : requestConfigurator.apply(nextPageRequestInformation);
-            this.currentPage = Objects.requireNonNull(this.requestAdapter.send(nextPageRequestInformation, this.collectionPageFactory, null));
+            this.currentPage = Objects.requireNonNull(this.requestAdapter.send(nextPageRequestInformation, null, this.collectionPageFactory));
             List<TEntity> pageItems = extractEntityListFromParsable(this.currentPage);
             if(!pageItems.isEmpty()) {
                 this.pageItemQueue.addAll(pageItems);
@@ -263,7 +263,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
      * @throws ApiException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */
-    @Nonnull
     public void iterate() throws ApiException, ReflectiveOperationException {
         if(this.state == PageIteratorState.DELTA) {
             interpageIterate();
@@ -280,7 +279,6 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
      * @throws ApiException if the request was unable to complete for any reason.
      * @throws ReflectiveOperationException if the entity or collection page could not be instantiated or if they are of invalid types.
      */
-    @Nonnull
     public void resume() throws ApiException, ReflectiveOperationException {
         iterate();
     }

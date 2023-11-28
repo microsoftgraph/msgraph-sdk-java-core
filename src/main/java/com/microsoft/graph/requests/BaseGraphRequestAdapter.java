@@ -40,7 +40,7 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
      * Map of valid cloud urls for use in Graph requests.
      * Accessible using a Clouds enum value.
      */
-    private static final EnumMap<Clouds, String> getCloudList() {
+    private static EnumMap<Clouds, String> getCloudList() {
         EnumMap<Clouds, String> cloudList = new EnumMap<>(Clouds.class);
         cloudList.put( Clouds.GLOBAL_CLOUD, "https://graph.microsoft.com" );
         cloudList.put( Clouds.USGOV_CLOUD, "https://graph.microsoft.us");

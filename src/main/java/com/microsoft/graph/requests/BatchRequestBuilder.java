@@ -49,7 +49,7 @@ public class BatchRequestBuilder {
         RequestInformation requestInfo = toPostRequestInformation(requestContent);
         NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
         requestInfo.setResponseHandler(nativeResponseHandler);
-        requestAdapter.sendPrimitive(requestInfo, InputStream.class, errorMappings == null ? null : new HashMap<>(errorMappings));
+        requestAdapter.sendPrimitive(requestInfo, errorMappings == null ? null : new HashMap<>(errorMappings) ,InputStream.class);
         return new BatchResponseContent((Response) nativeResponseHandler.getValue(), errorMappings);
     }
     /**
@@ -93,5 +93,4 @@ public class BatchRequestBuilder {
     public RequestAdapter getRequestAdapter() {
         return requestAdapter;
     }
-
 }

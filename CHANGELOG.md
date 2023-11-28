@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.10] - 2023-11-27
+
+### Changed 
+
+- Removed the usage of reflection for enum deserialization and reordered RequestAdapter method arguments. [Kiota-Java #840](https://github.com/microsoft/kiota-java/issues/840)
+
 ## [3.0.9] - 2023-11-14
 
 ### Changed

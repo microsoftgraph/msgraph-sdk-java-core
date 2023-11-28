@@ -382,7 +382,7 @@ class PageIteratorTest {
             mockResponse = response;
         }
 
-        public <T extends Parsable> T send(@Nonnull RequestInformation request, @Nonnull ParsableFactory<T> parsableFactory, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings) {
+        public <T extends Parsable> T send(@Nonnull RequestInformation request, @Nullable final HashMap<String, ParsableFactory<? extends Parsable>> errorMappings, @Nonnull ParsableFactory<T> parsableFactory) {
             return (T) this.mockResponse;
         }
     }
