@@ -4,44 +4,44 @@ xmlns="https://github.com/spotbugs/filter/3.0.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
 	<Match>
-		<Class name="com.microsoft.graph.content.BatchRequestContent" />
+		<Class name="content.com.microsoft.graph.core.BatchRequestContent" />
 		<Field name="requests" />
 		<Bug code="PA" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.content.BatchRequestContent" />
+		<Class name="content.com.microsoft.graph.core.BatchRequestContent" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.content.BatchRequestContentCollection" />
+		<Class name="content.com.microsoft.graph.core.BatchRequestContentCollection" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.models.BatchRequestStep" />
+		<Class name="models.com.microsoft.graph.core.BatchRequestStep" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.requests.upload.UploadSessionRequestBuilder" />
+		<Class name="upload.requests.com.microsoft.graph.core.UploadSessionRequestBuilder" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.requests.upload.UploadSliceRequestBuilder" />
+		<Class name="upload.requests.com.microsoft.graph.core.UploadSliceRequestBuilder" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.tasks.LargeFileUploadTask" />
+		<Class name="tasks.com.microsoft.graph.core.LargeFileUploadTask" />
 		<Bug code="CT" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.CoreConstants$Headers" />
+		<Class name="com.microsoft.graph.core.CoreConstants$Headers" />
 		<Bug code="PI" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.CoreConstants$BatchRequest" />
+		<Class name="com.microsoft.graph.core.CoreConstants$BatchRequest" />
 		<Bug code="PI" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.ErrorConstants$Messages" />
+		<Class name="com.microsoft.graph.core.ErrorConstants$Messages" />
 		<Bug code="PI" />
 	</Match>
 	<Match>
@@ -54,61 +54,61 @@ xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubu
 		<Bug code="RCN,NP" />
 	</Match>
 	<Match>
-		<Class name="com.microsoft.graph.authentication.AzureIdentityAccessTokenProvider" />
+		<Class name="authentication.com.microsoft.graph.core.AzureIdentityAccessTokenProvider" />
 		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
 	</Match>
 	<Match>
 		<Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
 		<Or>
-			<Class name="com.microsoft.graph.content.BatchRequestContent" />
-			<Class name="com.microsoft.graph.content.BatchResponseContent" />
-			<Class name="com.microsoft.graph.requests.ResponseBodyHandler" />
-			<Class name="com.microsoft.graph.requests.upload.UploadResponseHandler" />
+			<Class name="content.com.microsoft.graph.core.BatchRequestContent" />
+			<Class name="content.com.microsoft.graph.core.BatchResponseContent" />
+			<Class name="requests.com.microsoft.graph.core.ResponseBodyHandler" />
+			<Class name="upload.requests.com.microsoft.graph.core.UploadResponseHandler" />
 		</Or>
 	</Match>
 	<Match>
 		<Bug pattern="EI_EXPOSE_REP" />
-		<Class name="com.microsoft.graph.requests.BatchRequestBuilder" />
+		<Class name="requests.com.microsoft.graph.core.BatchRequestBuilder" />
 	</Match>
 	<Match>
 		<Bug pattern="EI_EXPOSE_REP2" />
 		<Or>
-			<Class name="com.microsoft.graph.content.BatchRequestContentCollection" />
-			<Class name="com.microsoft.graph.requests.middleware.GraphTelemetryHandler" />
-			<Class name="com.microsoft.graph.requests.upload.UploadSessionRequestBuilder" />
-			<Class name="com.microsoft.graph.requests.upload.UploadSliceRequestBuilder" />
-			<Class name="com.microsoft.graph.tasks.PageIterator$Builder" />
+			<Class name="content.com.microsoft.graph.core.BatchRequestContentCollection" />
+			<Class name="middleware.requests.com.microsoft.graph.core.GraphTelemetryHandler" />
+			<Class name="upload.requests.com.microsoft.graph.core.UploadSessionRequestBuilder" />
+			<Class name="upload.requests.com.microsoft.graph.core.UploadSliceRequestBuilder" />
+			<Class name="tasks.com.microsoft.graph.core.PageIterator$Builder" />
 		</Or>
 	</Match>
 
 	<!-- SpotBugs' exclusions for test classes -->
 	<Match>
-		<Class name="com.microsoft.graph.testModels.TestBodyType" />
+		<Class name="testModels.com.microsoft.graph.core.TestBodyType" />
 		<Bug code="PI" />
 	</Match>
 	<Match>
 		<Bug code="PA" />
 		<Or>
 			<Package name="~com\.microsoft\.graph\.testModels.*" />
-			<Class name="com.microsoft.graph.BaseClient" />
+			<Class name="com.microsoft.graph.core.BaseClient" />
 		</Or>
 	</Match>
 	<Match>
 		<Bug pattern="EI_EXPOSE_REP" />
 		<Or>
 			<Package name="~com\.microsoft\.graph\.testModels.*" />
-			<Class name="com.microsoft.graph.BaseClient" />
+			<Class name="com.microsoft.graph.core.BaseClient" />
 		</Or>
 	</Match>
 	<Match>
 		<Bug pattern="EI_EXPOSE_REP2" />
 		<Or>
 			<Package name="~com\.microsoft\.graph\.testModels.*" />
-			<Class name="com.microsoft.graph.BaseClient" />
+			<Class name="com.microsoft.graph.core.BaseClient" />
 		</Or>
 	</Match>
 	<Match>
 		<Bug pattern="DCN_NULLPOINTER_EXCEPTION" />
-		<Class name="com.microsoft.graph.content.BatchResponseContentTest" />
+		<Class name="content.com.microsoft.graph.core.BatchResponseContentTest" />
 	</Match>
 </FindBugsFilter>

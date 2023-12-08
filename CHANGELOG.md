@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.11] - 2023-12-08
+
+### Changed
+
+- Parent namespace for all classes has been changed from com.microsoft.graph.* to com.microsoft.graph.core.* in order to avoid conflicts with the generated service libraries.
+- This change is not backwards compatible and will require changes to your code.
+
 ## [3.0.10] - 2023-11-27
 
 ### Changed 
