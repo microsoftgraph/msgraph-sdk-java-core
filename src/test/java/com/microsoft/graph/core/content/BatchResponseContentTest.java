@@ -3,7 +3,6 @@ package com.microsoft.graph.core.content;
 import com.microsoft.graph.core.CoreConstants;
 import com.microsoft.graph.core.ErrorConstants;
 import com.microsoft.graph.core.testModels.*;
-import com.microsoft.graph.testModels.*;
 import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.serialization.JsonParseNodeFactory;
 import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;

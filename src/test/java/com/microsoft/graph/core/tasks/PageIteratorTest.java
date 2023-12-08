@@ -5,7 +5,6 @@ import com.microsoft.graph.core.CoreConstants;
 import com.microsoft.graph.core.testModels.TestEventItem;
 import com.microsoft.graph.core.testModels.TestEventsDeltaResponse;
 import com.microsoft.graph.core.testModels.TestEventsResponse;
-import com.microsoft.graph.testModels.*;
 import com.microsoft.kiota.ApiException;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
