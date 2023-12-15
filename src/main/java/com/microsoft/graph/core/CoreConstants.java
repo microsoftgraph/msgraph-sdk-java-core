@@ -14,7 +14,7 @@ public final class CoreConstants {
     private static class VersionValues {
         private static final int MAJOR = 3;
         private static final int MINOR = 0;
-        private static final int PATCH = 11;
+        private static final int PATCH = 12;
     }
 
     /**

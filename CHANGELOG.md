@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.0.12] - 2023-12-15
+
+### Fixed 
+
+- Fixes a bug where a null collection for allowedHosts would result in failure to initialize client. [#1411](https://github.com/microsoftgraph/msgraph-sdk-java-core/pull/1411) 
+
 ## [3.0.11] - 2023-12-08
 
 ### Changed
