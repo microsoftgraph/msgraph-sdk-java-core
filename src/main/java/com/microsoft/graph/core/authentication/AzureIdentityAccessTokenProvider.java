@@ -1,7 +1,6 @@
 package com.microsoft.graph.core.authentication;
 
 import java.util.HashSet;
-import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
