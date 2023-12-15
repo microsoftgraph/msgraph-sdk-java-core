@@ -22,7 +22,7 @@ public class AzureIdentityAccessTokenProvider extends com.microsoft.kiota.authen
     public AzureIdentityAccessTokenProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final String[] allowedHosts,
             @Nullable final ObservabilityOptions observabilityOptions, @Nonnull final String... scopes) {
         super(tokenCredential, allowedHosts, observabilityOptions, scopes);
-        if (allowedHosts.length == 0) {
+        if (allowedHosts == null || allowedHosts.length == 0) {
             final HashSet<String> allowedHostsSet = new HashSet<String>();
             allowedHostsSet.add("graph.microsoft.com");
             allowedHostsSet.add("graph.microsoft.us");
