@@ -153,11 +153,14 @@ public class BaseGraphRequestAdapter extends OkHttpRequestAdapter {
         this(authenticationProvider, determineBaseAddress(cloud, version), graphClientOption);
     }
 
-    private static String determineBaseAddress(@Nullable Clouds nationalCloud, @Nullable String version) throws IllegalArgumentException {
-        String cloud = nationalCloud == null ? getCloudList().get(Clouds.GLOBAL_CLOUD) : getCloudList().get(nationalCloud);
+    private static String determineBaseAddress(@Nullable final Clouds nationalCloud, @Nullable final String version) {
+        final String cloud = nationalCloud == null ? getCloudList().get(Clouds.GLOBAL_CLOUD) : getCloudList().get(nationalCloud);
         if(cloud == null) {
             throw new IllegalArgumentException(nationalCloud+" is an unexpected national cloud.");
         }
         return version == null ? (cloud+"/v1.0") : (cloud+"/"+version);
+    }
+    protected final void finalize() throws Throwable{
+        // to avoid finalizer attacks on the constructors defensive programming
     }
 }
