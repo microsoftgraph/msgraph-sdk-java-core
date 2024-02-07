@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 20
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3.0.0
+        uses: android-actions/setup-android@v3.2.0
       - name: Add execution right to the script
         run: chmod +x gradlew
         working-directory: ./android
@@ -31,7 +31,7 @@ jobs:
         working-directory: ./android
       - name: Upload linting results
         if: failure() && steps.lint.outcome == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lint-report
           path: ./android/build/reports
