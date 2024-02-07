@@ -2,9 +2,6 @@ buildscript {
     repositories {
         google()
         gradlePluginPortal()
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
     }
 
     dependencies {
@@ -17,6 +14,7 @@ buildscript {
 repositories {
     google()
     gradlePluginPortal()
+    mavenCentral()
 }
 
 apply plugin: "com.android.library"
@@ -56,18 +54,18 @@ android {
         disable "ResourceType"                 // Annotation binding
         disable "GradleDependency"
         disable "NewerVersionAvailable"
-        disable "DuplicatePlatformClasses"      // xpp3 added by azure-identity 
+        disable "DuplicatePlatformClasses"      // xpp3 added by azure-identity
     }
-	sourceSets {
-		main {
-			java.srcDirs = ['../src/main/java']
-			res.srcDirs = ['../src/main/java']
-			manifest.srcFile 'AndroidManifest.xml'
-		}
-		androidTest {
-			setRoot '../src/test'
-		}
-	}
+    sourceSets {
+        main {
+            java.srcDirs = ['../src/main/java']
+            res.srcDirs = ['../src/main/java']
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+        androidTest {
+            setRoot '../src/test'
+        }
+    }
 }
 
 apply from: "../gradle/dependencies.gradle"
