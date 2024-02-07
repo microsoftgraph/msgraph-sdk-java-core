@@ -1,5 +1,0 @@
-include 'coreLibrary'
-
-project(':coreLibrary').projectDir = new File("../../")
-
-

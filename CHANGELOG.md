@@ -11,6 +11,107 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.0] - 2024-02-07
+
+### Changed
+
+- Version bump for Java SDK GA release.
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components for Java SDK 6.1.0 release. 
+
+## [3.0.12] - 2023-12-15
+
+### Fixed 
+
+- Fixes a bug where a null collection for allowedHosts would result in failure to initialize client. [#1411](https://github.com/microsoftgraph/msgraph-sdk-java-core/pull/1411) 
+
+## [3.0.11] - 2023-12-08
+
+### Changed
+
+- Parent namespace for all classes has been changed from com.microsoft.graph.* to com.microsoft.graph.core.* in order to avoid conflicts with the generated service libraries.
+- This change is not backwards compatible and will require changes to your code.
+
+## [3.0.10] - 2023-11-27
+
+### Changed 
+
+- Removed the usage of reflection for enum deserialization and reordered RequestAdapter method arguments. [Kiota-Java #840](https://github.com/microsoft/kiota-java/issues/840)
+
+## [3.0.9] - 2023-11-14
+
+### Changed
+
+- Kiota-Java has moved away from Async/Completable futures, thus Async components are no longer utilized and have been removed. Furthermore, requestAdapter methods no longer use the async suffix. [Kiota-Java #175](https://github.com/microsoft/kiota-java/issues/175)
+- ApiException class now extends RuntimeException instead of Exception.
+
+### Removed
+
+- ServiceException class has been removed.
+
+## [3.0.8] - 2023-08-09
+
+### Changed
+
+- Replaces Javax annotations in favor of Jakarta annotations.
+
+### Removed
+
+- Removes 'SuppressFBWarnings' annotations and dependency.  
+
+## [3.0.7] - 2023-07-20
+
+### Added
+
+- Adds graph-java-sdk implementation of the `UrlReplaceHandler` middleware including default replacement pairs. 
+- Default replacement pair: '/users/TokenToReplace' -> '/me'
+
+## [3.0.6] - 2023-07-11
+
+### Added
+
+- Added the PageIterator functionality for Kiota generated service libraries.
+
+## [3.0.5] - 2023-06-15
+
+### Added
+
+- Added Batch Request and Batch Request Collection functionality for Kiota generated service libraries.
+
+## [3.0.4] - 2023-05-03
+
+### Added 
+ 
+- Added LargeFileUploadTask functionality for kiota generated service libraries. 
+
+### Fixed 
+
+- Fixes formatting used in the headers added by the telemetry handler to align with the [msGraph sdk spec.](https://github.com/microsoftgraph/msgraph-sdk-design/blob/master/middleware/TelemetryHandler.md)
+
+## [3.0.3] - 2023-04-06
+
+### Changed
+
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components.
+
+## [3.0.2] - 2022-10-10
+
+### Changed
+
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components.
+
+## [3.0.1] - 2022-09-20
+
+### Added
+
+- Uses [Kiota-Java](https://github.com/microsoft/kiota-java) libraries as underlying framework.
+- BaseGraphRequestAdapter for use with v1 and beta service libraries.
+
+### Changed
+
+- Removes Request Builders.
+- GraphClientFactory to handle OkHttp client creation.
+- BaseClient refactored to use Kiota framework.
+
 ## [2.0.21] - 2023-11-08
 
 ### Changed
