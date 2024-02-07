@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.0] - 2024-02-07
+
+### Changed
+
+- Version bump for Java SDK GA release.
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components for Java SDK 6.1.0 release. 
+
 ## [3.0.12] - 2023-12-15
 
 ### Fixed 
