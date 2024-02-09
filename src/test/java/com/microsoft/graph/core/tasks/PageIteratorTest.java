@@ -179,7 +179,7 @@ class PageIteratorTest {
     void given_CollectionPage_Delta_Link_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ApiException {
         TestEventsDeltaResponse originalPage = new TestEventsDeltaResponse();
         originalPage.setValue(new LinkedList<>());
-        originalPage.setOdataDeltaLink("http://localhost/events?$skip=11");
+        originalPage.setOdataNextLink("http://localhost/events?$skip=11");
         int inputEventCount = 17;
         for(int i = 0; i < inputEventCount; i++) {
             TestEventItem testEventItem = new TestEventItem();
@@ -187,10 +187,26 @@ class PageIteratorTest {
             originalPage.getValue().add(testEventItem);
         }
 
-        Function<TestEventItem, Boolean> processPageItemCallback = item -> true;
+        TestEventsDeltaResponse secondPage = new TestEventsDeltaResponse();
+        secondPage.setValue(new LinkedList<TestEventItem>());
+        secondPage.setOdataDeltaLink("http://localhost/events?$skip=11");
+        int secondPageEventCount = 5;
+        for(int i = 0; i < secondPageEventCount; i++) {
+            TestEventItem testEventItem = new TestEventItem();
+            testEventItem.setSubject("Second Page Test Event: " + i);
+            secondPage.getValue().add(testEventItem);
+        }
 
+        AtomicInteger totalItemsProcessed = new AtomicInteger(0);
+
+        Function<TestEventItem, Boolean> processPageItemCallback = item -> {
+            totalItemsProcessed.incrementAndGet();
+            return true;
+        };
+
+        MockAdapter mockAdapter = new MockAdapter(mock(AuthenticationProvider.class), secondPage);
         PageIterator<TestEventItem, TestEventsDeltaResponse> pageIterator = new PageIterator.Builder<TestEventItem, TestEventsDeltaResponse>()
-            .client(baseClient)
+            .requestAdapter(mockAdapter)
             .collectionPage(originalPage)
             .collectionPageFactory(TestEventsDeltaResponse::createFromDiscriminatorValue)
             .processPageItemCallback(processPageItemCallback)
@@ -200,6 +216,7 @@ class PageIteratorTest {
 
         assertEquals(PageIterator.PageIteratorState.DELTA, pageIterator.getPageIteratorState());
         assertEquals("http://localhost/events?$skip=11", pageIterator.getDeltaLink());
+        assertEquals(inputEventCount + secondPageEventCount, totalItemsProcessed.get());
     }
 
     @Test
