@@ -18,6 +18,8 @@ import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -152,13 +154,10 @@ class PageIteratorTest {
             secondPage.getValue().add(testEventItem);
         }
 
-        final Boolean[] reachedNextPage = {false};
+        AtomicInteger totalItemsProcessed = new AtomicInteger(0);
 
         Function<TestEventItem, Boolean> processPageItemCallback = item -> {
-            if(item.getSubject().contains("Second Page Test Event")) {
-                reachedNextPage[0] = true;
-                return false;
-            }
+            totalItemsProcessed.incrementAndGet();
             return true;
         };
 
@@ -172,10 +171,9 @@ class PageIteratorTest {
 
         pageIterator.iterate();
 
-        assertTrue(reachedNextPage[0]);
-        assertEquals(PageIterator.PageIteratorState.PAUSED, pageIterator.getPageIteratorState());
-        assertEquals("http://localhost/events?$skip=11", pageIterator.getNextLink());
-
+        assertEquals(PageIterator.PageIteratorState.COMPLETE, pageIterator.getPageIteratorState());
+        assertEquals("", pageIterator.getNextLink());
+        assertEquals(inputEventCount + secondPageEventCount, totalItemsProcessed.get());
     }
     @Test
     void given_CollectionPage_Delta_Link_Property_It_Iterates_Across_Pages() throws ReflectiveOperationException, ApiException {
