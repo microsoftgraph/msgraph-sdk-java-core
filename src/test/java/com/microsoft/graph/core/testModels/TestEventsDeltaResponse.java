@@ -8,22 +8,12 @@ import com.microsoft.kiota.serialization.SerializationWriter;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class TestEventsDeltaResponse implements Parsable, AdditionalDataHolder {
-    public Map<String, Object> additionalData;
+public class TestEventsDeltaResponse extends BaseCollectionPaginationCountResponse {
     private String odataDeltaLink;
-    private String odataNextLink;
     public List<TestEventItem> value;
 
     public TestEventsDeltaResponse() {
-        additionalData = new HashMap<>();
-    }
-
-    public Map<String, Object> getAdditionalData() {
-        return additionalData;
-    }
-
-    public void setAdditionalData(Map<String, Object> additionalData) {
-        this.additionalData = additionalData;
+        super();
     }
 
     public String getOdataDeltaLink() {
@@ -32,14 +22,6 @@ public class TestEventsDeltaResponse implements Parsable, AdditionalDataHolder {
 
     public void setOdataDeltaLink(String odataDeltaLink) {
         this.odataDeltaLink = odataDeltaLink;
-    }
-
-    public String getOdataNextLink() {
-        return odataNextLink;
-    }
-
-    public void setOdataNextLink(String odataNextLink) {
-        this.odataNextLink = odataNextLink;
     }
 
     public List<TestEventItem> getValue() {
@@ -51,22 +33,15 @@ public class TestEventsDeltaResponse implements Parsable, AdditionalDataHolder {
     }
 
     public Map<String, Consumer<ParseNode>> getFieldDeserializers() {
-        HashMap<String, Consumer<ParseNode>> fieldDeserializers = new HashMap<>();
-        fieldDeserializers.put("@odata.deltaLink", (n) -> setOdataDeltaLink(n.getStringValue()));
-        fieldDeserializers.put("@odata.nextLink", (n) -> setOdataNextLink(n.getStringValue()));
-        fieldDeserializers.put("value", (n) -> setValue(n.getCollectionOfObjectValues(TestEventItem::createFromDiscriminatorValue)));
-        return fieldDeserializers;
+        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(super.getFieldDeserializers());
+        deserializerMap.put("value", (n) -> { this.setValue(n.getCollectionOfObjectValues(TestEventItem::createFromDiscriminatorValue)); });
+        return deserializerMap;
     }
 
     public void serialize(SerializationWriter writer) {
-        if (writer == null) {
-            throw new IllegalArgumentException("writer");
-        }
-
-        writer.writeStringValue("@odata.deltaLink", odataDeltaLink);
-        writer.writeStringValue("@odata.nextLink", odataNextLink);
-        writer.writeCollectionOfObjectValues("value", value);
-        writer.writeAdditionalData(additionalData);
+        Objects.requireNonNull(writer);
+        super.serialize(writer);
+        writer.writeCollectionOfObjectValues("value", getValue());
     }
 
     public static TestEventsDeltaResponse createFromDiscriminatorValue(ParseNode parseNode) {

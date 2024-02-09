@@ -17,7 +17,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * A class for iterating through pages of a collection
- * Uses to automatically pages through result sets across multiple calls and process each item in the result set.
+ * Use to automatically page through result sets across multiple calls and process each item in the result set.
  * @param <TEntity> The type of the entity returned in the collection. This type must implement {@link Parsable}
  * @param <TCollectionPage> The Microsoft Graph collection response type returned in the collection response. This type must implement {@link Parsable} and {@link AdditionalDataHolder}
  */
@@ -302,16 +302,14 @@ public class PageIterator<TEntity extends Parsable, TCollectionPage extends Pars
     }
     private static <TCollectionPage extends Parsable & AdditionalDataHolder> String extractNextLinkFromParsable(@Nonnull TCollectionPage parsableCollection, @Nullable String getNextLinkMethodName) throws ReflectiveOperationException {
         String methodName = getNextLinkMethodName == null ? CoreConstants.CollectionResponseMethods.GET_ODATA_NEXT_LINK : getNextLinkMethodName;
-        Method[] methods = parsableCollection.getClass().getDeclaredMethods();
+        Method[] methods = parsableCollection.getClass().getMethods();
         String nextLink;
-        if(Arrays.stream(methods).anyMatch(m -> m.getName().equals(methodName))) {
-            try {
-                nextLink = (String) parsableCollection.getClass().getDeclaredMethod(methodName).invoke(parsableCollection);
-                if(!Compatibility.isBlank(nextLink)) {
-                    return nextLink;
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw new ReflectiveOperationException("Could not extract nextLink from parsableCollection.");
+        Optional<Method> nextLinkOptional = Arrays.stream(methods).filter(m -> m.getName().equals(methodName)).findFirst();
+        if (nextLinkOptional.isPresent()) {
+            Method nextLinkMethod = nextLinkOptional.get();
+            nextLink = (String) nextLinkMethod.invoke(parsableCollection);
+            if(!Compatibility.isBlank(nextLink)) {
+                return nextLink;
             }
         }
         nextLink = (String) parsableCollection.getAdditionalData().get(CoreConstants.OdataInstanceAnnotations.NEXT_LINK);
