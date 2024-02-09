@@ -6,7 +6,6 @@ import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.core.models.BatchRequestStep;
 import com.microsoft.graph.core.requests.IBaseClient;
 import com.microsoft.kiota.HttpMethod;
-import com.microsoft.kiota.RequestHeaders;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 
@@ -278,7 +277,7 @@ class BatchRequestContentTest {
         requestInfo2.pathParameters = pathParameters2;
         requestInfo2.httpMethod = HttpMethod.GET;
         // No headers object should be present in the Json body
-        requestInfo2.headers.add("authorization", longBearerString);
+        requestInfo2.headers.add("AuthoriZation", longBearerString); // Test with strange casing
 
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         batchRequestContent.addBatchRequestStep(new BatchRequestStep("1",adapter.convertToNativeRequest(requestInfo)));
