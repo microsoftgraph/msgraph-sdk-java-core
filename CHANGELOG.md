@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 'Authorization' header should not be added to BatchRequest Json body. [#1483](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1483)
 
+## [3.1.1] - 2024-02-09
+
+### Changed
+
+- Fixes a bug to allow the PageIterator to iterate across all pages.
+
 ## [3.1.0] - 2024-02-07
 
 ### Changed
