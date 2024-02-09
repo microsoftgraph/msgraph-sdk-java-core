@@ -212,13 +212,13 @@ public class BatchRequestContent {
             //Remove the header if it is some version of 'authorization'
             //RemoveAll utilizes ignoreCase natively
             headers = headers.newBuilder().removeAll(AUTHORIZATION_HEADER_KEY).build();
-            if((headers.size() != 0 || requestBody != null)) {
-                    writer.name(CoreConstants.BatchRequest.HEADERS);
-                    writer.beginObject();
-                    for (int i = 0; i < headers.size(); i++) {
-                        writer.name(headers.name(i)).value(headers.value(i));
-                    }
-                    writer.endObject();
+            if(headers.size() != 0 || requestBody != null) {
+                writer.name(CoreConstants.BatchRequest.HEADERS);
+                writer.beginObject();
+                for (int i = 0; i < headers.size(); i++) {
+                    writer.name(headers.name(i)).value(headers.value(i));
+                }
+                writer.endObject();
             }
             writer.endObject();
     }
