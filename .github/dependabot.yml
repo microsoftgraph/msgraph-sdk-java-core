@@ -44,7 +44,6 @@ updates:
   open-pull-requests-limit: 10
 - package-ecosystem: gradle
   directory: "/"
-  target-branch: v3/longTermBranch
   schedule:
     interval: daily
   open-pull-requests-limit: 10
@@ -54,7 +53,6 @@ updates:
         - "*kiota*"
 - package-ecosystem: gradle
   directory: "/android"
-  target-branch: v3/longTermBranch
   schedule:
     interval: daily
   open-pull-requests-limit: 10
@@ -64,7 +62,6 @@ updates:
         - "*kiota*"
 - package-ecosystem: maven
   directory: "/"
-  target-branch: v3/longTermBranch
   schedule:
     interval: daily
   open-pull-requests-limit: 10
@@ -74,7 +71,6 @@ updates:
         - "*kiota*"
 - package-ecosystem: github-actions
   directory: "/"
-  target-branch: v3/longTermBranch
   schedule:
     interval: daily
   open-pull-requests-limit: 10
