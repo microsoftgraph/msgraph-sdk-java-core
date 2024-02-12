@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- 'Authorization' header should not be added to BatchRequest Json body. [#1483](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1483)
+## [3.1.2] - 2024-02-12
+
+### Changed
+
+- Fixes bug where 'Authorization' header was being added leading to long delays in writing BatchRequests. [#1483](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1483)
 
 ## [3.1.1] - 2024-02-09
 
