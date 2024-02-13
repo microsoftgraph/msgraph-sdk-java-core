@@ -96,6 +96,8 @@ jobs:
   create_Tag:
     needs: maven_Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       RELEASE_TAG: ""
     steps:
