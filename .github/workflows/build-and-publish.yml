@@ -26,7 +26,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 20
+          java-version: 21
           distribution: 'temurin'
           cache: gradle
       - name: Download file
@@ -58,7 +58,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 20
+          java-version: 21
           distribution: 'temurin'
           cache: gradle
       - name: Download file
