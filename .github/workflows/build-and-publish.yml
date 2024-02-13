@@ -2,7 +2,7 @@ name: Build and Publish
 
 on:
   push:
-    branches: [ dev , master]
+    branches: [dev, master]
     paths-ignore:
       - '.gradle/wrapper'
       - '.gitignore'
