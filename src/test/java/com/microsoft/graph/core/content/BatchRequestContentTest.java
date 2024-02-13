@@ -9,6 +9,8 @@ import com.microsoft.kiota.HttpMethod;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 
+import com.microsoft.kiota.authentication.AuthenticationProvider;
+import com.microsoft.kiota.http.OkHttpRequestAdapter;
 import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import okhttp3.*;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +27,7 @@ import java.util.*;
 
 import static com.microsoft.graph.core.CoreConstants.ReplacementConstants.USERS_ENDPOINT_WITH_REPLACE_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class BatchRequestContentTest {
     static final String requestUrl = "https://graph.microsoft.com/v1.0"+USERS_ENDPOINT_WITH_REPLACE_TOKEN;
@@ -234,6 +237,61 @@ class BatchRequestContentTest {
         assertEquals(expectedJson, requestContentString);
     }
     @Test
+    void BatchRequestContent_DoNotAddAuthorizationHeader() throws Exception {
+        OkHttpRequestAdapter adapter = new OkHttpRequestAdapter(mock(AuthenticationProvider.class));
+
+        String expectedJson = "{\n" +
+            "    \"requests\": [\n" +
+            "        {\n" +
+            "            \"id\": \"1\",\n" +
+            "            \"url\": \"/me\",\n" +
+            "            \"method\": \"GET\",\n" +
+            "            \"headers\": {\n" +
+            "                \"accept\": \"application/json\"\n" +
+            "            }\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": \"2\",\n" +
+            "            \"url\": \"/me\",\n" +
+            "            \"method\": \"GET\"\n" +
+            "        }\n" +
+            "    ]\n" +
+            "}";
+        //The following string is the same size as a token
+        String longBearerString = "bbcbbbcbccbbabbacbccccbccabbcacacaaabccbccbbbbaabbabcccccbcbcacbbccbcbcaaacaacccacccbabacccabbccbccacccabcbbbbbacaacccabaaacaabcbacbaabcacabcbaaaccaccbbaaaabbbabbcaabbacccccaabbcabbbbbbbaaababaaabbbbcbbbcacbaaccaccabbcbabbabacbcccacbaccacaacaaacbacbaaaacbcbbacbcaaaaabcababbbcaabaaaabaaccbaccaababcbccbbacbaaabcbcbcbaaabcccabcacbbcbbabcccaccbacaaccaaaabcaacaccababbcbcabbccbaaaaaacccbcbccbaaccabbacbaaaacaccabcbbbcaabccccbbabbccaaaccbbbabbabcbcabcbccabbaabaacaaabbacaaccbcabaaaabcaabbabccabbcabcabbbaaaacccbcbcbbaacbbbbbcbbabcbabcbbcbbbaacccaababaccbaabcccccabbcabcababacbcaacbbaabaaacaabbacabcbcabcaabcccccacbaaacccbcabacbcbbbcccaaabacccaabcbcaababaabbacacabcbccacbbcacbbcaaccbbbcccbaaaacbcacabbcaaaacbcaacaccccbbaaabcccaacbabbbcbbccbacabccabaabacbbbbbcbaaaaaccabcbccabcccbcccabababbbbcbbcbbcbcabaabaabccbabcbbbabaaacaaaabcbcabaccaaaaacbaaabcbaccbaccbabacbcabbcbcbbaabbbbccaacccaabacacbabbcacabcbaccbcacbccaabcbbacbacbacbbaaccaaaaccacbcababccccccbbcbacacaaabaaaccbaabaacccbaaabcbcaabaaaaabcabacbabcbbccccbacbaabccaaabcccbbacbbacacaccabbcaacbbbbcbcbbcaabaacbbbcbbcbaaacccbacbaabacacbbabcaaaacaabacbaacaaaabbcacbacbcccacbcabcccacacaaccbbbcaacabcccaaacbabaaccbcbaacacbacaababcabcbccabcabcccaacabacabccaacbbcabbcaacbccaababacccaccabacbbbaabaccbcabcaabbcccacccbcbcabbccabbabaaaccacccbcbacabcaabcaccbbcbaaacbaabbbbcbccbbcccaababababaabacccbbbcabbaaacbcaaabccbbbccabbbcccbcacacaaabbabcacbacaacbbbcbbbbbccabbbabcabbcbacccaaabaaacbaabbacabbabcbcbcacbbaabbabcbcaacbabbcccbabaaccabbacbcaaacabbbbcaacbccbbbbacbcabbbaabcacaaabaabbaaccabbcabcabbacaaaacacabbabccacbbabbbbcabbaaccabcccaabbaaaacaabcbacabbaacaccbbbbaaaaacbcbacbbaaaabbabcaacaaacbbaabcccbbcbaacabbbbcaccaaaabcacbcbaaabbbcabcabcbbbbacbaccaacbccaacbbcaccaaaaacbabbbcbcbacbacbaccaacbcbcbbcaaaabaaabaabccaaaabbcabaaabcbcccbbcbaacacbbacacbabbcbaccabacbabcbcaabbbaabccccccaaccbcbccccbbbbcabaaacbbbaacbbaccaabcbcaacaacaacacaababcccbacbbccccbcacbcbcaacaaaacccccccaccaababaacbaabbcbbbccaacbabbcbcaaabbccacbbaabbbbcbbccbcccbbcacabaaacbacacbcaaabcbccacacccbbaacbacbbcbabbcbbbbcaccbaaccbcbcaabcababcbbbcccbcbaababcacbacbbbacacacabbccabbbaaaaacaccbbccbccbabaababcbbccabcaaacaccacabbaabacacabaccabacbacabbccbabaccbabcccbbcbbbaaabbccabbcbbbacacbbbabbcbbacbcabacaccabbbcbabbcbcacbcbbabbbbcabcbbabbbcaaccbaaaaccbababbbaabcbbbaacabbbbcabcabbcabbacabbccccaabaaaaabbcbabacbacbabcabcccabbbccbbcccaacacaabbcbabcbabaaaababbbacabaacbabbabcbbbcbccbacbcbccbbbccccbacaccbaccaaabbaacbbaaabbbcaccbabbcccbbbbccacbbaaacabbbbaabbabcccabcbcbbccccbacccabbbaaabcacccaabbabaccccbbbcccccaacbbbccbcabbbcccababbbcacccccccabccbbcaabccbbbaaccabbcaabcacabbcbbabcccaccccaaacbbbccaaabcbacabbbacbaccaabcbabababbcbcacaabcaabcbcbbcaaacaacabaaababbbacaccababaccbacacacacacbcccbabcbabcabccbaabcccababcbacbccccccacacbbacccccbaccbacaacbacacbcccccaaaacbaaaaccbacbbcacccbbbaabaaaccaccbcabcccccacaaaabcbabbacbbbcaaababcbacccbabcbaaabbcbaaacaabbcaaccaaccbacbaaaaaaabbaacaaabacbbcaacaacabbcabaccaaacbaccccbcccbcbcaaacbacaacccaccaacabacaaaabbbbbbbcacacbabccacacabbbababbbbcbabaaacaaacbacbcabbccacaacccbbbcbbacaccbbbaaabababbcbaacbcabcabaaccbcaaacbbbaacacccbbcaabcbacabbccbcbbbabbbaabacacaccaabbcbbaccbaaabcabbababaccca";
+        RequestInformation requestInfo = new RequestInformation();
+        requestInfo.urlTemplate = "{+baseurl}/users/{user%2Did}{?%24expand,%24select}";
+        HashMap<String, Object> pathParameters = new HashMap<>();
+        pathParameters.put("baseurl", "https://graph.microsoft.com/v1.0");
+        pathParameters.put("user%2Did", "TokenToReplace");
+        requestInfo.pathParameters = pathParameters;
+        requestInfo.httpMethod = HttpMethod.GET;
+        // Only one header should be present in the headers object of the Json Body
+        requestInfo.headers.add("accept", "application/json");
+        requestInfo.headers.add("authorization", longBearerString);
+        RequestInformation requestInfo2 = new RequestInformation();
+        requestInfo2.urlTemplate = "{+baseurl}/users/{user%2Did}{?%24expand,%24select}";
+        HashMap<String, Object> pathParameters2 = new HashMap<>();
+        pathParameters2.put("baseurl", "https://graph.microsoft.com/v1.0");
+        pathParameters2.put("user%2Did", "TokenToReplace");
+        requestInfo2.pathParameters = pathParameters2;
+        requestInfo2.httpMethod = HttpMethod.GET;
+        // No headers object should be present in the Json body
+        requestInfo2.headers.add("AuthoriZation", longBearerString); // Test with strange casing
+
+        BatchRequestContent batchRequestContent = new BatchRequestContent(client);
+        batchRequestContent.addBatchRequestStep(new BatchRequestStep("1",adapter.convertToNativeRequest(requestInfo)));
+        batchRequestContent.addBatchRequestStep(new BatchRequestStep("2",adapter.convertToNativeRequest(requestInfo2)));
+
+        InputStream stream = batchRequestContent.getBatchRequestContent();
+        String requestContentString = readInputStream(stream);
+        requestContentString = requestContentString.replace("\n", "").replaceAll("\\s", "");
+        expectedJson = expectedJson.replace("\n", "").replaceAll("\\s", "");
+
+        assertNotNull(requestContentString);
+        assertEquals(expectedJson, requestContentString);
+    }
+    @Test
     void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessage() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
         assertTrue(batchRequestContent.getBatchRequestSteps().isEmpty());
@@ -248,6 +306,7 @@ class BatchRequestContentTest {
         Assertions.assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().url().uri().toString(), request.url().uri().toString());
         Assertions.assertEquals(batchRequestContent.getBatchRequestSteps().get(requestId).getRequest().method(), request.method());
     }
+
     @Test
     void BatchRequestContent_AddBatchRequestStepWithHttpRequestMessageToBatchRequestContentWithMaxSteps() {
         BatchRequestContent batchRequestContent = new BatchRequestContent(client);
