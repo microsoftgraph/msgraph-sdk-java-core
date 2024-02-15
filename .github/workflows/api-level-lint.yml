@@ -3,7 +3,7 @@ name: "Checks the SDK only using APIs from the targeted API level"
 on:
   workflow_dispatch:
   push:
-    branches: [dev, master]
+    branches: [dev, master, support/2.x.x]
   pull_request:
     branches: [dev, master]
 
