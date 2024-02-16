@@ -2,10 +2,7 @@ name: Static analysis with SonarCloud
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
-      - dev
-      - feature/v2
+    branches: [master, dev, support/2.x.x]
   pull_request:
     types: [opened, synchronize, reopened]
 

@@ -18,16 +18,6 @@ updates:
     kiota-dependencies:
       patterns:
         - "*kiota*"
-- package-ecosystem: gradle
-  directory: "/samples/deviceCodeSample"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: gradle
-  directory: "/samples/interactiveBrowserSample"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
 - package-ecosystem: maven
   directory: "/"
   schedule:
@@ -39,42 +29,6 @@ updates:
         - "*kiota*"
 - package-ecosystem: github-actions
   directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: gradle
-  directory: "/"
-  target-branch: v3/longTermBranch
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  groups:
-    kiota-dependencies:
-      patterns:
-        - "*kiota*"
-- package-ecosystem: gradle
-  directory: "/android"
-  target-branch: v3/longTermBranch
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  groups:
-    kiota-dependencies:
-      patterns:
-        - "*kiota*"
-- package-ecosystem: maven
-  directory: "/"
-  target-branch: v3/longTermBranch
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  groups:
-    kiota-dependencies:
-      patterns:
-        - "*kiota*"
-- package-ecosystem: github-actions
-  directory: "/"
-  target-branch: v3/longTermBranch
   schedule:
     interval: daily
   open-pull-requests-limit: 10
