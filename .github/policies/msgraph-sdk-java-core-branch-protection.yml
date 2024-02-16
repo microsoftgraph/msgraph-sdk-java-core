@@ -85,9 +85,9 @@ configuration:
     # Restrict who can dismiss pull request reviews. boolean
     restrictsReviewDismissals: false
 
-  - branchNamePattern: v3/longTermBranch
-    # This branch pattern applies to the following branches as of 06/12/2023 10:31:16:
-    # v3/longTermBranch
+  - branchNamePattern: support/2.x.x
+    # This branch pattern applies to the following branches as of 2/14/2024 12:24
+    # support/2.x.x
 
     # Specifies whether this branch can be deleted. boolean
     allowsDeletions: false
@@ -111,15 +111,14 @@ configuration:
     requiresLinearHistory: false
     # Required status checks to pass before merging. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status
     requiredStatusChecks:
-    - Analyze (java)
-    - Build
-    - build
     - license/cla
+    - Build
     - lint-api-level
+    - Analyze (java)
+    - build
     # Require branches to be up to date before merging. Requires requiredStatusChecks. boolean
     requiresStrictStatusChecks: true
     # Indicates whether there are restrictions on who can push. boolean. Should be set with whoCanPush.
     restrictsPushes: false
     # Restrict who can dismiss pull request reviews. boolean
     restrictsReviewDismissals: false
-

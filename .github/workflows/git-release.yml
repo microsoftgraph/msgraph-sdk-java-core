@@ -9,10 +9,12 @@ on:
 jobs:
   Git_Release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Download Build Artifact
-        uses: dawidd6/action-download-artifact@v3.0.0
+        uses: dawidd6/action-download-artifact@v3.1.0
         with:
           workflow: build-and-publish.yml
           workflow_conclusion: success
