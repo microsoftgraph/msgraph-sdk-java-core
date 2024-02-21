@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -76,7 +77,8 @@ public class UploadResponseHandler {
                 } else {
                     final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
                     final UploadSession uploadSession = parseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
-                    if (!uploadSession.getNextExpectedRanges().isEmpty()) {
+                    final List<String> nextExpectedRanges = uploadSession.getNextExpectedRanges();
+                    if (!(nextExpectedRanges == null || nextExpectedRanges.isEmpty())) {
                         uploadResult.uploadSession = uploadSession;
                     } else {
                         uploadResult.itemResponse = parseNode.getObjectValue(factory);
