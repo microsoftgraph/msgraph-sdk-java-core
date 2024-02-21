@@ -56,16 +56,15 @@ public class UploadResponseHandler {
             }
             try(final InputStream in = body.byteStream()){
                 final String contentType = body.contentType().toString().split(";")[0]; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
-                int responseCode = response.code();
                 if(!response.isSuccessful()) {
                     throw new ApiExceptionBuilder()
                             .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
-                            .withResponseStatusCode(responseCode)
+                            .withResponseStatusCode(response.code())
                             .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
                             .build();
                 }
                 UploadResult<T> uploadResult = new UploadResult<>();
-                if (responseCode == HttpURLConnection.HTTP_CREATED || responseCode == HttpURLConnection.HTTP_OK) {
+                if (response.code() == HttpURLConnection.HTTP_CREATED) {
                     if (body.contentLength() > 0) {
                         final ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType, in);
                         uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
