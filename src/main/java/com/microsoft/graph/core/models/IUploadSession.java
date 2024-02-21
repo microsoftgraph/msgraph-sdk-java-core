@@ -29,7 +29,7 @@ public interface IUploadSession extends Parsable, AdditionalDataHolder {
      * A collection of byte ranges that the server is missing for the file. These ranges are zero indexed and of the format 'start-end' (e.g. '0-26' to indicate the first 27 bytes of the file). When uploading files as Outlook attachments, instead of a collection of ranges, this property always indicates a single value '{start}', the location in the file where the next upload should begin.
      * @return the Next Expected Ranges.
      */
-    @Nonnull
+    @Nullable
     List<String> getNextExpectedRanges();
     /**
      * Sets the ranges that are yet to be uploaded.
