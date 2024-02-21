@@ -119,9 +119,9 @@ class UploadResponseHandlerTest {
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
-            .message("OK")
+            .message("Accepted")
             .body(body)
-            .code(HttpURLConnection.HTTP_OK)
+            .code(HttpURLConnection.HTTP_ACCEPTED)
             .build();
         UploadResult<TestDriveItem> result = responseHandler
             .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
@@ -135,7 +135,7 @@ class UploadResponseHandlerTest {
         assertEquals("77829-99375", session.getNextExpectedRanges().get(1));
         assertEquals(2, session.getNextExpectedRanges().size());
     }
-    
+
     @Test
     void throwsServiceExceptionOnErrorResponse() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
