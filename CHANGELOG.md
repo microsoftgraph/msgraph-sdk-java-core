@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.4] - 2024-02-21
+
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components
+- Fixes a test in the test suite which did not respect the REST reference [#1517](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1517)
+- Fixes a bug with LargeFileUploadTask [#1517](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1517)
+
+### Changed
+
 ## [3.1.3] - 2024-02-14
 
 ### Changed
