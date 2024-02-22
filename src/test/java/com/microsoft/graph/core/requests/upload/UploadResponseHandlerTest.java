@@ -51,6 +51,36 @@ class UploadResponseHandlerTest {
         assertEquals("largeFile.vhd", item.name);
         assertEquals(33, item.size);
     }
+
+    @Test
+    void GetUploadItemOnCompletedUpdate() {
+        registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
+
+        UploadResponseHandler responseHandler = new UploadResponseHandler(null);
+        ResponseBody body = ResponseBody.create("{\n" +
+                "   \"id\": \"912310013A123\",\n" +
+                "   \"name\": \"largeFile.vhd\",\n" +
+                "   \"size\": 33\n" +
+                "}"
+            , MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON));
+        Response response = new Response.Builder()
+            .request(mock(Request.class))
+            .protocol(mock(Protocol.class))
+            .body(body)
+            .code(HttpURLConnection.HTTP_OK)
+            .message("OK")
+            .build();
+        UploadResult<TestDriveItem> result = responseHandler
+            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+        responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();});
+        TestDriveItem item = result.itemResponse;
+        assertTrue(result.isUploadSuccessful());
+        assertNotNull(item);
+        assertEquals("912310013A123", item.id);
+        assertEquals("largeFile.vhd", item.name);
+        assertEquals(33, item.size);
+    }
+
     @Test
     void getFileAttachmentLocationOnCompletedUpload() {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
@@ -89,9 +119,9 @@ class UploadResponseHandlerTest {
         Response response = new Response.Builder()
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
-            .message("OK")
+            .message("Accepted")
             .body(body)
-            .code(HttpURLConnection.HTTP_OK)
+            .code(HttpURLConnection.HTTP_ACCEPTED)
             .build();
         UploadResult<TestDriveItem> result = responseHandler
             .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
@@ -105,6 +135,7 @@ class UploadResponseHandlerTest {
         assertEquals("77829-99375", session.getNextExpectedRanges().get(1));
         assertEquals(2, session.getNextExpectedRanges().size());
     }
+
     @Test
     void throwsServiceExceptionOnErrorResponse() {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);

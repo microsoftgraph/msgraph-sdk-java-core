@@ -40,9 +40,9 @@ class UploadSliceRequestTest {
         Response response = new Response.Builder()
             .request(new Request.Builder().post(mock(RequestBody.class)).url("https://a.b.c/").build())
             .protocol(Protocol.HTTP_1_1)
-            .message("OK")
+            .message("Accepted")
             .body(body)
-            .code(HttpURLConnection.HTTP_OK)
+            .code(HttpURLConnection.HTTP_ACCEPTED)
             .build();
 
         OkHttpClient mockClient = getMockClient(response);

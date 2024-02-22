@@ -55,9 +55,12 @@ public class UploadSession implements IUploadSession {
      * Get the next upload byte ranges to be uploaded.
      * @return The byte ranges to be uploaded.
      */
-    @Nonnull
+    @Nullable
     @Override
     public List<String> getNextExpectedRanges() {
+        if (nextExpectedRanges == null) {
+            return null;
+        }
         return new ArrayList<>(nextExpectedRanges);
     }
     /**
