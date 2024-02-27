@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // Include the sdk as a dependency
-    implementation 'com.microsoft.graph:microsoft-graph-core:3.1.4'
+    implementation 'com.microsoft.graph:microsoft-graph-core:3.1.5'
     // This dependency is only needed if you are using the TokenCredentialAuthProvider
     implementation 'com.azure:azure-identity:1.11.0'
 }
@@ -37,7 +37,7 @@ Add the dependency in `dependencies` in pom.xml
     <!-- Include the sdk as a dependency -->
     <groupId>com.microsoft.graph</groupId>
     <artifactId>microsoft-graph-core</artifactId>
-    <version>3.1.4</version>
+    <version>3.1.5</version>
     <!-- This dependency is only needed if you are using the TokenCredentialAuthProvider -->
     <groupId>com.azure</groupId>
     <artifactId>azure-identity</artifactId>
