@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.6] - 2024-02-29
+
+### Changed
+
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components
+- Kiota-Java version bumps address a bug where file upload would fail due to unknown contentLength value. [Kiota-Java #1088](https://github.com/microsoft/kiota-java/pull/1088)
+
 ## [3.1.5] - 2024-02-27
 
 ### Changed
