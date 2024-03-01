@@ -24,13 +24,15 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * Task for uploading large files including pausing and resuming.
@@ -41,7 +43,7 @@ public class LargeFileUploadTask<T extends Parsable > {
     private static final long DEFAULT_MAX_SLICE_SIZE = (long) 5*1024*1024;
     private IUploadSession uploadSession;
     private final RequestAdapter requestAdapter;
-    private final InputStream uploadStream;
+    private final FileInputStream uploadStream;
     private final long maxSliceSize;
     private ArrayList<AbstractMap.SimpleEntry<Long, Long>> rangesRemaining;
     private final long totalUploadLength;
@@ -61,7 +63,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      */
     public LargeFileUploadTask(@Nullable final RequestAdapter requestAdapter,
                                @Nonnull Parsable uploadSession,
-                               @Nonnull InputStream uploadStream,
+                               @Nonnull FileInputStream uploadStream,
                                long streamSize,
                                @Nonnull ParsableFactory<T> factory) throws IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
         this(requestAdapter, uploadSession,uploadStream, streamSize,DEFAULT_MAX_SLICE_SIZE,  factory);
@@ -81,7 +83,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      */
     public LargeFileUploadTask(@Nullable final RequestAdapter requestAdapter,
                                @Nonnull Parsable uploadSession,
-                               @Nonnull InputStream uploadStream,
+                               @Nonnull FileInputStream uploadStream,
                                long streamSize,
                                long maxSliceSize,
                                @Nonnull ParsableFactory<T> factory) throws IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
@@ -275,9 +277,12 @@ public class LargeFileUploadTask<T extends Parsable > {
         long size = rangeEnd - rangeBegin + 1;
         return Math.min(size, this.maxSliceSize);
     }
-    private byte[] chunkInputStream(InputStream stream, int begin, int length) throws IOException {
-        byte[] buffer = new byte[length];
-        int lengthAssert = stream.read(buffer, begin, length);
+    private byte[] chunkInputStream(FileInputStream stream, int begin, int length) throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(length);
+        int lengthAssert = stream.getChannel().read(byteBuffer);
+        byteBuffer.flip();
+        byte[] buffer = byteBuffer.array();
+        byteBuffer.clear();
         assert lengthAssert == length;
         return buffer;
     }
