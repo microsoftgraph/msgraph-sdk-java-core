@@ -1,5 +1,23 @@
 package com.microsoft.graph.core.tasks;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.time.OffsetDateTime;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.microsoft.graph.core.ErrorConstants;
 import com.microsoft.graph.core.exceptions.ClientException;
 import com.microsoft.graph.core.models.IProgressCallback;
@@ -18,21 +36,8 @@ import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
 import com.microsoft.kiota.serialization.ParseNode;
-import okhttp3.OkHttpClient;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import okhttp3.OkHttpClient;
 
 /**
  * Task for uploading large files including pausing and resuming.
@@ -43,7 +48,7 @@ public class LargeFileUploadTask<T extends Parsable > {
     private static final long DEFAULT_MAX_SLICE_SIZE = (long) 5*1024*1024;
     private IUploadSession uploadSession;
     private final RequestAdapter requestAdapter;
-    private final FileInputStream uploadStream;
+    private final InputStream uploadStream;
     private final long maxSliceSize;
     private ArrayList<AbstractMap.SimpleEntry<Long, Long>> rangesRemaining;
     private final long totalUploadLength;
@@ -63,7 +68,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      */
     public LargeFileUploadTask(@Nullable final RequestAdapter requestAdapter,
                                @Nonnull Parsable uploadSession,
-                               @Nonnull FileInputStream uploadStream,
+                               @Nonnull InputStream uploadStream,
                                long streamSize,
                                @Nonnull ParsableFactory<T> factory) throws IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
         this(requestAdapter, uploadSession,uploadStream, streamSize,DEFAULT_MAX_SLICE_SIZE,  factory);
@@ -83,7 +88,7 @@ public class LargeFileUploadTask<T extends Parsable > {
      */
     public LargeFileUploadTask(@Nullable final RequestAdapter requestAdapter,
                                @Nonnull Parsable uploadSession,
-                               @Nonnull FileInputStream uploadStream,
+                               @Nonnull InputStream uploadStream,
                                long streamSize,
                                long maxSliceSize,
                                @Nonnull ParsableFactory<T> factory) throws IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
@@ -139,7 +144,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                         return result;
                     }
                 }
-                updateSessionStatus();
+                //updateSessionStatus();
                 uploadTries += 1;
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
@@ -203,7 +208,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         return session;
     }
     private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException {
-        byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
+        byte[] buffer = chunkInputStream(uploadStream, (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         try {
             return uploadSliceRequestBuilder.put(chunkStream);
@@ -277,12 +282,9 @@ public class LargeFileUploadTask<T extends Parsable > {
         long size = rangeEnd - rangeBegin + 1;
         return Math.min(size, this.maxSliceSize);
     }
-    private byte[] chunkInputStream(FileInputStream stream, int begin, int length) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(length);
-        int lengthAssert = stream.getChannel().read(byteBuffer);
-        byteBuffer.flip();
-        byte[] buffer = byteBuffer.array();
-        byteBuffer.clear();
+    private byte[] chunkInputStream(InputStream stream, int length) throws IOException {
+        byte[] buffer = new byte[length];
+        int lengthAssert = stream.read(buffer);
         assert lengthAssert == length;
         return buffer;
     }
