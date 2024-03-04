@@ -1,23 +1,5 @@
 package com.microsoft.graph.core.tasks;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.time.OffsetDateTime;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.microsoft.graph.core.ErrorConstants;
 import com.microsoft.graph.core.exceptions.ClientException;
 import com.microsoft.graph.core.models.IProgressCallback;
@@ -36,8 +18,19 @@ import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
 import com.microsoft.kiota.serialization.ParseNode;
-
 import okhttp3.OkHttpClient;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Task for uploading large files including pausing and resuming.
@@ -144,7 +137,7 @@ public class LargeFileUploadTask<T extends Parsable > {
                         return result;
                     }
                 }
-                //updateSessionStatus();
+                updateSessionStatus();
                 uploadTries += 1;
                 if (uploadTries < maxTries) {
                     TimeUnit.SECONDS.sleep((long) 2 * uploadTries * uploadTries);
