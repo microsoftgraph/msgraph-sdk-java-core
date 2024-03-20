@@ -52,7 +52,15 @@ public class UploadResponseHandler {
         Objects.requireNonNull(response);
         Objects.requireNonNull(factory);
         try (final ResponseBody body = response.body()) {
+            UploadResult<T> uploadResult = new UploadResult<>();
             if (Objects.isNull(body)) {
+                if (response.code() == HttpURLConnection.HTTP_CREATED) {
+                    final String location = response.headers().get("location");
+                    if(!Objects.isNull(location) && !location.isEmpty()) {
+                        uploadResult.location = new URI(location);
+                        return uploadResult;
+                    }
+                }
                 throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
             }
             try(final InputStream in = body.byteStream()){
@@ -64,15 +72,10 @@ public class UploadResponseHandler {
                             .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
                             .build();
                 }
-                UploadResult<T> uploadResult = new UploadResult<>();
                 if (response.code() == HttpURLConnection.HTTP_CREATED) {
                     if (body.contentLength() > 0) {
                         final ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType, in);
                         uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
-                    }
-                    final String location = response.headers().get("location");
-                    if(!Objects.isNull(location) && !location.isEmpty()) {
-                        uploadResult.location = new URI(location);
                     }
                 } else {
                     final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
