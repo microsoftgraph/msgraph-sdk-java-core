@@ -6,7 +6,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:5.2.0'
     testImplementation 'io.opentelemetry:opentelemetry-api:1.36.0'
     testImplementation 'io.opentelemetry:opentelemetry-context:1.36.0'
-    testImplementation 'io.opentelemetry.semconv:opentelemetry-semconv:1.24.0-alpha'
     testImplementation 'io.github.std-uritemplate:std-uritemplate:0.0.55'
     
     implementation 'com.google.code.gson:gson:2.10.1'
