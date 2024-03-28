@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.8]
+
+### Changed
+- Changed chunkInputStream method in LargeFileUploadTask to resolve IndexOutOfBoundsException when uploading large files
+- Fix Large File Upload bug where exception was thrown for completed successful uploads with Location header
+
 ## [3.1.7] - 2024-03-28
 
 ### Changed

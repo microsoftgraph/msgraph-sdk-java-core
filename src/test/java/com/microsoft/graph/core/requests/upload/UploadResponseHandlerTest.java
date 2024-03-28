@@ -11,11 +11,16 @@ import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
 import okhttp3.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static com.microsoft.kiota.serialization.ParseNodeFactoryRegistry.defaultInstance;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.time.OffsetDateTime;
 
@@ -24,7 +29,7 @@ class UploadResponseHandlerTest {
     ParseNodeFactoryRegistry registry = defaultInstance;
 
     @Test
-    void GetUploadItemOnCompletedUpload() {
+    void GetUploadItemOnCompletedUpload() throws IOException {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -41,8 +46,9 @@ class UploadResponseHandlerTest {
             .body(body)
             .code(HttpURLConnection.HTTP_CREATED)
             .build();
+        OkHttpClient mockHttpClient = getMockClient(response);
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+            .handleResponse(mockHttpClient.newCall(mock(Request.class)).execute(), TestDriveItem::createFromDiscriminatorValue);
         responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();});
         TestDriveItem item = result.itemResponse;
         assertTrue(result.isUploadSuccessful());
@@ -53,7 +59,7 @@ class UploadResponseHandlerTest {
     }
 
     @Test
-    void GetUploadItemOnCompletedUpdate() {
+    void GetUploadItemOnCompletedUpdate() throws IOException {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -70,8 +76,9 @@ class UploadResponseHandlerTest {
             .code(HttpURLConnection.HTTP_OK)
             .message("OK")
             .build();
+        OkHttpClient mockHttpClient = getMockClient(response);
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+            .handleResponse(mockHttpClient.newCall(mock(Request.class)).execute(), TestDriveItem::createFromDiscriminatorValue);
         responseHandler.handleResponse(response, parseNode -> {return new TestDriveItem();});
         TestDriveItem item = result.itemResponse;
         assertTrue(result.isUploadSuccessful());
@@ -82,7 +89,7 @@ class UploadResponseHandlerTest {
     }
 
     @Test
-    void getFileAttachmentLocationOnCompletedUpload() {
+    void getFileAttachmentLocationOnCompletedUpload() throws IOException {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -90,12 +97,13 @@ class UploadResponseHandlerTest {
             .request(mock(Request.class))
             .protocol(mock(Protocol.class))
             .message("success")
-            .body(ResponseBody.create("", MediaType.parse(CoreConstants.MimeTypeNames.APPLICATION_JSON)))
             .code(HttpURLConnection.HTTP_CREATED)
             .header("location", "http://localhost")
             .build();
+        OkHttpClient mockClient = getMockClient(response);
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response,TestDriveItem::createFromDiscriminatorValue);
+            .handleResponse(mockClient.newCall(mock(Request.class)).execute()
+            ,TestDriveItem::createFromDiscriminatorValue);
         TestDriveItem item = result.itemResponse;
 
         assertTrue(result.isUploadSuccessful());
@@ -103,7 +111,7 @@ class UploadResponseHandlerTest {
         assertEquals("http://localhost", result.location.toString());
     }
     @Test
-    void getUploadSessionOnProgressingUpload() {
+    void getUploadSessionOnProgressingUpload() throws IOException {
         registry.contentTypeAssociatedFactories.put(CoreConstants.MimeTypeNames.APPLICATION_JSON, new JsonParseNodeFactory());
 
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
@@ -123,8 +131,9 @@ class UploadResponseHandlerTest {
             .body(body)
             .code(HttpURLConnection.HTTP_ACCEPTED)
             .build();
+        OkHttpClient mockHttpClient = getMockClient(response);
         UploadResult<TestDriveItem> result = responseHandler
-            .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+            .handleResponse(mockHttpClient.newCall(mock(Request.class)).execute(), TestDriveItem::createFromDiscriminatorValue);
         UploadSession session = (UploadSession) result.uploadSession;
 
         assertFalse(result.isUploadSuccessful());
@@ -137,7 +146,7 @@ class UploadResponseHandlerTest {
     }
 
     @Test
-    void throwsServiceExceptionOnErrorResponse() {
+    void throwsServiceExceptionOnErrorResponse() throws IOException {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         ResponseBody body = ResponseBody.create("{\n" +
             "   \"error\": {\n"+
@@ -157,17 +166,18 @@ class UploadResponseHandlerTest {
             .body(body)
             .code(HttpURLConnection.HTTP_UNAUTHORIZED)
             .build();
+        OkHttpClient mockHttpClient = getMockClient(response);
 
         try {
             responseHandler
-                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+                .handleResponse(mockHttpClient.newCall(mock(Request.class)).execute(), TestDriveItem::createFromDiscriminatorValue);
         } catch (ApiException ex) {
             Assertions.assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
             assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, ex.getResponseStatusCode());
         }
     }
     @Test
-    void throwsSerializationErrorOnInvalidJson() {
+    void throwsSerializationErrorOnInvalidJson() throws IOException {
         UploadResponseHandler responseHandler = new UploadResponseHandler(null);
         String malformedResponse =
             "   \"error\": {\n"+
@@ -188,11 +198,31 @@ class UploadResponseHandlerTest {
             .body(body)
             .code(HttpURLConnection.HTTP_UNAUTHORIZED)
             .build();
+        OkHttpClient mockHttpClient = getMockClient(response);
         try {
             responseHandler
-                .handleResponse(response, TestDriveItem::createFromDiscriminatorValue);
+                .handleResponse(mockHttpClient.newCall(mock(Request.class)).execute(), TestDriveItem::createFromDiscriminatorValue);
         } catch (ApiException ex) {
             assertEquals(ErrorConstants.Codes.GENERAL_EXCEPTION, ex.getMessage());
         }
+    }
+
+    public static OkHttpClient getMockClient(final Response response) throws IOException {
+        final OkHttpClient mockClient = mock(OkHttpClient.class);
+        final Call remoteCall = mock(Call.class);
+        final Dispatcher dispatcher = new Dispatcher();
+        when(remoteCall.execute()).thenReturn(response);
+        doAnswer(
+                        (Answer<Void>)
+                                invocation -> {
+                                    Callback callback = invocation.getArgument(0);
+                                    callback.onResponse(null, response);
+                                    return null;
+                                })
+                .when(remoteCall)
+                .enqueue(any(Callback.class));
+        when(mockClient.dispatcher()).thenReturn(dispatcher);
+        when(mockClient.newCall(any())).thenReturn(remoteCall);
+        return mockClient;
     }
 }
