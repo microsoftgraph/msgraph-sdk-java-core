@@ -64,7 +64,6 @@ public class UploadResponseHandler {
                 throw new ApiException(ErrorConstants.Messages.NO_RESPONSE_FOR_UPLOAD);
             }
             try(final InputStream in = body.byteStream()){
-                final String contentType = body.contentType().toString().split(";")[0]; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
                 if(!response.isSuccessful()) {
                     throw new ApiExceptionBuilder()
                             .withMessage(ErrorConstants.Codes.GENERAL_EXCEPTION)
@@ -72,19 +71,32 @@ public class UploadResponseHandler {
                             .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
                             .build();
                 }
+                boolean canBeParsed = ((!Objects.isNull(body.contentType())) && (body.contentLength() > 0));
+                String contentType = canBeParsed ? body.contentType().toString().split(";")[0] : null; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
                 if (response.code() == HttpURLConnection.HTTP_CREATED) {
-                    if (body.contentLength() > 0) {
+                    if(canBeParsed) {
                         final ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType, in);
                         uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
                     }
+                    final String location = response.headers().get("location");
+                    if(!Objects.isNull(location) && !location.isEmpty()) {
+                        uploadResult.location = new URI(location);
+                    }
                 } else {
-                    final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
-                    final UploadSession uploadSession = parseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
-                    final List<String> nextExpectedRanges = uploadSession.getNextExpectedRanges();
-                    if (!(nextExpectedRanges == null || nextExpectedRanges.isEmpty())) {
-                        uploadResult.uploadSession = uploadSession;
+                    if(canBeParsed) {
+                        final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
+                        final UploadSession uploadSession = parseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
+                        final List<String> nextExpectedRanges = uploadSession.getNextExpectedRanges();
+                        if (!(nextExpectedRanges == null || nextExpectedRanges.isEmpty())) {
+                            uploadResult.uploadSession = uploadSession;
+                        } else {
+                            uploadResult.itemResponse = parseNode.getObjectValue(factory);
+                        }
                     } else {
-                        uploadResult.itemResponse = parseNode.getObjectValue(factory);
+                        final String location = response.headers().get("location");
+                        if (!Objects.isNull(location) && !location.isEmpty()) {
+                            uploadResult.location = new URI(location);
+                        }
                     }
                 }
                 return uploadResult;
@@ -94,6 +106,7 @@ public class UploadResponseHandler {
             throw new RuntimeException(ex);
         }
     }
+
 }
 
 
