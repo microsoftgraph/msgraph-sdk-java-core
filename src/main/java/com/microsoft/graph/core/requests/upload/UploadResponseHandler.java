@@ -73,29 +73,17 @@ public class UploadResponseHandler {
                 }
                 boolean canBeParsed = ((!Objects.isNull(body.contentType())) && (body.contentLength() > 0));
                 String contentType = canBeParsed ? body.contentType().toString().split(";")[0] : null; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
-                if (response.code() == HttpURLConnection.HTTP_CREATED) {
-                    if(canBeParsed) {
-                        final ParseNode uploadTypeParseNode = parseNodeFactory.getParseNode(contentType, in);
-                        uploadResult.itemResponse = uploadTypeParseNode.getObjectValue(factory);
-                    }
-                    final String location = response.headers().get("location");
-                    if(!Objects.isNull(location) && !location.isEmpty()) {
-                        uploadResult.location = new URI(location);
-                    }
-                } else {
-                    if(canBeParsed) {
-                        final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
+                if (canBeParsed) {
+                    final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
+                    if (response.code() == HttpURLConnection.HTTP_CREATED) {
+                        uploadResult.itemResponse = parseNode.getObjectValue(factory);
+                    } else {
                         final UploadSession uploadSession = parseNode.getObjectValue(UploadSession::createFromDiscriminatorValue);
                         final List<String> nextExpectedRanges = uploadSession.getNextExpectedRanges();
                         if (!(nextExpectedRanges == null || nextExpectedRanges.isEmpty())) {
                             uploadResult.uploadSession = uploadSession;
                         } else {
                             uploadResult.itemResponse = parseNode.getObjectValue(factory);
-                        }
-                    } else {
-                        final String location = response.headers().get("location");
-                        if (!Objects.isNull(location) && !location.isEmpty()) {
-                            uploadResult.location = new URI(location);
                         }
                     }
                 }

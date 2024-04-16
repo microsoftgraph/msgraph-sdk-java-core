@@ -2,6 +2,7 @@ package com.microsoft.graph.core.requests.upload;
 
 import com.microsoft.graph.core.models.IUploadSession;
 import com.microsoft.graph.core.models.UploadResult;
+import com.microsoft.graph.core.models.UploadSession;
 import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
@@ -46,11 +47,7 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
     @Nonnull
     public IUploadSession get() {
         RequestInformation requestInformation = toGetRequestInformation();
-        NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
-        requestInformation.setResponseHandler(nativeResponseHandler);
-        requestAdapter.sendPrimitive(requestInformation, null,  InputStream.class);
-        UploadResult<T> result = responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
-        return result.uploadSession;
+        return requestAdapter.send(requestInformation, null, UploadSession::createFromDiscriminatorValue);
     }
     private RequestInformation toGetRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
