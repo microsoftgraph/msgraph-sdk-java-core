@@ -47,7 +47,11 @@ public class UploadSessionRequestBuilder<T extends Parsable> {
     @Nonnull
     public IUploadSession get() {
         RequestInformation requestInformation = toGetRequestInformation();
-        return requestAdapter.send(requestInformation, null, UploadSession::createFromDiscriminatorValue);
+        NativeResponseHandler nativeResponseHandler = new NativeResponseHandler();
+        requestInformation.setResponseHandler(nativeResponseHandler);
+        requestAdapter.sendPrimitive(requestInformation, null,  InputStream.class);
+        UploadResult<T> result = responseHandler.handleResponse((Response) nativeResponseHandler.getValue(), factory);
+        return result.uploadSession;
     }
     private RequestInformation toGetRequestInformation() {
         RequestInformation requestInformation = new RequestInformation();
