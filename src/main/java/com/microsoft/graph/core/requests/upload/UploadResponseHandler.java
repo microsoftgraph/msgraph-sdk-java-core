@@ -71,7 +71,8 @@ public class UploadResponseHandler {
                             .withResponseHeaders(HeadersCompatibility.getResponseHeaders(response.headers()))
                             .build();
                 }
-                boolean canBeParsed = ((!Objects.isNull(body.contentType())) && (body.contentLength() > 0));
+                String contentLengthHeader = response.headers().get("content-length");
+                boolean canBeParsed = (!Objects.isNull(contentLengthHeader) && Integer.valueOf(contentLengthHeader) > 0) || !Objects.isNull(body.contentType());
                 String contentType = canBeParsed ? body.contentType().toString().split(";")[0] : null; //contentType.toString() returns in format <mediaType>;<charset>, we only want the mediaType.
                 if (canBeParsed) {
                     final ParseNode parseNode = parseNodeFactory.getParseNode(contentType, in);
