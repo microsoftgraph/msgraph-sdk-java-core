@@ -54,6 +54,9 @@ public class UploadResponseHandler {
         try (final ResponseBody body = response.body()) {
             UploadResult<T> uploadResult = new UploadResult<>();
             String contentLengthHeader = response.headers().get("content-length");
+            // rely on content-type OR content-length headers to determine if response body is empty.
+            // Response body() may be non-null despite being empty in raw response https://square.github.io/okhttp/3.x/okhttp/okhttp3/Response.html#body--
+            // content-length header is not always present in Graph responses. Content-type is more reliable
             if (Objects.isNull(body)
                 || Objects.isNull(body.contentType())
                 || (!Objects.isNull(contentLengthHeader) && Integer.parseInt(contentLengthHeader) == 0)
