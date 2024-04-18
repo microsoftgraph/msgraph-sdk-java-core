@@ -2,7 +2,6 @@ package com.microsoft.graph.core.requests.upload;
 
 import com.microsoft.graph.core.models.IUploadSession;
 import com.microsoft.graph.core.models.UploadResult;
-import com.microsoft.graph.core.models.UploadSession;
 import com.microsoft.kiota.*;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
