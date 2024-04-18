@@ -11,13 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-## [3.1.7]
+## [3.1.8]
 
 ### Added
 
 ### Changed
 - Changed chunkInputStream method in LargeFileUploadTask to resolve IndexOutOfBoundsException when uploading large files
-- Fix Large File Upload bug where exception was thrown for completed successful uploads with Location header
+- Fix Large File Upload bug where exception was thrown for completed successful uploads
 
 ## [3.1.7] - 2024-03-28
 
@@ -68,13 +68,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Version bump for Java SDK GA release.
-- Bumps Kiota-Java abstractions, authentication, http, and serialization components for Java SDK 6.1.0 release. 
+- Bumps Kiota-Java abstractions, authentication, http, and serialization components for Java SDK 6.1.0 release.
 
 ## [3.0.12] - 2023-12-15
 
-### Fixed 
+### Fixed
 
-- Fixes a bug where a null collection for allowedHosts would result in failure to initialize client. [#1411](https://github.com/microsoftgraph/msgraph-sdk-java-core/pull/1411) 
+- Fixes a bug where a null collection for allowedHosts would result in failure to initialize client. [#1411](https://github.com/microsoftgraph/msgraph-sdk-java-core/pull/1411)
 
 ## [3.0.11] - 2023-12-08
 
@@ -85,7 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.10] - 2023-11-27
 
-### Changed 
+### Changed
 
 - Removed the usage of reflection for enum deserialization and reordered RequestAdapter method arguments. [Kiota-Java #840](https://github.com/microsoft/kiota-java/issues/840)
 
@@ -108,13 +108,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Removes 'SuppressFBWarnings' annotations and dependency.  
+- Removes 'SuppressFBWarnings' annotations and dependency.
 
 ## [3.0.7] - 2023-07-20
 
 ### Added
 
-- Adds graph-java-sdk implementation of the `UrlReplaceHandler` middleware including default replacement pairs. 
+- Adds graph-java-sdk implementation of the `UrlReplaceHandler` middleware including default replacement pairs.
 - Default replacement pair: '/users/TokenToReplace' -> '/me'
 
 ## [3.0.6] - 2023-07-11
@@ -131,11 +131,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.4] - 2023-05-03
 
-### Added 
- 
-- Added LargeFileUploadTask functionality for kiota generated service libraries. 
+### Added
 
-### Fixed 
+- Added LargeFileUploadTask functionality for kiota generated service libraries.
+
+### Fixed
 
 - Fixes formatting used in the headers added by the telemetry handler to align with the [msGraph sdk spec.](https://github.com/microsoftgraph/msgraph-sdk-design/blob/master/middleware/TelemetryHandler.md)
 
@@ -179,7 +179,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   private OkHttpClient createClient(@Nonnull final IAuthenticationProvider auth) {
     return HttpClients.createDefault(auth);
   }
-  
+
   // then create the GraphServiceClient
     IAuthenticationProvider authenticationProvider = ...;
     GraphServiceClient
@@ -191,16 +191,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.20] - 2023-10-23
 
-### Changed 
+### Changed
 
-- Updates Okhttp3 to avoid transient vulnerabilty. [#1038](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1038) 
+- Updates Okhttp3 to avoid transient vulnerabilty. [#1038](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1038)
 
 ## [2.0.19] - 2023-06-20
 
 ### Changed
 
 - Remove explicit logging of GraphServiceException in the CoreHttpProvider class. [#885](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/885)
-- Thank you to @MaHa6543 for the contribution. 
+- Thank you to @MaHa6543 for the contribution.
 
 ## [2.0.18] - 2023-04-06
 
