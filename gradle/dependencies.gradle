@@ -7,8 +7,6 @@ dependencies {
     testImplementation 'io.opentelemetry:opentelemetry-api:1.37.0'
     testImplementation 'io.opentelemetry:opentelemetry-context:1.37.0'
     testImplementation 'io.github.std-uritemplate:std-uritemplate:0.0.56'
-    testImplementation 'io.opentelemetry.semconv:opentelemetry-semconv:1.25.0-alpha'
-    testImplementation 'io.opentelemetry.semconv:opentelemetry-semconv-incubating:1.25.0-alpha'
 
     implementation 'com.google.code.gson:gson:2.10.1'
 
@@ -17,11 +15,11 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:4.12.0'
     api 'com.azure:azure-core:1.48.0'
 
-    api 'com.microsoft.kiota:microsoft-kiota-abstractions:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-authentication-azure:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-text:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-form:1.1.4'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-multipart:1.1.4'
+    api 'com.microsoft.kiota:microsoft-kiota-abstractions:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-authentication-azure:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-text:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-form:1.1.6'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-multipart:1.1.6'
 }
