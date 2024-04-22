@@ -201,7 +201,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         return session;
     }
     private UploadResult<T> uploadSlice(UploadSliceRequestBuilder<T> uploadSliceRequestBuilder, ArrayList<Throwable> exceptionsList) throws IOException {
-        byte[] buffer = chunkInputStream(uploadStream,(int) uploadSliceRequestBuilder.getRangeBegin(), (int)uploadSliceRequestBuilder.getRangeLength());
+        byte[] buffer = chunkInputStream(uploadStream, (int)uploadSliceRequestBuilder.getRangeLength());
         ByteArrayInputStream chunkStream = new ByteArrayInputStream(buffer);
         try {
             return uploadSliceRequestBuilder.put(chunkStream);
@@ -275,9 +275,9 @@ public class LargeFileUploadTask<T extends Parsable > {
         long size = rangeEnd - rangeBegin + 1;
         return Math.min(size, this.maxSliceSize);
     }
-    private byte[] chunkInputStream(InputStream stream, int begin, int length) throws IOException {
+    private byte[] chunkInputStream(InputStream stream, int length) throws IOException {
         byte[] buffer = new byte[length];
-        int lengthAssert = stream.read(buffer, begin, length);
+        int lengthAssert = stream.read(buffer);
         assert lengthAssert == length;
         return buffer;
     }
