@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [3.1.10] - 2024-05-09
+
+### Changed
+
+- Downgraded `jakarta.annotation-api` dependency to `2.1.1` for java 8 compatibility
+
 ## [3.1.9] - 2024-04-23
 
 ### Changed
