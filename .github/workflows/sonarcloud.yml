@@ -2,7 +2,7 @@ name: Static analysis with SonarCloud
 on:
   workflow_dispatch:
   push:
-    branches: [master, dev, support/2.x.x]
+    branches: [main, support/2.x.x]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -34,7 +34,7 @@ jobs:
         with:
           java-version: 20
           distribution: 'temurin'
-          cache: gradle   
+          cache: gradle
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:

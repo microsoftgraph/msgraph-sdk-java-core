@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
   pull_request:
-    branches: [dev, master, support/2.x.x]
-  workflow_dispatch: 
- 
+    branches: [main, support/2.x.x]
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: 20
           distribution: 'temurin'
-          cache: gradle     
+          cache: gradle
       - name: Easy detect-secrets
         uses: RobertFischer/detect-secrets-action@v2.0.0
       - name: Grant execute permission for gradlew
