@@ -2,21 +2,21 @@ name: Build and Publish
 
 on:
   push:
-    branches: [dev, master, support/2.x.x]
+    branches: [main, support/2.x.x]
     paths-ignore:
       - '.gradle/wrapper'
       - '.gitignore'
       - 'LICENSE'
       - 'THIRD PARTY NOTICES'
       - '*.md'
-env: 
+env:
   PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
   PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
-      
+
 jobs:
   maven_Preview:
-    if: ${{ github.ref == 'refs/heads/dev' }}
-    environment: 
+    if: ${{ github.ref == 'refs/heads/main' }}
+    environment:
       name: maven_central_snapshot
     runs-on: ubuntu-latest
     steps:
@@ -32,23 +32,23 @@ jobs:
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
-        env:  
+        env:
           ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
-          OUTPUT_PATH: '.\local.properties' 
+          OUTPUT_PATH: '.\local.properties'
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
-        env: 
+        env:
           ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
           OUTPUT_PATH: '.\secring.gpg'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish
         run: ./gradlew $PREVIEW_TASK
-        
+
   maven_Release:
-    if: ${{ github.ref == 'refs/heads/master' }}
-    environment: 
+    if: ${{ github.ref == 'refs/heads/main' }}
+    environment:
       name: maven_central_release
     runs-on: ubuntu-latest
     steps:
@@ -64,13 +64,13 @@ jobs:
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
-        env:  
+        env:
           ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
           OUTPUT_PATH: '.\local.properties'
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
         shell: pwsh
-        env:  
+        env:
           ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
           OUTPUT_PATH: '.\secring.gpg'
       - name: Grant execute permission for gradlew
@@ -92,7 +92,7 @@ jobs:
             gradle.properties
             **/gradle/**
             Scripts/**
-  
+
   create_Tag:
     needs: maven_Release
     runs-on: ubuntu-latest
@@ -117,4 +117,4 @@ jobs:
           token: ${{ secrets.PERSONAL_TOKEN }}
           ref: ${{ steps.GetVersion.outputs.tag }}
 
-          
+
