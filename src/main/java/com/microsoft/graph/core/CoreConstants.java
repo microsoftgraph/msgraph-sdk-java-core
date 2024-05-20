@@ -12,9 +12,15 @@ public final class CoreConstants {
     private CoreConstants() {}
 
     private static class VersionValues {
+        // x-release-please-start-major
         private static final int MAJOR = 3;
+        // x-release-please-end
+        // x-release-please-start-minor
         private static final int MINOR = 1;
+        // x-release-please-end
+        // x-release-please-start-patch
         private static final int PATCH = 10;
+        // x-release-please-end
     }
 
     /**
