@@ -67,7 +67,6 @@ For an example of how to get an authentication provider, see [choose a Microsoft
 
 ### 2.3 Get a HttpClients object
 
-
 You must get a **HttpClients** object to make requests against the service.
 
 ```java
