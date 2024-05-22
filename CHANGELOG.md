@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.11](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.10...v3.1.11) (2024-05-22)
+
+
+### Bug Fixes
+
+* Bump Kiota dependencies ([e1f2d5e](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/e1f2d5e674cd273c23a47ad5906dd64f88ba240d))
+
 ## [3.1.10] - 2024-05-09
 
 ### Changed
@@ -335,4 +342,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Casing fixed for Odata type parsing
 - Removed .azure-pipelines/**
-
