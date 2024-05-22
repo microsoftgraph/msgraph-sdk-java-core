@@ -5,12 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.1.11] - 2024-05-12
-
-### Fixed
-
-- Fixes a bug where a `LargeFileTaskUpload` cannot be constructed if `InputStream.available()` returns 0 [#1621](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1621)
-
 ## [3.1.10] - 2024-05-09
 
 ### Changed
@@ -28,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-
 - Changed chunkInputStream method in LargeFileUploadTask to resolve IndexOutOfBoundsException when uploading large files
 - Fix Large File Upload bug where exception was thrown for completed successful uploads
 
@@ -48,7 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.1.5] - 2024-02-27
 
 ### Changed
-
 - Bumps Kiota-Java abstractions, authentication, http, and serialization components
 
 ## [3.1.4] - 2024-02-21
@@ -94,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Parent namespace for all classes has been changed from com.microsoft.graph.*to com.microsoft.graph.core.* in order to avoid conflicts with the generated service libraries.
+- Parent namespace for all classes has been changed from com.microsoft.graph.* to com.microsoft.graph.core.* in order to avoid conflicts with the generated service libraries.
 - This change is not backwards compatible and will require changes to your code.
 
 ## [3.0.10] - 2023-11-27
@@ -183,7 +175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed CoreHttpProvider dependency from OkHttpClient to Call.Factory (parent interface implemented by OkHttpClient). This make usage of OpenTelemetry tracing possible.
-  <https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation/okhttp/okhttp-3.0/library/README.md>
+  https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation/okhttp/okhttp-3.0/library/README.md
 
 ```java
   private Call.Factory createTracedClient(OpenTelemetry openTelemetry, @Nonnull final IAuthenticationProvider auth) {
@@ -343,3 +335,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Casing fixed for Odata type parsing
 - Removed .azure-pipelines/**
+

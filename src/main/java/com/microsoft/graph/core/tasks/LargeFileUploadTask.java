@@ -88,6 +88,9 @@ public class LargeFileUploadTask<T extends Parsable > {
         Objects.requireNonNull(uploadSession);
         Objects.requireNonNull(uploadStream);
         Objects.requireNonNull(factory);
+        if(uploadStream.available() <=0) {
+            throw new IllegalArgumentException("Must provide a stream that is not empty.");
+        }
         this.uploadSession = extractSessionFromParsable(uploadSession);
         this.requestAdapter = Objects.isNull(requestAdapter) ? initializeAdapter(this.uploadSession.getUploadUrl()):requestAdapter;
         this.totalUploadLength = streamSize;
