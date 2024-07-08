@@ -5,7 +5,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
     testImplementation 'io.opentelemetry:opentelemetry-api:1.40.0'
-    testImplementation 'io.opentelemetry:opentelemetry-context:1.39.0'
+    testImplementation 'io.opentelemetry:opentelemetry-context:1.40.0'
     testImplementation 'io.github.std-uritemplate:std-uritemplate:1.0.3'
     implementation 'com.google.code.gson:gson:2.11.0'
 
