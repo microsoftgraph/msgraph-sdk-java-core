@@ -161,7 +161,7 @@ public class BatchRequestContent {
      */
     @Nonnull
     public InputStream getBatchRequestContent() throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         writer.beginObject();
         writer.name(CoreConstants.BatchRequest.REQUESTS);
@@ -172,11 +172,9 @@ public class BatchRequestContent {
         writer.endArray();
         writer.endObject();
         writer.flush();
-        PipedInputStream in = new PipedInputStream();
-        try(final PipedOutputStream out = new PipedOutputStream(in)) {
-            outputStream.writeTo(out);
-            return in;
-        }
+        final ByteArrayInputStream out = new ByteArrayInputStream(outputStream.toByteArray());
+        outputStream.close();
+        return out;
     }
     private static final String AUTHORIZATION_HEADER_KEY = "authorization";
     private void writeBatchRequestStep(BatchRequestStep requestStep, JsonWriter writer) throws IOException {
