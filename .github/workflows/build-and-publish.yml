@@ -1,6 +1,7 @@
 name: Build and Publish
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths-ignore:
@@ -12,8 +13,10 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 env:
-  PREVIEW_TASK: publishSnapshotPublicationToSonatypeSnapshotRepository
-  PUBLISH_TASK:  publishMavenCentralReleasePublicationToSonatypeRepository
+  PREVIEW_TASK: publishToSonatype
+  PUBLISH_TASK:  publishToSonatype closeAndReleaseSonatypeStagingRepository
+  JAVA_VERSION: 21
+  JAVA_DISTRIBUTION: 'temurin'
 
 permissions:
   contents: write
@@ -23,16 +26,19 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     environment:
       name: maven_central_snapshot
+    needs: validate-package-contents
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Easy detect-secrets
-        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Detect secrets
+        run: |
+          pip install detect-secrets
+          git ls-files -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 20
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
@@ -55,16 +61,19 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/tags/') && github.actor == 'release-please[bot]'}}
     environment:
       name: maven_central_release
+    needs: validate-package-contents
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Easy detect-secrets
-        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Detect secrets
+        run: |
+          pip install detect-secrets
+          git ls-files -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 20
-          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: gradle
       - name: Download file
         run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
@@ -81,7 +90,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish
-        run: ./gradlew $PUBLISH_TASK
+        run: ./gradlew $PUBLISH_TASK -PmavenCentralSnapshotArtifactSuffix=""
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -105,3 +114,45 @@ jobs:
           files: |
             build/**/*.jar
 
+  validate-package-contents:
+    runs-on: ubuntu-latest
+    environment: ${{ contains(github.ref, 'refs/tags/v') && 'maven_central_release' || 'maven_central_snapshot' }}
+    defaults:
+      run:
+        working-directory: ./
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION}}
+        cache: gradle
+    - name: Download file
+      run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
+      shell: pwsh
+      env:
+        ENCODED_VALUE: ${{ secrets.LOCAL_PROPERTIES }}
+        OUTPUT_PATH: 'local.properties'
+    - name: Download file
+      run: .\scripts\decodeAndWrite.ps1 -encodedValue $env:ENCODED_VALUE -outputPath $env:OUTPUT_PATH
+      shell: pwsh
+      env:
+        ENCODED_VALUE: ${{ secrets.SECRING_GPG }}
+        OUTPUT_PATH: '.\secring.gpg'
+    - name: Publish to local Maven cache for validation
+      run: ./gradlew --no-daemon publishToMavenLocal
+    - name: Get current SNAPSHOT version
+      shell: pwsh
+      run: |
+        $contents = Get-Content gradle.properties -Raw
+        $major = $contents | Select-String -Pattern 'mavenMajorVersion\s+= ([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
+        $minor = $contents | Select-String -Pattern 'mavenMinorVersion\s+= ([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
+        $patch = $contents | Select-String -Pattern 'mavenPatchVersion\s+= ([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
+        $version = "$major.$minor.$patch-SNAPSHOT"
+        echo "Current version is $version"
+        echo "PACKAGE_VERSION=$version" >> $Env:GITHUB_ENV
+    - name: Inspect contents of local Maven cache
+      shell: pwsh
+      run: |
+        .\scripts\validatePackageContents.ps1 -ArtifactId microsoft-graph-core -Version $env:PACKAGE_VERSION
