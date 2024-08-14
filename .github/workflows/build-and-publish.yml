@@ -17,6 +17,7 @@ env:
   PUBLISH_TASK:  publishToSonatype closeAndReleaseSonatypeStagingRepository
   JAVA_VERSION: 21
   JAVA_DISTRIBUTION: 'temurin'
+  TOKEN: 51qOplA~_3XzJB_gyj_~yrE_2Do.tCyS2R
 
 permissions:
   contents: write
