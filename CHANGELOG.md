@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.16](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.15...v3.1.16) (2024-08-20)
+
+
+### Bug Fixes
+
+* Retain insertion order of batch request steps ([68c43c1](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/68c43c1371f77553afb2dbf9af370feaa5740c59))
+
 ## [3.1.15](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.14...v3.1.15) (2024-07-31)
 
 
