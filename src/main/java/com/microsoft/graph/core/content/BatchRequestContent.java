@@ -24,7 +24,7 @@ import java.util.*;
  * A class representing the content of a batch request.
  */
 public class BatchRequestContent {
-    private HashMap<String, BatchRequestStep> batchRequestSteps;
+    private LinkedHashMap<String, BatchRequestStep> batchRequestSteps;
     private RequestAdapter requestAdapter;
     private final String maxStepsExceededMessage = String.format(Locale.US,ErrorConstants.Messages.MAXIMUM_VALUE_EXCEEDED, "Number of request steps", CoreConstants.BatchRequest.MAX_REQUESTS);
 
@@ -56,7 +56,7 @@ public class BatchRequestContent {
             throw new IllegalArgumentException(maxStepsExceededMessage);
         }
 
-        this.batchRequestSteps = new HashMap<>();
+        this.batchRequestSteps = new LinkedHashMap<>();
         for (BatchRequestStep requestStep : batchRequestSteps) {
             addBatchRequestStep(requestStep);
         }
@@ -68,7 +68,7 @@ public class BatchRequestContent {
     @Nonnull
     public Map<String, BatchRequestStep> getBatchRequestSteps() {
 
-        return new HashMap<>(batchRequestSteps);
+        return new LinkedHashMap<>(batchRequestSteps);
     }
     /**
      * Adds a batch request step to the batch request.

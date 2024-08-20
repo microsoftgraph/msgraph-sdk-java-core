@@ -2,6 +2,10 @@ package com.microsoft.graph.core.content;
 
 import com.microsoft.graph.core.CoreConstants;
 import com.microsoft.graph.core.ErrorConstants;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.microsoft.graph.core.BaseClient;
 import com.microsoft.graph.core.models.BatchRequestStep;
 import com.microsoft.graph.core.requests.IBaseClient;
@@ -62,6 +66,29 @@ class BatchRequestContentTest {
             assertEquals(ErrorConstants.Messages.INVALID_DEPENDS_ON_REQUEST_ID, ex.getMessage());
         }
     }
+
+    @Test
+    void BatchRequestContent_RetainsOrderOfBatchRequestSteps() throws Exception {
+        BatchRequestStep requestStep = new BatchRequestStep("1", defaultTestRequest);
+        BatchRequestStep requestStep2 = new BatchRequestStep("ab23", defaultTestRequest);
+        BatchRequestStep requestStep3 = new BatchRequestStep("b", defaultTestRequest, Arrays.asList("1"));
+
+        BatchRequestContent batchRequestContent = new BatchRequestContent(client, Arrays.asList(requestStep, requestStep2, requestStep3));
+        InputStream batchRequestPayload = batchRequestContent.getBatchRequestContent();
+        String requestContentString = readInputStream(batchRequestPayload);
+        JsonElement jsonElement = JsonParser.parseString(requestContentString);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        if (jsonObject.has("requests")) {
+            JsonElement requests = jsonObject.get("requests");
+            assertTrue(requests.isJsonArray());
+            JsonArray jsonArray = requests.getAsJsonArray();
+            assertEquals(3, jsonArray.size());
+            assertEquals("1", jsonArray.get(0).getAsJsonObject().get("id").getAsString());
+            assertEquals("ab23", jsonArray.get(1).getAsJsonObject().get("id").getAsString());
+            assertEquals("b", jsonArray.get(2).getAsJsonObject().get("id").getAsString());
+        }
+    }
+
     @Test
     void BatchRequestContent_AddBatchRequestStepWithNewRequestStep() {
         BatchRequestStep batchRequestStep = new BatchRequestStep("1", defaultTestRequest);
