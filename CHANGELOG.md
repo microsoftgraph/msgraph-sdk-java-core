@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.17...v3.2.0) (2024-09-03)
+
+
+### Features
+
+* Adds kiota authentication dependency into compilation classpath ([4c80395](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/4c8039518244fd6e89b36c38f6f33b788b4ec212))
+
 ## [3.1.17](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.16...v3.1.17) (2024-08-23)
 
 

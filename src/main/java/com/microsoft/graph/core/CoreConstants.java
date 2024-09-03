@@ -16,10 +16,10 @@ public final class CoreConstants {
         private static final int MAJOR = 3;
         // x-release-please-end
         // x-release-please-start-minor
-        private static final int MINOR = 1;
+        private static final int MINOR = 2;
         // x-release-please-end
         // x-release-please-start-patch
-        private static final int PATCH = 17;
+        private static final int PATCH = 0;
         // x-release-please-end
     }
 
