@@ -85,7 +85,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
         } else {
             String statusCodePattern = statusCodeString;
             if (!errorMappings.containsKey(statusCodePattern)) {
-                if (statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX"))) {
+                if (statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) {
                     statusCodePattern = "4XX";
                 } else if (statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX")) {
                     statusCodePattern = "5XX";
