@@ -74,7 +74,7 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
         int statusCode = nativeResponse.code();
         String statusCodeString = String.valueOf(statusCode);
         if (errorMappings == null ||
-            !errorMappings.containsKey(statusCodeString) ||
+            !errorMappings.containsKey(statusCodeString) &&
             !(statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) &&
                 !(statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX"))) {
             throw new ApiExceptionBuilder()
@@ -83,7 +83,15 @@ public class ResponseBodyHandler<T extends Parsable> implements com.microsoft.ki
                     .withResponseHeaders(HeadersCompatibility.getResponseHeaders(nativeResponse.headers()))
                     .build();
         } else {
-            Parsable result = parseNode.getObjectValue(errorMappings.get(statusCodeString));
+            String statusCodePattern = statusCodeString;
+            if (!errorMappings.containsKey(statusCodePattern)) {
+                if (statusCode >= 400 && statusCode <= 499 && errorMappings.containsKey("4XX")) {
+                    statusCodePattern = "4XX";
+                } else if (statusCode >= 500 && statusCode <= 599 && errorMappings.containsKey("5XX")) {
+                    statusCodePattern = "5XX";
+                }
+            }
+            Parsable result = parseNode.getObjectValue(errorMappings.get(statusCodePattern));
             if (!(result instanceof Exception)) {
                 throw new ApiException("The server returned an unexpected status code and the error registered for this code failed to deserialize: " + statusCodeString);
             }
