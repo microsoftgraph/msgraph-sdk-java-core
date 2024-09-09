@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.2.0...v3.2.1) (2024-09-09)
+
+
+### Bug Fixes
+
+* errorMapping in ResponseCodes with "4XX" and "5XX" Pattern ([#1735](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/1735)) ([150ff3d](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/150ff3d8d8828e30d41f9587833838232932aa0b))
+
 ## [3.2.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.1.17...v3.2.0) (2024-09-03)
 
 
