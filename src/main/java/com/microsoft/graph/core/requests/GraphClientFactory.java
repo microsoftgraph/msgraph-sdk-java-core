@@ -3,7 +3,9 @@ package com.microsoft.graph.core.requests;
 import com.microsoft.graph.core.CoreConstants;
 import com.microsoft.graph.core.requests.middleware.GraphTelemetryHandler;
 import com.microsoft.graph.core.requests.options.GraphClientOption;
+import com.microsoft.kiota.authentication.BaseBearerTokenAuthenticationProvider;
 import com.microsoft.kiota.http.KiotaClientFactory;
+import com.microsoft.kiota.http.middleware.AuthorizationHandler;
 import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
 import com.microsoft.kiota.http.middleware.options.UrlReplaceHandlerOption;
 import okhttp3.Interceptor;
@@ -37,6 +39,33 @@ public class GraphClientFactory {
     public static OkHttpClient.Builder create(@Nonnull Interceptor... interceptors) {
         return create(new GraphClientOption(), interceptors);
     }
+
+    /**
+     * OkHttpClient Builder for Graph with specified Interceptors
+     * @param interceptors desired interceptors for use in requests.
+     * @return an OkHttpClient Builder instance.
+     */
+    @Nonnull
+    public static OkHttpClient.Builder create(@Nonnull List<Interceptor> interceptors) {
+        return create(new GraphClientOption(), interceptors.toArray(new Interceptor[0]));
+    }
+
+    /**
+     * OkHttpClient Builder for Graph with specified AuthenticationProvider.
+     * Adds an AuthorizationHandler to the OkHttpClient Builder.
+     * @param authenticationProvider the AuthenticationProvider to use for requests.
+     * @return an OkHttpClient Builder instance.
+     */
+    @Nonnull
+    public static OkHttpClient.Builder create(@Nonnull BaseBearerTokenAuthenticationProvider authenticationProvider) {
+        final GraphClientOption graphClientOption = new GraphClientOption();
+        final Interceptor[] interceptors = createDefaultGraphInterceptors(graphClientOption);
+        final ArrayList<Interceptor> interceptorList = new ArrayList<>(Arrays.asList(interceptors));
+        interceptorList.add(new AuthorizationHandler(authenticationProvider));
+        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
+        return create(graphClientOption, interceptorList);
+    }
+
     /**
      * OkHttpClient Builder for Graph with specified Interceptors and GraphClientOption.
      *
@@ -60,6 +89,18 @@ public class GraphClientFactory {
         }
         return builder;
     }
+
+    /**
+     * OkHttpClient Builder for Graph with specified Interceptors and GraphClientOption.
+     * @param graphClientOption the GraphClientOption for use in requests.
+     * @param interceptors desired interceptors for use in requests.
+     * @return an OkHttpClient Builder instance.
+     */
+    @Nonnull
+    public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull List<Interceptor> interceptors) {
+        return create(graphClientOption, interceptors.toArray(new Interceptor[0]));
+    }
+
     /**
      * The OkHttpClient Builder with optional GraphClientOption
      *
@@ -92,6 +133,5 @@ public class GraphClientFactory {
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.RETRY_HANDLER_FLAG);
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.REDIRECT_HANDLER_FLAG);
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.URL_REPLACEMENT_FLAG);
-        graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.BATCH_REQUEST_FLAG);
     }
 }

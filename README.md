@@ -59,23 +59,23 @@ The nature of the Graph API is such that the SDK needs quite a large set of clas
 
 Register your application by following the steps at [Register your app with the Microsoft Identity Platform](https://docs.microsoft.com/graph/auth-register-app-v2).
 
-### 2.2 Create an IAuthenticationProvider object
+### 2.2 Create an AuthenticationProvider object
 
-An instance of the **HttpClients** class handles building client. To create a new instance of this class, you need to provide an instance of `IAuthenticationProvider`, which can authenticate requests to Microsoft Graph.
+[Initialize an `AuthenticationProvider`](https://learn.microsoft.com/en-us/graph/sdks/choose-authentication-providers?view=graph-rest-1.0&tabs=java) based on your preferred authentication flow
 
-For an example of how to get an authentication provider, see [choose a Microsoft Graph authentication provider](https://docs.microsoft.com/graph/sdks/choose-authentication-providers?tabs=Java).
+### 2.3 Get a OkHttpClient object
 
-### 2.3 Get a HttpClients object
+You must get an **OkHttpClient** object to make requests against the service.
 
-You must get a **HttpClients** object to make requests against the service.
+Using the `GraphClientFactory`, you can initialize an `OkHttpClient` pre-configured for use with Microsoft Graph
 
 ```java
-OkHttpClient client = HttpClients.createDefault(iAuthenticationProvider);
+OkHttpClient client = GraphClientFactory.create(authenticationProvider).build();
 ```
 
 ## 3. Make requests against the service
 
-After you have a HttpClients that is authenticated, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
+After you have an OkHttpClient that is authenticated, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
 
 ### 3.1 Get the user's details
 
