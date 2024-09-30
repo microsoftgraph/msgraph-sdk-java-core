@@ -13,6 +13,8 @@ import java.net.URI;
 
 import org.junit.jupiter.api.Test;
 
+import com.microsoft.graph.core.authentication.AzureIdentityAccessTokenProvider;
+import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
 import com.microsoft.kiota.authentication.AccessTokenProvider;
 import com.microsoft.kiota.authentication.AllowedHostsValidator;
 import com.microsoft.kiota.authentication.BaseBearerTokenAuthenticationProvider;
@@ -41,14 +43,12 @@ class GraphClientFactoryTest {
     }
 
     private static BaseBearerTokenAuthenticationProvider getMockAuthenticationProvider() {
-        final AccessTokenProvider mockAccessTokenProvider = mock(AccessTokenProvider.class);
-        final AllowedHostsValidator allowedHostsValidator =
-                new AllowedHostsValidator("graph.microsoft.com");
-        when(mockAccessTokenProvider.getAllowedHostsValidator()).thenReturn(allowedHostsValidator);
+        final AccessTokenProvider mockAccessTokenProvider = mock(AzureIdentityAccessTokenProvider.class);
         when(mockAccessTokenProvider.getAuthorizationToken(any(URI.class), anyMap()))
                 .thenReturn(ACCESS_TOKEN_STRING);
-        final BaseBearerTokenAuthenticationProvider mockAuthenticationProvider =
-                mock(BaseBearerTokenAuthenticationProvider.class);
+        when(mockAccessTokenProvider.getAllowedHostsValidator()).thenReturn(new AllowedHostsValidator("graph.microsoft.com"));
+        final AzureIdentityAuthenticationProvider mockAuthenticationProvider =
+                mock(AzureIdentityAuthenticationProvider.class);
         when(mockAuthenticationProvider.getAccessTokenProvider())
                 .thenReturn(mockAccessTokenProvider);
         return mockAuthenticationProvider;

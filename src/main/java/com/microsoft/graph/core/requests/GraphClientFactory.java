@@ -96,6 +96,7 @@ public class GraphClientFactory {
      * @param interceptors desired interceptors for use in requests.
      * @return an OkHttpClient Builder instance.
      */
+    @Nonnull
     public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull List<Interceptor> interceptors) {
         return create(graphClientOption, interceptors.toArray(new Interceptor[0]));
     }
