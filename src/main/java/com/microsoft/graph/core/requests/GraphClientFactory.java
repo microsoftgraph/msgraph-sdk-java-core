@@ -58,9 +58,9 @@ public class GraphClientFactory {
      */
     @Nonnull
     public static OkHttpClient.Builder create(@Nonnull BaseBearerTokenAuthenticationProvider authenticationProvider) {
-        GraphClientOption graphClientOption = new GraphClientOption();
-        Interceptor[] interceptors = createDefaultGraphInterceptors(graphClientOption);
-        ArrayList<Interceptor> interceptorList = new ArrayList<>(Arrays.asList(interceptors));
+        final GraphClientOption graphClientOption = new GraphClientOption();
+        final Interceptor[] interceptors = createDefaultGraphInterceptors(graphClientOption);
+        final ArrayList<Interceptor> interceptorList = new ArrayList<>(Arrays.asList(interceptors));
         interceptorList.add(new AuthorizationHandler(authenticationProvider));
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
         return create(graphClientOption, interceptorList);
