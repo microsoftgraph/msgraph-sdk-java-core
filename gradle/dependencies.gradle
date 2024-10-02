@@ -12,7 +12,7 @@ dependencies {
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
     api 'com.squareup.okhttp3:okhttp:4.12.0'
-    api 'com.azure:azure-core:1.52.0'
+    api 'com.azure:azure-core:1.53.0'
 
     api 'com.microsoft.kiota:microsoft-kiota-abstractions:1.5.0'
     api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:1.5.0'
