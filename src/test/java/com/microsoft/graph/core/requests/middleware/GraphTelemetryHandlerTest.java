@@ -6,11 +6,15 @@ import com.microsoft.graph.core.requests.options.GraphClientOption;
 import com.microsoft.kiota.http.middleware.RedirectHandler;
 import com.microsoft.kiota.http.middleware.RetryHandler;
 
+import com.microsoft.kiota.http.middleware.options.RetryHandlerOption;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,22 +34,35 @@ class GraphTelemetryHandlerTest {
 
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(!response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(CoreConstants.Headers.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests running on java platform
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(!response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(
+            CoreConstants.Headers.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests running on java platform
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
     void arrayInterceptorsTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
 
-        final Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(), new RedirectHandler()};
+        final Interceptor[] interceptors = {new GraphTelemetryHandler(), getDisabledRetryHandler(),
+            new RedirectHandler()};
         final OkHttpClient client = GraphClientFactory.create(interceptors).build();
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
         final Response response = client.newCall(request).execute();
 
+        for (Interceptor clientInterceptor : client.interceptors()) {
+            if (clientInterceptor instanceof RetryHandler) {
+                RetryHandlerOption retryOptions = ((RetryHandler) clientInterceptor).getRetryOptions();
+                Assertions.assertEquals(0, retryOptions.maxRetries());
+                Assertions.assertEquals(0, retryOptions.delay());
+
+            }
+        }
+
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
@@ -59,7 +76,8 @@ class GraphTelemetryHandlerTest {
 
         assertNotNull(response);
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
@@ -76,7 +94,7 @@ class GraphTelemetryHandlerTest {
         graphClientOption.setGraphServiceTargetVersion(serviceLibVer);
 
         final String expectedCoreVer =
-            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" +coreLibVer;
+            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + coreLibVer;
         final String expectedClientEndpoint =
             CoreConstants.Headers.JAVA_VERSION_PREFIX + "-" + serviceLibVer + "/" + clientLibVer;
 
@@ -85,8 +103,16 @@ class GraphTelemetryHandlerTest {
         final Response response = client.newCall(request).execute();
 
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCoreVer));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
         assertTrue(response.request().header(CoreConstants.Headers.CLIENT_REQUEST_ID).contains(requestId));
+    }
+
+    private static @NotNull RetryHandler getDisabledRetryHandler() {
+        RetryHandlerOption retryHandlerOption = new RetryHandlerOption(
+            (delay, executionCount, request, response) -> false, 0, 0);
+        RetryHandler retryHandler = new RetryHandler(retryHandlerOption);
+        return retryHandler;
     }
 }
 

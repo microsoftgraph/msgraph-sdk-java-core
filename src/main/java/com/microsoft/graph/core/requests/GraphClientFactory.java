@@ -75,13 +75,13 @@ public class GraphClientFactory {
      */
     @Nonnull
     public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull Interceptor... interceptors) {
-        final OkHttpClient.Builder builder = create(graphClientOption);
+        final OkHttpClient.Builder builder = KiotaClientFactory.create(interceptors);
         //Skip adding interceptor if that class of interceptor already exist.
         final List<String> appliedInterceptors = new ArrayList<>();
         for(Interceptor interceptor: builder.interceptors()) {
             appliedInterceptors.add(interceptor.getClass().toString());
         }
-        for (Interceptor interceptor:interceptors){
+        for (Interceptor interceptor:createDefaultGraphInterceptors(graphClientOption)){
             if(appliedInterceptors.contains(interceptor.getClass().toString())) {
                 continue;
             }
