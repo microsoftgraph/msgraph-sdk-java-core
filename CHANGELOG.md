@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.1](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.3.0...v3.3.1) (2024-10-23)
+
+
+### Bug Fixes
+
+* release new version with updated kiota dependencies ([6e70a6e](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/6e70a6e8e83457b20baac14a508400bb1b093432))
+* release new version with updated kiota dependencies ([1cfa35a](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/1cfa35ab9cd46b5a5761cbad1ef96f0c0883f8e6))
+
 ## [3.3.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.2.1...v3.3.0) (2024-09-30)
 
 
