@@ -75,7 +75,7 @@ OkHttpClient client = GraphClientFactory.create(authenticationProvider).build();
 
 ## 3. Make requests against the service
 
-After you have an OkHttpClient that is authenticated, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
+After you have an authenticated `OkHttpClient`, you can begin making calls against the service. The requests against the service look like our [REST API](https://developer.microsoft.com/en-us/graph/docs/concepts/overview).
 
 ### 3.1 Get the user's details
 
@@ -125,12 +125,11 @@ For known issues, see [issues](https://github.com/MicrosoftGraph/msgraph-sdk-jav
 
 ## 5. Contributions
 
-The Microsoft Graph SDK is open for contribution. To contribute to this project, see [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/main/CONTRIBUTING.md).
+The Microsoft Graph SDK is open for contribution. To contribute to this project, see the [Contributing](https://github.com/microsoftgraph/msgraph-sdk-java-core/blob/main/CONTRIBUTING.md) guide.
 
 ## 6. Supported Java versions
 
 The Microsoft Graph SDK for Java library is supported at runtime for Java 8 and [Android API revision 26](http://source.android.com/source/build-numbers.html) or greater.
-
 
 ## 7. License
 
