@@ -37,7 +37,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull Interceptor... interceptors) {
+    public static OkHttpClient.Builder create(@Nonnull final Interceptor... interceptors) {
         return create(new GraphClientOption(), interceptors);
     }
 
@@ -47,7 +47,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull List<Interceptor> interceptors) {
+    public static OkHttpClient.Builder create(@Nonnull final List<Interceptor> interceptors) {
         return create(new GraphClientOption(), interceptors.toArray(new Interceptor[0]));
     }
 
@@ -58,7 +58,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull BaseBearerTokenAuthenticationProvider authenticationProvider) {
+    public static OkHttpClient.Builder create(@Nonnull final BaseBearerTokenAuthenticationProvider authenticationProvider) {
         return create(authenticationProvider, new RequestOption[0]);
     }
 
@@ -69,7 +69,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull BaseBearerTokenAuthenticationProvider authenticationProvider, @Nonnull RequestOption[] requestOptions) {
+    public static OkHttpClient.Builder create(@Nonnull final BaseBearerTokenAuthenticationProvider authenticationProvider, @Nonnull final RequestOption[] requestOptions) {
         final GraphClientOption graphClientOption = new GraphClientOption();
         final Interceptor[] interceptors = createDefaultGraphInterceptors(graphClientOption, requestOptions);
         final ArrayList<Interceptor> interceptorList = new ArrayList<>(Arrays.asList(interceptors));
@@ -86,7 +86,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull Interceptor... interceptors) {
+    public static OkHttpClient.Builder create(@Nonnull final GraphClientOption graphClientOption, @Nonnull final Interceptor... interceptors) {
         final OkHttpClient.Builder builder = KiotaClientFactory.create(interceptors);
         final List<Interceptor> customInterceptors = builder.interceptors();
         final boolean telemetryHandlerExists = customInterceptors.stream().anyMatch(x -> x instanceof GraphTelemetryHandler);
@@ -103,7 +103,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nonnull GraphClientOption graphClientOption, @Nonnull List<Interceptor> interceptors) {
+    public static OkHttpClient.Builder create(@Nonnull final GraphClientOption graphClientOption, @Nonnull final List<Interceptor> interceptors) {
         return create(graphClientOption, interceptors.toArray(new Interceptor[0]));
     }
 
@@ -114,7 +114,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nullable GraphClientOption graphClientOption) {
+    public static OkHttpClient.Builder create(@Nullable final GraphClientOption graphClientOption) {
         return create(graphClientOption, new RequestOption[0]);
     }
 
@@ -125,7 +125,7 @@ public class GraphClientFactory {
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nullable GraphClientOption graphClientOption, @Nonnull RequestOption[] requestOptions) {
+    public static OkHttpClient.Builder create(@Nullable final GraphClientOption graphClientOption, @Nonnull final RequestOption[] requestOptions) {
         GraphClientOption options = graphClientOption != null ? graphClientOption : new GraphClientOption();
         return KiotaClientFactory.create(createDefaultGraphInterceptors(options, requestOptions));
     }
@@ -137,7 +137,7 @@ public class GraphClientFactory {
      * @return an array of interceptors.
      */
     @Nonnull
-    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption) {
+    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull final GraphClientOption graphClientOption) {
         return createDefaultGraphInterceptors(graphClientOption, new RequestOption[0]);
     }
 
@@ -148,7 +148,7 @@ public class GraphClientFactory {
      * @return an array of interceptors.
      */
     @Nonnull
-    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull GraphClientOption graphClientOption, @Nonnull RequestOption[] requestOptions) {
+    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull final GraphClientOption graphClientOption, @Nonnull final RequestOption[] requestOptions) {
         Objects.requireNonNull(requestOptions, "parameter requestOptions cannot be null");
 
         UrlReplaceHandlerOption urlReplaceHandlerOption = new UrlReplaceHandlerOption(CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
