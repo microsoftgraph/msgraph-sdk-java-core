@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.azure.core.credential.AccessToken;
+import com.azure.core.credential.TokenCredential;
 import com.microsoft.graph.core.authentication.AzureIdentityAccessTokenProvider;
 import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
 import com.microsoft.graph.core.requests.middleware.GraphTelemetryHandler;
@@ -39,6 +41,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import reactor.core.publisher.Mono;
 
 class GraphClientFactoryTest {
 
@@ -95,6 +98,22 @@ class GraphClientFactoryTest {
                 getMockAuthenticationProvider();
         OkHttpClient graphClient = GraphClientFactory.create(mockAuthenticationProvider).addInterceptor(new MockResponseHandler()).build();
 
+        Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me").build();
+        Response response = graphClient.newCall(request).execute();
+
+        assertEquals(200, response.code());
+        assertNotNull(response.request());
+        assertTrue(response.request().headers().names().contains("Authorization"));
+        assertEquals("Bearer " + ACCESS_TOKEN_STRING, response.request().header("Authorization"));
+    }
+
+    @Test
+    void testCreateWithTokenCredential() throws IOException {
+        final TokenCredential tokenCredential = mock(TokenCredential.class);
+        when(tokenCredential.getTokenSync(any())).thenReturn(new AccessToken(ACCESS_TOKEN_STRING, null));
+        when(tokenCredential.getToken(any())).thenReturn(Mono.just(new AccessToken(ACCESS_TOKEN_STRING, null)));
+
+        final OkHttpClient graphClient = GraphClientFactory.create(tokenCredential).addInterceptor(new MockResponseHandler()).build();
         Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/me").build();
         Response response = graphClient.newCall(request).execute();
 

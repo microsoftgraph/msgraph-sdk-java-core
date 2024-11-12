@@ -1,6 +1,8 @@
 package com.microsoft.graph.core.requests;
 
+import com.azure.core.credential.TokenCredential;
 import com.microsoft.graph.core.CoreConstants;
+import com.microsoft.graph.core.authentication.AzureIdentityAccessTokenProvider;
 import com.microsoft.graph.core.requests.middleware.GraphTelemetryHandler;
 import com.microsoft.graph.core.requests.options.GraphClientOption;
 import com.microsoft.kiota.RequestOption;
@@ -49,6 +51,27 @@ public class GraphClientFactory {
     @Nonnull
     public static OkHttpClient.Builder create(@Nonnull final List<Interceptor> interceptors) {
         return create(new GraphClientOption(), interceptors.toArray(new Interceptor[0]));
+    }
+
+    /**
+     * OkHttpClient Builder for Graph with authentication middleware that uses the specified TokenCredential.
+     * @param tokenCredential the TokenCredential to use for authentication.
+     * @return an OkHttpClient Builder instance.
+     */
+    @Nonnull
+    public static OkHttpClient.Builder create(@Nonnull final TokenCredential tokenCredential) {
+        return create(tokenCredential, new RequestOption[0]);
+    }
+
+    /**
+     * OkHttpClient Builder for Graph with authentication middleware that uses the specified TokenCredential and RequestOptions to override default graph interceptors.
+     * @param tokenCredential the TokenCredential to use for authentication.
+     * @param requestOptions custom request options to override default graph interceptors
+     * @return an OkHttpClient Builder instance.
+     */
+    @Nonnull
+    public static OkHttpClient.Builder create(@Nonnull final TokenCredential tokenCredential, @Nonnull final RequestOption[] requestOptions) {
+        return create(new BaseBearerTokenAuthenticationProvider(new AzureIdentityAccessTokenProvider(tokenCredential)), requestOptions);
     }
 
     /**
