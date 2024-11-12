@@ -71,7 +71,9 @@ public class GraphClientFactory {
     @Nonnull
     public static OkHttpClient.Builder create(@Nonnull final BaseBearerTokenAuthenticationProvider authenticationProvider, @Nonnull final RequestOption[] requestOptions) {
         final GraphClientOption graphClientOption = new GraphClientOption();
-        final Interceptor[] interceptors = createDefaultGraphInterceptors(graphClientOption, requestOptions);
+        final List<RequestOption> requestOptionsList = new ArrayList<>(Arrays.asList(requestOptions));
+        requestOptionsList.add(graphClientOption);
+        final Interceptor[] interceptors = createDefaultGraphInterceptors(requestOptionsList.toArray(new RequestOption[0]));
         final ArrayList<Interceptor> interceptorList = new ArrayList<>(Arrays.asList(interceptors));
         interceptorList.add(new AuthorizationHandler(authenticationProvider));
         graphClientOption.featureTracker.setFeatureUsage(FeatureFlag.AUTH_HANDLER_FLAG);
@@ -115,19 +117,17 @@ public class GraphClientFactory {
      */
     @Nonnull
     public static OkHttpClient.Builder create(@Nullable final GraphClientOption graphClientOption) {
-        return create(graphClientOption, new RequestOption[0]);
+        return KiotaClientFactory.create(createDefaultGraphInterceptors(graphClientOption));
     }
 
     /**
      * The OkHttpClient Builder with optional GraphClientOption and RequestOptions to override default graph interceptors
-     * @param graphClientOption the GraphClientOption for use in requests.
      * @param requestOptions custom request options to override default graph interceptors
      * @return an OkHttpClient Builder instance.
      */
     @Nonnull
-    public static OkHttpClient.Builder create(@Nullable final GraphClientOption graphClientOption, @Nonnull final RequestOption[] requestOptions) {
-        GraphClientOption options = graphClientOption != null ? graphClientOption : new GraphClientOption();
-        return KiotaClientFactory.create(createDefaultGraphInterceptors(options, requestOptions));
+    public static OkHttpClient.Builder create(@Nonnull final RequestOption[] requestOptions) {
+        return KiotaClientFactory.create(createDefaultGraphInterceptors(requestOptions));
     }
 
     /**
@@ -138,24 +138,34 @@ public class GraphClientFactory {
      */
     @Nonnull
     public static Interceptor[] createDefaultGraphInterceptors(@Nonnull final GraphClientOption graphClientOption) {
-        return createDefaultGraphInterceptors(graphClientOption, new RequestOption[0]);
+        return getDefaultGraphInterceptors(new RequestOption[]{ graphClientOption }).toArray(new Interceptor[0]);
     }
 
     /**
      * Creates the default Interceptors for use with Graph configured with the provided RequestOptions.
-     * @param graphClientOption the GraphClientOption used to create the GraphTelemetryHandler with.
      * @param requestOptions custom request options to override default graph interceptors
      * @return an array of interceptors.
      */
     @Nonnull
-    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull final GraphClientOption graphClientOption, @Nonnull final RequestOption[] requestOptions) {
+    public static Interceptor[] createDefaultGraphInterceptors(@Nonnull final RequestOption[] requestOptions) {
         Objects.requireNonNull(requestOptions, "parameter requestOptions cannot be null");
+        return getDefaultGraphInterceptors(requestOptions).toArray(new Interceptor[0]);
+    }
 
+    /**
+     * Creates the default Interceptors for use with Graph.
+     * @param requestOptions custom request options to override default graph interceptors
+     * @return a list of interceptors.
+     */
+    private static List<Interceptor> getDefaultGraphInterceptors(@Nonnull final RequestOption[] requestOptions) {
+        GraphClientOption graphClientOption = new GraphClientOption();
         UrlReplaceHandlerOption urlReplaceHandlerOption = new UrlReplaceHandlerOption(CoreConstants.ReplacementConstants.getDefaultReplacementPairs());
-
         for (RequestOption option : requestOptions) {
             if (option instanceof UrlReplaceHandlerOption) {
                 urlReplaceHandlerOption = (UrlReplaceHandlerOption) option;
+            }
+            if (option instanceof GraphClientOption) {
+                graphClientOption = (GraphClientOption) option;
             }
         }
 
@@ -164,7 +174,7 @@ public class GraphClientFactory {
         handlers.add(new GraphTelemetryHandler(graphClientOption));
         handlers.addAll(Arrays.asList(KiotaClientFactory.createDefaultInterceptors(requestOptions)));
         addDefaultFeatureUsages(graphClientOption);
-        return handlers.toArray(new Interceptor[0]);
+        return handlers;
     }
 
     //These are the default features used by the Graph Client

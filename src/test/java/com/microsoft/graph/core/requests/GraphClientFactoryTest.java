@@ -11,6 +11,9 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -19,12 +22,17 @@ import org.junit.jupiter.api.Test;
 import com.microsoft.graph.core.authentication.AzureIdentityAccessTokenProvider;
 import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
 import com.microsoft.graph.core.requests.middleware.GraphTelemetryHandler;
+import com.microsoft.graph.core.requests.options.GraphClientOption;
 import com.microsoft.kiota.RequestOption;
 import com.microsoft.kiota.authentication.AccessTokenProvider;
 import com.microsoft.kiota.authentication.AllowedHostsValidator;
 import com.microsoft.kiota.authentication.BaseBearerTokenAuthenticationProvider;
+import com.microsoft.kiota.http.middleware.HeadersInspectionHandler;
+import com.microsoft.kiota.http.middleware.ParametersNameDecodingHandler;
 import com.microsoft.kiota.http.middleware.RedirectHandler;
 import com.microsoft.kiota.http.middleware.RetryHandler;
+import com.microsoft.kiota.http.middleware.UrlReplaceHandler;
+import com.microsoft.kiota.http.middleware.UserAgentHandler;
 import com.microsoft.kiota.http.middleware.options.RetryHandlerOption;
 
 import okhttp3.Interceptor;
@@ -35,6 +43,51 @@ import okhttp3.Response;
 class GraphClientFactoryTest {
 
     private static final String ACCESS_TOKEN_STRING = "token";
+
+    @Test
+    void testDefaultCreate() {
+        final OkHttpClient.Builder clientBuilder = GraphClientFactory.create();
+        assertDefaultHandlersPresent(clientBuilder.interceptors());
+    }
+
+    @Test
+    void testCreateWithCustomInterceptorsAddsTelemetry() {
+        final OkHttpClient.Builder clientBuilder = GraphClientFactory.create(
+           new RetryHandler(), new RedirectHandler()
+        );
+
+        assertEquals(3, clientBuilder.interceptors().size());
+
+        for (Interceptor interceptor : clientBuilder.interceptors()) {
+            assertTrue(
+                interceptor instanceof GraphTelemetryHandler
+                || interceptor instanceof RetryHandler
+                || interceptor instanceof RedirectHandler
+            );
+        }
+    }
+
+    @Test
+    void testCreateWithGraphClientOption() {
+        final OkHttpClient.Builder clientBuilder = GraphClientFactory.create(new GraphClientOption());
+        assertDefaultHandlersPresent(clientBuilder.interceptors());
+    }
+
+    @Test
+    void testCreateDefaultInterceptorsWithCustomOptions() {
+        Interceptor[] interceptors = GraphClientFactory.createDefaultGraphInterceptors(
+            new RequestOption[] {new RetryHandlerOption(null, 0, 0)}
+        );
+        assertDefaultHandlersPresent(Arrays.asList(interceptors));
+
+        for (Interceptor interceptor : interceptors) {
+            if (interceptor instanceof RetryHandler) {
+                RetryHandlerOption retryOptions = ((RetryHandler) interceptor).getRetryOptions();
+                Assertions.assertEquals(0, retryOptions.maxRetries());
+                Assertions.assertEquals(0, retryOptions.delay());
+            }
+        }
+    }
 
     @Test
     void testCreateWithAuthenticationProvider() throws IOException {
@@ -100,6 +153,24 @@ class GraphClientFactoryTest {
             assertTrue(clientInterceptor instanceof GraphTelemetryHandler
                 || clientInterceptor instanceof RedirectHandler
                 || clientInterceptor instanceof RetryHandler);
+        }
+    }
+
+    private void assertDefaultHandlersPresent(final List<Interceptor> interceptors) {
+        HashSet<Class<? extends Interceptor>> expectedInterceptors = new HashSet<>(
+            Arrays.asList(
+                GraphTelemetryHandler.class,
+                RetryHandler.class,
+                UrlReplaceHandler.class,
+                UserAgentHandler.class,
+                RedirectHandler.class,
+                ParametersNameDecodingHandler.class,
+                HeadersInspectionHandler.class
+            )
+        );
+
+        for (Interceptor interceptor : interceptors) {
+            assertTrue(expectedInterceptors.contains(interceptor.getClass()));
         }
     }
 
