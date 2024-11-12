@@ -55,6 +55,7 @@ android {
         disable "GradleDependency"
         disable "NewerVersionAvailable"
         disable "DuplicatePlatformClasses"      // xpp3 added by azure-identity
+        disable "LambdaLast"
     }
     sourceSets {
         main {
