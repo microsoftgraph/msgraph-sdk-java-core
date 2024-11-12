@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.azure.core.http.policy.RetryOptions;
-import com.microsoft.graph.core.CoreConstants;
 import com.microsoft.graph.core.authentication.AzureIdentityAccessTokenProvider;
 import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
 import com.microsoft.graph.core.requests.middleware.GraphTelemetryHandler;
@@ -89,7 +87,7 @@ class GraphClientFactoryTest {
             new RedirectHandler()};
         final OkHttpClient client = GraphClientFactory.create(interceptors).build();
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
-        final Response response = client.newCall(request).execute();
+        client.newCall(request).execute();
 
         for (Interceptor clientInterceptor : client.interceptors()) {
             if (clientInterceptor instanceof RetryHandler) {
