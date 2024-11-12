@@ -140,7 +140,8 @@ public class GraphClientFactory {
      */
     @Nonnull
     public static OkHttpClient.Builder create(@Nullable final GraphClientOption graphClientOption) {
-        return KiotaClientFactory.create(createDefaultGraphInterceptors(graphClientOption));
+        GraphClientOption option = graphClientOption == null ? new GraphClientOption() : graphClientOption;
+        return KiotaClientFactory.create(createDefaultGraphInterceptors(option));
     }
 
     /**
