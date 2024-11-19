@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.3.1...v3.4.0) (2024-11-19)
+
+
+### Features
+
+* add GraphClientFactory method using TokenCredential ([b75c471](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/b75c471d17436712d7e6cc8e32e606af200670e7))
+* Support overriding default interceptors via request options ([667cae6](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/667cae662ec46e938d73817e79d58e84d97171e6))
+
+
+### Bug Fixes
+
+* issue where custom interceptors would fail to override default interceptors ([adf470a](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/adf470aa76e12920effbc9d8feee5721ecb68101))
+
 ## [3.3.1](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.3.0...v3.3.1) (2024-10-23)
 
 
