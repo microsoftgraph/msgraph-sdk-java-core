@@ -64,6 +64,7 @@ xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubu
 			<Class name="com.microsoft.graph.core.content.BatchResponseContent" />
 			<Class name="com.microsoft.graph.core.requests.ResponseBodyHandler" />
 			<Class name="com.microsoft.graph.core.requests.upload.UploadResponseHandler" />
+			<Class name="com.microsoft.graph.core.requests.middleware.GraphTelemetryHandlerTest" />
 		</Or>
 	</Match>
 	<Match>

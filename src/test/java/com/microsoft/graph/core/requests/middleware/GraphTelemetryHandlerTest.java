@@ -10,7 +10,9 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,23 +31,31 @@ class GraphTelemetryHandlerTest {
         final Response response = client.newCall(request).execute();
 
         assertNotNull(response);
+        assertNotNull(response.request());
+        assertNotNull(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME));
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(!response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(CoreConstants.Headers.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests running on java platform
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(!response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(
+            CoreConstants.Headers.ANDROID_VERSION_PREFIX)); // Android version is not going to be present on unit tests running on java platform
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
     void arrayInterceptorsTest() throws IOException {
         final String expectedCore = CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + CoreConstants.Headers.VERSION;
 
-        final Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(), new RedirectHandler()};
+        final Interceptor[] interceptors = {new GraphTelemetryHandler(), new RetryHandler(),
+            new RedirectHandler()};
         final OkHttpClient client = GraphClientFactory.create(interceptors).build();
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
         final Response response = client.newCall(request).execute();
 
         assertNotNull(response);
+        assertNotNull(response.request());
+        assertNotNull(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME));
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
@@ -58,8 +68,11 @@ class GraphTelemetryHandlerTest {
         final Response response = client.newCall(request).execute();
 
         assertNotNull(response);
+        assertNotNull(response.request());
+        assertNotNull(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME));
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCore));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(defaultSDKVersion));
     }
 
     @Test
@@ -76,7 +89,7 @@ class GraphTelemetryHandlerTest {
         graphClientOption.setGraphServiceTargetVersion(serviceLibVer);
 
         final String expectedCoreVer =
-            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" +coreLibVer;
+            CoreConstants.Headers.GRAPH_VERSION_PREFIX + "/" + coreLibVer;
         final String expectedClientEndpoint =
             CoreConstants.Headers.JAVA_VERSION_PREFIX + "-" + serviceLibVer + "/" + clientLibVer;
 
@@ -84,8 +97,12 @@ class GraphTelemetryHandlerTest {
         final Request request = new Request.Builder().url("https://graph.microsoft.com/v1.0/users/").build();
         final Response response = client.newCall(request).execute();
 
+        assertNotNull(response);
+        assertNotNull(response.request());
+        assertNotNull(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME));
         assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedCoreVer));
-        assertTrue(response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
+        assertTrue(
+            response.request().header(CoreConstants.Headers.SDK_VERSION_HEADER_NAME).contains(expectedClientEndpoint));
         assertTrue(response.request().header(CoreConstants.Headers.CLIENT_REQUEST_ID).contains(requestId));
     }
 }

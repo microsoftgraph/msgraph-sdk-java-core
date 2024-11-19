@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="LambdaLast">
+        <ignore path="../src/main/java/com/microsoft/graph/core/requests/GraphClientFactory.java" />
+    </issue>
+</lint>
