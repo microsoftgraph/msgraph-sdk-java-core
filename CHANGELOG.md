@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.4.0...v3.5.0) (2025-01-02)
+
+
+### Features
+
+* adds a parameter for isCAE enabled in authentication provider ([a202619](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/a20261919a30a4a0e767773ffdc4c06cab0242d3))
+
+
+### Bug Fixes
+
+* replaces invalid inherited doc comments for access token provider ([a202619](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/a20261919a30a4a0e767773ffdc4c06cab0242d3))
+
 ## [3.4.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.3.1...v3.4.0) (2024-11-19)
 
 
