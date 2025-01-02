@@ -17,11 +17,31 @@ public class AzureIdentityAccessTokenProvider extends com.microsoft.kiota.authen
     public AzureIdentityAccessTokenProvider(@Nonnull TokenCredential tokenCredential) {
         this(tokenCredential, new String[] {}, null);
     }
-    /** {@inheritDoc} */
+    /**
+     * Creates a new instance of AzureIdentityAccessTokenProvider.
+     * @param tokenCredential The Azure.Identity.TokenCredential implementation to use.
+     * @param allowedHosts The list of allowed hosts for which to request access tokens.
+     * @param scopes The scopes to request access tokens for.
+     * @param observabilityOptions The observability options to use.
+     */
     @SuppressWarnings("LambdaLast")
     public AzureIdentityAccessTokenProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final String[] allowedHosts,
             @Nullable final ObservabilityOptions observabilityOptions, @Nonnull final String... scopes) {
-        super(tokenCredential, allowedHosts, observabilityOptions, scopes);
+        this(tokenCredential, allowedHosts, observabilityOptions, true, scopes);
+    }
+
+    /**
+     * Creates a new instance of AzureIdentityAccessTokenProvider.
+     * @param tokenCredential The Azure.Identity.TokenCredential implementation to use.
+     * @param allowedHosts The list of allowed hosts for which to request access tokens.
+     * @param scopes The scopes to request access tokens for.
+     * @param observabilityOptions The observability options to use.
+     * @param isCaeEnabled Whether to enable Continuous Access Evaluation, defaults to true.
+     */
+    @SuppressWarnings("LambdaLast")
+    public AzureIdentityAccessTokenProvider(@Nonnull final TokenCredential tokenCredential, @Nonnull final String[] allowedHosts,
+            @Nullable final ObservabilityOptions observabilityOptions, final boolean isCaeEnabled, @Nonnull final String... scopes) {
+        super(tokenCredential, allowedHosts, observabilityOptions, isCaeEnabled, scopes);
         if (allowedHosts == null || allowedHosts.length == 0) {
             final HashSet<String> allowedHostsSet = new HashSet<String>();
             allowedHostsSet.add("graph.microsoft.com");
