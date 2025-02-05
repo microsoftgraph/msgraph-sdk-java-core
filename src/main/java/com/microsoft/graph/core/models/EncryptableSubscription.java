@@ -28,7 +28,7 @@ public interface EncryptableSubscription {
      * Converts an X.509 Certificate object to Base-64 string and adds to the encryptableSubscription provided
      * @param subscription encryptable subscription
      * @param certificate X.509 Certificate
-     * @throws CertificateEncodingException
+     * @throws CertificateEncodingException if the certificate cannot be encoded
      */
     public static void addPublicEncryptionCertificate(@Nonnull final EncryptableSubscription subscription, @Nonnull final X509Certificate certificate) throws CertificateEncodingException {
         Objects.requireNonNull(subscription);

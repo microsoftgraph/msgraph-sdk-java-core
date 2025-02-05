@@ -1,9 +1,8 @@
 package com.microsoft.graph.core.models;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.interfaces.RSAPrivateKey;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
@@ -21,6 +20,9 @@ import com.microsoft.kiota.serialization.ParseNodeFactoryRegistry;
 
 import jakarta.annotation.Nonnull;
 
+/**
+ * DecryptableContent interface
+ */
 public interface DecryptableContent {
 
     /**
@@ -81,14 +83,14 @@ public interface DecryptableContent {
      *
      * @param <T> Parsable type to return
      * @param decryptableContent instance of DecryptableContent
-     * @param privateKeyProvider provides an RSA Private Key for the certificate provided when subscribing
+     * @param certificateKeyProvider provides an RSA Private Key for the certificate provided when subscribing
      * @param factory ParsableFactory for the return type
-     * @return
-     * @throws Exception
+     * @return decrypted resource data
+     * @throws Exception if an error occurs while decrypting the data
      */
-    public static <T extends Parsable> T decrypt(@Nonnull final DecryptableContent decryptableContent, @Nonnull final PrivateKeyProvider privateKeyProvider, @Nonnull final ParsableFactory<T> factory) throws Exception {
-        Objects.requireNonNull(privateKeyProvider);
-        final String decryptedContent = decryptAsString(decryptableContent, privateKeyProvider);
+    public static <T extends Parsable> T decrypt(@Nonnull final DecryptableContent decryptableContent, @Nonnull final CertificateKeyProvider certificateKeyProvider, @Nonnull final ParsableFactory<T> factory) throws Exception {
+        Objects.requireNonNull(certificateKeyProvider);
+        final String decryptedContent = decryptAsString(decryptableContent, certificateKeyProvider);
         final ParseNode rootParseNode = ParseNodeFactoryRegistry.defaultInstance.getParseNode(
             "application/json", new ByteArrayInputStream(decryptedContent.getBytes(StandardCharsets.UTF_8)));
         return rootParseNode.getObjectValue(factory);
@@ -99,14 +101,14 @@ public interface DecryptableContent {
      * https://learn.microsoft.com/en-us/graph/change-notifications-with-resource-data?tabs=csharp#decrypting-resource-data-from-change-notifications
      *
      * @param content instance of DecryptableContent
-     * @param privateKeyProvider provides an RSA Private Key for the certificate provided when subscribing
+     * @param certificateKeyProvider provides an RSA Private Key for the certificate provided when subscribing
      * @return decrypted resource data
-     * @throws Exception
+     * @throws Exception if an error occurs while decrypting the data
      */
-    public static String decryptAsString(@Nonnull final DecryptableContent content, @Nonnull final PrivateKeyProvider privateKeyProvider) throws Exception {
-        Objects.requireNonNull(privateKeyProvider);
-        final RSAPrivateKey privateKey = privateKeyProvider.getCertificatePrivateKey(content.getEncryptionCertificateId(), content.getEncryptionCertificateThumbprint());
-        final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+    public static String decryptAsString(@Nonnull final DecryptableContent content, @Nonnull final CertificateKeyProvider certificateKeyProvider) throws Exception {
+        Objects.requireNonNull(certificateKeyProvider);
+        final Key privateKey = certificateKeyProvider.getCertificateKey(content.getEncryptionCertificateId(), content.getEncryptionCertificateThumbprint());
+        final Cipher cipher = Cipher.getInstance("RSA/None/OAEPWithSHA1AndMGF1Padding");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         final byte[] decryptedSymmetricKey = cipher.doFinal(Base64.getDecoder().decode(content.getDataKey()));
 
@@ -126,10 +128,13 @@ public interface DecryptableContent {
      * @param data Base-64 decoded resource data
      * @param key Decrypted symmetric key from DecryptableContent.getDataKey()
      * @return decrypted resource data
-     * @throws Exception
+     * @throws Exception if an error occurs while decrypting the data
      */
     public static byte[] aesDecrypt(byte[] data, byte[] key) throws Exception {
         try {
+            @SuppressWarnings("java:S3329")
+            // Sonar warns that a random IV should be used for encryption
+            // but we are decrypting here.
             final IvParameterSpec ivSpec = new IvParameterSpec(Arrays.copyOf(key, 16));
             final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), ivSpec);
@@ -140,17 +145,17 @@ public interface DecryptableContent {
     }
 
     /**
-     * Provides an RSA Private Key for the certificate with the ID provided when creating the
+     * Provides a private key for the certificate with the ID provided when creating the
      * subscription and the thumbprint.
      */
     @FunctionalInterface
-    public interface PrivateKeyProvider {
+    public interface CertificateKeyProvider {
         /**
-         * Returns the RSAPrivateKey for an X.509 certificate with the given id and thumbprint
+         * Returns the private key for an X.509 certificate with the given id and thumbprint
          * @param certificateId certificate Id provided when subscribing
-         * @param certtificateThumbprint certificate thumbprint
-         * @return RSA private key used to sign the certificate
+         * @param certificateThumbprint certificate thumbprint
+         * @return Private key used to sign the certificate
          */
-        public RSAPrivateKey getCertificatePrivateKey(String certificateId, String certtificateThumbprint);
+        public Key getCertificateKey(String certificateId, String certificateThumbprint);
     }
 }
