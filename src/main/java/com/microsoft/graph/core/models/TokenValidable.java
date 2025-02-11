@@ -163,7 +163,7 @@ public interface TokenValidable<U extends DecryptableContent, T extends Encrypte
                 }
             }
 
-            if (body.get("azp", String.class) != graphNotificationPublisher) {
+            if (!body.get("azp", String.class).equals(graphNotificationPublisher)) {
                 throw new IllegalArgumentException("Invalid token publisher. Expected Graph notification publisher (azp): " + graphNotificationPublisher);
             }
 

@@ -136,6 +136,10 @@ public interface DecryptableContent {
             // Sonar warns that a random IV should be used for encryption
             // but we are decrypting here.
             final IvParameterSpec ivSpec = new IvParameterSpec(Arrays.copyOf(key, 16));
+            @SuppressWarnings("java:S5542")
+            // Sonar warns that cncryption algorithms should be used with secure mode and padding scheme
+            // but ChangeNotifications implementation uses this algorithm for decryption.
+            // https://learn.microsoft.com/en-us/graph/change-notifications-with-resource-data?tabs=java#decrypting-resource-data
             final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), ivSpec);
             return cipher.doFinal(data);
