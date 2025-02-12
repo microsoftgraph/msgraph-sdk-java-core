@@ -6,6 +6,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * EncryptableSubscription interface
@@ -16,13 +17,13 @@ public interface EncryptableSubscription {
      * Sets the encryption certificate
      * @param certificate Base-64 encoded certificate to be used by Microsoft Graph to encrypt resource data
      */
-    public void setEncryptionCertificate(String certificate);
+    public void setEncryptionCertificate(@Nullable final String certificate);
 
     /**
      * Returns the encryption certificate
      * @return encryption certificate
      */
-    public String getEncryptionCertificate();
+    public @Nullable String getEncryptionCertificate();
 
     /**
      * Converts an X.509 Certificate object to Base-64 string and adds to the encryptableSubscription provided

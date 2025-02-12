@@ -16,6 +16,7 @@ import io.jsonwebtoken.JweHeader;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.LocatorAdapter;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * DiscoverUrlAdapter class
@@ -40,7 +41,7 @@ public class DiscoverUrlAdapter extends LocatorAdapter<Key> {
     }
 
     @Override
-    protected Key locate(JwsHeader header) {
+    protected @Nullable Key locate(@Nonnull JwsHeader header) {
         Objects.requireNonNull(header);
         try {
             String keyId = header.getKeyId();
@@ -52,7 +53,7 @@ public class DiscoverUrlAdapter extends LocatorAdapter<Key> {
     }
 
     @Override
-    protected Key locate(JweHeader header) {
+    protected @Nullable Key locate(@Nonnull JweHeader header) {
         return null;
     }
 

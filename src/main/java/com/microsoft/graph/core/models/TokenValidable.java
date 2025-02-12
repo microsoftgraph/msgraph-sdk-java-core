@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -26,25 +27,25 @@ public interface TokenValidable<U extends DecryptableContent, T extends Encrypte
      * Sets collection of validation tokens
      * @param validationTokens tokens
      */
-    public void setValidationTokens(List<String> validationTokens);
+    public void setValidationTokens(@Nullable final List<String> validationTokens);
 
     /**
      * Returns validation tokens
      * @return list of tokens
      */
-    public List<String> getValidationTokens();
+    public @Nullable List<String> getValidationTokens();
 
     /**
      * Sets collection of encrypted token bearers
      * @param value collection of encrypted token bearers
      */
-    public void setValue(List<T> value);
+    public void setValue(@Nullable final List<T> value);
 
     /**
      * Get collection of encrypted token bearers
      * @return encrypted token bearers
      */
-    public List<T> getValue();
+    public @Nullable List<T> getValue();
 
     /**
      * Validates the tokens
