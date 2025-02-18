@@ -15,6 +15,8 @@ import io.jsonwebtoken.Locator;
 
 /**
  * TokenValidable interface
+ * @param <T> The type of the bearer of the encrypted content
+ * @param <U> The type of the decryptable content
  */
 public interface TokenValidable<U extends DecryptableContent, T extends EncryptedContentBearer<U>> {
 
@@ -70,7 +72,8 @@ public interface TokenValidable<U extends DecryptableContent, T extends Encrypte
         Objects.requireNonNull(appIds);
         Objects.requireNonNull(keyDiscoveryUrl);
 
-        if (collection.getValidationTokens().isEmpty()
+        if (collection.getValidationTokens() == null
+                || collection.getValidationTokens().isEmpty()
                 || collection.getValue().stream().allMatch(x -> x.getEncryptedContent() == null)) {
             return true;
         }

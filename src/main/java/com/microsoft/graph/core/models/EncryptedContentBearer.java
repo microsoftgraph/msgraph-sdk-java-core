@@ -2,6 +2,7 @@ package com.microsoft.graph.core.models;
 
 /**
  * Contains Decryptable content
+ * @param <T> The type of the decryptable content
  */
 public interface EncryptedContentBearer<T extends DecryptableContent> {
 

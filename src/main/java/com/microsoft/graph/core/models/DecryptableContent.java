@@ -109,7 +109,7 @@ public interface DecryptableContent {
     public static @Nonnull String decryptAsString(@Nonnull final DecryptableContent content, @Nonnull final CertificateKeyProvider certificateKeyProvider) throws Exception {
         Objects.requireNonNull(certificateKeyProvider);
         final Key privateKey = certificateKeyProvider.getCertificateKey(content.getEncryptionCertificateId(), content.getEncryptionCertificateThumbprint());
-        final Cipher cipher = Cipher.getInstance("RSA/None/OAEPWithSHA1AndMGF1Padding");
+        final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA1ANDMGF1PADDING");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         final byte[] decryptedSymmetricKey = cipher.doFinal(Base64.getDecoder().decode(content.getDataKey()));
 
