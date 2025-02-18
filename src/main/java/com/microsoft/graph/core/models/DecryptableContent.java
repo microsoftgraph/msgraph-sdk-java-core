@@ -107,6 +107,7 @@ public interface DecryptableContent {
      * @throws Exception if an error occurs while decrypting the data
      */
     public static @Nonnull String decryptAsString(@Nonnull final DecryptableContent content, @Nonnull final CertificateKeyProvider certificateKeyProvider) throws Exception {
+        Objects.requireNonNull(content);
         Objects.requireNonNull(certificateKeyProvider);
         final Key privateKey = certificateKeyProvider.getCertificateKey(content.getEncryptionCertificateId(), content.getEncryptionCertificateThumbprint());
         final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA1ANDMGF1PADDING");
@@ -132,6 +133,8 @@ public interface DecryptableContent {
      * @throws Exception if an error occurs while decrypting the data
      */
     public static @Nonnull byte[] aesDecrypt(@Nonnull final byte[] data, @Nonnull final byte[] key) throws Exception {
+        Objects.requireNonNull(data);
+        Objects.requireNonNull(key);
         try {
             @SuppressWarnings("java:S3329")
             // Sonar warns that a random IV should be used for encryption
