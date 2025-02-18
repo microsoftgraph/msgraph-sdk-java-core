@@ -9,7 +9,7 @@
     <groupId>com.microsoft.graph</groupId>
     <artifactId>microsoft-graph-core</artifactId>
     <!--x-release-please-start-version-->
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <!--x-release-please-end-->
     <packaging>pom</packaging>
 
