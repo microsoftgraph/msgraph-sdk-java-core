@@ -103,9 +103,9 @@ publishing {
     publications {
 		maven(MavenPublication) {
         	customizePom(pom)
-        	groupId project.property('mavenGroupId')
-        	artifactId project.property('mavenArtifactId')
-        	version getVersionName()
+        	groupId = project.property('mavenGroupId')
+        	artifactId = project.property('mavenArtifactId')
+        	version = getVersionName()
         	from components.java
         	pom.withXml {
         		def pomFile = file("${project.buildDir}/generated-pom.xml")
