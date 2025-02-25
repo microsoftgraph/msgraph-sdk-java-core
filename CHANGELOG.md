@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.1](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.0...v3.6.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* resolve build errors for azure authentication package on android ([87c1042](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/87c1042f0f5383c4cdfd6a079d3aba643bcc607e))
+* resolve build errors for azure authentication package on android ([a379813](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/a3798137e26a27c002ccdd281220f58fd0baa372))
+
 ## [3.6.0](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.5.0...v3.6.0) (2025-02-18)
 
 
