@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         classpath "com.gradle:gradle-enterprise-gradle-plugin:3.19.2"
-        classpath "com.android.tools.build:gradle:8.9.0"
+        classpath "com.android.tools.build:gradle:8.9.1"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.52.0"
     }
 }
@@ -23,13 +23,13 @@ apply plugin: "com.github.ben-manes.versions"
 android {
     namespace "com.microsoft.graph"
 
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     defaultConfig {
         versionCode 1
         versionName "1.0"
         minSdkVersion 26
-        targetSdkVersion 35
+        targetSdkVersion 36
     }
 
     buildTypes {
