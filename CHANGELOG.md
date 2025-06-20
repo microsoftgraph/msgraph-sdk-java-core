@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.3](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.2...v3.6.3) (2025-06-20)
+
+
+### Bug Fixes
+
+* branch name for the CI ([2226099](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/2226099ef65c0bacfa39a72f0df001efd30a99a5))
+* branch name for the CI ([a38d725](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/a38d72527515918223a012c503377742939e1554))
+
 ## [3.6.2](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.1...v3.6.2) (2025-06-20)
 
 
