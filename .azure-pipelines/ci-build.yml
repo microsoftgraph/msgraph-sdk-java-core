@@ -100,7 +100,7 @@ extends:
                 displayName: Inspect contents of local Maven cache
 
               - pwsh: |
-                  $packageFullPath = Join-Path -Path "./" -ChildPath "build/publishing-repository/com.microsoft.graph/microsoft-graph-core" -AdditionalChildPath "$(PACKAGE_VERSION)"
+                  $packageFullPath = Join-Path -Path "./" -ChildPath "build/publishing-repository/com/microsoft/graph/microsoft-graph-core" -AdditionalChildPath "$(PACKAGE_VERSION)"
                   echo "Package full path: $packageFullPath"
                   echo "##vso[task.setvariable variable=PACKAGE_PATH;]$packageFullPath"
                 displayName: Get the package full path
