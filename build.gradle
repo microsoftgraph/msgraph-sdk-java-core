@@ -7,8 +7,6 @@ plugins {
     id 'jacoco'
     id 'com.github.spotbugs' version '6.2.0'
     id "org.sonarqube" version "6.2.0.5505"
-    // TODO remove this dependency once we remove the GH WF
-    id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 }
 
 java {
@@ -119,19 +117,6 @@ publishing {
         maven {
             name = "ADO"
             url = layout.buildDirectory.dir("publishing-repository")
-        }
-    }
-}
-// TODO remove this section once we remove the GH WF
-nexusPublishing {
-    repositories {
-        sonatype {
-            if (project.rootProject.file('local.properties').exists()) {
-                Properties properties = new Properties()
-                properties.load(project.rootProject.file('local.properties').newDataInputStream())
-                username = properties.getProperty('sonatypeUsername')
-                password = properties.getProperty('sonatypePassword')
-            }
         }
     }
 }
