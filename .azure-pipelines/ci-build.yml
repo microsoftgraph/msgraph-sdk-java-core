@@ -97,7 +97,7 @@ extends:
                   BRANCH_NAME: $(Build.SourceBranchName)
 
               - pwsh: |
-                  .\scripts\ValidatePackageContents.ps1 -ArtifactId microsoft-graph-core -Version $(PACKAGE_VERSION) -ValidateMavenMetadata $false
+                  .\scripts\validatePackageContents.ps1 -ArtifactId microsoft-graph-core -Version $(PACKAGE_VERSION) -ValidateMavenMetadata $false
                 displayName: Inspect contents of local Maven cache
 
               - pwsh: |
