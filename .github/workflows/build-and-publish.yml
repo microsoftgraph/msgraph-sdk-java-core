@@ -1,5 +1,7 @@
 name: Build and Publish
 
+# TODO remove todo entries in build.gradle
+
 on:
   workflow_dispatch:
   push:
