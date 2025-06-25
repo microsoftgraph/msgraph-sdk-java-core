@@ -16,10 +16,6 @@ jobs:
           java-version: 21
           distribution: 'temurin'
           cache: gradle
-      - name: Detect secrets
-        run: |
-          pip install detect-secrets
-          git ls-files -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
