@@ -159,7 +159,7 @@ class LargeFileUploadTest {
         };
 
         // Act
-        UploadResult<TestDriveItem> result = task.upload(3, null);
+        task.upload(3, null);
 
         // Verify the chunkStream content
         ByteArrayInputStream capturedStream = captor.getValue();
