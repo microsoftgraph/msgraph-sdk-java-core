@@ -5,9 +5,14 @@ import com.microsoft.graph.core.testModels.TestDriveItem;
 import com.microsoft.graph.core.models.UploadSession;
 import com.microsoft.kiota.authentication.AuthenticationProvider;
 import com.microsoft.kiota.http.OkHttpRequestAdapter;
+
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doReturn;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.mockito.internal.matchers.Any;
+
+import com.microsoft.graph.core.models.UploadResult;
 
 class LargeFileUploadTest {
 
@@ -105,5 +114,60 @@ class LargeFileUploadTest {
         UploadSliceRequestBuilder lastSlice = builders.get(3);
         assertEquals(size%maxSliceSize, lastSlice.getRangeLength());
         assertEquals(size-1, lastSlice.getRangeEnd());
+    }
+    // Test for chunkInputStream method with a 5MB file
+        @Test
+    void uploads5MBFileSuccessfully() throws Exception {
+        // Arrange
+        UploadSession session = new UploadSession();
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.now().plusHours(1));
+
+        // 5MB file
+        byte[] data = new byte[5 * 1024 * 1024];
+            for (int i = 0; i < data.length; i++) {
+        data[i] = (byte)(i % 256);
+    }
+        ByteArrayInputStream stream = new ByteArrayInputStream(data);
+        int size = stream.available();
+
+    // Create a real task to get the real builder(s)
+        LargeFileUploadTask<TestDriveItem> realTask = new LargeFileUploadTask<>(adapter, session, stream, size, TestDriveItem::createFromDiscriminatorValue);
+        var realBuilders = realTask.getUploadSliceRequests();
+
+        // Spy the builder(s) and mock put()
+        ArrayList<UploadSliceRequestBuilder<TestDriveItem>> spyBuilders = new ArrayList<>();
+        ArgumentCaptor<ByteArrayInputStream> captor = ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+        for (UploadSliceRequestBuilder<TestDriveItem> builder : realBuilders) {
+            UploadSliceRequestBuilder<TestDriveItem> spyBuilder = spy(builder);
+            UploadResult<TestDriveItem> mockResult = new UploadResult<>();
+            TestDriveItem item = new TestDriveItem();
+            item.size = data.length;
+            mockResult.itemResponse = item;
+            doReturn(mockResult).when(spyBuilder).put(captor.capture());
+            spyBuilders.add(spyBuilder);
+        }
+
+        // Subclass LargeFileUploadTask to inject our spy builders
+        LargeFileUploadTask<TestDriveItem> task = new LargeFileUploadTask<>(adapter, session, stream, size, TestDriveItem::createFromDiscriminatorValue) {
+            @Override
+            protected java.util.List<UploadSliceRequestBuilder<TestDriveItem>> getUploadSliceRequests() {
+                return spyBuilders;
+            }
+        };
+
+        // Act
+        UploadResult<TestDriveItem> result = task.upload(3, null);
+
+        // Verify the chunkStream content
+        ByteArrayInputStream capturedStream = captor.getValue();
+        byte[] capturedBytes = new byte[data.length];
+        int read = capturedStream.read(capturedBytes);
+        assertEquals(data.length, read, "Should read all bytes from chunkStream");
+        for (int i = 0; i < data.length; i++) {
+            assertEquals(data[i], capturedBytes[i], "Byte at position " + i + " should match original data");
+        }
     }
 }

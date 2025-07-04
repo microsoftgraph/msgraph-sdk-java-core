@@ -1,5 +1,20 @@
 package com.microsoft.graph.core.tasks;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.time.OffsetDateTime;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import com.microsoft.graph.core.ErrorConstants;
 import com.microsoft.graph.core.exceptions.ClientException;
 import com.microsoft.graph.core.models.IProgressCallback;
@@ -18,19 +33,10 @@ import com.microsoft.kiota.authentication.AnonymousAuthenticationProvider;
 import com.microsoft.kiota.serialization.Parsable;
 import com.microsoft.kiota.serialization.ParsableFactory;
 import com.microsoft.kiota.serialization.ParseNode;
-import okhttp3.OkHttpClient;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import okhttp3.OkHttpClient;
 
 /**
  * Task for uploading large files including pausing and resuming.
@@ -274,8 +280,15 @@ public class LargeFileUploadTask<T extends Parsable > {
     }
     private byte[] chunkInputStream(InputStream stream, int length) throws IOException {
         byte[] buffer = new byte[length];
-        int lengthAssert = stream.read(buffer);
-        assert lengthAssert == length;
+        int totalRead = 0;
+        while (totalRead < length) {
+            int bytesRead = stream.read(buffer, totalRead, length - totalRead);
+            if (bytesRead == -1) {
+                // End of stream reached
+                break;
+            }
+            totalRead += bytesRead;
+        }
         return buffer;
     }
 }
