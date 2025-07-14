@@ -3,8 +3,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.13.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.18.0'
-    testImplementation 'io.opentelemetry:opentelemetry-api:1.51.0'
-    testImplementation 'io.opentelemetry:opentelemetry-context:1.51.0'
+    testImplementation 'io.opentelemetry:opentelemetry-api:1.52.0'
+    testImplementation 'io.opentelemetry:opentelemetry-context:1.52.0'
     testImplementation 'io.github.std-uritemplate:std-uritemplate:1.0.6'
     implementation 'com.google.code.gson:gson:2.13.1'
 
