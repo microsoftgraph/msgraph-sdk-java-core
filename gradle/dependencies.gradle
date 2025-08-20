@@ -2,9 +2,9 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.mockito:mockito-core:5.18.0'
-    testImplementation 'io.opentelemetry:opentelemetry-api:1.52.0'
-    testImplementation 'io.opentelemetry:opentelemetry-context:1.52.0'
+    testImplementation 'org.mockito:mockito-core:5.19.0'
+    testImplementation 'io.opentelemetry:opentelemetry-api:1.53.0'
+    testImplementation 'io.opentelemetry:opentelemetry-context:1.53.0'
     testImplementation 'io.github.std-uritemplate:std-uritemplate:1.0.6'
     implementation 'com.google.code.gson:gson:2.13.1'
 
@@ -16,13 +16,13 @@ dependencies {
     implementation 'com.auth0:jwks-rsa:0.23.0'
 
     api 'com.squareup.okhttp3:okhttp:4.12.0'
-    api 'com.azure:azure-core:1.54.1'
+    api 'com.azure:azure-core:1.56.0'
 
-    api 'com.microsoft.kiota:microsoft-kiota-abstractions:1.8.8'
-    api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:1.8.8'
-    implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:1.8.8'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:1.8.8'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-text:1.8.8'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-form:1.8.8'
-    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-multipart:1.8.8'
+    api 'com.microsoft.kiota:microsoft-kiota-abstractions:1.8.9'
+    api 'com.microsoft.kiota:microsoft-kiota-authentication-azure:1.8.9'
+    implementation 'com.microsoft.kiota:microsoft-kiota-http-okHttp:1.8.9'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-json:1.8.9'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-text:1.8.9'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-form:1.8.9'
+    implementation 'com.microsoft.kiota:microsoft-kiota-serialization-multipart:1.8.9'
 }
