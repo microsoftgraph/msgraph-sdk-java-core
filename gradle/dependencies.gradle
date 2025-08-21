@@ -10,9 +10,9 @@ dependencies {
 
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.7'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.7'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.7'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
     implementation 'com.auth0:jwks-rsa:0.23.0'
 
     api 'com.squareup.okhttp3:okhttp:4.12.0'
