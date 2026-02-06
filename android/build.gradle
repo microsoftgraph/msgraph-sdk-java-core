@@ -52,6 +52,7 @@ android {
         checkAllWarnings true
         warningsAsErrors true
         lintConfig file("lint.xml")
+        disable 'AndroidGradlePluginVersion' // We will not be upgrading gradle to version 9 as it does not support our minimum required version of jdk8
     }
 
     sourceSets {
