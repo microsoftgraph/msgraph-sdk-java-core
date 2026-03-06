@@ -5,6 +5,7 @@ on:
     branches: [main, support/2.x.x]
   pull_request:
     types: [opened, synchronize, reopened]
+  merge_group:
 
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -3,6 +3,7 @@ name: Java CI with Gradle
 on:
   pull_request:
     branches: [main, support/2.x.x]
+  merge_group:
   workflow_dispatch:
 
 jobs:
