@@ -11,6 +11,7 @@ on:
   pull_request:
     types: [synchronize]
     branches: [main, support/2.x.x]
+  merge_group:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

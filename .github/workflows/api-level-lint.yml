@@ -6,6 +6,7 @@ on:
     branches: [main, support/2.x.x]
   pull_request:
     branches: [main, support/2.x.x]
+  merge_group:
 
 jobs:
   lint-api-level:
