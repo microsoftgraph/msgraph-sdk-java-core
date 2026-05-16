@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.6](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.5...v3.6.6) (2026-05-16)
+
+
+### Bug Fixes
+
+* **deps:** bump com.azure:azure-core from 1.57.1 to 1.58.0 in /android ([dffa772](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/dffa772d2ed4babcb6a0c7b98bc2c95bd17d99e0))
+* **deps:** bump com.azure:azure-core from 1.57.1 to 1.58.0 in /android ([14864cc](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/14864cc2c69b94604bea2a5c2b6337ef8fc8326f))
+* **deps:** bump com.google.code.gson:gson from 2.13.2 to 2.14.0 in /android ([80661ec](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/80661ecdf4d5e93ca0ab7924ee3a3614c355eb04))
+* **deps:** bump com.google.code.gson:gson in /android ([b415de4](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/b415de47634d29484a486c46413ddeb83ad80b37))
+* **deps:** bump the kiota-dependencies group ([#2069](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/2069)) ([756a7dd](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/756a7dd719236de958ea88fe1cb89f4e655826bc))
+
 ## [3.6.5](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.4...v3.6.5) (2025-09-11)
 
 
