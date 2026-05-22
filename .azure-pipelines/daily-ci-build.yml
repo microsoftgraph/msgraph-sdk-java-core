@@ -50,7 +50,7 @@ extends:
                   jdkArchitectureOption: 'x64'
                   jdkSourceOption: 'PreInstalled'
 
-              - script: chmod +x gradlew && ./gradlew assemble -PskipCodeAnalysis
+              - script: chmod +x gradlew && ./gradlew build -PskipCodeAnalysis
                 displayName: Build SDK
                 workingDirectory: $(Build.SourcesDirectory)
 
