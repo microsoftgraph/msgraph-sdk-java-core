@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
         mavenCentral()
     }
-    if (!hasProperty('skipCodeAnalysis')) {
+    if (System.getProperty('skipCodeAnalysis') == null) {
         dependencies {
             classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:6.5.4'
             classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:7.3.0.8198'
@@ -21,7 +21,7 @@ plugins {
 
 }
 
-if (!project.hasProperty('skipCodeAnalysis')) {
+if (System.getProperty('skipCodeAnalysis') == null) {
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'org.sonarqube'
 }
@@ -45,7 +45,7 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
-if (!project.hasProperty('skipCodeAnalysis')) {
+if (System.getProperty('skipCodeAnalysis') == null) {
     spotbugsMain {
         excludeFilter = file("spotBugsExcludeFilter.xml")
         reports {
@@ -101,7 +101,7 @@ def pomConfig = {
     }
 }
 
-if (!project.hasProperty('skipCodeAnalysis')) {
+if (System.getProperty('skipCodeAnalysis') == null) {
     sonarqube {
         properties {
             property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"

@@ -50,10 +50,10 @@ extends:
                   jdkArchitectureOption: 'x64'
                   jdkSourceOption: 'PreInstalled'
 
-              - script: chmod +x gradlew && ./gradlew build -PskipCodeAnalysis
+              - script: chmod +x gradlew && ./gradlew build -DskipCodeAnalysis=true
                 displayName: Build SDK
                 workingDirectory: $(Build.SourcesDirectory)
 
-              - script: ./gradlew test -PskipCodeAnalysis
+              - script: ./gradlew test -DskipCodeAnalysis=true
                 displayName: Run unit tests
                 workingDirectory: $(Build.SourcesDirectory)
