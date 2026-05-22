@@ -21,12 +21,11 @@ extends:
   parameters:
     pool:
       name: Azure-Pipelines-1ESPT-ExDShared
-      image: ubuntu-latest
       os: linux
     sdl:
       sourceAnalysisPool:
         name: Azure-Pipelines-1ESPT-ExDShared
-        image: windows-latest
+        image: windows-2022
         os: windows
       credscan:
         enabled: true
@@ -49,7 +48,7 @@ extends:
                   gradleWrapperFile: 'gradlew'
                   workingDirectory: '$(Build.SourcesDirectory)'
                   tasks: 'assemble test'
-                  options: '-DskipCodeAnalysis=true --no-daemon'
+                  options: '--no-daemon'
                   publishJUnitResults: true
                   testResultsFiles: '**/TEST-*.xml'
                   javaHomeOption: 'JDKVersion'
