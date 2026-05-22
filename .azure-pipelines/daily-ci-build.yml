@@ -50,10 +50,10 @@ extends:
                   jdkArchitectureOption: 'x64'
                   jdkSourceOption: 'PreInstalled'
 
-              - script: chmod +x gradlew && ./gradlew assemble
+              - script: chmod +x gradlew && ./gradlew assemble -PskipCodeAnalysis
                 displayName: Build SDK
                 workingDirectory: $(Build.SourcesDirectory)
 
-              - script: ./gradlew test
+              - script: ./gradlew test -PskipCodeAnalysis
                 displayName: Run unit tests
                 workingDirectory: $(Build.SourcesDirectory)

@@ -1,3 +1,16 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    if (!hasProperty('skipCodeAnalysis')) {
+        dependencies {
+            classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:6.5.4'
+            classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:7.3.0.8198'
+        }
+    }
+}
+
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
@@ -5,9 +18,12 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
-    id 'com.github.spotbugs' version '6.5.4'
-    id "org.sonarqube" version "7.3.0.8198"
 
+}
+
+if (!project.hasProperty('skipCodeAnalysis')) {
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'org.sonarqube'
 }
 
 java {
@@ -29,24 +45,26 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
-spotbugsMain {
-    excludeFilter = file("spotBugsExcludeFilter.xml")
-    reports {
-        html {
-            required
-            outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
-            stylesheet = 'fancy-hist.xsl'
+if (!project.hasProperty('skipCodeAnalysis')) {
+    spotbugsMain {
+        excludeFilter = file("spotBugsExcludeFilter.xml")
+        reports {
+            html {
+                required
+                outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
         }
     }
-}
 
-spotbugsTest {
-    excludeFilter = file("spotBugsExcludeFilter.xml")
-    reports {
-        html {
-            required
-            outputLocation = file("$buildDir/reports/spotbugs/test/spotbugs.html")
-            stylesheet = 'fancy-hist.xsl'
+    spotbugsTest {
+        excludeFilter = file("spotBugsExcludeFilter.xml")
+        reports {
+            html {
+                required
+                outputLocation = file("$buildDir/reports/spotbugs/test/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
         }
     }
 }
@@ -83,11 +101,13 @@ def pomConfig = {
     }
 }
 
-sonarqube {
-    properties {
-        property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"
-        property "sonar.organization", "microsoftgraph2"
-        property "sonar.host.url", "https://sonarcloud.io"
+if (!project.hasProperty('skipCodeAnalysis')) {
+    sonarqube {
+        properties {
+            property "sonar.projectKey", "microsoftgraph_msgraph-sdk-java-core"
+            property "sonar.organization", "microsoftgraph2"
+            property "sonar.host.url", "https://sonarcloud.io"
+        }
     }
 }
 
