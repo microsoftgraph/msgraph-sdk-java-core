@@ -47,6 +47,11 @@ extends:
               - checkout: self
                 submodules: recursive
 
+              - script: |
+                  sed -i "/com.github.spotbugs/d" build.gradle
+                  sed -i "/org.sonarqube/d" build.gradle
+                displayName: Remove code analysis plugins (not available in network-isolated agents)
+
               - task: Gradle@4
                 displayName: Build and Test SDK
                 inputs:
