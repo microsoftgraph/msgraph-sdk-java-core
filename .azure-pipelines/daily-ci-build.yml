@@ -43,17 +43,15 @@ extends:
               - checkout: self
                 submodules: recursive
 
-              - task: JavaToolInstaller@0
-                displayName: Set up Java
+              - task: Gradle@4
+                displayName: Build and Test SDK
                 inputs:
-                  versionSpec: '17'
+                  gradleWrapperFile: 'gradlew'
+                  workingDirectory: '$(Build.SourcesDirectory)'
+                  tasks: 'assemble test'
+                  options: '-DskipCodeAnalysis=true --no-daemon'
+                  publishJUnitResults: true
+                  testResultsFiles: '**/TEST-*.xml'
+                  javaHomeOption: 'JDKVersion'
+                  jdkVersionOption: '1.17'
                   jdkArchitectureOption: 'x64'
-                  jdkSourceOption: 'PreInstalled'
-
-              - script: chmod +x gradlew && ./gradlew build -DskipCodeAnalysis=true
-                displayName: Build SDK
-                workingDirectory: $(Build.SourcesDirectory)
-
-              - script: ./gradlew test -DskipCodeAnalysis=true
-                displayName: Run unit tests
-                workingDirectory: $(Build.SourcesDirectory)
