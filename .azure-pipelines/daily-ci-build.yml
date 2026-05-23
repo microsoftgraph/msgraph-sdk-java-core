@@ -19,16 +19,10 @@ resources:
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    settings:
-      networkIsolationPolicy: Permissive
     pool:
       name: Azure-Pipelines-1ESPT-ExDShared
       image: ubuntu-latest
       os: linux
-    featureFlags:
-      java:
-        internalModuleProxy:
-          enabled: true
     sdl:
       sourceAnalysisPool:
         name: Azure-Pipelines-1ESPT-ExDShared
@@ -55,7 +49,30 @@ extends:
                   sed -i "/spotbugsMain/,/^}/d" build.gradle
                   sed -i "/spotbugsTest/,/^}/d" build.gradle
                   sed -i "/sonarqube {/,/^}/d" build.gradle
-                displayName: Remove code analysis plugins (not available in network-isolated agents)
+                displayName: Remove code analysis plugins (not available on network-isolated agents)
+
+              - script: |
+                  cat > init.gradle << 'EOF'
+                  allprojects {
+                      repositories {
+                          clear()
+                          maven {
+                              url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
+                          }
+                      }
+                  }
+                  settingsEvaluated { settings ->
+                      settings.pluginManagement {
+                          repositories {
+                              clear()
+                              maven {
+                                  url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
+                              }
+                          }
+                      }
+                  }
+                  EOF
+                displayName: Configure Gradle to use CFS upstream feed
 
               - task: Gradle@4
                 displayName: Build and Test SDK
@@ -63,7 +80,7 @@ extends:
                   gradleWrapperFile: 'gradlew'
                   workingDirectory: '$(Build.SourcesDirectory)'
                   tasks: 'assemble test'
-                  options: '--no-daemon'
+                  options: '--no-daemon --init-script init.gradle'
                   publishJUnitResults: true
                   testResultsFiles: '**/TEST-*.xml'
                   javaHomeOption: 'JDKVersion'
