@@ -43,36 +43,13 @@ extends:
               - checkout: self
                 submodules: recursive
 
-              - script: |
-                  cat > init.gradle << 'EOF'
-                  allprojects {
-                      repositories {
-                          clear()
-                          maven {
-                              url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
-                          }
-                      }
-                  }
-                  settingsEvaluated { settings ->
-                      settings.pluginManagement {
-                          repositories {
-                              clear()
-                              maven {
-                                  url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
-                              }
-                          }
-                      }
-                  }
-                  EOF
-                displayName: Configure Gradle to use CFS upstream feed
-
               - task: Gradle@4
                 displayName: Build and Test SDK
                 inputs:
                   gradleWrapperFile: 'gradlew'
                   workingDirectory: '$(Build.SourcesDirectory)'
                   tasks: 'assemble test'
-                  options: '--no-daemon --init-script init.gradle'
+                  options: '--no-daemon'
                   publishJUnitResults: true
                   testResultsFiles: '**/TEST-*.xml'
                   javaHomeOption: 'JDKVersion'
