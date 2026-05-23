@@ -70,8 +70,8 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
     maven {
-        url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
-        name 'GraphDeveloperExperiences_Public'
+        url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiencesPublic/maven/v1'
+        name 'GraphDeveloperExperiencesPublic'
         credentials(PasswordCredentials)
         authentication {
             basic(BasicAuthentication)
@@ -128,8 +128,8 @@ publishing {
             url = layout.buildDirectory.dir("publishing-repository")
         }
         maven {
-            url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
-            name 'GraphDeveloperExperiences_Public'
+            url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiencesPublic/maven/v1'
+            name 'GraphDeveloperExperiencesPublic'
             credentials(PasswordCredentials)
             authentication {
                 basic(BasicAuthentication)

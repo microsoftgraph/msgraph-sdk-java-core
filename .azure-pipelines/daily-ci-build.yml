@@ -49,7 +49,7 @@ extends:
                   gradleWrapperFile: 'gradlew'
                   workingDirectory: '$(Build.SourcesDirectory)'
                   tasks: 'assemble test'
-                  options: '--no-daemon -PGraphDeveloperExperiences_PublicPassword=$(ARTIFACTS_PAT)'
+                  options: '--no-daemon -PGraphDeveloperExperiencesPublicPassword=$(ARTIFACTS_PAT)'
                   publishJUnitResults: true
                   testResultsFiles: '**/TEST-*.xml'
                   javaHomeOption: 'JDKVersion'
