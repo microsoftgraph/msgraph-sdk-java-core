@@ -19,8 +19,8 @@ resources:
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-  settings:
-    networkIsolationPolicy: Permissive
+    settings:
+      networkIsolationPolicy: Permissive
     pool:
       name: Azure-Pipelines-1ESPT-ExDShared
       image: ubuntu-latest
@@ -29,24 +29,6 @@ extends:
       java:
         internalModuleProxy:
           enabled: true
-    networkIsolation:
-      overrideAllowRules:
-        - host: repo.maven.apache.org
-          port: 443
-          protocols:
-            - https
-        - host: plugins.gradle.org
-          port: 443
-          protocols:
-            - https
-        - host: services.gradle.org
-          port: 443
-          protocols:
-            - https
-        - host: repo1.maven.org
-          port: 443
-          protocols:
-            - https
     sdl:
       sourceAnalysisPool:
         name: Azure-Pipelines-1ESPT-ExDShared
