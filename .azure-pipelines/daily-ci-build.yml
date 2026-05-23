@@ -43,12 +43,6 @@ extends:
               - checkout: self
                 submodules: recursive
 
-              - script: |
-                  mkdir -p ~/.gradle
-                  echo "GraphDeveloperExperiences_PublicUsername=microsoftgraph" >> ~/.gradle/gradle.properties
-                  echo "GraphDeveloperExperiences_PublicPassword=$(System.AccessToken)" >> ~/.gradle/gradle.properties
-                displayName: Configure Gradle credentials for CFS feed
-
               - task: Gradle@4
                 displayName: Build and Test SDK
                 inputs:
