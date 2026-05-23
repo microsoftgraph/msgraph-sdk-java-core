@@ -44,14 +44,6 @@ extends:
                 submodules: recursive
 
               - script: |
-                  sed -i "/com.github.spotbugs/d" build.gradle
-                  sed -i "/org.sonarqube/d" build.gradle
-                  sed -i "/spotbugsMain/,/^}/d" build.gradle
-                  sed -i "/spotbugsTest/,/^}/d" build.gradle
-                  sed -i "/sonarqube {/,/^}/d" build.gradle
-                displayName: Remove code analysis plugins (not available on network-isolated agents)
-
-              - script: |
                   cat > init.gradle << 'EOF'
                   allprojects {
                       repositories {
