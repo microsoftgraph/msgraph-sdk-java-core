@@ -49,7 +49,10 @@ extends:
                   sed -i "/spotbugsMain/,/^}/d" build.gradle
                   sed -i "/spotbugsTest/,/^}/d" build.gradle
                   sed -i "/sonarqube {/,/^}/d" build.gradle
-                displayName: Remove code analysis plugins (not available on CFS upstream feed)
+                  sed -i "/mavenCentral()/d" build.gradle
+                  sed -i "/gradlePluginPortal()/d" settings.gradle
+                  sed -i "/mavenCentral()/d" settings.gradle
+                displayName: Strip plugins and public repos for network-isolated build
 
               - task: Gradle@4
                 displayName: Build and Test SDK
