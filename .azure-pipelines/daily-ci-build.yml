@@ -66,6 +66,3 @@ extends:
                   javaHomeOption: 'JDKVersion'
                   jdkVersionOption: '1.17'
                   jdkArchitectureOption: 'x64'
-                  spotBugsAnalysisEnabled: true
-                  spotBugsGradlePluginVersionChoice: 'specify'
-                  spotbugsGradlePluginVersion: '6.5.4'
