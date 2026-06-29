@@ -5,8 +5,8 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
-    id 'com.github.spotbugs' version '6.2.5'
-    id "org.sonarqube" version "7.2.2.6593"
+    id 'com.github.spotbugs' version '6.5.4'
+    id "org.sonarqube" version "7.3.0.8198"
 
 }
 
@@ -68,6 +68,14 @@ sourceSets {
 repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
+    maven {
+        url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
+        name 'GraphDeveloperExperiencesPublic'
+        credentials(PasswordCredentials)
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
 }
 
 apply from: "gradle/dependencies.gradle"
@@ -117,6 +125,14 @@ publishing {
         maven {
             name = "ADO"
             url = layout.buildDirectory.dir("publishing-repository")
+        }
+        maven {
+            url 'https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1'
+            name 'GraphDeveloperExperiencesPublic'
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
 }
