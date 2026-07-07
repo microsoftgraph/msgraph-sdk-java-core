@@ -60,7 +60,6 @@ jacocoTestReport {
 sourceSets {
     main {
         java {
-            exclude 'pom.xml'
         }
     }
 }
