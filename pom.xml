@@ -247,12 +247,19 @@
                     <!-- Tests are only ever run on a modern JDK (main sources keep 1.8 for
                          downstream compatibility). This mirrors the Gradle build, where the 1.8
                          source/target applied to compileJava only, not compileTestJava. -->
-                    <testSource>17</testSource>
-                    <testTarget>17</testTarget>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <source>17</source>
+                            <target>17</target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
