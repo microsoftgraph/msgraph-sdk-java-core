@@ -159,7 +159,6 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-core</artifactId>
-<<<<<<< HEAD
             <version>${azure-core.version}</version>
         </dependency>
 
@@ -167,9 +166,6 @@
             <groupId>com.microsoft.kiota</groupId>
             <artifactId>microsoft-kiota-abstractions</artifactId>
             <version>${kiota.version}</version>
-=======
-            <version>1.58.1</version>
->>>>>>> origin/main
         </dependency>
         <dependency>
             <groupId>com.microsoft.kiota</groupId>
