@@ -56,8 +56,8 @@
         <jjwt.version>0.13.0</jjwt.version>
         <jwks-rsa.version>0.24.1</jwks-rsa.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <azure-core.version>1.58.0</azure-core.version>
-        <kiota.version>1.9.2</kiota.version>
+        <azure-core.version>1.58.1</azure-core.version>
+        <kiota.version>1.9.3</kiota.version>
 
         <!-- Test dependency versions -->
         <junit.version>6.1.0</junit.version>
