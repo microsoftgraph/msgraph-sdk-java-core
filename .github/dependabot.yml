@@ -11,6 +11,9 @@ updates:
     # incompatible with this library's Java 8 baseline. Stay on the 2.x line.
     - dependency-name: "jakarta.annotation:jakarta.annotation-api"
       update-types: ["version-update:semver-major"]
+    # okhttp 5.x is a major bump handled manually. Stay on the 4.x line.
+    - dependency-name: "com.squareup.okhttp3:okhttp"
+      update-types: ["version-update:semver-major"]
   groups:
     kiota-dependencies:
       patterns:
@@ -31,6 +34,9 @@ updates:
     # jakarta.annotation-api 3.x is compiled to Java 11 bytecode, which is
     # incompatible with this library's Java 8 baseline. Stay on the 2.x line.
     - dependency-name: "jakarta.annotation:jakarta.annotation-api"
+      update-types: ["version-update:semver-major"]
+    # okhttp 5.x is a major bump handled manually. Stay on the 4.x line.
+    - dependency-name: "com.squareup.okhttp3:okhttp"
       update-types: ["version-update:semver-major"]
   groups:
     kiota-dependencies:
