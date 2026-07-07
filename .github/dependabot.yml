@@ -1,9 +1,7 @@
 version: 2
 updates:
-- package-ecosystem: gradle
-  directories:
-    - "/"
-    - "/java-8"
+- package-ecosystem: maven
+  directory: "/"
   schedule:
     interval: daily
     time: "09:00" # 9am UTC
@@ -23,21 +21,6 @@ updates:
   schedule:
     interval: daily
     time: "10:00" # 10am UTC. After core dependencies are updated to prevent duplicates.
-  open-pull-requests-limit: 10
-  groups:
-    kiota-dependencies:
-      patterns:
-        - "*kiota*"
-    junit-dependencies:
-      patterns:
-        - "*junit*"
-    open-telemetry:
-      patterns:
-        - "*opentelemetry*"
-- package-ecosystem: maven
-  directory: "/"
-  schedule:
-    interval: daily
   open-pull-requests-limit: 10
   groups:
     kiota-dependencies:

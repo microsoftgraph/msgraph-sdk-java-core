@@ -65,29 +65,62 @@ extends:
                   Copy-Item $(downloadLocalProperties.secureFilePath) local.properties -Verbose
                 displayName: Copy secring and 'local.properties'
 
-              - script: ./gradlew --no-daemon publishToMavenLocal -PmavenCentralPublishingEnabled=true -PmavenCentralSnapshotArtifactSuffix=""
-                displayName: Publish to local Maven for verification
-                condition: contains(variables['build.sourceBranch'], 'refs/tags/v')
-
-              - script: ./gradlew --no-daemon publishToMavenLocal -PmavenCentralPublishingEnabled=true
-                displayName: Publish to local Maven for verification
-                condition: not(contains(variables['build.sourceBranch'], 'refs/tags/v'))
-
-              - script: ./gradlew --no-daemon publishMavenPublicationToADORepository -PmavenCentralPublishingEnabled=true -PmavenCentralSnapshotArtifactSuffix=""
-                displayName: Publish to local Maven ADO for ESRP
-                condition: contains(variables['build.sourceBranch'], 'refs/tags/v')
-
-              - script: ./gradlew --no-daemon publishMavenPublicationToADORepository -PmavenCentralPublishingEnabled=true
-                displayName: Publish to local Maven ADO for ESRP
-                condition: not(contains(variables['build.sourceBranch'], 'refs/tags/v'))
+              - pwsh: |
+                  # maven-gpg-plugin signs via the local gpg keyring, so the key from
+                  # secring.gpg must be imported into gpg before signing can succeed.
+                  gpg --batch --import secring.gpg
+                displayName: Import GPG signing key
 
               - pwsh: |
-                  $contents = Get-Content gradle.properties -Raw
-                  $major = $contents | Select-String -Pattern 'mavenMajorVersion\s*=\s*([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
-                  $minor = $contents | Select-String -Pattern 'mavenMinorVersion\s*=\s*([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
-                  $patch = $contents | Select-String -Pattern 'mavenPatchVersion\s*=\s*([0-9]+)' | ForEach-Object { $_.Matches.Groups[1].Value }
-                  $snapshot_suffix = if ($Env:BRANCH_NAME.StartsWith('refs/tags/v')) { '' } else { '-SNAPSHOT' }
-                  $version = "$major.$minor.$patch$snapshot_suffix"
+                  $props = Get-Content local.properties -Raw
+                  $keyId = ($props | Select-String -Pattern 'signing\.keyId=(.+)').Matches.Groups[1].Value
+                  $keyPassword = ($props | Select-String -Pattern 'signing\.password=(.+)').Matches.Groups[1].Value
+
+                  $settingsXml = @"
+                  <settings>
+                    <mirrors>
+                      <mirror>
+                        <id>GraphDeveloperExperiences_Public</id>
+                        <mirrorOf>*</mirrorOf>
+                        <url>https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1</url>
+                      </mirror>
+                    </mirrors>
+                    <profiles>
+                      <profile>
+                        <id>signing</id>
+                        <properties>
+                          <gpg.keyname>$keyId</gpg.keyname>
+                          <gpg.passphrase>$keyPassword</gpg.passphrase>
+                        </properties>
+                      </profile>
+                    </profiles>
+                  </settings>
+                  "@
+                  $settingsDir = Join-Path $HOME ".m2"
+                  New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
+                  $settingsXml | Set-Content (Join-Path $settingsDir "settings.xml") -Encoding UTF8
+                displayName: Configure Maven settings
+
+              - task: MavenAuthenticate@0
+                displayName: Authenticate to Azure Artifacts feed (PAT-less)
+                inputs:
+                  artifactsFeeds: 'GraphDeveloperExperiences_Public'
+
+              - script: ./mvnw install -Psigning --no-transfer-progress
+                displayName: Publish to local Maven for verification
+
+              - script: ./mvnw deploy -Psigning --no-transfer-progress -DaltDeploymentRepository=ADO::default::file://$(Build.SourcesDirectory)/target/staging-deploy
+                displayName: Stage artifacts for ESRP
+
+              - pwsh: |
+                  $pomXml = [xml](Get-Content pom.xml -Raw)
+                  $ns = New-Object System.Xml.XmlNamespaceManager($pomXml.NameTable)
+                  $ns.AddNamespace('m', $pomXml.DocumentElement.NamespaceURI)
+                  $version = $pomXml.SelectSingleNode('/m:project/m:version', $ns).InnerText
+                  # If version contains -SNAPSHOT and we're on a tag, strip it
+                  if ($Env:BRANCH_NAME.StartsWith('refs/tags/v')) {
+                    $version = $version -replace '-SNAPSHOT$', ''
+                  }
                   echo "Current version is $version"
                   echo "##vso[task.setvariable variable=PACKAGE_VERSION;]$version"
                 displayName: Get current version
@@ -100,7 +133,7 @@ extends:
                 displayName: Inspect contents of local Maven cache
 
               - pwsh: |
-                  $packageFullPath = Join-Path -Path "./" -ChildPath "build/publishing-repository/com/microsoft/graph/microsoft-graph-core" -AdditionalChildPath "$(PACKAGE_VERSION)"
+                  $packageFullPath = Join-Path -Path "./target/staging-deploy" -ChildPath "com/microsoft/graph/microsoft-graph-core" -AdditionalChildPath "$(PACKAGE_VERSION)"
                   echo "Package full path: $packageFullPath"
                   echo "##vso[task.setvariable variable=PACKAGE_PATH;]$packageFullPath"
                 displayName: Get the package full path
@@ -176,16 +209,6 @@ extends:
                           $(Pipeline.Workspace)/**/*.pom.asc.sha1
                           $(Pipeline.Workspace)/**/*.pom.asc.sha256
                           $(Pipeline.Workspace)/**/*.pom.asc.sha512
-                          $(Pipeline.Workspace)/**/*.module
-                          $(Pipeline.Workspace)/**/*.module.md5
-                          $(Pipeline.Workspace)/**/*.module.sha1
-                          $(Pipeline.Workspace)/**/*.module.sha256
-                          $(Pipeline.Workspace)/**/*.module.sha512
-                          $(Pipeline.Workspace)/**/*.module.asc
-                          $(Pipeline.Workspace)/**/*.module.asc.md5
-                          $(Pipeline.Workspace)/**/*.module.asc.sha1
-                          $(Pipeline.Workspace)/**/*.module.asc.sha256
-                          $(Pipeline.Workspace)/**/*.module.asc.sha512
 
                         addChangeLog: false
                         action: edit

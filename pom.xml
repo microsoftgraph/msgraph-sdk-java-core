@@ -1,61 +1,388 @@
-<project>
-    <!--
-        This package file is a place holder to enable the dependency graph https://github.com/microsoftgraph/msgraph-sdk-java-core/network/dependencies
-        as the dependency graph is not compatible with gradle https://docs.github.com/en/free-pro-team@latest/github/visualizing-repository-data-with-graphs/about-the-dependency-graph#supported-package-ecosystems
-        build.gradle is the source of truth
-    -->
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.microsoft.graph</groupId>
     <artifactId>microsoft-graph-core</artifactId>
     <!--x-release-please-start-version-->
-    <version>3.6.6</version>
+    <version>3.6.6-SNAPSHOT</version>
     <!--x-release-please-end-->
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
+
+    <name>Microsoft Graph Java Core SDK</name>
+    <description>Microsoft Graph Core SDK</description>
+    <url>https://github.com/microsoftgraph/msgraph-sdk-java-core</url>
+
+    <organization>
+        <name>Microsoft</name>
+        <url>https://github.com/microsoftgraph/msgraph-sdk-java-core</url>
+    </organization>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/microsoftgraph/msgraph-sdk-java-core/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/microsoftgraph/msgraph-sdk-java-core</url>
+        <connection>scm:git:https://github.com/microsoftgraph/msgraph-sdk-java-core.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:microsoftgraph/msgraph-sdk-java-core.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Microsoft</name>
+        </developer>
+    </developers>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- Dependency versions -->
+        <gson.version>2.14.0</gson.version>
+        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
+        <jjwt.version>0.13.0</jjwt.version>
+        <jwks-rsa.version>0.24.1</jwks-rsa.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <azure-core.version>1.58.0</azure-core.version>
+        <kiota.version>1.9.2</kiota.version>
+
+        <!-- Test dependency versions -->
+        <junit.version>6.1.0</junit.version>
+        <mockito.version>5.23.0</mockito.version>
+        <opentelemetry.version>1.62.0</opentelemetry.version>
+        <std-uritemplate.version>1.0.6</std-uritemplate.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.0</spotbugs-maven-plugin.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
+        <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
+
+        <!-- SonarCloud analysis -->
+        <sonar.projectKey>microsoftgraph_msgraph-sdk-java-core</sonar.projectKey>
+        <sonar.organization>microsoftgraph2</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>GraphDeveloperExperiences_Public</id>
+            <url>https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>GraphDeveloperExperiences_Public</id>
+            <url>https://microsoftgraph.pkgs.visualstudio.com/0985d294-5762-4bc2-a565-161ef349ca3e/_packaging/GraphDeveloperExperiences_Public/maven/v1</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.14.0</version>
+            <version>${gson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>jwks-rsa</artifactId>
+            <version>${jwks-rsa.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <version>${okhttp.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-core</artifactId>
-            <version>1.58.0</version>
+            <version>${azure-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-abstractions</artifactId>
+            <version>${kiota.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-authentication-azure</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-http-okHttp</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-serialization-json</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-serialization-text</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-serialization-form</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.kiota</groupId>
+            <artifactId>microsoft-kiota-serialization-multipart</artifactId>
+            <version>${kiota.version}</version>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.3</version>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>6.0.3</version>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>5.2.0</version>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
-            <version>4.9.8</version>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>${opentelemetry.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-context</artifactId>
+            <version>${opentelemetry.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.std-uritemplate</groupId>
+            <artifactId>std-uritemplate</artifactId>
+            <version>${std-uritemplate.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <!-- Tests are only ever run on a modern JDK (main sources keep 1.8 for
+                         downstream compatibility). This mirrors the Gradle build, where the 1.8
+                         source/target applied to compileJava only, not compileTestJava. -->
+                    <testSource>17</testSource>
+                    <testTarget>17</testTarget>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>com.microsoft.graph.core</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doclint>-missing</doclint>
+                    <quiet>true</quiet>
+                    <additionalJOption>-J-Xmx2g</additionalJOption>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <excludeFilterFile>spotBugsExcludeFilter.xml</excludeFilterFile>
+                    <includeTests>true</includeTests>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>signing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
