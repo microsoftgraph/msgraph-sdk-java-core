@@ -63,7 +63,7 @@
         <junit.version>6.1.0</junit.version>
         <mockito.version>5.23.0</mockito.version>
         <opentelemetry.version>1.63.0</opentelemetry.version>
-        <std-uritemplate.version>1.0.6</std-uritemplate.version>
+        <std-uritemplate.version>2.0.11</std-uritemplate.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
