@@ -3,4 +3,4 @@ languages:
 extensions:
   services:
   - Microsoft Graph
-dependencyFile: /gradle/dependencies.gradle
+dependencyFile: /pom.xml

@@ -5,33 +5,26 @@
 .Synopsis
     Retrieve the latest version of the library
 .Description 
-    Retrieves the latest version specified in the Gradle.Properties file
+    Retrieves the latest version specified in the pom.xml file
     Uses the retrieved values to update the environment variable VERSION_STRING
 .Parameter propertiesPath
-    The path pointing to the gradle.properties file.
+    The path pointing to the pom.xml file.
 #>
 
 Param(
     [string]$propertiesPath
 )
 
-#Retrieve the current version from the Gradle.Properties file given the specified path
+#Retrieve the current version from the pom.xml file given the specified path
 if($propertiesPath -eq "" -or $null -eq $propertiesPath) {
-    $propertiesPath = Join-Path -Path $PSScriptRoot -ChildPath "../gradle.properties"
+    $propertiesPath = Join-Path -Path $PSScriptRoot -ChildPath "../pom.xml"
 }
-$file = get-item $propertiesPath
-$findVersions = $file | Select-String -Pattern "mavenMajorVersion" -Context 0,2
-$content = Get-Content $propertiesPath
 
-$lineNumber = $findVersions.LineNumber - 1
-$versionIndex = $content[$lineNumber].IndexOf("=")
-$versionIndex += 2 # skipping =[space]
-$majorVersion = $content[$lineNumber].Substring($versionIndex)
-$lineNumber++
-$minorVersion = $content[$lineNumber].Substring($versionIndex)
-$lineNumber++
-$patchVersion = $content[$lineNumber].Substring($versionIndex)
-$version = "$majorVersion.$minorVersion.$patchVersion"
+$pomXml = [xml](Get-Content $propertiesPath -Raw)
+$ns = New-Object System.Xml.XmlNamespaceManager($pomXml.NameTable)
+$ns.AddNamespace('m', $pomXml.DocumentElement.NamespaceURI)
+$version = $pomXml.SelectSingleNode('/m:project/m:version', $ns).InnerText
+$version = $version -replace '-SNAPSHOT$', ''
 
 #Set Task output to create tag
 Write-Output "::set-output name=tag::v${version}"

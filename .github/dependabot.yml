@@ -1,13 +1,16 @@
 version: 2
 updates:
-- package-ecosystem: gradle
-  directories:
-    - "/"
-    - "/java-8"
+- package-ecosystem: maven
+  directory: "/"
   schedule:
     interval: daily
     time: "09:00" # 9am UTC
   open-pull-requests-limit: 10
+  ignore:
+    # jakarta.annotation-api 3.x is compiled to Java 11 bytecode, which is
+    # incompatible with this library's Java 8 baseline. Stay on the 2.x line.
+    - dependency-name: "jakarta.annotation:jakarta.annotation-api"
+      update-types: ["version-update:semver-major"]
   groups:
     kiota-dependencies:
       patterns:
@@ -24,21 +27,11 @@ updates:
     interval: daily
     time: "10:00" # 10am UTC. After core dependencies are updated to prevent duplicates.
   open-pull-requests-limit: 10
-  groups:
-    kiota-dependencies:
-      patterns:
-        - "*kiota*"
-    junit-dependencies:
-      patterns:
-        - "*junit*"
-    open-telemetry:
-      patterns:
-        - "*opentelemetry*"
-- package-ecosystem: maven
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
+  ignore:
+    # jakarta.annotation-api 3.x is compiled to Java 11 bytecode, which is
+    # incompatible with this library's Java 8 baseline. Stay on the 2.x line.
+    - dependency-name: "jakarta.annotation:jakarta.annotation-api"
+      update-types: ["version-update:semver-major"]
   groups:
     kiota-dependencies:
       patterns:

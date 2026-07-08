@@ -3,4 +3,13 @@
     <issue id="LambdaLast">
         <ignore path="../src/main/java/com/microsoft/graph/core/requests/GraphClientFactory.java" />
     </issue>
+    <!-- okhttp (v5) and jakarta.annotation-api (v3) major bumps are intentionally deferred; ignore newer-version lint warnings for them -->
+    <issue id="GradleDependency">
+        <ignore regexp="okhttp" />
+        <ignore regexp="jakarta" />
+    </issue>
+    <issue id="NewerVersionAvailable">
+        <ignore regexp="okhttp" />
+        <ignore regexp="jakarta" />
+    </issue>
 </lint>
