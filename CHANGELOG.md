@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.7](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.6...v3.6.7) (2026-08-05)
+
+
+### Bug Fixes
+
+* **deps:** bump com.azure:azure-core from 1.58.0 to 1.58.1 ([#2103](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/2103)) ([f344668](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/f344668281b6a1380a5a1810f7fabdbac18a6b52))
+* **deps:** bump com.azure:azure-core from 1.58.0 to 1.58.1 in /android ([#2104](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/2104)) ([c570ace](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/c570ace09caf368db679ff791d6984ba49baa1d9))
+* **deps:** bump org.junit.jupiter:junit-jupiter ([0da3cb1](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/0da3cb1fc3b893187cd9d322d69697d1f50508c6))
+* **deps:** bump org.junit.jupiter:junit-jupiter from 6.0.3 to 6.1.0 in /android in the junit-dependencies group ([8be1ced](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/8be1ced7a8bfc71b4cf162b2ccf669df02e1fc9e))
+* **deps:** bump the kiota-dependencies group in /android with 7 updates ([#2105](https://github.com/microsoftgraph/msgraph-sdk-java-core/issues/2105)) ([e5c2194](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/e5c2194da42bb3a0bfe7c0770826249a9b8fe363))
+* **deps:** bump the open-telemetry group in /android with 2 updates ([f1d71e8](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/f1d71e87713b4c2903c81cd765045d24e2f5ea00))
+* **deps:** bump the open-telemetry group in /android with 2 updates ([fa1cd13](https://github.com/microsoftgraph/msgraph-sdk-java-core/commit/fa1cd13017fb5ad8119efc90c7ef0b5ad8a99517))
+
 ## [3.6.6](https://github.com/microsoftgraph/msgraph-sdk-java-core/compare/v3.6.5...v3.6.6) (2026-05-16)
 
 
