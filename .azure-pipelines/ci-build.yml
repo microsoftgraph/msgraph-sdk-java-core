@@ -106,11 +106,27 @@ extends:
                 inputs:
                   artifactsFeeds: 'GraphDeveloperExperiences_Public'
 
-              - script: ./mvnw install -Psigning --no-transfer-progress
+              - task: Maven@4
                 displayName: Publish to local Maven for verification
+                inputs:
+                  mavenPomFile: 'pom.xml'
+                  goals: 'install'
+                  options: '-Psigning --no-transfer-progress'
+                  publishJUnitResults: false
+                  javaHomeOption: 'JDKVersion'
+                  jdkVersionOption: '1.21'
+                  jdkArchitectureOption: 'x64'
 
-              - script: ./mvnw deploy -Psigning --no-transfer-progress -DaltDeploymentRepository=ADO::default::file://$(Build.SourcesDirectory)/target/staging-deploy
+              - task: Maven@4
                 displayName: Stage artifacts for ESRP
+                inputs:
+                  mavenPomFile: 'pom.xml'
+                  goals: 'deploy'
+                  options: '-Psigning --no-transfer-progress -DaltDeploymentRepository=ADO::default::file://$(Build.SourcesDirectory)/target/staging-deploy'
+                  publishJUnitResults: false
+                  javaHomeOption: 'JDKVersion'
+                  jdkVersionOption: '1.21'
+                  jdkArchitectureOption: 'x64'
 
               - pwsh: |
                   $pomXml = [xml](Get-Content pom.xml -Raw)
