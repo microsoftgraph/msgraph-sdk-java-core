@@ -60,7 +60,7 @@
         <kiota.version>1.9.3</kiota.version>
 
         <!-- Test dependency versions -->
-        <junit.version>6.1.0</junit.version>
+        <junit.version>6.1.2</junit.version>
         <mockito.version>5.23.0</mockito.version>
         <opentelemetry.version>1.63.0</opentelemetry.version>
         <std-uritemplate.version>1.0.6</std-uritemplate.version>
