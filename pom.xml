@@ -51,13 +51,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Dependency versions -->
-        <gson.version>2.14.0</gson.version>
+        <gson.version>2.15.0</gson.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <jjwt.version>0.13.0</jjwt.version>
-        <jwks-rsa.version>0.24.1</jwks-rsa.version>
+        <jwks-rsa.version>0.24.2</jwks-rsa.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <azure-core.version>1.58.1</azure-core.version>
-        <kiota.version>1.9.3</kiota.version>
+        <azure-core.version>1.61.0</azure-core.version>
+        <kiota.version>1.10.4</kiota.version>
 
         <!-- Test dependency versions -->
         <junit.version>6.1.0</junit.version>
