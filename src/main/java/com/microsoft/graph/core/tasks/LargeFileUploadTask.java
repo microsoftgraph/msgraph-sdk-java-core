@@ -231,7 +231,7 @@ public class LargeFileUploadTask<T extends Parsable > {
         for (Map.Entry<Long, Long> entry: rangesRemaining) {
             long currentRangeBegin = entry.getKey();
             long currentEnd = entry.getValue();
-            while(currentRangeBegin < currentEnd) {
+            while(currentRangeBegin <= currentEnd) {
                 long nextSliceSize = nextSliceSize(currentRangeBegin, currentEnd);
                 UploadSliceRequestBuilder<T> sliceRequestBuilder =
                     new UploadSliceRequestBuilder<>(this.uploadSession.getUploadUrl(), this.requestAdapter,

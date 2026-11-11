@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.mockito.internal.matchers.Any;
 
@@ -115,6 +116,27 @@ class LargeFileUploadTest {
         assertEquals(size%maxSliceSize, lastSlice.getRangeLength());
         assertEquals(size-1, lastSlice.getRangeEnd());
     }
+    @Test
+    void includesOneByteFinalSlice() throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        UploadSession session = new UploadSession();
+        session.setNextExpectedRanges(Arrays.asList("0-"));
+        session.setUploadUrl("http://localhost");
+        session.setExpirationDateTime(OffsetDateTime.parse("2019-11-07T06:39:31.499Z"));
+
+        int sliceSize = 320 * 1024;
+        byte[] data = new byte[sliceSize + 1];
+        LargeFileUploadTask<TestDriveItem> task = new LargeFileUploadTask<>(adapter, session,
+            new ByteArrayInputStream(data), data.length, sliceSize, TestDriveItem::createFromDiscriminatorValue);
+
+        List<UploadSliceRequestBuilder<TestDriveItem>> builders = task.getUploadSliceRequests();
+
+        assertEquals(2, builders.size());
+        UploadSliceRequestBuilder<TestDriveItem> finalSlice = builders.get(1);
+        assertEquals(sliceSize, finalSlice.getRangeBegin());
+        assertEquals(sliceSize, finalSlice.getRangeEnd());
+        assertEquals(1, finalSlice.getRangeLength());
+    }
+
     // Test for chunkInputStream method with a 5MB file
         @Test
     void uploads5MBFileSuccessfully() throws Exception {
