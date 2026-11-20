@@ -251,7 +251,7 @@ extends:
               runOnce:
                 deploy:
                   steps:
-                    - task: EsrpRelease@9
+                    - task: EsrpRelease@14
                       inputs:
                         connectedservicename: "Federated DevX ESRP Managed Identity Connection"
                         usemanagedidentity: false
