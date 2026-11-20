@@ -9,7 +9,7 @@ on:
   push:
     branches: [main, support/2.x.x]
   pull_request:
-    types: [synchronize]
+    types: [opened, reopened, synchronize]
     branches: [main, support/2.x.x]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
